@@ -285,6 +285,12 @@ From there, you could plot the t‑SNE dimensions in a similar fashion to the PC
 
 Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
 
+## exercises {-}
+
+- Based on the chemical measurements in the beer components dataset, which is more similar to hops, hop oil or hop extract? Note that, for simplicity, you may wish to ignore the columns "analyte_odor" and "analyte_class" in your analysis.
+
+- What are the top two markers for red versus white wine in the wine_quality dataset? Note that you may need to assign each bottle a unique ID as follows: `wine_quality <- select(mutate(wine_quality, ID = seq(1,6497,1)), ID, everything())`.
+
 ## {-}
 
 ## further reading {-}

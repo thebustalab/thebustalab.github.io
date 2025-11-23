@@ -377,3 +377,4 @@ ggplot(pt_by_year_summ,
 
 - [R for Data Science, Chapter 5–10](https://r4ds.hadley.nz/transform). Hadley Wickham and Mine Çetinkaya-Rundel’s open textbook expands on wrangling, reshaping, and summarizing with narratives, exercises, and datasets that reinforce the patterns we practiced.
 
+- [genzplyr](https://github.com/hadley/genzplyr). genzplyr is an alternative syntax for dplyr that replaces boring old function names with GenZ slang. Your data wrangling is about to hit different.

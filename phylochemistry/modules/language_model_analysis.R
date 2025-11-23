@@ -1095,6 +1095,10 @@ message("Loading language model module...")
                 }
               }
               
+              # Trim any accidental whitespace/newlines in provided keys
+              if (!is.null(biolm_api_key)) biolm_api_key <- trimws(biolm_api_key[1])
+              if (!is.null(nvidia_api_key)) nvidia_api_key <- trimws(nvidia_api_key[1])
+              
               # Validate input type
               if (input_type == "amino_acid_stringset") { 
                 if (!inherits(amino_acid_stringset, "XStringSet")) {
@@ -1107,6 +1111,9 @@ message("Loading language model module...")
               
               # BIOLM    
               if (platform == "biolm") {
+                if (is.null(biolm_api_key) || biolm_api_key == "") {
+                  stop("biolm_api_key is missing or empty.")
+                }
                 # Build the items string manually by iterating over the sequences.
                 # If needed, escape any internal quotes in the sequence.
                 items_str <- paste0(
@@ -1150,6 +1157,9 @@ message("Loading language model module...")
               }
               
               if (platform == "nvidia") {
+                if (is.null(nvidia_api_key) || nvidia_api_key == "") {
+                  stop("nvidia_api_key is missing or empty.")
+                }
                 # NVIDIA API accepts a list of sequences
                 payload <- list(
                   sequences = as.list(as.data.frame(amino_acid_stringset)[[1]]),
@@ -1164,12 +1174,34 @@ message("Loading language model module...")
                   body = jsonlite::toJSON(payload, auto_unbox = TRUE),
                   encode = "json"
                 )
-                # Save response to a temporary h5 file
+                code <- httr::status_code(response)
+                if (code >= 300) {
+                  body_txt <- httr::content(response, as = "text", encoding = "UTF-8")
+                  if (code == 401 || code == 403) {
+                    stop("NVIDIA API request failed (auth): HTTP ", code, " - check that nvidia_api_key is valid and not expired. Response: ", body_txt)
+                  }
+                  stop("NVIDIA API request failed: HTTP ", code, " Response: ", body_txt)
+                }
+
+                # Save response to a temporary file; NVIDIA returns an HDF5 file, not a zip
                 file_path <- tempfile(fileext = ".h5")
-                writeBin(httr::content(response, as = "raw"), file_path)
-                temp_dir <- tempdir()
-                unzipped_files <- unzip(file_path, exdir = temp_dir)
-                embeddings <- as_tibble(t(rhdf5::h5read(unzipped_files, "embeddings")))
+                resp_raw <- httr::content(response, as = "raw")
+                if (length(resp_raw) == 0) {
+                  stop("NVIDIA API returned an empty response.")
+                }
+                writeBin(resp_raw, file_path)
+
+                # Some future versions could wrap the H5 in a zip; handle both
+                read_path <- file_path
+                ctype <- httr::headers(response)[["content-type"]]
+                if (!is.null(ctype) && grepl("zip", ctype, ignore.case = TRUE)) {
+                  temp_dir <- tempdir()
+                  unzipped_files <- unzip(file_path, exdir = temp_dir)
+                  if (length(unzipped_files) == 0) stop("Failed to unzip NVIDIA embeddings payload.")
+                  read_path <- unzipped_files[1]
+                }
+
+                embeddings <- as_tibble(t(rhdf5::h5read(read_path, "embeddings")))
                 colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
                 embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
                 return(embeddings)
