@@ -14196,7 +14196,29 @@
                                 }
                                 
                                 if( analysis == "dist") {
-                                    return(dist_matrix)
+                                    df <- as.data.frame(as.table(as.matrix(dist_matrix)))
+                                    names(df) <- c("sample_1", "sample_2", "distance")
+                                    df <- filter(df, distance != 0)
+                                    clustering <- df
+
+                                    clustering <- right_join(
+                                      data_wide[,match(
+                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                        colnames(data_wide))
+                                      ], clustering, by = c("sample_unique_ID" = "sample_1"), suffix = c("sample_1", "sample_2")
+                                    )
+
+                                    clustering <- right_join(
+                                      data_wide[,match(
+                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                        colnames(data_wide))
+                                      ], clustering, by = c("sample_unique_ID" = "sample_2"), suffix = c("_sample_1", "_sample_2")
+                                    )
+
+                                    colnames(clustering)[colnames(clustering) == "sample_unique_ID"] <- "sample_unique_ID_sample_1"
+                                    clustering <- select(clustering, sample_unique_ID_sample_1, sample_unique_ID_sample_2, distance, everything())
+                                    return(clustering)
+                                    # return(dist_matrix)
                                     stop()
                                 }
 
@@ -14205,7 +14227,6 @@
                             if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
 
                     # Run the matrix analysis selected
-
 
                         ## HCLUST, HCLUST_PHYLO ##
 
