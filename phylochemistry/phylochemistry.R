@@ -31,6 +31,7 @@
 
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/genomescope.R")
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/analyzeGCMSdata4.R")
+                source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
             }
         }
 
@@ -182,7 +183,6 @@
     ## Load phylochemistry modules
 
         source("https://thebustalab.github.io/phylochemistry/modules/datasets.R")
-        source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
         source("https://thebustalab.github.io/phylochemistry/modules/pca_visualizer.R")
 
     ## Set up prioriy functions
