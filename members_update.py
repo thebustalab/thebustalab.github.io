@@ -72,14 +72,17 @@ def main():
     current_df = latest_memberships[latest_memberships["is_current"]]
     past_df = latest_memberships[~latest_memberships["is_current"]]
 
+    # Define ordering so we list graduate students first, then other researchers, then undergraduates
+    status_categories = ["Grad", "Researcher", "UGRA"]
+
     # Define categorical ordering to prioritize graduate students first
-    status_order = pd.Categorical(current_df["Status"], categories=["Grad", "UGRA"], ordered=True)
+    status_order = pd.Categorical(current_df["Status"], categories=status_categories, ordered=True)
     current_df = current_df.assign(status_order=status_order).sort_values(
         ["status_order", "Person"], ascending=[True, True]
     )
 
     # Define categorical ordering to prioritize graduate students first
-    status_order = pd.Categorical(past_df["Status"], categories=["Grad", "UGRA"], ordered=True)
+    status_order = pd.Categorical(past_df["Status"], categories=status_categories, ordered=True)
     past_df = past_df.assign(status_order=status_order).sort_values(
         ["status_order", "Person"], ascending=[True, True]
     )
@@ -219,11 +222,14 @@ def generate_member_html(row):
     Given a row from our DataFrame, produce the HTML snippet
     for one member 'box'.
     """
-    # Decide how to label them (Grad vs. UGRA)
-    if row["Status"] == "Grad":
-        status_text = "Graduate Researcher"
-    else:
-        status_text = "Undergraduate Researcher"
+    # Decide how to label them (Grad vs. Researcher vs. UGRA)
+    status = row.get("Status", "")
+    status_map = {
+        "Grad": "Graduate Researcher",
+        "UGRA": "Undergraduate Researcher",
+        "Researcher": "Researcher",
+    }
+    status_text = status_map.get(status, status or "Researcher")
 
     # Basic fields
     name  = row["Person"]
