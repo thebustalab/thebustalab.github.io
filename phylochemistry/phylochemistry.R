@@ -10583,7 +10583,7 @@
                             
                             ## How to prepare blurbs
                             "You are a news reporter that specializes in summarizing the abstracts of scientific articles into short two to three sentence blurbs.",
-                            "Each blurb should begin with (i) the name of any chemical compounds or compound classes being described in the abstract and (ii) the name of the journal in which the abstract is published.",
+                            "Each blurb should begin with (i) the name of any chemical compounds or compound classes being described in the abstract and (ii) the name of the journal in which the abstract is published, both in bold like <b>Compound name (journal)</b>.",
                             "The content of each blurb should emphasize the findings of the article and their application in solving real-world problems.",
                             "Avoid describing the level of impact of the study by avoiding words like \"groundbreaking\", \"revolutionary\", and so on.",
                             "Use the tone of a reporter.",
