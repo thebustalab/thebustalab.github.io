@@ -10349,7 +10349,59 @@
                   
                 }
 
-                shinyApp(ui = ui, server = server)
+                if ( jupyter == TRUE) {
+
+                    available_ports <- vector()
+
+                    if ( length( unique( c(
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10123) }
+
+                    if ( length( unique( c(
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10456) }
+
+                    if ( length( unique( c(
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10789) }
+
+                    if (length(available_ports) > 0) {
+                        cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
+                        runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
+                    } else {
+                        cat("All available ports are in use. Please try again later.")
+                    }
+
+                }
+
+                if (jupyter == FALSE) { shinyApp(ui = ui, server = server) }
             }
 
         #### parseRISFile
