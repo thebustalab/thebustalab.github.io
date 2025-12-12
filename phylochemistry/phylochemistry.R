@@ -10110,7 +10110,7 @@
 
         #### buildCaption
 
-            buildCaption <- function() {
+            buildCaption <- function(jupyter = FALSE) {
 
                 ui <- fluidPage(
                   theme = shinythemes::shinytheme("darkly"),
