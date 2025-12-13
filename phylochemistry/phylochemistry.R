@@ -10503,9 +10503,9 @@
                     return(as_tibble(df))
                 }
 
-        #### createNewsletter
+        #### createNewsletter_old
 
-            createNewsletter <- function(
+            createNewsletter_old <- function(
                     search_terms,
                     focus_areas,
                     n_articles_per_newsletter,
@@ -10679,6 +10679,208 @@
                 return(output)
                      
             }
+
+        #### createNewsletter
+
+            createNewsletter <- function(
+                search_terms,
+                focus_areas,
+                n_articles_per_newsletter,
+                pubmed_api_key,
+                openai_api_key,
+                image_prompt,
+                monitored_directory = NULL,
+                monitored_time_window = NULL,
+                monitored_file_suffix = NULL
+            ) {
+
+                ## Search PubMed for all terms
+                output <- list()
+                output$hits <- searchPubMed(
+                    search_terms = search_terms,
+                    pubmed_api_key = pubmed_api_key,
+                    sort = "date"
+                )
+
+                yesterdays_hits <- output$hits[output$hits$date == (Sys.Date() - 1), ]
+                yesterdays_hits <- yesterdays_hits[nchar(yesterdays_hits$abstract) > 200, ]
+                output$yesterdays_hits <- yesterdays_hits
+
+                ## Rank articles
+                if (nrow(yesterdays_hits) > 0) {
+                    ratings <- list()
+
+                    for (i in seq_len(nrow(yesterdays_hits))) {
+                        summary <- completionGPT(
+                            system_prompt = paste(
+                                "You are an expert at classifying scientific literature.",
+                                "I will give you an abstract, and your job is to provide a rating on how closely related that abstract",
+                                "is to the following plant chemistry focus areas:",
+                                paste0(focus_areas, collapse = ", "),
+                                ". DO NOT RESPOND WITH ANYTHING EXCEPT A SINGLE NUMBER THAT IS THE RATING FROM 1-10,",
+                                "with 10 being the most related to the focus areas, 1 being the least related."
+                            ),
+                            query = paste0("Here is the abstract: ", yesterdays_hits$abstract[i]),
+                            model = "gpt-3.5-turbo",
+                            temperature = 0,
+                            openai_api_key = openai_api_key
+                        )
+                        ratings[[i]] <- summary$response
+                    }
+
+                    ratings <- as.numeric(gsub("Rating: ", "", unlist(ratings)))
+                    yesterdays_ranked_hits <- yesterdays_hits
+                    yesterdays_ranked_hits$ratings <- ratings
+                    yesterdays_ranked_hits <- yesterdays_ranked_hits |>
+                        dplyr::arrange(desc(ratings))
+
+                    output$yesterdays_ranked_hits <- yesterdays_ranked_hits
+                } else {
+                    output$yesterdays_ranked_hits <- NULL
+                }
+
+                ## ------------------------------------------------------------
+                ## Make cover image (BASE64 EMBEDDED)
+                ## ------------------------------------------------------------
+                endpoint_url <- "https://api.openai.com/v1/images/generations"
+
+                image_response <- httr::content(
+                    httr::POST(
+                        url = endpoint_url,
+                        httr::add_headers(
+                            Authorization = paste("Bearer", openai_api_key)
+                        ),
+                        httr::content_type_json(),
+                        encode = "json",
+                        body = list(
+                            model = "dall-e-3",
+                            n = 1,
+                            prompt = image_prompt,
+                            size = "1024x1024",
+                            response_format = "b64_json"
+                        )
+                    )
+                )
+
+                image_base64 <- image_response$data[[1]]$b64_json
+                image_data_uri <- paste0("data:image/png;base64,", image_base64)
+
+                ## ------------------------------------------------------------
+                ## Date formatting
+                ## ------------------------------------------------------------
+                today <- Sys.Date()
+                day <- as.integer(format(today, "%d"))
+                suffix <- ifelse(
+                    day %in% c(1, 21, 31), "st",
+                    ifelse(day %in% c(2, 22), "nd",
+                           ifelse(day %in% c(3, 23), "rd", "th"))
+                )
+
+                formatted_date <- paste0(
+                    format(today, "%B "),
+                    day,
+                    suffix,
+                    format(today, ", %Y")
+                )
+
+                ## ------------------------------------------------------------
+                ## Monitored directory
+                ## ------------------------------------------------------------
+                if (!is.null(monitored_directory)) {
+                    hours <- monitored_time_window
+                    directories <- dir(monitored_directory, full.names = TRUE)
+                    file_info <- file.info(directories)
+                    threshold_time <- Sys.time() - hours * 3600
+
+                    recently_modified <- file_info[file_info$mtime > threshold_time, ]
+
+                    monitored_directory_df <- list()
+
+                    if (nrow(recently_modified) > 0) {
+                        for (i in seq_len(nrow(recently_modified))) {
+                            file_path <- file.path(
+                                rownames(recently_modified)[i],
+                                paste0(
+                                    basename(rownames(recently_modified)[i]),
+                                    monitored_file_suffix
+                                )
+                            )
+
+                            if (file.exists(file_path)) {
+                                monitored_directory_df[[i]] <- data.frame(
+                                    doi = basename(rownames(recently_modified)[i]),
+                                    abstract = paste(readLines(file_path), collapse = " ")
+                                )
+                            }
+                        }
+                        monitored_directory_df <- do.call(rbind, monitored_directory_df)
+                    } else {
+                        monitored_directory_df <- data.frame(doi = "", abstract = "")
+                    }
+                } else {
+                    monitored_directory_df <- data.frame(doi = "", abstract = "")
+                }
+
+                ## ------------------------------------------------------------
+                ## Build newsletter query
+                ## ------------------------------------------------------------
+                query <- paste0(
+                    "Here are the articles:\n\n",
+                    paste(
+                        "This article is located at the following doi:",
+                        yesterdays_ranked_hits$doi[1:n_articles_per_newsletter],
+                        "Here is the article's title:",
+                        yesterdays_ranked_hits$title[1:n_articles_per_newsletter],
+                        "Here is the article's abstract:",
+                        yesterdays_ranked_hits$abstract[1:n_articles_per_newsletter],
+                        collapse = "\n\n"
+                    ),
+                    "\n\nHere are the articles from the archives:\n\n",
+                    paste(
+                        "This article is located at the following doi:",
+                        monitored_directory_df$doi[1:n_articles_per_newsletter],
+                        "Here is the article's abstract:",
+                        monitored_directory_df$abstract[1:n_articles_per_newsletter],
+                        collapse = "\n\n"
+                    )
+                )
+
+                ## ------------------------------------------------------------
+                ## Issue newsletter query
+                ## ------------------------------------------------------------
+                newsletter <- completionGPT(
+                    system_prompt = paste(
+                        "You are a news reporter that specializes in summarizing the abstracts of scientific articles into short two to three sentence blurbs.",
+                        "Each blurb should begin with the name of any chemical compounds or compound classes and the journal name.",
+                        "Do not use formatting inside blurbs.",
+                        "Provide the DOI at the end of each blurb, prefixed with https://doi.org/.",
+                        "Format the output as an HTML email.",
+
+                        "Begin the newsletter with a center-justified div (style=\"text-align:center\")",
+                        "that contains an image scaled to 200x200px located at this URL:",
+                        image_data_uri,
+
+                        "Follow the image with an <h1> header:",
+                        paste0("Greetings! This is your research newsletter for ", formatted_date, "."),
+
+                        "Then close the center-justified div.",
+
+                        "Create a main section grouped by topic (3–4 topics).",
+                        "Create a second section titled 'From the archives'."
+                    ),
+                    query = query,
+                    model = "gpt-4o",
+                    temperature = 0,
+                    openai_api_key = openai_api_key
+                )
+
+                newsletter$response <- gsub("```", "", gsub("```html", "", newsletter$response))
+                output$newsletter <- newsletter
+
+                message("Newsletter complete!")
+                return(output)
+            }
+
 
         #### completionGPT
 
