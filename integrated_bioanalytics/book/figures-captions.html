@@ -115,7 +115,7 @@
 <h3>insets<a class="anchor" aria-label="anchor" href="#insets"><i class="fas fa-link"></i></a>
 </h3>
 <p>Zoom in on certain plot regions</p>
-<div class="sourceCode" id="cb186"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span></span>
@@ -136,7 +136,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Plot insets</p>
-<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, <span class="va">hwy</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"col"</span>, fun <span class="op">=</span> <span class="va">mean</span>, width <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Number of cylinders"</span>, y <span class="op">=</span> <span class="cn">NULL</span>, title <span class="op">=</span> <span class="st">"Means"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -154,7 +154,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Image insets</p>
-<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Isoquercitin_synthase</span> <span class="op">&lt;-</span> <span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png"</span><span class="op">)</span></span>
 <span><span class="va">grobs.tb</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>                   width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -177,7 +177,7 @@
 <h3>paneled figures<a class="anchor" aria-label="anchor" href="#paneled-figures"><i class="fas fa-link"></i></a>
 </h3>
 <p>Many high quality figures are paneled figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the paneled figure and send the plot to a new object:</p>
-<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">color_palette</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fl">11</span>, <span class="st">"Paired"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">color_palette</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">element</span><span class="op">)</span></span>
 <span></span>
@@ -215,13 +215,13 @@
 <span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Now, add them together to lay them out. Let’s look at various ways to lay this out:</p>
-<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb193"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>,<span class="va">plot2</span><span class="op">)</span>, <span class="va">plot1</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
@@ -229,20 +229,20 @@
 <h3>exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
 </h3>
 <p>To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: “C:\Desktop\the_file.png” (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.</path_to_file_you_want_to_create></p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="figures-captions.html#cb193-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
-<span id="cb193-2"><a href="figures-captions.html#cb193-2" tabindex="-1"></a></span>
-<span id="cb193-3"><a href="figures-captions.html#cb193-3" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
-<span id="cb193-4"><a href="figures-captions.html#cb193-4" tabindex="-1"></a></span>
-<span id="cb193-5"><a href="figures-captions.html#cb193-5" tabindex="-1"></a>plot</span>
-<span id="cb193-6"><a href="figures-captions.html#cb193-6" tabindex="-1"></a></span>
-<span id="cb193-7"><a href="figures-captions.html#cb193-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="figures-captions.html#cb194-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
 <span id="cb194-2"><a href="figures-captions.html#cb194-2" tabindex="-1"></a></span>
-<span id="cb194-3"><a href="figures-captions.html#cb194-3" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb194-3"><a href="figures-captions.html#cb194-3" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
 <span id="cb194-4"><a href="figures-captions.html#cb194-4" tabindex="-1"></a></span>
 <span id="cb194-5"><a href="figures-captions.html#cb194-5" tabindex="-1"></a>plot</span>
 <span id="cb194-6"><a href="figures-captions.html#cb194-6" tabindex="-1"></a></span>
 <span id="cb194-7"><a href="figures-captions.html#cb194-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="figures-captions.html#cb195-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb195-2"><a href="figures-captions.html#cb195-2" tabindex="-1"></a></span>
+<span id="cb195-3"><a href="figures-captions.html#cb195-3" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb195-4"><a href="figures-captions.html#cb195-4" tabindex="-1"></a></span>
+<span id="cb195-5"><a href="figures-captions.html#cb195-5" tabindex="-1"></a>plot</span>
+<span id="cb195-6"><a href="figures-captions.html#cb195-6" tabindex="-1"></a></span>
+<span id="cb195-7"><a href="figures-captions.html#cb195-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 </div>
 </div>
 <div id="captions" class="section level2 unnumbered">
@@ -346,7 +346,7 @@ Figure 4.1: Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A b
 <h3>buildCaption<a class="anchor" aria-label="anchor" href="#buildcaption"><i class="fas fa-link"></i></a>
 </h3>
 <p>To help you manage the suggestions above, please consider using the <code>buildCaption()</code> tool, which you can open using the command below. That command should open an interactive window with a checklist to help you quickly build quality captions.</p>
-<div class="sourceCode" id="cb195"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildCaption</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -416,7 +416,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-11-23"
+date: "2025-12-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4415,6 +4415,42 @@ ggplot(pca_out) +
 
 <img src="index_files/figure-html/unnamed-chunk-493-1.png" width="100%" style="display: block; margin: auto;" />
 
+## generative models {-}
+
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+
+In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
+
+
+``` r
+search_results$system <- "You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."
+
+search_results <- generateText(
+  df = search_results,
+  prompt_column = "abstract",
+  system_column = "system",
+  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
+)
+##   |                                                          |                                                  |   0%  |                                                          |====                                              |   8%  |                                                          |========                                          |  17%  |                                                          |============                                      |  25%  |                                                          |=================                                 |  33%  |                                                          |=====================                             |  42%  |                                                          |=========================                         |  50%  |                                                          |=============================                     |  58%  |                                                          |=================================                 |  67%  |                                                          |======================================            |  75%  |                                                          |==========================================        |  83%  |                                                          |==============================================    |  92%  |                                                          |==================================================| 100%
+
+select(search_results, title, generation)
+## # A tibble: 12 × 2
+##    title                                          generation
+##    <chr>                                          <chr>     
+##  1 β-Amyrin synthase from Conyza blinii expresse… plant-bio…
+##  2 Ginsenosides in Panax genus and their biosynt… plant-che…
+##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… plant-bio…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … plant-che…
+##  5 Friedelin Synthase from Maytenus ilicifolia: … biochemis…
+##  6 Functional characterization of an oxidosquale… Plant-Bio…
+##  7 Sorghum (Sorghum bicolor).                     plant-gen…
+##  8 Potential food applications of sorghum (Sorgh… nutrition…
+##  9 Current status and prospects of herbicide-res… agricultu…
+## 10 Regulatory mechanisms underlying cuticular wa… plant-bio…
+## 11 Cuticular wax in wheat: biosynthesis, genetic… plant-bio…
+## 12 Update on Cuticular Wax Biosynthesis and Its … plant-pat…
+```
+
 ## protein embeddings {-}
 
 <!-- Protein Language Models: -->
@@ -4481,11 +4517,11 @@ all_sequences_embedded[1:5,1:6]
 ## # A tibble: 5 × 6
 ##   name           product embedding_1 embedding_2 embedding_3
 ##   <chr>          <chr>         <dbl>       <dbl>       <dbl>
-## 1 WP_447540117.… syntha…      0.0158     -0.0234     -0.0142
-## 2 YBQ28266.1 di… syntha…      0.0162     -0.0267     -0.0147
-## 3 YBQ36092.1 di… syntha…      0.0162     -0.0267     -0.0147
-## 4 YBQ43901.1 di… syntha…      0.0162     -0.0267     -0.0147
-## 5 YBQ32175.1 di… syntha…      0.0159     -0.0260     -0.0143
+## 1 WP_455697623.… syntha…     -0.0692     -0.0854     -0.0281
+## 2 WP_455697622.… syntha…     -0.0584     -0.0110     -0.0474
+## 3 pdb|9E2M|F Ch… syntha…     -0.0185     -0.0878     -0.0290
+## 4 pdb|9E2M|E Ch… syntha…     -0.0185     -0.0878     -0.0290
+## 5 pdb|9E2M|D Ch… syntha…     -0.0185     -0.0878     -0.0290
 ## # ℹ 1 more variable: embedding_4 <dbl>
 ```
 
@@ -4509,7 +4545,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-496-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-497-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -4569,7 +4605,6 @@ search_results_ex_embed_pca %>%
 
 
 asdf -->
-
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -4792,7 +4827,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-532-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4820,7 +4855,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-533-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-535-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4865,7 +4900,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-535-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-537-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4881,7 +4916,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-536-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-538-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4890,7 +4925,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-537-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-539-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4961,7 +4996,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-539-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-541-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4981,7 +5016,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-540-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-542-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5059,7 +5094,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-545-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-547-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5094,7 +5129,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-546-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-548-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -5316,7 +5351,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-568-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-570-1.png" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

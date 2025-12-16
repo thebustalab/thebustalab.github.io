@@ -256,6 +256,64 @@
 <span id="cb156-41"><a href="embedding-models.html#cb156-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-493-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
+<div id="generative-models" class="section level2 unnumbered">
+<h2>generative models<a class="anchor" aria-label="anchor" href="#generative-models"><i class="fas fa-link"></i></a>
+</h2>
+<p>Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The <code>generateText()</code> function provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the <code>prompt_column</code>, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (<code>system_column</code>, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.</p>
+<p>In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call <code>generateText()</code>, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="embedding-models.html#cb157-1" tabindex="-1"></a>search_results<span class="sc">$</span>system <span class="ot">&lt;-</span> <span class="st">"You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."</span></span>
+<span id="cb157-2"><a href="embedding-models.html#cb157-2" tabindex="-1"></a></span>
+<span id="cb157-3"><a href="embedding-models.html#cb157-3" tabindex="-1"></a>search_results <span class="ot">&lt;-</span> <span class="fu">generateText</span>(</span>
+<span id="cb157-4"><a href="embedding-models.html#cb157-4" tabindex="-1"></a>  <span class="at">df =</span> search_results,</span>
+<span id="cb157-5"><a href="embedding-models.html#cb157-5" tabindex="-1"></a>  <span class="at">prompt_column =</span> <span class="st">"abstract"</span>,</span>
+<span id="cb157-6"><a href="embedding-models.html#cb157-6" tabindex="-1"></a>  <span class="at">system_column =</span> <span class="st">"system"</span>,</span>
+<span id="cb157-7"><a href="embedding-models.html#cb157-7" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
+<span id="cb157-8"><a href="embedding-models.html#cb157-8" tabindex="-1"></a>)</span>
+<span id="cb157-9"><a href="embedding-models.html#cb157-9" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb157-10"><a href="embedding-models.html#cb157-10" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-11"><a href="embedding-models.html#cb157-11" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb157-12"><a href="embedding-models.html#cb157-12" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-13"><a href="embedding-models.html#cb157-13" tabindex="-1"></a>  <span class="er">|====</span>                                              <span class="er">|</span>   <span class="dv">8</span>%</span>
+<span id="cb157-14"><a href="embedding-models.html#cb157-14" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-15"><a href="embedding-models.html#cb157-15" tabindex="-1"></a>  <span class="er">|========</span>                                          <span class="er">|</span>  <span class="dv">17</span>%</span>
+<span id="cb157-16"><a href="embedding-models.html#cb157-16" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-17"><a href="embedding-models.html#cb157-17" tabindex="-1"></a>  <span class="er">|============</span>                                      <span class="er">|</span>  <span class="dv">25</span>%</span>
+<span id="cb157-18"><a href="embedding-models.html#cb157-18" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-19"><a href="embedding-models.html#cb157-19" tabindex="-1"></a>  <span class="er">|=================</span>                                 <span class="er">|</span>  <span class="dv">33</span>%</span>
+<span id="cb157-20"><a href="embedding-models.html#cb157-20" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-21"><a href="embedding-models.html#cb157-21" tabindex="-1"></a>  <span class="er">|=====================</span>                             <span class="er">|</span>  <span class="dv">42</span>%</span>
+<span id="cb157-22"><a href="embedding-models.html#cb157-22" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-23"><a href="embedding-models.html#cb157-23" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
+<span id="cb157-24"><a href="embedding-models.html#cb157-24" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-25"><a href="embedding-models.html#cb157-25" tabindex="-1"></a>  <span class="er">|=============================</span>                     <span class="er">|</span>  <span class="dv">58</span>%</span>
+<span id="cb157-26"><a href="embedding-models.html#cb157-26" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-27"><a href="embedding-models.html#cb157-27" tabindex="-1"></a>  <span class="er">|=================================</span>                 <span class="er">|</span>  <span class="dv">67</span>%</span>
+<span id="cb157-28"><a href="embedding-models.html#cb157-28" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-29"><a href="embedding-models.html#cb157-29" tabindex="-1"></a>  <span class="er">|======================================</span>            <span class="er">|</span>  <span class="dv">75</span>%</span>
+<span id="cb157-30"><a href="embedding-models.html#cb157-30" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-31"><a href="embedding-models.html#cb157-31" tabindex="-1"></a>  <span class="er">|==========================================</span>        <span class="er">|</span>  <span class="dv">83</span>%</span>
+<span id="cb157-32"><a href="embedding-models.html#cb157-32" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-33"><a href="embedding-models.html#cb157-33" tabindex="-1"></a>  <span class="er">|==============================================</span>    <span class="er">|</span>  <span class="dv">92</span>%</span>
+<span id="cb157-34"><a href="embedding-models.html#cb157-34" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb157-35"><a href="embedding-models.html#cb157-35" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb157-36"><a href="embedding-models.html#cb157-36" tabindex="-1"></a></span>
+<span id="cb157-37"><a href="embedding-models.html#cb157-37" tabindex="-1"></a><span class="fu">select</span>(search_results, title, generation)</span>
+<span id="cb157-38"><a href="embedding-models.html#cb157-38" tabindex="-1"></a><span class="do">## # A tibble: 12 × 2</span></span>
+<span id="cb157-39"><a href="embedding-models.html#cb157-39" tabindex="-1"></a><span class="do">##    title                                          generation</span></span>
+<span id="cb157-40"><a href="embedding-models.html#cb157-40" tabindex="-1"></a><span class="do">##    &lt;chr&gt;                                          &lt;chr&gt;     </span></span>
+<span id="cb157-41"><a href="embedding-models.html#cb157-41" tabindex="-1"></a><span class="do">##  1 β-Amyrin synthase from Conyza blinii expresse… plant-bio…</span></span>
+<span id="cb157-42"><a href="embedding-models.html#cb157-42" tabindex="-1"></a><span class="do">##  2 Ginsenosides in Panax genus and their biosynt… plant-che…</span></span>
+<span id="cb157-43"><a href="embedding-models.html#cb157-43" tabindex="-1"></a><span class="do">##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… plant-bio…</span></span>
+<span id="cb157-44"><a href="embedding-models.html#cb157-44" tabindex="-1"></a><span class="do">##  4 Friedelin in Maytenus ilicifolia Is Produced … plant-che…</span></span>
+<span id="cb157-45"><a href="embedding-models.html#cb157-45" tabindex="-1"></a><span class="do">##  5 Friedelin Synthase from Maytenus ilicifolia: … biochemis…</span></span>
+<span id="cb157-46"><a href="embedding-models.html#cb157-46" tabindex="-1"></a><span class="do">##  6 Functional characterization of an oxidosquale… Plant-Bio…</span></span>
+<span id="cb157-47"><a href="embedding-models.html#cb157-47" tabindex="-1"></a><span class="do">##  7 Sorghum (Sorghum bicolor).                     plant-gen…</span></span>
+<span id="cb157-48"><a href="embedding-models.html#cb157-48" tabindex="-1"></a><span class="do">##  8 Potential food applications of sorghum (Sorgh… nutrition…</span></span>
+<span id="cb157-49"><a href="embedding-models.html#cb157-49" tabindex="-1"></a><span class="do">##  9 Current status and prospects of herbicide-res… agricultu…</span></span>
+<span id="cb157-50"><a href="embedding-models.html#cb157-50" tabindex="-1"></a><span class="do">## 10 Regulatory mechanisms underlying cuticular wa… plant-bio…</span></span>
+<span id="cb157-51"><a href="embedding-models.html#cb157-51" tabindex="-1"></a><span class="do">## 11 Cuticular wax in wheat: biosynthesis, genetic… plant-bio…</span></span>
+<span id="cb157-52"><a href="embedding-models.html#cb157-52" tabindex="-1"></a><span class="do">## 12 Update on Cuticular Wax Biosynthesis and Its … plant-pat…</span></span></code></pre></div>
+</div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
 </h2>
@@ -287,7 +345,7 @@
 <p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
 <p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span>, <span class="st">"__diterpene_synthase"</span><span class="op">)</span></span>
 <span></span>
@@ -296,7 +354,7 @@
 <span></span>
 <span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span></code></pre></div>
 <p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
 <span>  amino_acid_stringset <span class="op">=</span> <span class="va">all_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/biolm_api_key.txt"</span><span class="op">)</span>,</span>
@@ -309,14 +367,14 @@
 <span><span class="co">## # A tibble: 5 × 6</span></span>
 <span><span class="co">##   name           product embedding_1 embedding_2 embedding_3</span></span>
 <span><span class="co">##   &lt;chr&gt;          &lt;chr&gt;         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;</span></span>
-<span><span class="co">## 1 WP_447540117.… syntha…      0.0158     -0.0234     -0.0142</span></span>
-<span><span class="co">## 2 YBQ28266.1 di… syntha…      0.0162     -0.0267     -0.0147</span></span>
-<span><span class="co">## 3 YBQ36092.1 di… syntha…      0.0162     -0.0267     -0.0147</span></span>
-<span><span class="co">## 4 YBQ43901.1 di… syntha…      0.0162     -0.0267     -0.0147</span></span>
-<span><span class="co">## 5 YBQ32175.1 di… syntha…      0.0159     -0.0260     -0.0143</span></span>
+<span><span class="co">## 1 WP_455697623.… syntha…     -0.0692     -0.0854     -0.0281</span></span>
+<span><span class="co">## 2 WP_455697622.… syntha…     -0.0584     -0.0110     -0.0474</span></span>
+<span><span class="co">## 3 pdb|9E2M|F Ch… syntha…     -0.0185     -0.0878     -0.0290</span></span>
+<span><span class="co">## 4 pdb|9E2M|E Ch… syntha…     -0.0185     -0.0878     -0.0290</span></span>
+<span><span class="co">## 5 pdb|9E2M|D Ch… syntha…     -0.0185     -0.0878     -0.0290</span></span>
 <span><span class="co">## # ℹ 1 more variable: embedding_4 &lt;dbl&gt;</span></span></code></pre></div>
 <p>Nice! Once we’ve bot the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">all_sequences_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -331,7 +389,7 @@
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-496-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-497-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="section-15" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
@@ -415,6 +473,7 @@ asdf --><hr>
 <li><a class="nav-link" href="#embedding-models">embedding models</a></li>
 <li><a class="nav-link" href="#pre-reading">pre-reading</a></li>
 <li><a class="nav-link" href="#text-embeddings">text embeddings</a></li>
+<li><a class="nav-link" href="#generative-models">generative models</a></li>
 <li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
 <li><a class="nav-link" href="#section-15"></a></li>
 <li><a class="nav-link" href="#further-reading-8">further reading</a></li>
@@ -435,7 +494,7 @@ asdf --><hr>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
