@@ -142,6 +142,25 @@ ggplot(pca_out) +
 
 ```
 
+## generative models {-}
+
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+
+In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
+
+```{r, cache = TRUE}
+search_results$system <- "You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."
+
+search_results <- generateText(
+  df = search_results,
+  prompt_column = "abstract",
+  system_column = "system",
+  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
+)
+
+select(search_results, title, generation)
+```
+
 ## protein embeddings {-}
 
 <!-- Protein Language Models: -->
@@ -330,4 +349,3 @@ runMatrixAnalysis(
 
 ```
 asdf -->
-

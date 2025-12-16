@@ -233,6 +233,8 @@ message("Loading language model module...")
           if (is.null(hf_api_key) || hf_api_key == "") {
             stop("Please provide an HF API key via `hf_api_key` or set HF_TOKEN env var.")
           }
+          if (length(hf_api_key) > 1) hf_api_key <- hf_api_key[1]
+          hf_api_key <- str_trim(hf_api_key)
 
           base_url <- sprintf(
             "https://router.huggingface.co/hf-inference/models/%s/pipeline/feature-extraction",
@@ -259,8 +261,13 @@ message("Loading language model module...")
 
               # handle 429 / 5xx with backoff
               if (code == 429 || (code >= 500 && code < 600)) {
-                retry_after <- as.numeric(httr::headers(resp)[["retry-after"]])
-                if (is.finite(retry_after)) {
+                if (verbose) {
+                  msg_retry <- tryCatch(httr::content(resp, as = "text", encoding = "UTF-8"), error = function(e) "")
+                  message(sprintf("Attempt %d retryable error (HTTP %s): %s", attempt, code, msg_retry))
+                }
+                retry_after_raw <- httr::headers(resp)[["retry-after"]]
+                retry_after <- suppressWarnings(as.numeric(retry_after_raw))
+                if (length(retry_after) == 1 && is.finite(retry_after)) {
                   Sys.sleep(retry_after)
                 } else {
                   Sys.sleep(delay)
@@ -324,6 +331,145 @@ message("Loading language model module...")
 
           # preserve original row order
           out <- bind_cols(df, embeddings_df)
+          return(out)
+        }
+
+    #### generateText
+
+        generateText <- function(
+          df,
+          prompt_column,
+          system_column = NULL,
+          hf_api_key = Sys.getenv("HF_TOKEN"),
+          model_id = "Qwen/Qwen2.5-14B-Instruct",
+          provider = "featherless-ai",
+          max_retries = 5,
+          timeout_sec = 60,
+          temperature = NULL,
+          verbose = FALSE,
+          max_new_tokens = 512
+        ) {
+          suppressPackageStartupMessages({
+            library(jsonlite)
+            library(httr)
+            library(tibble)
+            library(dplyr)
+            library(stringr)
+          })
+
+          df <- as_tibble(df)
+          if (!prompt_column %in% colnames(df)) stop("`prompt_column` not found in df.")
+          if (!is.null(system_column) && !system_column %in% colnames(df)) {
+            stop("`system_column` not found in df.")
+          }
+
+          if (is.null(hf_api_key) || hf_api_key == "") {
+            stop("Please provide an HF API key via `hf_api_key` or set HF_TOKEN env var.")
+          }
+          if (length(hf_api_key) > 1) hf_api_key <- hf_api_key[1]
+          hf_api_key <- str_trim(hf_api_key)
+          provider <- str_trim(provider)
+
+          prompts <- as.character(df[[prompt_column]])
+          prompts[is.na(prompts)] <- ""
+          systems <- NULL
+          if (!is.null(system_column)) {
+            systems <- as.character(df[[system_column]])
+            systems[is.na(systems)] <- ""
+          }
+
+          if (nzchar(provider)) {
+            base_url <- sprintf("https://router.huggingface.co/%s/v1/chat/completions", provider)
+          } else {
+            base_url <- "https://router.huggingface.co/v1/chat/completions"
+          }
+
+          post_with_retries <- function(payload_json) {
+            delay <- 1
+            for (attempt in seq_len(max_retries)) {
+              resp <- httr::POST(
+                url = base_url,
+                httr::add_headers(
+                  Authorization = paste0("Bearer ", hf_api_key),
+                  `Content-Type` = "application/json"
+                ),
+                body = payload_json,
+                encode = "raw",
+                timeout(timeout_sec)
+              )
+
+              code <- resp$status_code
+              if (code >= 200 && code < 300) return(resp)
+
+              if (code == 429 || (code >= 500 && code < 600)) {
+                if (verbose) {
+                  msg_retry <- tryCatch(httr::content(resp, as = "text", encoding = "UTF-8"), error = function(e) "")
+                  message(sprintf("Attempt %d retryable error (HTTP %s): %s", attempt, code, msg_retry))
+                }
+                retry_after_raw <- httr::headers(resp)[["retry-after"]]
+                retry_after <- suppressWarnings(as.numeric(retry_after_raw))
+                if (length(retry_after) == 1 && is.finite(retry_after)) {
+                  Sys.sleep(retry_after)
+                } else {
+                  Sys.sleep(delay)
+                  delay <- min(delay * 2, 30)
+                }
+                next
+              }
+
+              msg <- tryCatch(httr::content(resp, as = "text", encoding = "UTF-8"), error = function(e) "")
+              if (verbose) {
+                message(sprintf("Attempt %d failed (HTTP %s): %s", attempt, code, msg))
+              }
+              stop(sprintf("HF request failed (HTTP %s): %s", code, msg))
+            }
+            stop("HF request failed after retries.")
+          }
+
+          generations <- character(length(prompts))
+          pb <- txtProgressBar(min = 0, max = length(prompts), style = 3)
+
+          for (i in seq_along(prompts)) {
+            user_msg <- list(role = "user", content = prompts[i])
+            msgs <- list(user_msg)
+            if (!is.null(systems)) {
+              sys_val <- str_trim(systems[i])
+              if (nzchar(sys_val)) {
+                msgs <- append(list(list(role = "system", content = sys_val)), msgs)
+              }
+            }
+
+            payload <- list(
+              model = model_id,
+              messages = msgs,
+              max_tokens = max_new_tokens
+            )
+            if (!is.null(temperature)) {
+              payload$temperature <- temperature
+            }
+
+            resp <- post_with_retries(jsonlite::toJSON(payload, auto_unbox = TRUE))
+            txt <- httr::content(resp, as = "text", encoding = "UTF-8")
+            parsed <- jsonlite::fromJSON(txt, simplifyVector = FALSE)
+
+            if (is.list(parsed$choices) &&
+                length(parsed$choices) >= 1 &&
+                is.list(parsed$choices[[1]]) &&
+                !is.null(parsed$choices[[1]]$message) &&
+                !is.null(parsed$choices[[1]]$message$content)) {
+              generations[i] <- as.character(parsed$choices[[1]]$message$content)
+            } else if (!is.null(parsed$generated_text)) {
+              generations[i] <- as.character(parsed$generated_text)
+            } else {
+              generations[i] <- NA_character_
+            }
+
+            setTxtProgressBar(pb, i)
+          }
+
+          close(pb)
+
+          out <- bind_cols(df, tibble(generation = generations))
           return(out)
         }
 
