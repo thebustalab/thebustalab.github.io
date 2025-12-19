@@ -100,7 +100,7 @@
 <li><p>Create a new folder on your hard drive and place your CDF.csv file into that folder. It doesn’t matter what the name of that folder is, but it must not contain special characters (including a space <code></code> in the name). For example, if my CDF.csv file is called “sorghum_bicolor.CDF.csv”, then I might create a folder called <code>gc_data</code> on my hard drive, and place the “sorghum_bicolor.CDF.csv” file in that folder.</p></li>
 <li><p>In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the <code>analyzeGCMSdata</code> function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work. The first time you run this command, a bunch of tools required for the analysis will be installed. It might take a while! Later runs of the command will not have this install portion - the app will just open straight away.</p></li>
 </ol>
-<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/gcms.R"</span><span class="op">)</span></span></code></pre></div>
 <p>If the command was run successfully you should see something like:
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/success.png" width="100%" style="display: block; margin: auto;"><br></p>
@@ -109,11 +109,11 @@
 </li>
 </ol>
 <p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
-<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>If you are on a PC, you may need to use double back slashes. For example:</p>
-<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"C:\\Users\\My_Profile\\gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>The first time you open your CDF.csv datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).</p>
@@ -149,7 +149,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
