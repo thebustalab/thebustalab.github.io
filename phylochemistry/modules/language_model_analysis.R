@@ -164,7 +164,7 @@ message("Loading language model module...")
           df,
           column_name,
           hf_api_key = Sys.getenv("HF_TOKEN"),
-          path_to_glove_file = "glove.6B.50d.txt",
+          path_to_glove_file = NULL,
           local = FALSE,
           model_id = "BAAI/bge-small-en-v1.5",
           batch_size = 16,
@@ -187,8 +187,15 @@ message("Loading language model module...")
           text_vector <- as.character(df[[column_name]])
           text_vector[is.na(text_vector)] <- ""  # avoid NAs to API
 
+          if (!is.null(path_to_glove_file) && nzchar(path_to_glove_file)) {
+            local <- TRUE
+          }
+
           if (local) {
             # ---------- LOCAL (GloVe) ----------
+            if (is.null(path_to_glove_file) || !nzchar(path_to_glove_file)) {
+              stop("GloVe file path is required when using local embeddings.")
+            }
             if (!file.exists(path_to_glove_file)) {
               stop("GloVe file not found at: ", path_to_glove_file)
             }
