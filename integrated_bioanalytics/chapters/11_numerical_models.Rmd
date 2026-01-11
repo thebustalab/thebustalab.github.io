@@ -491,6 +491,12 @@ Classification with random forests:
 - https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
 - https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
+- Ridge regression (regularization; different from simple/multiple linear regression): https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html. This walks through why ridge stabilizes coefficients when predictors are correlated and shows how the penalty trades bias for variance. It is a good conceptual bridge between OLS and modern predictive modeling. Use it when you want stable coefficients without variable selection.
+
+- Elastic net (regularization; different from simple/multiple linear regression): https://rpubs.com/jmkelly91/881590. This tutorial shows how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection. It includes tuning tips and interpretability notes in an applied workflow. Use it when you want a shortlist of predictors but still respect grouped signals.
+
+- Partial least squares regression (regularization; different from simple/multiple linear regression): https://allmodelsarewrong.github.io/regular.html. This resource frames PLSR in the broader context of regularization and dimension reduction for predictive modeling. It emphasizes latent components and how they relate to prediction, which is key for high-dimensional data. Use it when interpreting components is acceptable and prediction is the priority.
+
 
 <!-- ## exercises {-}
 
