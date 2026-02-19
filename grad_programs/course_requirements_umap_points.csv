@@ -1,0 +1,291 @@
+Type,Degree,Course Name,Course Code,Course Type,UMAP1,UMAP2
+Course,Applied Materials Science M.S.,Materials Analysis & Design I,AMS 5101,Core,-0.5516072208663962,-1.7651480135588167
+Course,Applied Materials Science M.S.,Materials Analysis & Design Lab I,AMS 5102,Core,-0.5937555725357078,-1.702937453713846
+Course,Applied Materials Science M.S.,Materials Analysis and Design II,AMS 5201,Core,-0.7588485176345847,-1.8201425966886995
+Course,Applied Materials Science M.S.,Materials Analysis and Design Lab II,AMS 5202,Core,-0.6376177961608909,-1.6950936016706941
+Course,Applied Materials Science M.S.,Graduate Professional Skills 2,AMS 8030,Core,6.007625014088438,-0.9874311980871676
+Course,Applied Materials Science M.S.,Graduate Professional Skills I,AMS 8099,Core,5.954890639088438,-0.939682900634241
+Course,Applied Materials Science M.S.,Advanced Concrete Materials and Repair,CE 5027,Elective,-1.9086790973922751,-1.8599918779997346
+Course,Applied Materials Science M.S.,Material and Minerals Processing,CHE 4141,Elective,-0.5647463495513938,-0.7500303980974673
+Course,Applied Materials Science M.S.,Extractive Metallurgy: An Introduction to Metals' Extraction,CHE 4142,Elective,-0.3918368513366721,-0.7841524479059695
+Course,Applied Materials Science M.S.,Solar Energy and Photovoltaics,CHE 4231,Elective,0.28453591515807886,-1.6019216475157259
+Course,Applied Materials Science M.S.,Transport Phenomena with Computational Fluid Dynamics,CHE 5021,Elective,0.5803284948089578,-2.737250894036722
+Course,Applied Materials Science M.S.,Polymer Engineering,CHE 5131,Elective,-1.729237883784487,-0.16749674054665553
+Course,Applied Materials Science M.S.,Particle Technology,CHE 5621,Elective,-0.5642786915084861,-0.7153161016373156
+Course,Applied Materials Science M.S.,Biomedical Engineering,CHE 5711,Elective,-0.8632622654220603,-0.7039793280033587
+Course,Applied Materials Science M.S.,Physical Biochemistry: Statistical Bio-Thermodynamics,CHEM 4373,Elective,1.124203637740896,1.2726414504380705
+Course,Applied Materials Science M.S.,Polymer Chemistry,CHEM 5510,Elective,-1.8658338482162498,-0.04296320649666774
+Course,Applied Materials Science M.S.,Computational Chemistry,CHEM 5650,Elective,0.4248573487022378,0.49415221837477696
+Course,Applied Materials Science M.S.,Applications of Spectroscopy,CHEM 5714,Elective,0.030045062802121825,1.2980543675752165
+Course,Applied Materials Science M.S.,Introduction to Solid-State Semiconductors,EE 4611,Elective,-0.05323538134308081,-2.4320858416227815
+Course,Applied Materials Science M.S.,Microelectronics Technology,EE 5621,Elective,0.7296079700210549,-1.4705714282660005
+Course,Applied Materials Science M.S.,"Theory, Practice of Scanning Electron Microscopy and X-Ray Microanalysis in Lectures",EES 5321,Elective,-0.4270376856109641,-1.1921460923819063
+Course,Applied Materials Science M.S.,Advanced Engineering Economics,IE 5325,Elective,-0.9180942470809959,-1.2832763490347383
+Course,Applied Materials Science M.S.,Advanced Mechanics of Materials,ME 5220,Elective,-1.0098060066482566,-1.6149135527281282
+Course,Applied Materials Science M.S.,Nondestructive Evaluation of Engineering Materials,ME 5315,Elective,-0.5031165773651145,-1.5350186524061677
+Course,Applied Materials Science M.S.,Smart Materials and Structures,ME 5345,Elective,-0.9385040695449851,-2.1069507298140047
+Course,Applied Materials Science M.S.,Optics,PHYS 5041,Elective,0.3444398348548867,-0.2851728943256854
+Course,Applied Materials Science M.S.,Introduction to Solid State Physics,PHYS 5531,Elective,-0.0826143915435813,-2.4788729843763826
+Course,Chemical Engineering M.S.Ch.E,Transport Phenomena with Computational Fluid Dynamics,CHE 5021,Core,0.6407409613349893,-2.7389820513395784
+Course,Chemical Engineering M.S.Ch.E,Chemical Engineering Analysis,CHE 5031,Core,-1.083800166346743,-0.29953192147297847
+Course,Chemical Engineering M.S.Ch.E,Seminar,CHE 8150,Core,2.6580744092681865,2.2282067838044646
+Course,Chemical Engineering M.S.Ch.E,Process Optimization: Lean Six Sigma,CHE 5011,Elective,-0.9504862720748923,-0.6808646914629458
+Course,Chemical Engineering M.S.Ch.E,Mining Policy,CHE 5101,Elective,-2.202725737788393,1.2799439730973723
+Course,Chemical Engineering M.S.Ch.E,Polymer Engineering,CHE 5131,Elective,-1.783753960826113,-0.12925183745903956
+Course,Chemical Engineering M.S.Ch.E,Advanced Chemical Reactor Design,CHE 5301,Elective,-1.0014425213119529,-0.24199905964417445
+Course,Chemical Engineering M.S.Ch.E,Biochemical Engineering I,CHE 5601,Elective,-0.9615627224227927,-0.30252490910572993
+Course,Chemical Engineering M.S.Ch.E,Hazardous Waste Process Engineering,CHE 5612,Elective,-1.2174852783462546,-0.07352095815224635
+Course,Chemical Engineering M.S.Ch.E,Air Pollution Control - Advanced Topics,CHE 5613,Elective,-0.9614065582534812,0.9029108586640836
+Course,Chemical Engineering M.S.Ch.E,Particle Technology,CHE 5621,Elective,-0.4469448025009177,-0.6852232066063403
+Course,Chemical Engineering M.S.Ch.E,Biomanufacturing and Bioprocess Engineering,CHE 5705,Elective,-0.8214965755722068,-0.0768663880495547
+Course,Chemical Engineering M.S.Ch.E,Biomedical Engineering,CHE 5711,Elective,-0.8209000522872947,-0.7240461704401492
+Course,Chemical Engineering M.S.Ch.E,Graduate Independent Study in Chemical Engineering,CHE 5991,Elective,-0.8002787525436423,-0.35968208285851466
+Course,Chemical Engineering M.S.Ch.E,Special Topics in Chemical Engineering (Various Titles to be Assigned),CHE 5995,Elective,-0.4723052675506614,0.13144496110396398
+Course,Chemistry M.S.,Introductory Graduate Seminar,CHEM 8099,Core,2.4572211806991557,2.3167683186860564
+Course,Chemistry M.S.,Seminar,CHEM 8184,Core,2.653566390774534,2.250666767630148
+Course,Chemistry M.S.,Water Chemistry,CE 5241,Elective,-2.555128663279726,2.460096746954489
+Course,Chemistry M.S.,Organic and Stable Isotope Biogeochemistry,CHEM 5150,Elective,-1.8215528423568748,2.290015131506491
+Course,Chemistry M.S.,Advanced Environmental Chemistry,CHEM 5212,Elective,-0.9022332126876853,1.1301909985871794
+Course,Chemistry M.S.,Instrumental Analysis,CHEM 5242,Elective,-0.08869406531067114,1.1884931626649382
+Course,Chemistry M.S.,Physical Biochemistry: Statistical Bio-Thermodynamics,CHEM 5373,Elective,1.0131440912702538,1.3102032246919157
+Course,Chemistry M.S.,Advanced Inorganic Chemistry I,CHEM 5424,Elective,-0.41717073271484595,0.7547002139420987
+Course,Chemistry M.S.,Polymer Chemistry,CHEM 5510,Elective,-1.8329087192794822,-0.05778959366364467
+Course,Chemistry M.S.,Advanced Organic Chemistry I,CHEM 5524,Elective,-0.3880817587158225,0.8479657473893644
+Course,Chemistry M.S.,Advanced Physical Chemistry I,CHEM 5624,Elective,-0.3738547260543845,0.7278398576112272
+Course,Chemistry M.S.,Computational Chemistry,CHEM 5650,Elective,0.44543406417159814,0.47119167474226964
+Course,Chemistry M.S.,Fluorescence Methods in Life Science,CHEM 5659,Elective,0.6145268981674172,1.2424270215363982
+Course,Chemistry M.S.,Applications of Spectroscopy,CHEM 5714,Elective,0.06046071698455591,1.2444901767106535
+Course,Chemistry M.S.,Data Analysis and Communication for the Natural Sciences,CHEM 5725,Elective,1.6278801863410928,0.7643952670426847
+Course,Chemistry M.S.,Special Topics in Chemistry (Various Titles to be Assigned),CHEM 5795,Elective,-0.3037494117996238,0.2137343588204862
+Course,Chemistry M.S.,Advanced Analytical Chemistry II,CHEM 8224,Elective,-0.3556917602798484,1.1816754641862395
+Course,Chemistry M.S.,Advanced Inorganic Chemistry II,CHEM 8424,Elective,-0.3411159212371848,0.8014910521836759
+Course,Chemistry M.S.,Advanced Organic Chemistry II,CHEM 8524,Elective,-0.4327343399307273,0.8873504700990201
+Course,Chemistry M.S.,Modern Mass Spectrometry,CHEM 8720,Elective,0.12793532063751,0.9499920907350065
+Course,Chemistry M.S.,Cellular Biochemistry,IBS 8101,Elective,0.8018609588363625,1.42361870435195
+Course,Chemistry M.S.,"Cell, Molecular and Developmental Biology",IBS 8102,Elective,0.7038772409179666,1.4903459849687102
+Course,Chemistry M.S.,Chemical Biology,IBS 8202,Elective,0.5487360661247231,1.3915032449098113
+Course,Chemistry M.S.,Methods in Molecular Biosciences,IBS 8203,Elective,0.476609796784208,1.2515700164170744
+Course,Chemistry M.S.,Chemical Limnology,LIM 5102,Elective,-2.4914353782913228,2.9999023976655486
+Course,Chemistry M.S.,Principles of Medicinal Chemistry,PHAR 6722,Elective,-0.14080259154052954,0.9628690781922818
+Course,Civil Engineering M.S.,Graduate Professional Skills I,CE 8020,Core,5.945131212971495,-0.9297240373758792
+Course,Civil Engineering M.S.,Graduate Professional Skills 2,CE 8030,Core,5.966940314076231,-0.9471848902372836
+Course,Civil Engineering M.S.,Advanced Project Management,CE 5026,Elective,-1.4136496479293845,-1.2679511007933137
+Course,Civil Engineering M.S.,Advanced Concrete Materials and Repair,CE 5027,Elective,-1.9219230110427878,-1.8067923483519075
+Course,Civil Engineering M.S.,Structural Dynamics,CE 5115,Elective,-1.3599377567550681,-2.1876252588896272
+Course,Civil Engineering M.S.,Seismic Design and Analysis,CE 5116,Elective,-1.6419804985305808,-2.095297425713968
+Course,Civil Engineering M.S.,Bridge Analysis and Design,CE 5127,Elective,-1.7692924434921287,-2.122598975625467
+Course,Civil Engineering M.S.,Prestressed Concrete Structures,CE 5128,Elective,-1.6704793865463279,-2.2908496555952547
+Course,Civil Engineering M.S.,Post-Tensioned Concrete Structures,CE 5129,Elective,-1.7136891777297996,-2.155006855454874
+Course,Civil Engineering M.S.,Advanced Steel Design,CE 5134,Elective,-1.415798514582827,-1.8852616247801302
+Course,Civil Engineering M.S.,Advanced Reinforced Concrete Design,CE 5135,Elective,-1.7472260887405417,-1.8737252649931428
+Course,Civil Engineering M.S.,Structural Systems,CE 5136,Elective,-1.3522687847396873,-2.2529916462568758
+Course,Civil Engineering M.S.,Advanced Structural Analysis and Design,CE 5137,Elective,-1.6298125679275535,-1.9864277538923738
+Course,Civil Engineering M.S.,Wood and Timber Design,CE 5138,Elective,-1.3336389953872703,-1.702986567941141
+Course,Civil Engineering M.S.,Reinforced Masonry Design,CE 5139,Elective,-1.5818699295303367,-2.067185967889261
+Course,Civil Engineering M.S.,Water Policy,CE 5201,Elective,-2.4677384788772603,1.4924552741380217
+Course,Civil Engineering M.S.,Applications in Environmental Modeling,CE 5216,Elective,-1.5494063789627097,2.0294155183167937
+Course,Civil Engineering M.S.,Urban Hydrology and Stormwater Management,CE 5225,Elective,-2.312365620829775,2.0134080949159148
+Course,Civil Engineering M.S.,Water Resources Engineering,CE 5226,Elective,-3.0124965603134175,1.6364120545716765
+Course,Civil Engineering M.S.,Water Quality Engineering,CE 5237,Elective,-3.1066380436203023,1.6633435788484099
+Course,Civil Engineering M.S.,Water Chemistry,CE 5241,Elective,-2.6077676708480855,2.5443989339204314
+Course,Civil Engineering M.S.,Environmental Remediation Technologies,CE 5246,Elective,-1.084967225291445,1.3143428864808562
+Course,Civil Engineering M.S.,Design of Traffic Systems,CE 5315,Elective,-1.714521020152285,-2.295927971330118
+Course,Civil Engineering M.S.,Pavement Analysis and Design,CE 5316,Elective,-1.92245849917145,-1.9994373020796297
+Course,Civil Engineering M.S.,"Pavement Maintenance, Rehabilitation, and Management",CE 5318,Elective,-2.062229483821108,-1.9055852589277742
+Course,Civil Engineering M.S.,"Advanced Pavement Materials, Design and Construction",CE 5320,Elective,-2.0046888286849995,-1.8602552113203523
+Course,Civil Engineering M.S.,Highway Planning and Design,CE 5326,Elective,-1.869433015086367,-2.07037600847764
+Course,Civil Engineering M.S.,Advanced Soil Mechanics,CE 5420,Elective,-1.8112116749069236,-1.4071449336676118
+Course,Civil Engineering M.S.,Numerical Modeling in Geotechnical Engineering,CE 5422,Elective,-1.9157100612899802,-1.4484311637548921
+Course,Civil Engineering M.S.,Rock Mechanics,CE 5426,Elective,-1.6907144481918357,-1.413747042146158
+Course,Civil Engineering M.S.,Sustainable Design and Construction,CE 5515,Elective,-1.535042851664736,-1.5097976622251985
+Course,Civil Engineering M.S.,"Decision, Risk and Reliability",CE 5525,Elective,2.553942949078367,-0.4274552163748263
+Course,Civil Engineering M.S.,Design of Structures with Advanced Materials,CE 5545,Elective,-1.0979355270645164,-1.9907178578047273
+Course,Computer Science M.S.,Seminar,CS 8993,Core,2.636666805050657,2.157197863134909
+Course,Computer Science M.S.,Advanced Theory of Computation,CS 5112,Elective,1.7822445337989785,-0.9766950902609347
+Course,Computer Science M.S.,Advanced Algorithms and Data Structures,CS 5122,Elective,1.936228424809263,-0.9820437726644992
+Course,Computer Science M.S.,Computer Graphics,CS 5212,Elective,0.6113782232025124,-1.0545372066168306
+Course,Computer Science M.S.,Artificial Intelligence,CS 5222,Elective,1.4400776331642129,-0.9861890968946933
+Course,Computer Science M.S.,Introduction to Machine Learning and Data Mining,CS 5232,Elective,2.1070525353172282,0.2880071106286527
+Course,Computer Science M.S.,Natural Language Processing,CS 5242,Elective,1.6476549213150002,0.443955034288931
+Course,Computer Science M.S.,Operating Systems,CS 5312,Elective,1.5953451698043801,-1.2017665204672334
+Course,Computer Science M.S.,Database Management Systems,CS 5322,Elective,1.4665825669982888,-0.9494163689283847
+Course,Computer Science M.S.,Computer Security,CS 5332,Elective,1.930213541291044,-1.4757199582724092
+Course,Computer Science M.S.,Compiler Design,CS 5342,Elective,1.5718672578552224,-1.7860194143919466
+Course,Computer Science M.S.,Computer Architecture,CS 5412,Elective,1.6796964113929727,-1.5847178396849153
+Course,Computer Science M.S.,Computer Networks,CS 5422,Elective,1.857386917374418,-1.3595450219778535
+Course,Computer Science M.S.,Sensors and Internet of Things,CS 5432,Elective,0.6234029238441445,-1.3858687576918123
+Course,Computer Science M.S.,Advanced Natural Language Processing,CS 5642,Elective,1.6743434970596291,0.4641563001008512
+Course,Computer Science M.S.,Advanced Computer Security,CS 5732,Elective,1.8982908432701089,-1.3563302454618928
+Course,Computer Science M.S.,Special Topics (Various Titles to be Assigned),CS 5995,Elective,-0.3435805732986472,0.18738594678359044
+Course,Earth and Environmental Sciences M.S.,Seminar,EES 5100,Core,2.5897819106796245,2.1835996213288786
+Course,Earth and Environmental Sciences M.S.,Professional Issues in Earth and Environmental Science,EES 8200,Core,-1.9806741173049949,1.6824392381043913
+Course,Earth and Environmental Sciences M.S.,EES 4xxx-Level Courses,EES 4XXX,Elective,0.21331253697662134,-0.8078060147432803
+Course,Earth and Environmental Sciences M.S.,EES 5xxx-Level Courses,EES 5XXX,Elective,0.30411508729247827,-0.8745663163332461
+Course,Electrical Engineering M.S.E.E.,Graduate Professional Communication Seminar,EE 8001,Core,2.6463857000091533,2.3559671941133025
+Course,Electrical Engineering M.S.E.E.,Co-op in Electrical Engineering,EE 4896,Elective,0.4896493261077859,-0.9441308972506045
+Course,Electrical Engineering M.S.E.E.,Digital Control System Design,EE 5151,Elective,1.2485291096711018,-1.5504324135450838
+Course,Electrical Engineering M.S.E.E.,Linear State-Space Control Systems,EE 5161,Elective,1.051398471496389,-1.2400943932203767
+Course,Electrical Engineering M.S.E.E.,Computer Architecture,EE 5305,Elective,1.6853767638423898,-1.5295570788053987
+Course,Electrical Engineering M.S.E.E.,Design of VLSI Circuits,EE 5311,Elective,1.3693980952122666,-1.6354268488554475
+Course,Electrical Engineering M.S.E.E.,Computer Networks,EE 5321,Elective,1.7952171271064736,-1.3469551500944612
+Course,Electrical Engineering M.S.E.E.,Digital Systems,EE 5341,Elective,1.225201156488941,-1.476817577805948
+Course,Electrical Engineering M.S.E.E.,Programmable Logic Controllers,EE 5371,Elective,1.1748872925856568,-1.3866929707197664
+Course,Electrical Engineering M.S.E.E.,Antennas and Transmission Lines,EE 5477,Elective,0.7692491715171792,-0.6514509764580249
+Course,Electrical Engineering M.S.E.E.,Antennas and Transmission Lines Laboratory,EE 5479,Elective,0.7147463863113381,-0.6264490631489276
+Course,Electrical Engineering M.S.E.E.,Power Systems,EE 5510,Elective,0.7813359205940225,-1.9374864992765901
+Course,Electrical Engineering M.S.E.E.,Power Electronics,EE 5522,Elective,0.6728884284713723,-1.8058505949644563
+Course,Electrical Engineering M.S.E.E.,"Grid- Resiliency, Efficiency and Technology",EE 5533,Elective,0.953769505522535,-1.8029101786283968
+Course,Electrical Engineering M.S.E.E.,Energy Conversion System,EE 5541,Elective,0.5851692264297463,-1.8482365307478426
+Course,Electrical Engineering M.S.E.E.,Introduction to Solid State Semiconductors,EE 5611,Elective,0.020670563481137938,-2.404394358125162
+Course,Electrical Engineering M.S.E.E.,Microelectronics Technology,EE 5621,Elective,0.694908410809324,-1.6338905987410066
+Course,Electrical Engineering M.S.E.E.,Medical Imaging,EE 5745,Elective,-0.1465196306488059,-1.0892124471334932
+Course,Electrical Engineering M.S.E.E.,Digital Signal Processing,EE 5746,Elective,1.1728213061907746,-1.426651209321451
+Course,Electrical Engineering M.S.E.E.,Modern Communication,EE 5765,Elective,1.0083196764209725,-1.1889311370520113
+Course,Electrical Engineering M.S.E.E.,Special Topics (Various Titles to be Assigned),EE 5995,Elective,-0.28201827357025366,0.16346505311446202
+Course,Integrated Biosciences M.S.,Integrated Biological Systems I,IBS 8011,Core,1.4108057176092126,1.309949189695883
+Course,Integrated Biosciences M.S.,Integrated Biological Systems II,IBS 8013,Core,1.3598223035552957,1.2262258830399992
+Course,Integrated Biosciences M.S.,IBS Research Club,IBS 8030,Core,0.8832800691345193,0.6325661244721891
+Course,Integrated Biosciences M.S.,The Biological Practitioner,IBS 8099,Core,1.0479990844943978,1.0894375148149016
+Course,Integrated Biosciences M.S.,Ecological Statistics,BIOL 5809,Elective,-1.4066711361190818,3.021700531515646
+Course,Integrated Biosciences M.S.,Data Analysis and Communication for the Natural Sciences,CHEM 5725,Elective,1.6535106902339913,0.737635523352194
+Course,Integrated Biosciences M.S.,Analysis of Variance,STAT 5411,Elective,2.6723516290405254,0.25466963675932897
+Course,Integrated Biosciences M.S.,Regression Analysis,STAT 5511,Elective,2.654096156857298,0.18130466369109166
+Course,Integrated Biosciences M.S.,Integrated Evolutionary Processes,IBS 8012,Elective,1.4217525278547265,1.2900821271272185
+Course,Integrated Biosciences M.S.,Rotations,IBS 8094,Elective,1.534457058213041,-0.3333017674355029
+Course,Integrated Biosciences M.S.,Cellular Biochemistry,IBS 8101,Elective,0.8730643098571755,1.4475745263429167
+Course,Integrated Biosciences M.S.,"Cell, Molecular and Developmental Biology",IBS 8102,Elective,0.7811301355579354,1.3572143617005827
+Course,Integrated Biosciences M.S.,Comparative Animal Physiology,IBS 8103,Elective,0.984606326124952,1.1765513720841887
+Course,Integrated Biosciences M.S.,Ecological Processes,IBS 8201,Elective,-1.5671044285079978,2.8716084065766814
+Course,Integrated Biosciences M.S.,Chemical Biology,IBS 8202,Elective,0.5599583094337441,1.3784720006318572
+Course,Integrated Biosciences M.S.,Methods in Molecular Biosciences,IBS 8203,Elective,0.666442126534269,1.0949648919435027
+Course,Integrated Biosciences M.S.,Integrated Biosciences Graduate Seminar,IBS 8993,Elective,2.2666505878189067,2.246685415777731
+Course,Mathematical Sciences M.S.,Real Variables,MATH 5201,Core,2.239728183052824,-0.38039872023148524
+Course,Mathematical Sciences M.S.,Advanced Linear Algebra,MATH 5327,Core,2.029255897305296,-0.5663721707729815
+Course,Mathematical Sciences M.S.,Abstract Algebra I,MATH 5371,Core,1.9363824432113625,-0.44933384257240283
+Course,Mathematical Sciences M.S.,Probability,STAT 5571,Core,2.6440283363082866,-0.24839749905152309
+Course,Mathematical Sciences M.S.,Graduate Seminar,MATH 8980,Core,2.5720856492736797,2.3050900998445036
+Course,Mathematical Sciences M.S.,Graduate Colloquium,MATH 8990,Core,2.39697304417877,2.2685491147370818
+Course,Mathematical Sciences M.S.,Comprehensive Exam,MATH 8991,Core,0.35755118777541894,-0.733557954159212
+Course,Mathematical Sciences M.S.,Mathematical Foundations of Bioinformatics,MATH 5233,Elective,1.7339852755287148,0.4125265183778287
+Course,Mathematical Sciences M.S.,Data-Driven Dynamical Systems Modeling,MATH 5271,Elective,1.5266280179241158,-0.34762768420262324
+Course,Mathematical Sciences M.S.,Mathematical Data Science,STAT 5200,Elective,1.9658854906776406,0.01504620936827672
+Course,Mathematical Sciences M.S.,Analysis of Variance,STAT 5411,Elective,2.6520650689819316,0.30077233937697423
+Course,Mathematical Sciences M.S.,Regression Analysis,STAT 5511,Elective,2.5525039737441997,0.07866445210890782
+Course,Mathematical Sciences M.S.,Multivariate Statistics,STAT 5515,Elective,2.3884734218337993,0.11633428958373082
+Course,Mathematical Sciences M.S.,Applied Time Series Analysis,STAT 5521,Elective,2.44113329102783,0.06896707442717565
+Course,Mathematical Sciences M.S.,Applied Functional Analysis,MATH 5202,Elective,1.8123826687553384,-0.31699553104920375
+Course,Mathematical Sciences M.S.,Dynamical Systems,MATH 5260,Elective,1.5015134071329095,-0.6078068760303973
+Course,Mathematical Sciences M.S.,Modeling with Dynamical Systems,MATH 5270,Elective,1.555484056971357,-0.5301731691776036
+Course,Mathematical Sciences M.S.,Partial Differential Equations,MATH 5280,Elective,0.9443416302421548,-0.4460043382911204
+Course,Mathematical Sciences M.S.,Theory of Numbers,MATH 5330,Elective,2.0372869675376872,-0.6249376532701968
+Course,Mathematical Sciences M.S.,Graph Theory,MATH 5365,Elective,2.120727390549467,-0.5426313799886225
+Course,Mathematical Sciences M.S.,Enumerative Combinatorics,MATH 5366,Elective,2.1010752623298625,-0.6576413062481402
+Course,Mathematical Sciences M.S.,Abstract Algebra II,MATH 5372,Elective,1.8635466401794412,-0.44565422805829036
+Course,Mathematical Sciences M.S.,Linear Programming,MATH 5810,Elective,2.0889486377456645,-0.22094210955185878
+Course,Mathematical Sciences M.S.,Statistical Learning,STAT 5211,Elective,2.3461929862716655,0.195014924082327
+Course,Mathematical Sciences M.S.,Probability Models,STAT 5531,Elective,2.558964282772825,-0.22841918441338527
+Course,Mathematical Sciences M.S.,Statistical Inference,STAT 5572,Elective,2.5237065856674175,0.1811350288720609
+Course,Mathematical Sciences M.S.,Linear Models,STAT 8611,Elective,2.418544441960142,-0.009030014005136366
+Course,Mechanical Engineering M.S.M.E.,Analytic Techniques in Mechanical Engineering,ME 5110,Core,-1.067313998439028,-1.203405052152109
+Course,Mechanical Engineering M.S.M.E.,Advanced Dynamics and Control,ME 5120,Core,0.26066562583236474,-1.232731610265207
+Course,Mechanical Engineering M.S.M.E.,Advanced Thermal Fluid Sciences,ME 5210,Core,0.3799674217918374,-2.420390337434244
+Course,Mechanical Engineering M.S.M.E.,Advanced Mechanics of Materials,ME 5220,Core,-1.0204237396499656,-1.6088417467741487
+Course,Mechanical Engineering M.S.M.E.,Graduate Professional Skills 1,ME 8020,Core,5.892768770954893,-0.8822774288324832
+Course,Mechanical Engineering M.S.M.E.,Graduate Professional Skills 2,ME 8030,Core,5.975935370228575,-0.9582687911657809
+Course,Mechanical Engineering M.S.M.E.,Heat and Mass Transfer,ME 4112,Elective,0.07638099839477319,-1.9473219809202669
+Course,Mechanical Engineering M.S.M.E.,CAD/CAM,ME 4145,Elective,-0.16352197478027564,-1.213289528813791
+Course,Mechanical Engineering M.S.M.E.,Machine Design,ME 4175,Elective,-0.5422805244705222,-1.1965689954428194
+Course,Mechanical Engineering M.S.M.E.,Pipeline Engineering,ME 4375,Elective,-1.3930478985092185,-0.11657711836380946
+Course,Mechanical Engineering M.S.M.E.,Special Topics (Various Titles to be Assigned),ME 4495,Elective,-0.2845184500000022,0.20555695918517125
+Course,Mechanical Engineering M.S.M.E.,Design and Manufacturing of Composite Materials,ME 5101,Elective,-0.8135004932662986,-1.819036930528116
+Course,Mechanical Engineering M.S.M.E.,"Heating, Ventilation, Air Conditioning and Refrigeration Fundamentals",ME 5122,Elective,-0.1294133360168479,-1.4730678496031282
+Course,Mechanical Engineering M.S.M.E.,Computational Fluid Dynamics,ME 5305,Elective,0.6709048454978921,-2.7681904730467317
+Course,Mechanical Engineering M.S.M.E.,Nondestructive Evaluation of Engineering Materials,ME 5315,Elective,-0.6448715622207664,-1.7058480677275178
+Course,Mechanical Engineering M.S.M.E.,Sustainable Energy System,ME 5325,Elective,0.5050392453887917,-1.8651321825651643
+Course,Mechanical Engineering M.S.M.E.,Introduction to Finite Element Analysis,ME 5335,Elective,-1.1911781723281882,-1.646333187547159
+Course,Mechanical Engineering M.S.M.E.,Smart Materials and Structures,ME 5345,Elective,-0.9169910843154929,-2.126813024011087
+Course,Mechanical Engineering M.S.M.E.,Gas Turbines,ME 5355,Elective,-0.05666360209198218,-1.4517468509344575
+Course,Mechanical Engineering M.S.M.E.,Introduction to Medical Device Development,ME 5365,Elective,-0.5584144289276145,-0.9046055671839236
+Course,Mechanical Engineering M.S.M.E.,Fundamentals of Nuclear Engineering,ME 5050,Elective,-0.36284288714142066,-1.2895807323126314
+Course,Mechanical Engineering M.S.M.E.,Machine Vision and Image Based Robot Control,ME 5060,Elective,0.7531047170379617,-1.3595365581182954
+Course,Mechanical Engineering M.S.M.E.,Independent Study in Mechanical Engineering,ME 5991,Elective,-0.48697122881622534,-0.5049046745604097
+Course,Mechanical Engineering M.S.M.E.,Life Cycle Assessment,ME 5345,Elective,-1.193245976664736,-0.9429281947283267
+Course,Mechanical Engineering M.S.M.E.,Data-Driven Engineering: Using Data Analytics for Engineering Design and Decision Making,IE 5355,Elective,-0.7033066446563743,-1.2540673312811372
+Course,Physics M.S.,Physics Seminar,PHYS 5090,Core,2.4153501098373393,1.8401865067811491
+Course,Physics M.S.,Advanced Classical Mechanics,PHYS 5501,Core,0.18943443944244165,-1.1784465012220857
+Course,Physics M.S.,Electrodynamics,PHYS 5511,Core,0.7488597934463479,-0.20072305175347316
+Course,Physics M.S.,Quantum Mechanics I,PHYS 5521,Core,1.002169996998594,-0.21272277804894435
+Course,Physics M.S.,Computational Methods in Physics,PHYS 5052,Core,0.7042902415016152,0.29060050872282994
+Course,Physics M.S.,Data Analysis Methods in Physics,PHYS 5053,Core,1.261908469987423,0.2559990587563993
+Course,Physics M.S.,Experimental Methods,PHYS 5061,Core,0.543516010544584,0.6961793008180143
+Course,Physics M.S.,Physical Limnology,LIM 5101,Elective,-2.39845308611603,2.897634655508566
+Course,Physics M.S.,Introduction to Particle Physics,PHYS 5033,Elective,0.9551113848903634,0.1277144852014066
+Course,Physics M.S.,Optics,PHYS 5041,Elective,0.37974229504852075,-0.31673996123356807
+Course,Physics M.S.,Quantum Computation,PHYS 5071,Elective,1.1298260097721078,-0.28725440773053157
+Course,Physics M.S.,Quantum Mechanics II,PHYS 5522,Elective,1.0458720331409432,-0.19216725203080165
+Course,Physics M.S.,Introduction to Solid State Physics,PHYS 5531,Elective,-0.08740732023926001,-2.5139602121977327
+Course,Physics M.S.,Fluid Dynamics,PHYS 5541,Elective,0.616803318760679,-2.7058616575865266
+Course,Physics M.S.,General Relativity,PHYS 5551,Elective,0.8782643680789926,-0.07281306358857143
+Course,Physics M.S.,Astrophysics I: Stellar Astrophysics,PHYS 5561,Elective,0.5843203966835,-0.057096391644906874
+Course,Physics M.S.,Astrophysics II: Galaxies and the Universe,PHYS 5562,Elective,0.7225292628028848,0.07202562716918004
+Course,Physics M.S.,Independent Study,PHYS 5591,Elective,-0.4275071317932151,-0.399422913518381
+Course,Physics M.S.,Physics Research,PHYS 5594,Elective,0.8325390224674203,0.15877035287337316
+Course,Physics M.S.,Special Topics in Physics,PHYS 5595,Elective,0.5021077697494485,0.02535197165923131
+Course,Physics M.S.,Environmental Geophysics,PHYS 5800,Elective,-1.7743855411788962,1.7737292352052214
+Course,Water Resources Science M.S.,Water Policy,WRS 5101,Core,-2.3728569443008443,1.602057367834616
+Course,Water Resources Science M.S.,Interdisciplinary Seminar in Water Resources,WRS 8100,Core,-2.6190434391281148,1.9060653748841765
+Course,Water Resources Science M.S.,Research and Professional Ethics in Water Resources and Environmental Science,WRS 8581,Core,-2.428290456034853,1.7039870324464323
+Course,Water Resources Science M.S.,Watershed Engineering,CE 4228,Elective,-2.8994246418258687,1.7888657155366423
+Course,Water Resources Science M.S.,Watershed Hydrology,EES 5201,Elective,-2.304841607310488,1.9340058865876677
+Course,Water Resources Science M.S.,Hydrogeology,EES 5250,Elective,-2.238308518626406,1.9685510697694304
+Course,Water Resources Science M.S.,Water Processes and Management,GEOG 4446,Elective,-2.5209599430343648,1.8467692437501433
+Course,Water Resources Science M.S.,Physical Limnology,LIM 5101,Elective,-2.39849814722748,2.963596493277121
+Course,Water Resources Science M.S.,Water Chemistry,CE 5241,Elective,-2.4595323498031636,2.5301174226136687
+Course,Water Resources Science M.S.,Organic and Stable Isotope Biogeochemistry,CHEM 5150,Elective,-1.8850122387191794,2.358760029348898
+Course,Water Resources Science M.S.,Advanced Environmental Chemistry,CHEM 5212,Elective,-0.9279082710525535,1.2001207175584319
+Course,Water Resources Science M.S.,Data Analysis and Communication for the Natural Sciences,CHEM 5725,Elective,1.6119675641277291,0.7989690604539396
+Course,Water Resources Science M.S.,Chemical Limnology,LIM 5102,Elective,-2.4368663723251363,2.9369756284089568
+Course,Water Resources Science M.S.,Ichthyology,BIOL 4761,Elective,-1.883342116572573,2.78959074643569
+Course,Water Resources Science M.S.,Leverage Bioinformatic Tools to Manage Big Data and Answer Primary Biology Questions,BIOL 5201,Elective,1.4619164471843697,0.8494822087617399
+Course,Water Resources Science M.S.,Microbial Ecology,BIOL 5801,Elective,-1.4094456131240867,2.6626190247865202
+Course,Water Resources Science M.S.,Fisheries Ecology and Management,BIOL 5805,Elective,-1.6324118072769187,2.8958725037904265
+Course,Water Resources Science M.S.,Ecological Statistics,BIOL 5809,Elective,-1.4586230213424705,2.942157179388571
+Course,Water Resources Science M.S.,Stream Ecology,BIOL 5833,Elective,-1.8139718467971824,2.7622577252717497
+Course,Water Resources Science M.S.,Lake Ecology,BIOL 5861,Elective,-1.8644557888290427,2.9547461572022917
+Course,Water Resources Science M.S.,Ecosystems Ecology,BIOL 5863,Elective,-1.454553454615786,2.95165243771987
+Course,Water Resources Science M.S.,Open Channel Hydraulics,CE 4213,Elective,-2.9123049671432515,1.863595396551657
+Course,Water Resources Science M.S.,Hydraulic Design,CE 4215,Elective,-3.0930505687973042,1.4043770137162688
+Course,Water Resources Science M.S.,Design of Water and Wastewater Treatment Plants,CE 4256,Elective,-3.101866811015322,1.5737821164460661
+Course,Water Resources Science M.S.,Applications in Environmental Modeling,CE 5216,Elective,-1.5991426403305076,2.0228466096253874
+Course,Water Resources Science M.S.,Urban Hydrology and Stormwater Management,CE 5225,Elective,-2.3693738872787495,2.0230626168580534
+Course,Water Resources Science M.S.,Water Resources Engineering,CE 5226,Elective,-2.9182349140426656,1.6093594136567595
+Course,Water Resources Science M.S.,Water Quality Engineering,CE 5237,Elective,-3.0044732982894917,1.68643870976882
+Course,Water Resources Science M.S.,Environmental Remediation Technologies,CE 5246,Elective,-1.02412185023041,1.2424363198609831
+Course,Water Resources Science M.S.,Advanced Analytical Spectroscopy,CHEM 5224,Elective,-0.10480424711914282,1.2347828450532439
+Course,Water Resources Science M.S.,Modern Mass Spectrometry,CHEM 5720,Elective,0.22130516221313257,0.9601598086686612
+Course,Water Resources Science M.S.,Glacial and Quaternary Geology,EES 5210,Elective,-1.8831861908218406,1.7052065434785368
+Course,Water Resources Science M.S.,Fluvial Geomorphology,EES 5260,Elective,-2.71360406229706,1.9743370118470671
+Course,Water Resources Science M.S.,Field Methods in Hydrology,EES 5510,Elective,-2.3299714023849507,2.132986218008566
+Course,Water Resources Science M.S.,Introduction to Stream Restoration,EES 5601,Elective,-2.891749470927431,2.081603676352072
+Course,Water Resources Science M.S.,Stream Crossing Design,EES 5603,Elective,-3.0181537563583394,1.8064679208131316
+Course,Water Resources Science M.S.,Stream Restoration Practice,EES 8602,Elective,-2.9210334713241597,2.0535539689393523
+Course,Water Resources Science M.S.,Environmental Application of GIS,GIS 5572,Elective,-1.4749225075027488,1.900838524374533
+Course,Water Resources Science M.S.,Integrated Approaches to the Study of Inland Waters,LIM 5010,Elective,-2.3883837158462544,2.3781136575074675
+Course,Water Resources Science M.S.,Integrated Approaches to the Study of Inland Waters II,LIM 5012,Elective,-2.2917767460128804,2.4659694733949187
+Course,Water Resources Science M.S.,Laboratory and Discussion in Integrated Approaches to the Study of Inland Waters II,LIM 5013,Elective,-2.3106976444503804,2.378870398077536
+Course,Water Resources Science M.S.,Geological Paleolimnology,LIM 5103,Elective,-1.9164412910720847,2.0734895768495085
+Course,Water Resources Science M.S.,Research Frontiers and New Directions in Limnology and Environmental Science,LIM 5105,Elective,-2.292200892665102,2.724661022696066
+Course,Water Resources Science M.S.,Fluid Dynamics,PHYS 5541,Elective,0.6022820775726296,-2.689622968163919
+Course,Water Resources Science M.S.,Plan B Project,WRS 8095,Elective,-1.2198413307449363,-0.8302358684210299
+Degree Mean,Applied Materials Science M.S.,Applied Materials Science M.S. mean,NA,NA,-0.16509792158813696,-0.968142270770502
+Degree Mean,Chemical Engineering M.S.Ch.E,Chemical Engineering M.S.Ch.E mean,NA,NA,-0.8906370098373435,-0.44903779375238406
+Degree Mean,Chemistry M.S.,Chemistry M.S. mean,NA,NA,0.2667275970199563,0.9242606463761808
+Degree Mean,Civil Engineering M.S.,Civil Engineering M.S. mean,NA,NA,-1.5029316837570212,-1.4936318096785066
+Degree Mean,Computer Science M.S.,Computer Science M.S. mean,NA,NA,1.528043211005018,-1.098278611627054
+Degree Mean,Earth and Environmental Sciences M.S.,Earth and Environmental Sciences M.S. mean,NA,NA,0.23576203038482446,-0.7157954868940829
+Degree Mean,Electrical Engineering M.S.E.E.,Electrical Engineering M.S.E.E. mean,NA,NA,0.9800470476367928,-1.2971501049665926
+Degree Mean,Integrated Biosciences M.S.,Integrated Biosciences M.S. mean,NA,NA,1.0954508935430505,0.9516076150269986
+Degree Mean,Mathematical Sciences M.S.,Mathematical Sciences M.S. mean,NA,NA,2.0029888456085185,-0.20563343140168178
+Degree Mean,Mechanical Engineering M.S.M.E.,Mechanical Engineering M.S.M.E. mean,NA,NA,-0.3197766239425681,-1.3202996549276826
+Degree Mean,Physics M.S.,Physics M.S. mean,NA,NA,0.7668341701248147,-0.110691725936365
+Degree Mean,Water Resources Science M.S.,Water Resources Science M.S. mean,NA,NA,-2.024538129069521,2.243206411871481

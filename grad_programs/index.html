@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Course Embeddings PCA</title>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --bg: #f3f1ea;
+      --panel: #ffffff;
+      --ink: #1f1f1f;
+      --muted: #5b5b5b;
+      --accent: #1a4d8f;
+      --border: #d7d2c8;
+    }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #f7f3ea, #eef2f7);
+    }
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 20px;
+      letter-spacing: 0.3px;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+      padding: 12px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100vh - 160px);
+      overflow: auto;
+    }
+    .control-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .control-actions button {
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #faf7f0;
+      cursor: pointer;
+    }
+    #plot {
+      height: calc(100vh - 140px);
+      min-height: 520px;
+    }
+    .footer {
+      padding: 10px 12px 18px 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      #plot {
+        height: 70vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Course Embeddings PCA</h1>
+    <p>Pan, zoom, and hover to explore. Toggle degrees with the filters.</p>
+  </header>
+  <div class="layout">
+    <div class="panel">
+      <div class="control-actions">
+        <button id="select-all">Select all</button>
+        <button id="select-none">Select none</button>
+      </div>
+      <div id="degree-controls" class="controls"></div>
+    </div>
+    <div class="panel">
+      <div id="status" style="font-size:12px;color:#5b5b5b;margin-bottom:6px;">Loading data...</div>
+      <div id="plot"></div>
+    </div>
+  </div>
+  <div class="footer">
+    Data precomputed from course embeddings. Degree means are large circles; courses are squares.
+  </div>
+
+  <script>
+    const pointsPath = "course_requirements_umap_points.csv";
+    const segmentsPath = "course_requirements_umap_segments.csv";
+
+    function groupBy(items, key) {
+      const map = new Map();
+      for (const item of items) {
+        const k = item[key] ?? "Unknown";
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(item);
+      }
+      return map;
+    }
+
+    function toNumber(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    async function loadCsv(path) {
+      console.log("Loading CSV:", path);
+      const res = await fetch(path);
+      console.log("Fetch status:", res.status, res.statusText);
+      const text = await res.text();
+      console.log("CSV bytes:", text.length);
+      const parsed = Papa.parse(text, { header: true, dynamicTyping: true, skipEmptyLines: true });
+      console.log("Parsed rows:", parsed.data.length);
+      return parsed.data;
+    }
+
+    function buildControls(degrees, onChange) {
+      const container = document.getElementById("degree-controls");
+      container.innerHTML = "";
+
+      degrees.forEach((deg) => {
+        const safeDeg = String(deg || "Unknown");
+        const id = `deg-${safeDeg.replace(/[^a-z0-9]+/gi, "-")}`;
+        const wrapper = document.createElement("label");
+        wrapper.style.display = "flex";
+        wrapper.style.alignItems = "center";
+        wrapper.style.gap = "8px";
+        wrapper.style.fontSize = "13px";
+        wrapper.style.padding = "4px 2px";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.value = safeDeg;
+        input.checked = true;
+        input.addEventListener("change", onChange);
+
+        const text = document.createElement("span");
+        text.textContent = safeDeg;
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(text);
+        container.appendChild(wrapper);
+      });
+    }
+
+    function getSelectedDegrees() {
+      const inputs = document.querySelectorAll("#degree-controls input[type=checkbox]");
+      return Array.from(inputs).filter(i => i.checked).map(i => i.value);
+    }
+
+    function setAll(checked) {
+      const inputs = document.querySelectorAll("#degree-controls input[type=checkbox]");
+      inputs.forEach(i => { i.checked = checked; });
+    }
+
+    async function init() {
+      const statusEl = document.getElementById("status");
+      const points = await loadCsv(pointsPath);
+      const segments = await loadCsv(segmentsPath);
+      statusEl.textContent = `Loaded ${points.length} points and ${segments.length} segments.`;
+
+      const degreeSet = new Set(points.map(d => d.Degree).filter(d => d !== undefined && d !== null && String(d).trim() !== ""));
+      const degrees = Array.from(degreeSet).sort();
+
+      const pointsByDegree = groupBy(points, "Degree");
+      const segmentsByDegree = groupBy(segments, "Degree");
+
+      const traces = [];
+      const degreeTraceMap = new Map();
+      const palette = [
+        "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c",
+        "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928"
+      ];
+      const degreeColor = new Map();
+      degrees.forEach((deg, i) => degreeColor.set(deg, palette[i % palette.length]));
+
+      degrees.forEach((deg) => {
+        const degreePoints = pointsByDegree.get(deg) || [];
+        const courses = degreePoints.filter(d => d.Type === "Course");
+        const means = degreePoints.filter(d => d.Type === "Degree Mean");
+        const color = degreeColor.get(deg) || "#1b6ca8";
+
+        const courseTrace = {
+          type: "scatter",
+          mode: "markers",
+          name: `${deg} courses`,
+          legendgroup: deg,
+          marker: { size: 7, symbol: "square", color: color, line: { width: 0.5, color: "#000" } },
+          x: courses.map(d => toNumber(d["UMAP1"])),
+          y: courses.map(d => toNumber(d["UMAP2"])),
+          text: courses.map(d => `${d["Course Name"]}<br>${d["Course Code"]}<br>${d["Course Type"]}`),
+          hovertemplate: `%{text}<br>${deg}<extra></extra>`
+        };
+
+        const meanTrace = {
+          type: "scatter",
+          mode: "markers",
+          name: `${deg} mean`,
+          legendgroup: deg,
+          marker: { size: 14, symbol: "circle", color: color, line: { width: 1, color: "#000" } },
+          x: means.map(d => toNumber(d["UMAP1"])),
+          y: means.map(d => toNumber(d["UMAP2"])),
+          text: means.map(d => `${deg} mean`),
+          hovertemplate: `%{text}<extra></extra>`
+        };
+
+        const segRows = segmentsByDegree.get(deg) || [];
+        const segX = [];
+        const segY = [];
+        segRows.forEach(r => {
+          segX.push(toNumber(r.mean_x), toNumber(r.x), null);
+          segY.push(toNumber(r.mean_y), toNumber(r.y), null);
+        });
+        const segmentTrace = {
+          type: "scatter",
+          mode: "lines",
+          name: `${deg} links`,
+          legendgroup: deg,
+          hoverinfo: "skip",
+          line: { width: 0.5, color: color },
+          x: segX,
+          y: segY
+        };
+
+        const idxStart = traces.length;
+        traces.push(segmentTrace, meanTrace, courseTrace);
+        degreeTraceMap.set(deg, [idxStart, idxStart + 1, idxStart + 2]);
+      });
+
+      buildControls(degrees, () => {
+        const selected = new Set(getSelectedDegrees());
+        const visibility = traces.map(() => true);
+        degrees.forEach((deg) => {
+          const indices = degreeTraceMap.get(deg) || [];
+          const isOn = selected.has(deg);
+          indices.forEach(i => { visibility[i] = isOn; });
+        });
+        Plotly.restyle("plot", { visible: visibility });
+      });
+
+      document.getElementById("select-all").addEventListener("click", () => {
+        setAll(true);
+        const selected = new Set(getSelectedDegrees());
+        const visibility = traces.map(() => true);
+        degrees.forEach((deg) => {
+          const indices = degreeTraceMap.get(deg) || [];
+          const isOn = selected.has(deg);
+          indices.forEach(i => { visibility[i] = isOn; });
+        });
+        Plotly.restyle("plot", { visible: visibility });
+      });
+
+      document.getElementById("select-none").addEventListener("click", () => {
+        setAll(false);
+        const visibility = traces.map(() => false);
+        Plotly.restyle("plot", { visible: visibility });
+      });
+
+      const layout = {
+        paper_bgcolor: "#ffffff",
+        plot_bgcolor: "#ffffff",
+        dragmode: "pan",
+        margin: { l: 60, r: 20, t: 20, b: 50 },
+        xaxis: { title: "UMAP1" },
+        yaxis: { title: "UMAP2" },
+        showlegend: false
+      };
+
+      Plotly.newPlot("plot", traces, layout, { responsive: true, displaylogo: false });
+    }
+
+    init().catch((err) => {
+      console.error(err);
+      const plot = document.getElementById("plot");
+      const statusEl = document.getElementById("status");
+      statusEl.textContent = "Failed to load data. Check the console and file paths.";
+      plot.textContent = String(err);
+    });
+  </script>
+</body>
+</html>

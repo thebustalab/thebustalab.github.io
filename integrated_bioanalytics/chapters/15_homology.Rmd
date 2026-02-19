@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png', dpi = NA)
 ```
 
+BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.
+
+HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequence alignments of a protein family or domain. These profiles capture position-specific conservation and variability, which makes HMMER more sensitive for detecting distant homology and for identifying shared domains or motifs (including catalytic domains) even when overall sequence identity is low. As a result, BLAST is typically the first pass for close matches and rapid annotation, while HMMER is preferred for domain-centric searches, remote homolog discovery, and functional inference based on conserved motifs.
+
 ## blastNCBI {-}
 
 The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
