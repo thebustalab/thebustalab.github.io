@@ -11507,7 +11507,7 @@
                     return(connections[!is.na(connections[,3]),])
             }
 
-        #### buildNetwork
+        #### buildNetwork_OG
 
             #' Build a network from an edgelist
             #'
@@ -11517,9 +11517,9 @@
             #' @import
             #' @export
             #' @examples
-            #' buildNetwork()
+            #' buildNetwork_OG()
 
-            buildNetwork <- function( edgelist, node_attributes = NULL, facet_variable = NULL ) {
+            buildNetwork_OG <- function( edgelist, node_attributes = NULL, facet_variable = NULL ) {
 
                 ## Make sure the edgelist is a dataframe and that its first two columns are characters
                     edgelist <- as.data.frame(edgelist)
