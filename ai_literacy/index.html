@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impact Explorer</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #0f1b2a;
+      --muted: #5a6b80;
+      --accent: #0d5c9f;
+      --accent-2: #0a7f5a;
+      --line: #d6dde7;
+      --range: #2f80c8;
+      --range-dark: #1f6fad;
+      --track: #dde5ef;
+      --max-width: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 480px at 100% -10%, #d9f0ff 0%, transparent 60%),
+        radial-gradient(900px 450px at -10% 110%, #fbe8d6 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 24px 18px 36px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 14px 40px rgba(10, 40, 60, 0.08);
+      overflow: hidden;
+    }
+
+    .top {
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      letter-spacing: 0.01em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .tab-btn.active.co2 {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .tab-btn.active.water {
+      border-color: var(--accent-2);
+      background: var(--accent-2);
+      color: #fff;
+    }
+
+    .next-btn {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+
+    .viz {
+      padding: 16px 16px 10px;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 0 0 10px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(190px, 280px) minmax(260px, 1fr) minmax(150px, 240px);
+      gap: 12px;
+      align-items: center;
+      margin: 9px 0;
+      cursor: pointer;
+    }
+
+    .row:focus {
+      outline: 2px solid #9ac3e8;
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+
+    .label {
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .bar-wrap {
+      position: relative;
+      height: 24px;
+      background: var(--track);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .range-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 999px;
+      transition: left 520ms ease, width 520ms ease, opacity 260ms ease;
+    }
+
+    .range-bar.co2 {
+      background: linear-gradient(90deg, var(--range) 0%, var(--range-dark) 100%);
+    }
+
+    .range-bar.water {
+      background: linear-gradient(90deg, #2f9e8f 0%, #1f7a6f 100%);
+    }
+
+    .vals {
+      font-size: 0.82rem;
+      color: #0d2232;
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sources {
+      margin: 14px 16px 18px;
+      border-top: 1px dashed var(--line);
+      padding-top: 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .sources a {
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    .foot {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+      .top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel">
+      <div class="top">
+        <h1>Impact Explorer</h1>
+        <div class="controls">
+          <button id="tabCo2" class="tab-btn co2 active" type="button">CO2</button>
+          <button id="tabWater" class="tab-btn water" type="button">Water</button>
+          <button id="nextBtn" class="next-btn" type="button">Next</button>
+        </div>
+      </div>
+
+      <div class="viz">
+        <p id="status" class="status"></p>
+        <div id="rows"></div>
+        <div id="foot" class="foot">Starts with the lowest value and adds larger values each step.</div>
+      </div>
+
+      <div class="sources" id="sources">
+        Click an activity row to view source links.
+      </div>
+    </section>
+  </div>
+
+  <script id="emissionData" type="text/plain">
+activity,co2_value,co2_unit,water_value,water_unit,source
+A 5-minute hot shower,0.575,kg CO2,40,L,https://www.epa.gov/watersense/showerheads
+Driving a car 1 mile,0.35,kg CO2,,,
+100 AI queries (longer prompts),0.03,kg CO2,3.8,L,https://en.wikipedia.org/wiki/The_water_consumption_of_AI_data_centers
+Two minutes microwave use,0.008,kg CO2,,,
+Streaming Netflix for 1 hour,0.036,kg CO2,,,
+Using a space heater for 1 hour,0.36,kg CO2,,,
+Fly from Chicago to Minneapolis,74,kg CO2,,,
+Eating a hamburger (1/3 lb),18.8,kg CO2,2250,L,https://www.waterfootprint.org/media/downloads/Report-48-WaterFootprint-AnimalProducts-Vol1.pdf
+Clothes dryer cycle,1.8,kg CO2,,,
+Latte (with dairy milk),0.88,kg CO2,,,
+1 hour laptop use,0.04,kg CO2,,,
+Toilet flush,,,6,L,https://www.epa.gov/watersense/residential-toilets
+Load of laundry,,,76,L,https://www.energystar.gov/products/appliances/clothes_washers
+Apple,,,70,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
+Glass of milk (250 mL),,,250,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
+Cup of coffee (black),,,140,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
+Cup of tap water (240 mL),,,0.24,L,
+</script>
+
+  <script>
+    const rowsEl = document.getElementById('rows');
+    const sourcesEl = document.getElementById('sources');
+    const statusEl = document.getElementById('status');
+    const footEl = document.getElementById('foot');
+    const nextBtn = document.getElementById('nextBtn');
+    const tabCo2 = document.getElementById('tabCo2');
+    const tabWater = document.getElementById('tabWater');
+
+    const state = {
+      allRows: [],
+      activeMetric: 'co2',
+      visibleCountByMetric: { co2: 1, water: 1 },
+      scaleByMetric: { co2: 1, water: 1 },
+      prevScaleByMetric: { co2: 1, water: 1 },
+    };
+
+    function parseCSV(text) {
+      const lines = text.replace(/\r/g, '').trim().split('\n');
+      if (!lines.length) return [];
+      const header = splitCSVLine(lines[0]);
+      const out = [];
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const parts = splitCSVLine(lines[i]);
+        const obj = {};
+        for (let j = 0; j < header.length; j++) obj[header[j]] = (parts[j] || '').trim();
+        out.push(obj);
+      }
+      return out;
+    }
+
+    function splitCSVLine(line) {
+      const vals = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (ch === ',' && !inQuotes) {
+          vals.push(cur);
+          cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      vals.push(cur);
+      return vals;
+    }
+
+    function num(x) {
+      const n = Number(x);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function formatVal(v) {
+      if (v < 0.001) return v.toExponential(2);
+      if (v < 0.1) return v.toFixed(3);
+      return v.toFixed(2);
+    }
+
+    function metricRows(metric) {
+      const valueKey = metric === 'co2' ? 'co2Value' : 'waterValue';
+      return state.allRows
+        .filter(r => r[valueKey] > 0)
+        .map(r => ({
+          activity: r.activity,
+          low: 0,
+          high: r[valueKey],
+          unit: metric === 'co2' ? r.co2Unit : r.waterUnit,
+          source: r.source,
+        }))
+        .sort((a, b) => a.high - b.high);
+    }
+
+    function visibleRows(metric) {
+      const rows = metricRows(metric);
+      const n = Math.max(1, Math.min(state.visibleCountByMetric[metric], rows.length));
+      return rows.slice(0, n);
+    }
+
+    function updateTabUI() {
+      const metric = state.activeMetric;
+      tabCo2.classList.toggle('active', metric === 'co2');
+      tabCo2.classList.toggle('co2', true);
+      tabWater.classList.toggle('active', metric === 'water');
+      tabWater.classList.toggle('water', true);
+
+      const total = metricRows(metric).length;
+      const shown = Math.min(state.visibleCountByMetric[metric], total || 0);
+      nextBtn.textContent = shown >= total ? 'Reset' : 'Next';
+      statusEl.textContent = `Showing ${shown} of ${total} ${metric === 'co2' ? 'CO2' : 'water'} activities.`;
+      footEl.textContent = metric === 'co2'
+        ? 'CO2 tab: starts with the lowest emitter and adds larger emitters each step.'
+        : 'Water tab: starts with the lowest water-use item and adds larger items each step.';
+    }
+
+    function render() {
+      rowsEl.innerHTML = '';
+      const metric = state.activeMetric;
+      const data = visibleRows(metric);
+      if (!data.length) {
+        updateTabUI();
+        sourcesEl.textContent = `No ${metric.toUpperCase()} values available in the current dataset.`;
+        return;
+      }
+
+      const prevScale = Math.max(0.01, state.prevScaleByMetric[metric] || state.scaleByMetric[metric] || 1);
+      const nextScale = Math.max(0.01, ...data.map(d => d.high));
+      state.scaleByMetric[metric] = nextScale;
+
+      const pending = [];
+
+      for (const d of data) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.tabIndex = 0;
+        row.setAttribute('role', 'button');
+        row.setAttribute('aria-label', `Source for ${d.activity}`);
+
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = d.activity;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bar-wrap';
+
+        const lowPctPrev = Math.max(0, Math.min(100, (d.low / prevScale) * 100));
+        const highPctPrev = Math.max(0, Math.min(100, (d.high / prevScale) * 100));
+        const widthPctPrev = Math.max(0.8, highPctPrev - lowPctPrev);
+
+        const lowPctNext = Math.max(0, Math.min(100, (d.low / nextScale) * 100));
+        const highPctNext = Math.max(0, Math.min(100, (d.high / nextScale) * 100));
+        const widthPctNext = Math.max(0.8, highPctNext - lowPctNext);
+
+        const rangeBar = document.createElement('div');
+        rangeBar.className = `range-bar ${metric}`;
+        rangeBar.style.left = `${lowPctPrev}%`;
+        rangeBar.style.width = `${widthPctPrev}%`;
+
+        const vals = document.createElement('div');
+        vals.className = 'vals';
+        vals.textContent = `${formatVal(d.high)} ${d.unit || ''}`.trim();
+
+        wrap.appendChild(rangeBar);
+        row.appendChild(label);
+        row.appendChild(wrap);
+        row.appendChild(vals);
+
+        const showSource = () => {
+          if (d.source) {
+            sourcesEl.innerHTML = `<strong>${escapeHtml(d.activity)}</strong><br>Source: <a href="${escapeAttr(d.source)}" target="_blank" rel="noopener noreferrer">${escapeHtml(d.source)}</a>`;
+          } else {
+            sourcesEl.innerHTML = `<strong>${escapeHtml(d.activity)}</strong><br>Source not provided.`;
+          }
+        };
+
+        row.addEventListener('click', showSource);
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showSource();
+          }
+        });
+
+        rowsEl.appendChild(row);
+        pending.push({ bar: rangeBar, left: lowPctNext, width: widthPctNext });
+      }
+
+      requestAnimationFrame(() => {
+        for (const p of pending) {
+          p.bar.style.left = `${p.left}%`;
+          p.bar.style.width = `${p.width}%`;
+        }
+      });
+
+      state.prevScaleByMetric[metric] = nextScale;
+      updateTabUI();
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    function escapeAttr(s) {
+      return String(s).replaceAll('"', '&quot;');
+    }
+
+    function switchMetric(metric) {
+      state.activeMetric = metric;
+      render();
+    }
+
+    function init() {
+      const text = document.getElementById('emissionData').textContent;
+      const raw = parseCSV(text);
+
+      state.allRows = raw.map(r => ({
+        activity: r.activity,
+        co2Value: num(r.co2_value),
+        co2Unit: (r.co2_unit || '').trim() || 'kg CO2',
+        waterValue: num(r.water_value),
+        waterUnit: (r.water_unit || '').trim() || 'L',
+        source: (r.source || '').trim(),
+      })).filter(r => r.activity);
+
+      const co2Total = metricRows('co2').length;
+      const waterTotal = metricRows('water').length;
+      state.visibleCountByMetric.co2 = Math.min(1, co2Total || 1);
+      state.visibleCountByMetric.water = Math.min(1, waterTotal || 1);
+
+      nextBtn.addEventListener('click', () => {
+        const metric = state.activeMetric;
+        const total = metricRows(metric).length;
+        if (state.visibleCountByMetric[metric] >= total) {
+          state.visibleCountByMetric[metric] = Math.min(1, total || 1);
+        } else {
+          state.visibleCountByMetric[metric] += 1;
+        }
+        render();
+      });
+
+      tabCo2.addEventListener('click', () => switchMetric('co2'));
+      tabWater.addEventListener('click', () => switchMetric('water'));
+
+      switchMetric('co2');
+    }
+
+    init();
+  </script>
+</body>
+</html>
