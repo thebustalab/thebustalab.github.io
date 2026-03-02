@@ -33,7 +33,7 @@ output <- points3D(
 str(output)
 ```
 
-The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segement. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
+The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segment. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
 
 ```{r}
 output$points <- left_join(output$points, aquifers)
@@ -60,6 +60,72 @@ ggplot() +
   ) +
   theme_void() +
   scale_fill_manual(values = discrete_palette)
+```
+
+### network plots {-}
+
+You can use `runMatrixAnalysis()` to compute distances among samples, then plot a sample-similarity network with `buildNetwork()`.
+
+For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`from`, `to` in this example). If a third column is present, it is treated as edge weight, and any additional columns are carried through as edge attributes.
+
+```{r}
+wood_dist <- runMatrixAnalysis(
+  data = wood_smoke,
+  analysis = "dist",
+  column_w_names_of_multiple_analytes = "compound",
+  column_w_values_for_multiple_analytes = "abundance_mg_g",
+  columns_w_sample_ID_info = "sample_id",
+  na_replacement = "zero",
+  scale_variance = TRUE
+)
+
+wood_edges <- as.data.frame(as.table(as.matrix(wood_dist)))
+colnames(wood_edges) <- c("wood_1", "wood_2", "distance")
+wood_edges <- wood_edges %>% filter(distance > 0) %>% mutate(edgeweight = 1 / (1 + distance) * 100)
+
+# Build an order-invariant pair ID so A-B and B-A map to the same key.
+key <- paste(pmin(wood_edges$wood_1, wood_edges$wood_2), pmax(wood_edges$wood_1, wood_edges$wood_2), sep = " | ")
+# Mark only rows that appear in mirrored pairs (both directions present).
+dup_rows <- duplicated(key) | duplicated(key, fromLast = TRUE)
+# Keep the mirrored-pair rows and drop one-direction-only links.
+wood_edges <- wood_edges[dup_rows, ]
+
+node_attributes <- wood_smoke_data %>%
+  distinct(sample_id, wood_type, species) %>%
+  dplyr::rename(node_name = sample_id)
+
+net <- buildNetwork(
+  edgelist = wood_edges,
+  node_attributes = node_attributes
+)
+
+ggplot() +
+  geom_segment(
+    data = net$edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = edgeweight,
+      alpha = edgeweight
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = net$nodes,
+    aes(x = x, y = y, fill = wood_type),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  ggrepel::geom_text_repel(
+    data = net$nodes,
+    aes(x = x, y = y, label = species),
+    size = 2.5,
+    max.overlaps = 40
+  ) +
+  scale_fill_manual(values = c("hardwood" = "#1f78b4", "softwood" = "#33a02c")) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
 ```
 
 ### marginal summaries {-}
@@ -328,4 +394,3 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
-

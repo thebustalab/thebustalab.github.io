@@ -11609,6 +11609,165 @@
                 return(network_frame)
             }
 
+        #### buildNetwork
+
+            #' Build a network from an edgelist
+            #'
+            #' @param edgelist A data frame with origin nodes in the first column, destination nodes in the second column, and optional edge attributes in columns 3+ (first is treated as edge weight when present).
+            #' @param node_attributes A dataframe of attributes associated with the nodes. First column must contain node names.
+            #' @param facet_variable Currently unused; retained for API compatibility.
+            #' @import
+            #' @export
+            #' @examples
+            #' buildNetwork()
+
+            buildNetwork <- function(edgelist, node_attributes = NULL, facet_variable = NULL) {
+
+                edgelist <- as.data.frame(edgelist, stringsAsFactors = FALSE)
+                if (ncol(edgelist) < 2) {
+                    stop("`edgelist` must have at least two columns: start node and end node.")
+                }
+
+                edgelist[[1]] <- as.character(edgelist[[1]])
+                edgelist[[2]] <- as.character(edgelist[[2]])
+
+                # Build from an explicit edgelist so row-level edge attributes are preserved.
+                network_object <- network::network(
+                    edgelist[, 1:2, drop = FALSE],
+                    matrix.type = "edgelist",
+                    ignore.eval = TRUE
+                )
+
+                if (ncol(edgelist) > 2) {
+                    for (i in 3:ncol(edgelist)) {
+                        attr_name <- colnames(edgelist)[i]
+                        if (is.null(attr_name) || is.na(attr_name) || attr_name == "") {
+                            attr_name <- paste0("edge_attr_", i - 2)
+                        }
+                        network::set.edge.attribute(network_object, attr_name, edgelist[[i]])
+                    }
+
+                    # Preserve a canonical "weight" attribute for downstream tooling.
+                    if (!("weight" %in% colnames(edgelist))) {
+                        network::set.edge.attribute(network_object, "weight", edgelist[[3]])
+                    }
+                }
+
+                # Prefer a weighted force-directed layout when usable edge weights are present.
+                layout_coords <- NULL
+                if (ncol(edgelist) > 2 && requireNamespace("igraph", quietly = TRUE)) {
+                    weight_col <- c("edgeweight", "weight")
+                    weight_col <- weight_col[weight_col %in% colnames(edgelist)]
+                    if (length(weight_col) == 0) {
+                        weight_col <- colnames(edgelist)[3]
+                    } else {
+                        weight_col <- weight_col[1]
+                    }
+
+                    layout_weights <- suppressWarnings(as.numeric(edgelist[[weight_col]]))
+                    if (any(!is.na(layout_weights))) {
+                        min_pos <- suppressWarnings(min(layout_weights[layout_weights > 0], na.rm = TRUE))
+                        if (!is.finite(min_pos)) {
+                            min_pos <- 1e-06
+                        }
+                        layout_weights[is.na(layout_weights) | layout_weights <= 0] <- min_pos
+
+                        graph_for_layout <- igraph::graph_from_data_frame(
+                            data.frame(
+                                from = edgelist[[1]],
+                                to = edgelist[[2]],
+                                weight = layout_weights,
+                                stringsAsFactors = FALSE
+                            ),
+                            directed = FALSE
+                        )
+
+                        coords <- igraph::layout_with_fr(
+                            graph_for_layout,
+                            weights = igraph::E(graph_for_layout)$weight,
+                            niter = 2000
+                        )
+                        coords <- as.matrix(coords)
+                        rownames(coords) <- igraph::V(graph_for_layout)$name
+
+                        vertex_names <- network::get.vertex.attribute(network_object, "vertex.names")
+                        coords <- coords[match(vertex_names, rownames(coords)), , drop = FALSE]
+
+                        if (!any(is.na(coords))) {
+                            layout_coords <- coords
+                        }
+                    }
+                }
+
+                combined_network_frame <- ggnetwork::ggnetwork(
+                    network_object,
+                    arrow.gap = 0,
+                    layout = if (is.null(layout_coords)) "kamadakawai" else layout_coords,
+                    stringsAsFactors = FALSE
+                )
+
+                is_node <- (combined_network_frame$x == combined_network_frame$xend) &
+                    (combined_network_frame$y == combined_network_frame$yend)
+
+                nodes <- combined_network_frame[is_node, c("x", "y", "vertex.names"), drop = FALSE]
+                colnames(nodes)[3] <- "node_name"
+                nodes <- nodes[!duplicated(nodes$node_name), , drop = FALSE]
+
+                node_lookup <- nodes[, c("node_name", "x", "y"), drop = FALSE]
+                colnames(node_lookup) <- c("node_name", "node_x", "node_y")
+
+                edge_attributes <- NULL
+                if (ncol(edgelist) > 2) {
+                    edge_attributes <- edgelist[, 3:ncol(edgelist), drop = FALSE]
+                }
+
+                edges <- data.frame(
+                    start_node = edgelist[[1]],
+                    end_node = edgelist[[2]],
+                    stringsAsFactors = FALSE
+                )
+                if (!is.null(edge_attributes)) {
+                    edges <- cbind(edges, edge_attributes)
+                    if (!("weight" %in% colnames(edges))) {
+                        edges$weight <- edgelist[[3]]
+                    }
+                }
+
+                start_idx <- match(edges$start_node, node_lookup$node_name)
+                end_idx <- match(edges$end_node, node_lookup$node_name)
+
+                edges$x <- node_lookup$node_x[start_idx]
+                edges$y <- node_lookup$node_y[start_idx]
+                edges$xend <- node_lookup$node_x[end_idx]
+                edges$yend <- node_lookup$node_y[end_idx]
+
+                if (any(is.na(edges$x) | is.na(edges$y) | is.na(edges$xend) | is.na(edges$yend))) {
+                    warning("Some edges could not be mapped to node coordinates; check edgelist node labels.")
+                }
+
+                edge_cols <- c("x", "y", "start_node", "xend", "yend", "end_node")
+                extra_cols <- setdiff(colnames(edges), edge_cols)
+                edges <- edges[, c(edge_cols, extra_cols), drop = FALSE]
+
+                if (!is.null(node_attributes)) {
+                    node_attributes <- as.data.frame(node_attributes, stringsAsFactors = FALSE)
+                    node_key <- as.character(node_attributes[[1]])
+                    matched_attrs <- node_attributes[match(nodes$node_name, node_key), , drop = FALSE]
+
+                    # Avoid duplicating the node identifier column.
+                    if (ncol(matched_attrs) > 0) {
+                        matched_attrs <- matched_attrs[, -1, drop = FALSE]
+                    }
+                    nodes <- cbind(nodes, matched_attrs)
+                }
+
+                if (!is.null(facet_variable)) {
+                    warning("`facet_variable` is currently not implemented in buildNetwork().")
+                }
+
+                return(list(edges = edges, nodes = nodes))
+            }
+
     ##### Data Visualization
         
         #### -.gg
