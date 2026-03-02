@@ -107,7 +107,7 @@
 <p>So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>Please note that we can get distance matrices directly from <code>runMatrixAnalyses</code> by specifying <code>analysis = "dist"</code>:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
@@ -121,20 +121,16 @@
 <span><span class="co">## Replacing NAs in your data with mean</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
-<span><span class="co">##                          Devil_Mountain_Lake_BELA</span></span>
-<span><span class="co">## Devil_Mountain_Lake_BELA                 0.000000</span></span>
-<span><span class="co">## Imuruk_Lake_BELA                         3.672034</span></span>
-<span><span class="co">## Kuzitrin_Lake_BELA                       1.663147</span></span>
-<span><span class="co">##                          Imuruk_Lake_BELA</span></span>
-<span><span class="co">## Devil_Mountain_Lake_BELA         3.672034</span></span>
-<span><span class="co">## Imuruk_Lake_BELA                 0.000000</span></span>
-<span><span class="co">## Kuzitrin_Lake_BELA               3.062381</span></span>
-<span><span class="co">##                          Kuzitrin_Lake_BELA</span></span>
-<span><span class="co">## Devil_Mountain_Lake_BELA           1.663147</span></span>
-<span><span class="co">## Imuruk_Lake_BELA                   3.062381</span></span>
-<span><span class="co">## Kuzitrin_Lake_BELA                 0.000000</span></span></code></pre></div>
+<span><span class="co">##      sample_unique_ID_sample_1  sample_unique_ID_sample_2</span></span>
+<span><span class="co">## [1,] "Devil_Mountain_Lake_BELA" "Imuruk_Lake_BELA"       </span></span>
+<span><span class="co">## [2,] "Devil_Mountain_Lake_BELA" "Kuzitrin_Lake_BELA"     </span></span>
+<span><span class="co">## [3,] "Devil_Mountain_Lake_BELA" "Lava_Lake_BELA"         </span></span>
+<span><span class="co">##      distance   </span></span>
+<span><span class="co">## [1,] " 3.672034"</span></span>
+<span><span class="co">## [2,] " 1.663147"</span></span>
+<span><span class="co">## [3,] " 3.401828"</span></span></code></pre></div>
 <p>There is more that we can do with distance matrices though, lots more. Let’s start by looking at an example of hierarchical clustering. For this, we just need to tell <code>runMatrixAnalyses()</code> to use <code>analysis = "hclust"</code>:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
@@ -163,7 +159,7 @@
 <span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
 <p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalyses&gt;) + geom_*()</code> etc.</p>
 <p>Note that <code>ggtree</code> also comes with several great new geoms: <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab()</a></code> and <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint()</a></code>. Let’s try those out:</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.amazon.com/Integration-Manipulation-Visualization-Phylogenetic-Computational-ebook/dp/B0B5NLZR1Z/">ggtree</a></span><span class="op">)</span></span>
 <span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -171,9 +167,9 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">700</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-293-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-295-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">10</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
@@ -184,9 +180,9 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.2</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-294-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">lake</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"North_Killeak_Lake"</span>,<span class="st">"White_Fish_Lake"</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide_filtered</span></span>
 <span></span>
@@ -206,13 +202,13 @@
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">0.9</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-295-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="annotating-trees" class="section level2 unnumbered">
 <h2>Annotating trees<a class="anchor" aria-label="anchor" href="#annotating-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>Overlaying sample traits on a ggtree-based plot is straightforward when we combine <code>ggtree</code> with <code>ggplot2</code>. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hclust_out</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
@@ -223,7 +219,7 @@
 <span><span class="co">## ignore the edges, you can set</span></span>
 <span><span class="co">## `options(ignore.negative.edge=TRUE)`, then re-run ggtree.</span></span></code></pre></div>
 <p>The object returned by <code>runMatrixAnalyses()</code> already contains the branch coordinates, so we can pass it directly to <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree()</a></code> and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">hclust_out</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -233,9 +229,9 @@
 <span><span class="co">## Adding another scale for y, which will replace the existing</span></span>
 <span><span class="co">## scale.</span></span>
 <span><span class="va">tree_plot</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-299-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the <code>y</code> coordinate supplied by <code>ggtree</code>, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">heat_plot</span> <span class="op">&lt;-</span> <span class="va">hclust_out</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">isTip</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">parent</span>, <span class="op">-</span><span class="va">node</span>, <span class="op">-</span><span class="va">branch.length</span>, <span class="op">-</span><span class="va">label</span>, <span class="op">-</span><span class="va">isTip</span>, <span class="op">-</span><span class="va">x</span>, <span class="op">-</span><span class="va">branch</span>, <span class="op">-</span><span class="va">angle</span>, <span class="op">-</span><span class="va">bootstrap</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -245,18 +241,18 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">heat_plot</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-298-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-300-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>With matching y scales, <code>plot_grid()</code> can align the tree and the heat map so the tiles line up with the corresponding samples. Using <code>align = "h"</code> snaps them together horizontally, and <code>axis = "tb"</code> keeps the panel heights consistent.</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">tree_plot</span>, <span class="va">heat_plot</span>, axis <span class="op">=</span> <span class="st">"tb"</span>, align <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-299-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">tree_plot</span>, <span class="va">heat_plot</span>, axis <span class="op">=</span> <span class="st">"tb"</span>, align <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-301-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_blooms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, names_to <span class="op">=</span> <span class="st">"chemical"</span>, values_to <span class="op">=</span> <span class="st">"abundance"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">chemical</span>, y <span class="op">=</span> <span class="va">label</span>, fill <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-300-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-302-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-3" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
@@ -305,7 +301,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-19.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-03-02.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

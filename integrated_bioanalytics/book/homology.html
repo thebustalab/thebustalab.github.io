@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>homology | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta name="description" content="BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models...">
 <meta name="generator" content="bookdown 0.44 with bs4_book()">
 <meta property="og:title" content="homology | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta property="og:description" content="BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="homology | Integrated Bioanalytics">
-<meta name="twitter:description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta name="twitter:description" content="BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -96,11 +96,13 @@
 <h1>homology<a class="anchor" aria-label="anchor" href="#homology"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png" width="100%" style="display: block; margin: auto;"></div>
+<p>BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.</p>
+<p>HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequence alignments of a protein family or domain. These profiles capture position-specific conservation and variability, which makes HMMER more sensitive for detecting distant homology and for identifying shared domains or motifs (including catalytic domains) even when overall sequence identity is low. As a result, BLAST is typically the first pass for close matches and rapid annotation, while HMMER is preferred for domain-centric searches, remote homolog discovery, and functional inference based on conserved motifs.</p>
 <div id="blastncbi" class="section level2 unnumbered">
 <h2>blastNCBI<a class="anchor" aria-label="anchor" href="#blastncbi"><i class="fas fa-link"></i></a>
 </h2>
 <p>The <code>blastNCBI()</code> function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like “core_nt,” you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the <code>Biostrings</code> package is available because it supplies <code>DNAStringSet</code>.</p>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">blastNCBI</span><span class="op">(</span></span>
 <span>    query_sequence <span class="op">=</span> <span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span>,</span>
 <span>    program <span class="op">=</span> <span class="st">"blastn"</span>,</span>
@@ -131,7 +133,7 @@
 </ul>
 <p>Different BLAST modes tailor the search to the molecule types you are comparing. In the XYblastZ naming scheme, <code>nnblastn</code> reproduces the classic nucleotide-vs-nucleotide search (<code>blastn</code>), <code>ntblastp</code> lines up with <code>tblastn</code>, and <code>pnblastp</code> matches <code>blastp</code>. Preset names such as <code>blastx</code>, <code>megablast</code>, or <code>dc-megablast</code> extend these basics to translated queries or alternate nucleotide heuristics, while <code>tblastx</code> translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of your query and target sequences so the scoring and heuristics work in your favor.</p>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
-<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa"</span>,</span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa"</span>,</span>
@@ -165,7 +167,7 @@
 <li><p>Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.</p></li>
 </ol>
 <p>We can implement these two steps using the <code>buildDomainLibrary()</code> function and the <code>predictDomains()</code> function. See below:</p>
-<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildDomainLibrary</span><span class="op">(</span></span>
 <span>    alignment_in_paths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa"</span>,</span>
@@ -244,7 +246,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-12-19.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-03-02.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -74,7 +74,7 @@ wood_dist <- runMatrixAnalysis(
   analysis = "dist",
   column_w_names_of_multiple_analytes = "compound",
   column_w_values_for_multiple_analytes = "abundance_mg_g",
-  columns_w_sample_ID_info = "sample_id",
+  columns_w_sample_ID_info = "species",
   na_replacement = "zero",
   scale_variance = TRUE
 )
@@ -90,12 +90,11 @@ dup_rows <- duplicated(key) | duplicated(key, fromLast = TRUE)
 # Keep the mirrored-pair rows and drop one-direction-only links.
 wood_edges <- wood_edges[dup_rows, ]
 
-node_attributes <- wood_smoke_data %>%
-  distinct(sample_id, wood_type, species) %>%
-  dplyr::rename(node_name = sample_id)
+node_attributes <- wood_smoke %>%
+  select(species, wood_type)
 
 net <- buildNetwork(
-  edgelist = wood_edges,
+  edgelist = filter(wood_edges, edgeweight > 4.3),
   node_attributes = node_attributes
 )
 
@@ -114,12 +113,12 @@ ggplot() +
     aes(x = x, y = y, fill = wood_type),
     shape = 21, size = 3.2, color = "black", stroke = 0.2
   ) +
-  ggrepel::geom_text_repel(
-    data = net$nodes,
-    aes(x = x, y = y, label = species),
-    size = 2.5,
-    max.overlaps = 40
-  ) +
+  # ggrepel::geom_text_repel(
+  #   data = net$nodes,
+  #   aes(x = x, y = y, label = species),
+  #   size = 2.5,
+  #   max.overlaps = 40
+  # ) +
   scale_fill_manual(values = c("hardwood" = "#1f78b4", "softwood" = "#33a02c")) +
   scale_linewidth_continuous(range = c(0.2, 1.4)) +
   scale_alpha_continuous(range = c(0.15, 0.8)) +
