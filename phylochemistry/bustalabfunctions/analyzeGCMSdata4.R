@@ -815,6 +815,14 @@
                                         )
                                     }
                                     prelim_baseline <- do.call(rbind, prelim_baseline)
+
+                                    ## bound baseline to first and last point in chromatogram
+                                    prelim_baseline <- rbind(
+                                        data.frame(rt = min(tic$rt), min = tic$abundance[min(tic$rt)]),
+                                        prelim_baseline,
+                                        data.frame(rt = max(tic$rt), min = tic$abundance[max(tic$rt)])
+                                    )
+
                                     tic$in_prelim_baseline <- FALSE
                                     tic$in_prelim_baseline[tic$rt %in% prelim_baseline$rt] <- TRUE
 
