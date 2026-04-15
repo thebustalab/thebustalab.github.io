@@ -1,4 +1,19 @@
-.Rproj.user
+# Agent instructions (private, not for public repo)
+AGENTS.md
+
+# Syncthing temporary files
+.syncthing.*
+*.tmp
+
+# R project files
+.Rproj.user/
 .Rhistory
 .RData
-.Ruserdata
+*.rds
+*_cache/
+*_files/
+index_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
