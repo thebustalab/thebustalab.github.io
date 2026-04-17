@@ -21,7 +21,7 @@
       --red: #b33a3a;
       --red-bg: #fbeaea;
       --line: #ddd4db;
-      --max-width: 960px;
+      --max-width: 880px;
     }
 
     * { box-sizing: border-box; }
@@ -41,294 +41,294 @@
     }
 
     h1 {
-      margin: 0 0 6px;
-      font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+      margin: 0 0 4px;
+      font-size: clamp(1.2rem, 2.4vw, 1.7rem);
       font-weight: 600;
       color: var(--accent);
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.92rem;
-      margin: 0 0 24px;
+      font-size: 0.88rem;
+      margin: 0 0 18px;
       font-weight: 300;
     }
 
-    /* Example selector */
-    .example-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-
-    .example-card {
-      background: var(--card);
-      border: 2px solid var(--line);
-      border-radius: 10px;
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-size: 0.88rem;
-      line-height: 1.35;
-    }
-
-    .example-card:hover {
-      border-color: var(--accent-light);
-      box-shadow: 0 2px 12px rgba(138, 70, 128, 0.12);
-    }
-
-    .example-card.active {
-      border-color: var(--accent);
-      background: var(--accent-faint);
-      box-shadow: 0 2px 16px rgba(138, 70, 128, 0.18);
-    }
-
-    .example-card .card-num {
-      font-weight: 600;
-      color: var(--accent);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .example-card .card-title {
-      font-weight: 500;
-      margin-top: 2px;
-    }
-
-    .example-card .card-role {
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin-top: 2px;
-    }
-
-    /* Flow area */
-    .flow-area {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 8px 30px rgba(60, 30, 55, 0.07);
-      overflow: hidden;
-    }
-
-    .flow-header {
-      padding: 18px 22px;
-      border-bottom: 1px solid var(--line);
+    /* Dropdown selector */
+    .selector-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
     }
 
-    .flow-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-    }
-
-    .flow-controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .flow-btn {
-      font-family: "Poppins", sans-serif;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #fff;
-      border-radius: 999px;
-      padding: 7px 18px;
+    .selector-label {
       font-size: 0.85rem;
       font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .selector-dropdown {
+      font-family: "Poppins", sans-serif;
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--ink);
       cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .flow-btn:hover {
-      background: var(--accent-light);
-    }
-
-    .flow-btn.outline {
-      background: transparent;
-      color: var(--accent);
-    }
-
-    .flow-btn.outline:hover {
-      background: var(--accent-faint);
-    }
-
-    .flow-btn:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-
-    /* Node display */
-    .flow-body {
-      padding: 22px;
-      min-height: 220px;
-    }
-
-    .node-progress {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-    }
-
-    .node-pip {
       flex: 1;
-      height: 6px;
-      border-radius: 3px;
+      min-width: 240px;
+      max-width: 500px;
+    }
+
+    .selector-dropdown:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(138, 70, 128, 0.15);
+    }
+
+    /* Diamond flow layout */
+    .diamond {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Connector lines */
+    .connector {
+      width: 2px;
+      height: 20px;
       background: var(--line);
-      transition: background 0.3s;
+      margin: 0 auto;
     }
 
-    .node-pip.done {
-      background: var(--accent);
+    .connector-fork {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      position: relative;
+      height: 24px;
     }
 
-    .node-pip.current {
-      background: var(--accent-light);
+    .connector-fork::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 12px;
+      background: var(--line);
     }
 
-    .node-label {
-      font-size: 0.78rem;
+    .connector-fork::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: calc(25% + 16px);
+      right: calc(25% + 16px);
+      height: 2px;
+      background: var(--line);
+    }
+
+    .connector-fork-down-left,
+    .connector-fork-down-right {
+      position: absolute;
+      top: 12px;
+      width: 2px;
+      height: 12px;
+      background: var(--line);
+    }
+
+    .connector-fork-down-left { left: calc(25% + 16px); }
+    .connector-fork-down-right { right: calc(25% + 16px); }
+
+    .connector-merge {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+      height: 24px;
+    }
+
+    .connector-merge::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 2px;
+      height: 12px;
+      background: var(--line);
+    }
+
+    .connector-merge::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: calc(25% + 16px);
+      right: calc(25% + 16px);
+      height: 2px;
+      background: var(--line);
+    }
+
+    .connector-merge-up-left,
+    .connector-merge-up-right {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 12px;
+      background: var(--line);
+    }
+
+    .connector-merge-up-left { left: calc(25% + 16px); }
+    .connector-merge-up-right { right: calc(25% + 16px); }
+
+    /* Split row */
+    .split-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* Node cards */
+    .node-card {
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 4px 16px rgba(60, 30, 55, 0.06);
+      width: 100%;
+      max-width: 600px;
+      transition: border-color 0.3s;
+    }
+
+    .node-card.top-node,
+    .node-card.bottom-node {
+      max-width: 600px;
+    }
+
+    .node-card.border-green { border-color: var(--green); }
+    .node-card.border-amber { border-color: var(--amber); }
+    .node-card.border-red { border-color: var(--red); }
+
+    .node-num {
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .node-title {
+      font-size: 1rem;
+      font-weight: 600;
       margin-bottom: 6px;
     }
 
-    .node-heading {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .node-text {
-      font-size: 0.9rem;
-      color: #333;
-      line-height: 1.6;
-    }
-
-    .node-text p {
-      margin: 0 0 10px;
-    }
-
-    .node-text p:last-child {
-      margin-bottom: 0;
-    }
-
-    /* Outcome chips */
     .outcome {
       display: inline-block;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 999px;
-      margin: 8px 0 4px;
+      margin-bottom: 6px;
     }
 
-    .outcome.green {
-      background: var(--green-bg);
-      color: var(--green);
+    .outcome.green { background: var(--green-bg); color: var(--green); }
+    .outcome.amber { background: var(--amber-bg); color: var(--amber); }
+    .outcome.red { background: var(--red-bg); color: var(--red); }
+
+    .node-body {
+      font-size: 0.84rem;
+      color: #333;
+      line-height: 1.55;
     }
 
-    .outcome.amber {
-      background: var(--amber-bg);
-      color: var(--amber);
+    .node-body p {
+      margin: 0 0 8px;
     }
 
-    .outcome.red {
-      background: var(--red-bg);
-      color: var(--red);
+    .node-body p:last-child {
+      margin-bottom: 0;
     }
 
     /* Subtask list */
     .subtask-list {
       list-style: none;
       padding: 0;
-      margin: 10px 0 0;
+      margin: 8px 0 0;
     }
 
     .subtask-list li {
-      padding: 8px 12px;
-      margin: 4px 0;
-      border-radius: 8px;
-      font-size: 0.87rem;
-      border-left: 4px solid var(--line);
+      padding: 6px 10px;
+      margin: 3px 0;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      border-left: 3px solid var(--line);
       background: #fafafa;
     }
 
-    .subtask-list li.good {
-      border-left-color: var(--green);
-      background: var(--green-bg);
-    }
-
-    .subtask-list li.caution {
-      border-left-color: var(--amber);
-      background: var(--amber-bg);
-    }
-
-    .subtask-list li.poor {
-      border-left-color: var(--red);
-      background: var(--red-bg);
-    }
-
-    .subtask-label {
-      font-weight: 500;
-    }
+    .subtask-list li.good { border-left-color: var(--green); background: var(--green-bg); }
+    .subtask-list li.caution { border-left-color: var(--amber); background: var(--amber-bg); }
+    .subtask-list li.poor { border-left-color: var(--red); background: var(--red-bg); }
 
     /* Verdict */
     .verdict-box {
-      margin-top: 14px;
-      padding: 14px 18px;
-      border-radius: 10px;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
       border: 2px solid var(--line);
+      font-size: 0.84rem;
+      line-height: 1.5;
     }
 
-    .verdict-box.positive {
-      border-color: var(--green);
-      background: var(--green-bg);
-    }
-
-    .verdict-box.mixed {
-      border-color: var(--amber);
-      background: var(--amber-bg);
-    }
-
-    .verdict-box.negative {
-      border-color: var(--red);
-      background: var(--red-bg);
-    }
+    .verdict-box.positive { border-color: var(--green); background: var(--green-bg); }
+    .verdict-box.mixed { border-color: var(--amber); background: var(--amber-bg); }
+    .verdict-box.negative { border-color: var(--red); background: var(--red-bg); }
 
     .verdict-label {
       font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 4px;
+      font-size: 0.82rem;
+      margin-bottom: 3px;
     }
 
-    .verdict-text {
-      font-size: 0.88rem;
-      line-height: 1.55;
+    /* Placeholder state */
+    .node-card.empty {
+      border-style: dashed;
+      opacity: 0.5;
     }
 
-    /* Placeholder */
-    .placeholder {
-      text-align: center;
+    .node-card.empty .node-body {
       color: var(--muted);
-      padding: 60px 20px;
-      font-size: 0.95rem;
+      font-style: italic;
     }
 
-    @media (max-width: 600px) {
-      .example-grid {
+    /* Responsive */
+    @media (max-width: 640px) {
+      .split-row {
         grid-template-columns: 1fr;
       }
-      .flow-header {
-        flex-direction: column;
-        align-items: flex-start;
+      .connector-fork, .connector-merge {
+        display: none;
+      }
+      .diamond {
+        gap: 0;
+      }
+      .split-row {
+        gap: 0;
+      }
+      .split-row .node-card {
+        max-width: 100%;
+      }
+      /* Add simple connectors on mobile */
+      .split-row .node-card + .node-card {
+        margin-top: 8px;
       }
     }
   </style>
@@ -336,22 +336,16 @@
 <body>
   <div class="wrap">
     <h1>AI Decision Flow for Natural Scientists</h1>
-    <p class="subtitle">Select an example task to trace it through the decision framework.</p>
+    <p class="subtitle">A framework for deciding when and how to use AI in research tasks.</p>
 
-    <div class="example-grid" id="exampleGrid"></div>
-
-    <div class="flow-area">
-      <div class="flow-header">
-        <div class="flow-title" id="flowTitle">Select an example above</div>
-        <div class="flow-controls">
-          <button class="flow-btn outline" id="prevBtn" disabled>Back</button>
-          <button class="flow-btn" id="nextBtn" disabled>Next</button>
-        </div>
-      </div>
-      <div class="flow-body" id="flowBody">
-        <div class="placeholder">Choose a task from the grid above to see how it flows through the five-node decision framework.</div>
-      </div>
+    <div class="selector-row">
+      <span class="selector-label">Example task:</span>
+      <select class="selector-dropdown" id="exampleSelect">
+        <option value="">Select a task to trace through the flow...</option>
+      </select>
     </div>
+
+    <div class="diamond" id="diamond"></div>
   </div>
 
 <script>
@@ -396,10 +390,7 @@ const EXAMPLES = [
         outcome: "green",
         outcomeText: "Minimal concerns",
         body: "<p>Minimal ethical concern. No perception issue \u2014 nobody expects you to format references by hand. Reproducibility is a non-issue.</p>",
-        verdict: {
-          type: "positive",
-          text: "Strong AI use case. Every node is favourable. This is the kind of mechanical, verifiable task where AI saves real time with virtually no risk."
-        }
+        verdict: { type: "positive", text: "Strong AI use case. Every node is favourable. This is the kind of mechanical, verifiable task where AI saves real time with virtually no risk." }
       }
     ]
   },
@@ -409,50 +400,11 @@ const EXAMPLES = [
     role: "Grad student",
     verdictType: "mixed",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "green",
-        outcomeText: "Proceed \u2014 any tool",
-        body: "<p>No sensitive data. The papers being reviewed are published. Proceed with any tool.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>A thesis is professional scholarly work. Considered mode applies.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 3 subtasks",
-        body: "<p>\u201cWrite me a literature review\u201d breaks apart into subtasks with very different AI suitability:</p>",
-        subtasks: [
-          { text: "Summarise individual papers the student has already read", rating: "good" },
-          { text: "Identify themes and gaps across the literature", rating: "caution" },
-          { text: "Write the narrative arc that positions the thesis", rating: "poor" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Mixed \u2014 varies by subtask",
-        body: "<p><strong>Summarising papers:</strong> Easy to validate if the student has read them. Context grounding (providing the papers) helps significantly. <span class='outcome green'>Good</span></p><p><strong>Identifying themes:</strong> Harder \u2014 requires domain knowledge to judge whether the right themes have been identified. <span class='outcome amber'>Caution</span></p><p><strong>Writing the narrative:</strong> Hardest \u2014 this is a scholarly argument, not just a summary. The student\u2019s intellectual contribution. <span class='outcome red'>Poor AI candidate</span></p><p>All subtasks are text-native, so AI capability fit is good. But AI may not have access to recent or niche papers.</p><p><strong>Key lesson:</strong> A first-year student who hasn\u2019t read deeply in the field cannot validate even the summaries meaningfully. The validateability axis is tied directly to disciplinary expertise.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "amber",
-        outcomeText: "Significant concerns",
-        body: "<p>A thesis is the student\u2019s own scholarly contribution. If the literature review reads as AI-generated, examiners will notice. Institutional policies may apply.</p>",
-        verdict: {
-          type: "mixed",
-          text: "Cautionary, but decomposition helps. Summarising individual papers with context grounding is a strong use case. The narrative arc and thematic synthesis require the student\u2019s own intellectual contribution. The framework correctly identifies which parts are and aren\u2019t suitable."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "green", outcomeText: "Proceed \u2014 any tool", body: "<p>No sensitive data. The papers being reviewed are published. Proceed with any tool.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>A thesis is professional scholarly work. Considered mode applies.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 3 subtasks", body: "<p>\u201cWrite me a literature review\u201d breaks apart into subtasks with very different AI suitability:</p>", subtasks: [ { text: "Summarise individual papers the student has already read", rating: "good" }, { text: "Identify themes and gaps across the literature", rating: "caution" }, { text: "Write the narrative arc that positions the thesis", rating: "poor" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Mixed \u2014 varies by subtask", body: "<p><strong>Summarising papers:</strong> Easy to validate if the student has read them. Context grounding (providing the papers) helps significantly. <span class='outcome green'>Good</span></p><p><strong>Identifying themes:</strong> Harder \u2014 requires domain knowledge to judge whether the right themes have been identified. <span class='outcome amber'>Caution</span></p><p><strong>Writing the narrative:</strong> Hardest \u2014 this is a scholarly argument, not just a summary. <span class='outcome red'>Poor AI candidate</span></p><p><strong>Key lesson:</strong> A first-year student who hasn\u2019t read deeply in the field cannot validate even the summaries meaningfully.</p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "amber", outcomeText: "Significant concerns", body: "<p>A thesis is the student\u2019s own scholarly contribution. If the literature review reads as AI-generated, examiners will notice. Institutional policies may apply.</p>", verdict: { type: "mixed", text: "Cautionary, but decomposition helps. Summarising individual papers with context grounding is a strong use case. The narrative arc and thematic synthesis require the student\u2019s own intellectual contribution." } }
     ]
   },
   {
@@ -461,51 +413,11 @@ const EXAMPLES = [
     role: "Postdoc",
     verdictType: "mixed",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "Sensitive \u2014 local model or de-identify",
-        body: "<p>Pre-publication data with novel compound identifications. Sensitive. Can you use a local model? If yes, proceed. If not, can you strip the novel identifications and work with just spectral patterns? It depends on the task.</p><p><strong>The gate does real work here.</strong> The tooling choice (local vs cloud) carries forward and affects capability downstream.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>This is for a paper. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 4 subtasks",
-        body: "<p>The analysis breaks into subtasks with very different profiles:</p>",
-        subtasks: [
-          { text: "Convert proprietary instrument output to a clean table", rating: "good" },
-          { text: "Identify peaks", rating: "caution" },
-          { text: "Compare against reference databases", rating: "caution" },
-          { text: "Interpret novel findings", rating: "poor" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Mixed \u2014 capability barriers",
-        body: "<p><strong>Format conversion:</strong> Very easy to validate (does the table match the raw data?). But instrument output is often in proprietary formats \u2014 AI capability fit may be poor unless data has been converted first with specialised software. <span class='outcome amber'>Enabler step</span></p><p><strong>Peak identification:</strong> Harder to validate; a wrong identification could be serious. <span class='outcome amber'>Caution</span></p><p><strong>Novel interpretation:</strong> Requires deep expertise. Essentially a judgement call. <span class='outcome red'>Poor AI candidate</span></p><p><strong>Node 1 \u2192 Node 4 interaction:</strong> If routed to a local model by the confidentiality gate, it may be less capable for analytical subtasks than a frontier cloud model would be.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "amber",
-        outcomeText: "Reproducibility matters",
-        body: "<p>The analytical pipeline needs to be documented for reproducibility. Correct compound identification has direct consequences for published claims.</p>",
-        verdict: {
-          type: "mixed",
-          text: "The flow works and surfaces the interaction between confidentiality constraints and AI capability. Format conversion is the enabler for everything else. The confidentiality gate\u2019s tooling choice (local model) may limit what\u2019s possible downstream."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "Sensitive \u2014 local model or de-identify", body: "<p>Pre-publication data with novel compound identifications. Sensitive. Can you use a local model? If yes, proceed. If not, can you strip the novel identifications and work with just spectral patterns?</p><p><strong>The gate does real work here.</strong> The tooling choice carries forward and affects capability downstream.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>This is for a paper. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 4 subtasks", body: "<p>The analysis breaks into subtasks with very different profiles:</p>", subtasks: [ { text: "Convert proprietary instrument output to a clean table", rating: "good" }, { text: "Identify peaks", rating: "caution" }, { text: "Compare against reference databases", rating: "caution" }, { text: "Interpret novel findings", rating: "poor" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Mixed \u2014 capability barriers", body: "<p><strong>Format conversion:</strong> Very easy to validate but instrument output is often in proprietary formats. <span class='outcome amber'>Enabler step</span></p><p><strong>Peak identification:</strong> Harder to validate; wrong identification could be serious. <span class='outcome amber'>Caution</span></p><p><strong>Novel interpretation:</strong> Requires deep expertise. <span class='outcome red'>Poor AI candidate</span></p><p><strong>Node 1 \u2192 Node 4 interaction:</strong> If routed to a local model, it may be less capable for analytical subtasks.</p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "amber", outcomeText: "Reproducibility matters", body: "<p>The analytical pipeline needs to be documented for reproducibility. Correct compound identification has direct consequences for published claims.</p>", verdict: { type: "mixed", text: "The flow surfaces the interaction between confidentiality constraints and AI capability. Format conversion is the enabler for everything else. The confidentiality gate\u2019s tooling choice (local model) may limit what\u2019s possible downstream." } }
     ]
   },
   {
@@ -514,49 +426,11 @@ const EXAMPLES = [
     role: "Grad student",
     verdictType: "negative",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "green",
-        outcomeText: "Proceed \u2014 any tool",
-        body: "<p>No sensitive data involved. Proceed.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered (if sending)",
-        body: "<p>If the student is just exploring what AI produces \u2014 exploratory. If they\u2019re actually going to send the email \u2014 considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "green",
-        outcomeText: "Could decompose, often treated as one task",
-        body: "<p>Could decompose into: (a) research the supervisor\u2019s recent work and interests, (b) draft the email itself. But many students will treat this as a single task.</p>",
-        subtasks: [
-          { text: "Research the supervisor\u2019s work and interests", rating: "good" },
-          { text: "Draft the email itself", rating: "poor" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "green",
-        outcomeText: "Technically favourable",
-        body: "<p><strong>Validateability:</strong> The student can judge whether the email sounds right, but \u201cright\u201d is subjective. Validation is possible but soft.</p><p><strong>AI capability fit:</strong> Text task. AI can do it technically.</p><p>Both axes look reasonable at first glance. But the decisive issue is at node 5.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "red",
-        outcomeText: "High perception risk",
-        body: "<p><strong>This is where the flow really earns its keep.</strong> The perception risk is high. If the supervisor perceives the email as AI-generated \u2014 and experienced academics often can \u2014 it actively undermines the student\u2019s goal.</p><p>An email that\u2019s supposed to demonstrate genuine interest and initiative reads as the opposite if it feels templated. The ethical question is real even if the content is accurate.</p>",
-        verdict: {
-          type: "negative",
-          text: "The responsibility node catches something the other nodes don\u2019t. The task is easy for AI and moderately easy to validate, but the perception and ethical cost is the real issue. A task can pass the technical evaluation and still be a poor AI candidate."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "green", outcomeText: "Proceed \u2014 any tool", body: "<p>No sensitive data involved. Proceed.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered (if sending)", body: "<p>If the student is just exploring what AI produces \u2014 exploratory. If they\u2019re actually going to send the email \u2014 considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "green", outcomeText: "Could decompose, often treated as one task", body: "<p>Could decompose into researching the supervisor\u2019s work and drafting the email. But many students treat this as a single task.</p>", subtasks: [ { text: "Research the supervisor\u2019s work and interests", rating: "good" }, { text: "Draft the email itself", rating: "poor" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "green", outcomeText: "Technically favourable", body: "<p><strong>Validateability:</strong> The student can judge whether the email sounds right, but \u201cright\u201d is subjective.</p><p><strong>AI capability fit:</strong> Text task. AI can do it technically.</p><p>Both axes look reasonable. But the decisive issue is at node 5.</p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "red", outcomeText: "High perception risk", body: "<p><strong>This is where the flow really earns its keep.</strong> If the supervisor perceives the email as AI-generated \u2014 and experienced academics often can \u2014 it actively undermines the student\u2019s goal.</p><p>An email meant to demonstrate genuine interest reads as the opposite if it feels templated.</p>", verdict: { type: "negative", text: "The responsibility node catches something the other nodes don\u2019t. The task passes the technical evaluation but the perception and ethical cost is the real issue." } }
     ]
   },
   {
@@ -565,50 +439,11 @@ const EXAMPLES = [
     role: "Grad student",
     verdictType: "negative",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "green",
-        outcomeText: "Depends on dataset",
-        body: "<p>Depends on the data. Ecological field data \u2014 probably fine. Clinical data \u2014 gate applies. For this example, assume no sensitive data.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>If this is for a paper, considered mode applies.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 3 subtasks",
-        body: "<p>Could decompose into subtasks, but many students will treat this as \u201cwrite me the code\u201d:</p>",
-        subtasks: [
-          { text: "Write the model code", rating: "caution" },
-          { text: "Write diagnostic checks", rating: "caution" },
-          { text: "Interpret the output", rating: "poor" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "red",
-        outcomeText: "Validateability is the critical issue",
-        body: "<p><strong>This is the critical node.</strong> The student can check whether the code <em>runs</em>, but they cannot validate whether the model specification is <em>correct</em> \u2014 whether the random effects structure is appropriate, whether the assumptions are met, whether the results mean what they appear to mean.</p><p><strong>The code running is not the same as the analysis being right.</strong></p><p><strong>AI capability fit:</strong> Good \u2014 AI is strong at code generation.</p><p>A student who has studied mixed-effects models can validate. One who hasn\u2019t, cannot. This is the disciplinary expertise argument in action.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "red",
-        outcomeText: "High stakes",
-        body: "<p>High stakes if a wrong model specification leads to incorrect conclusions in a publication. Reproducibility matters \u2014 was the prompt documented? Was the model choice justified?</p>",
-        verdict: {
-          type: "negative",
-          text: "The flow correctly identifies this as risky despite AI being technically good at the task. Validateability is the decisive axis. The student\u2019s statistical training (or lack thereof) determines whether this is a force multiplier or a liability."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "green", outcomeText: "Depends on dataset", body: "<p>Depends on the data. Ecological field data \u2014 probably fine. Clinical data \u2014 gate applies. For this example, assume no sensitive data.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>If this is for a paper, considered mode applies.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 3 subtasks", body: "<p>Could decompose, but many students treat this as \u201cwrite me the code\u201d:</p>", subtasks: [ { text: "Write the model code", rating: "caution" }, { text: "Write diagnostic checks", rating: "caution" }, { text: "Interpret the output", rating: "poor" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "red", outcomeText: "Validateability is the critical issue", body: "<p><strong>The student can check whether the code <em>runs</em>, but not whether the model specification is <em>correct</em>.</strong> Whether the random effects structure is appropriate, whether the assumptions are met \u2014 these require statistical training.</p><p><strong>The code running is not the same as the analysis being right.</strong></p><p><strong>AI capability fit:</strong> Good \u2014 AI is strong at code generation.</p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "red", outcomeText: "High stakes", body: "<p>High stakes if a wrong model specification leads to incorrect conclusions in a publication. Reproducibility matters \u2014 was the prompt documented?</p>", verdict: { type: "negative", text: "Risky despite AI being technically good at the task. Validateability is the decisive axis. The student\u2019s statistical training determines whether this is a force multiplier or a liability." } }
     ]
   },
   {
@@ -617,52 +452,11 @@ const EXAMPLES = [
     role: "Postdoc",
     verdictType: "mixed",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "Check before uploading",
-        body: "<p>May contain unpublished results. Check before uploading figures or data to a cloud AI.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>Conference presentation. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 5 subtasks",
-        body: "<p>The overall task contains subtasks ranging from excellent to poor AI candidates:</p>",
-        subtasks: [
-          { text: "Outline the talk structure", rating: "good" },
-          { text: "Draft text and bullet points for each slide", rating: "good" },
-          { text: "Build the actual slides in PowerPoint/Keynote", rating: "poor" },
-          { text: "Write speaker notes in presenter\u2019s voice", rating: "poor" },
-          { text: "Create or refine figures", rating: "caution" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Mixed across subtasks",
-        body: "<p><strong>Outlining and drafting:</strong> Easy to validate and text-native. Excellent fit. <span class='outcome green'>Good</span></p><p><strong>Building slides:</strong> Requires GUI interaction. AI can\u2019t do this. <span class='outcome red'>Poor fit</span></p><p><strong>Speaker notes:</strong> Personal voice and delivery style matter. <span class='outcome red'>Poor fit</span></p><p><strong>Figures:</strong> AI can draft code (matplotlib, ggplot) but can\u2019t directly edit slide graphics. <span class='outcome amber'>Depends on tooling</span></p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "amber",
-        outcomeText: "Voice matters for talks",
-        body: "<p>A talk should sound like the presenter. Perception risk if it feels generic. But the structural and content-drafting subtasks carry little responsibility risk.</p>",
-        verdict: {
-          type: "mixed",
-          text: "A strong decomposition example. The flow reveals that the same overall task contains subtasks ranging from excellent to poor AI candidates. Without decomposition, the whole task would get a muddled evaluation."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "Check before uploading", body: "<p>May contain unpublished results. Check before uploading figures or data to a cloud AI.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>Conference presentation. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 5 subtasks", body: "<p>Subtasks ranging from excellent to poor AI candidates:</p>", subtasks: [ { text: "Outline the talk structure", rating: "good" }, { text: "Draft text and bullet points for each slide", rating: "good" }, { text: "Build the actual slides in PowerPoint/Keynote", rating: "poor" }, { text: "Write speaker notes in presenter\u2019s voice", rating: "poor" }, { text: "Create or refine figures", rating: "caution" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Mixed across subtasks", body: "<p><strong>Outlining and drafting:</strong> Easy to validate, text-native. <span class='outcome green'>Good</span></p><p><strong>Building slides:</strong> Requires GUI interaction. <span class='outcome red'>Poor fit</span></p><p><strong>Speaker notes:</strong> Personal voice matters. <span class='outcome red'>Poor fit</span></p><p><strong>Figures:</strong> AI can draft code but can\u2019t edit slide graphics. <span class='outcome amber'>Depends</span></p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "amber", outcomeText: "Voice matters for talks", body: "<p>A talk should sound like the presenter. Perception risk if it feels generic. But the structural subtasks carry little risk.</p>", verdict: { type: "mixed", text: "A strong decomposition example. The same overall task contains subtasks ranging from excellent to poor AI candidates." } }
     ]
   },
   {
@@ -671,53 +465,11 @@ const EXAMPLES = [
     role: "Faculty",
     verdictType: "mixed",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "Sensitive \u2014 scope carefully",
-        body: "<p>Preliminary data may be unpublished. The research idea itself is sensitive \u2014 you don\u2019t want your unfunded proposal concept ingested into a training set that a competitor could later query.</p><p>Local model or very careful scoping of what\u2019s shared with cloud AI.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>Unambiguously considered. A grant proposal is high-stakes professional work.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 6 subtasks",
-        body: "<p>A grant proposal is a large composite task with subtasks spanning the full range:</p>",
-        subtasks: [
-          { text: "Literature synthesis to establish the gap", rating: "good" },
-          { text: "Articulating the central hypothesis", rating: "poor" },
-          { text: "Describing the research plan and methods", rating: "caution" },
-          { text: "Writing the broader impacts section", rating: "caution" },
-          { text: "Drafting the budget justification", rating: "good" },
-          { text: "Compliance with solicitation formatting/content", rating: "good" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Mixed \u2014 core ideas must be the PI\u2019s",
-        body: "<p><strong>Literature synthesis:</strong> Validateable if the PI knows the field. Context grounding (providing key papers) helps significantly. <span class='outcome green'>Good</span></p><p><strong>Central hypothesis:</strong> This is the PI\u2019s core intellectual contribution. Even if AI drafts something, the PI must judge whether it captures their actual idea \u2014 not about correctness but about <em>whether this is what I mean</em>. <span class='outcome red'>Poor AI candidate</span></p><p><strong>Budget justification and compliance:</strong> Straightforward, clear right answers. <span class='outcome green'>Good</span></p><p>All subtasks are text-native, so capability fit is generally good.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "red",
-        outcomeText: "High responsibility",
-        body: "<p>Grant proposals carry the PI\u2019s name and reputation. Reviewers are experienced scientists who may detect AI-generated prose. The central hypothesis and research plan must be genuinely the PI\u2019s intellectual contribution. NSF and NIH are increasingly requiring disclosure of AI use.</p>",
-        verdict: {
-          type: "mixed",
-          text: "Strongly decomposition-dependent. Budget justification and compliance checking are excellent AI candidates. Literature synthesis works with context grounding. But the hypothesis and research plan are where the PI\u2019s expertise is irreplaceable. Disclosure requirements are tightening."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "Sensitive \u2014 scope carefully", body: "<p>Preliminary data may be unpublished. The research idea itself is sensitive \u2014 you don\u2019t want your unfunded proposal ingested into a training set a competitor could query.</p><p>Local model or very careful scoping of what\u2019s shared with cloud AI.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>Unambiguously considered. A grant proposal is high-stakes professional work.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 6 subtasks", body: "<p>A large composite task spanning the full range:</p>", subtasks: [ { text: "Literature synthesis to establish the gap", rating: "good" }, { text: "Articulating the central hypothesis", rating: "poor" }, { text: "Describing the research plan and methods", rating: "caution" }, { text: "Writing the broader impacts section", rating: "caution" }, { text: "Drafting the budget justification", rating: "good" }, { text: "Compliance with solicitation formatting/content", rating: "good" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Mixed \u2014 core ideas must be the PI\u2019s", body: "<p><strong>Literature synthesis:</strong> Validateable with context grounding. <span class='outcome green'>Good</span></p><p><strong>Central hypothesis:</strong> The PI\u2019s core intellectual contribution. Not about correctness but about <em>whether this is what I mean</em>. <span class='outcome red'>Poor AI candidate</span></p><p><strong>Budget and compliance:</strong> Straightforward, clear right answers. <span class='outcome green'>Good</span></p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "red", outcomeText: "High responsibility", body: "<p>Grant proposals carry the PI\u2019s name and reputation. Reviewers may detect AI-generated prose. NSF and NIH increasingly require disclosure of AI use.</p>", verdict: { type: "mixed", text: "Strongly decomposition-dependent. Budget justification and compliance are excellent AI candidates. The hypothesis and research plan are where the PI\u2019s expertise is irreplaceable." } }
     ]
   },
   {
@@ -726,52 +478,11 @@ const EXAMPLES = [
     role: "Faculty",
     verdictType: "negative",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "red",
-        outcomeText: "Confidential \u2014 local model or stop",
-        body: "<p>The manuscript is confidential \u2014 unpublished, shared under the expectation of reviewer confidentiality. <strong>Uploading it to a cloud AI arguably violates that confidentiality.</strong> Many journals now explicitly prohibit this.</p><p>Local model or nothing.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>Peer review is professional scholarly work. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 5 subtasks",
-        body: "<p>Peer review decomposes, but most subtasks are problematic:</p>",
-        subtasks: [
-          { text: "Summarise the paper\u2019s claims and methods", rating: "caution" },
-          { text: "Check statistical and methodological rigour", rating: "poor" },
-          { text: "Evaluate novelty and significance", rating: "poor" },
-          { text: "Write constructive feedback", rating: "poor" },
-          { text: "Check references and formatting compliance", rating: "good" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Text-native but constrained to local models",
-        body: "<p><strong>Summarising:</strong> Easy to validate if the reviewer has read the paper. <span class='outcome green'>Validateable</span></p><p><strong>Statistical checking:</strong> Depends entirely on the reviewer\u2019s expertise. If they can\u2019t validate AI\u2019s assessment, it\u2019s dangerous. <span class='outcome red'>Risky</span></p><p><strong>Novelty/significance:</strong> Pure judgement call requiring deep domain knowledge. <span class='outcome red'>Poor</span></p><p><strong>Capability fit:</strong> Text-native, but constrained to local models by node 1. Less capable models may struggle with nuanced assessment.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "red",
-        outcomeText: "Fundamental integrity issue",
-        body: "<p><strong>This is perhaps the strongest responsibility example in the entire set.</strong> Peer review is built on the premise that an expert human is evaluating the work. AI-generated reviews undermine the entire system, even if the content is accurate.</p><p>Many journals now explicitly prohibit AI use in peer review. The ethical cost is not hypothetical \u2014 it\u2019s an integrity violation with potential professional consequences.</p>",
-        verdict: {
-          type: "negative",
-          text: "Poor AI use case. The confidentiality gate and the responsibility node both independently flag serious issues. Reference/formatting checks are the only defensible subtask. Using AI for the substantive review is ethically problematic regardless of output quality. A paradigmatic case where the responsibility node is decisive on its own."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "red", outcomeText: "Confidential \u2014 local model or stop", body: "<p>The manuscript is confidential \u2014 unpublished, shared under the expectation of reviewer confidentiality. <strong>Uploading it to a cloud AI arguably violates that confidentiality.</strong> Many journals now explicitly prohibit this.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>Peer review is professional scholarly work. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 5 subtasks", body: "<p>Peer review decomposes, but most subtasks are problematic:</p>", subtasks: [ { text: "Summarise the paper\u2019s claims and methods", rating: "caution" }, { text: "Check statistical and methodological rigour", rating: "poor" }, { text: "Evaluate novelty and significance", rating: "poor" }, { text: "Write constructive feedback", rating: "poor" }, { text: "Check references and formatting compliance", rating: "good" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Text-native but constrained to local models", body: "<p><strong>Summarising:</strong> Validateable if the reviewer has read the paper. <span class='outcome green'>OK</span></p><p><strong>Statistical checking:</strong> Depends on expertise. If the reviewer can\u2019t validate AI\u2019s assessment, it\u2019s dangerous. <span class='outcome red'>Risky</span></p><p><strong>Novelty/significance:</strong> Pure judgement call requiring deep domain knowledge. <span class='outcome red'>Poor</span></p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "red", outcomeText: "Fundamental integrity issue", body: "<p><strong>Perhaps the strongest responsibility example in the entire set.</strong> Peer review is built on the premise that an expert human is evaluating the work. AI-generated reviews undermine the entire system, even if accurate.</p><p>Many journals now explicitly prohibit AI use in peer review.</p>", verdict: { type: "negative", text: "Poor AI use case. The confidentiality gate and the responsibility node both independently flag serious issues. Reference/formatting checks are the only defensible subtask. A paradigmatic case where the responsibility node is decisive on its own." } }
     ]
   },
   {
@@ -780,52 +491,11 @@ const EXAMPLES = [
     role: "Faculty",
     verdictType: "positive",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "Moderate sensitivity",
-        body: "<p>The manuscript is the PI\u2019s own work, but it\u2019s under review and unpublished. Moderate sensitivity \u2014 the PI may be less concerned than with someone else\u2019s manuscript, but pre-publication data is still involved.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>Responding to reviews is professional scholarly work. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "green",
-        outcomeText: "Decomposes well",
-        body: "<p>This task decomposes into subtasks that are mostly good AI candidates:</p>",
-        subtasks: [
-          { text: "Organise and categorise reviewer comments", rating: "good" },
-          { text: "Draft point-by-point responses", rating: "good" },
-          { text: "Revise the manuscript text", rating: "caution" },
-          { text: "Run additional analyses reviewers requested", rating: "caution" },
-          { text: "Write a cover letter to the editor", rating: "good" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "green",
-        outcomeText: "Mostly favourable",
-        body: "<p><strong>Organising comments:</strong> Very easy to validate \u2014 it\u2019s just reorganisation. <span class='outcome green'>Good</span></p><p><strong>Drafting responses:</strong> The PI can validate in their own field readily. Context grounding works very well here \u2014 provide the original manuscript and the reviews. <span class='outcome green'>Good with context grounding</span></p><p><strong>Revising text:</strong> Validateable but requires careful reading. <span class='outcome amber'>Caution</span></p><p><strong>Additional analyses:</strong> Same issues as the statistical model example \u2014 depends on expertise. <span class='outcome amber'>Caution</span></p><p>All subtasks are text-native. Good capability fit.</p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "amber",
-        outcomeText: "Moderate concerns",
-        body: "<p>The responses represent the PI\u2019s scientific engagement with reviewers. Editors and reviewers can sometimes detect generic AI-flavoured responses. Transparency norms are evolving.</p><p><strong>Key contrast with peer review (Example 8):</strong> Both involve reviewer\u2013author interactions, but the ethical landscape is completely different. Reviewing someone else\u2019s work with AI is a confidentiality and integrity violation. Using AI to help respond to reviews of your own work is a productivity tool \u2014 provided the responses are genuine and the PI validates them.</p>",
-        verdict: {
-          type: "positive",
-          text: "Generally a reasonable AI use case, especially with context grounding. Organising comments and drafting responses with the manuscript as context are strong use cases. The contrast with Example 8 (peer review) is pedagogically valuable \u2014 same domain, completely different framework outcomes."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "Moderate sensitivity", body: "<p>The PI\u2019s own manuscript, but under review and unpublished. Moderate sensitivity \u2014 pre-publication data is involved.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>Responding to reviews is professional scholarly work. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "green", outcomeText: "Decomposes well", body: "<p>Mostly good AI candidates:</p>", subtasks: [ { text: "Organise and categorise reviewer comments", rating: "good" }, { text: "Draft point-by-point responses", rating: "good" }, { text: "Revise the manuscript text", rating: "caution" }, { text: "Run additional analyses reviewers requested", rating: "caution" }, { text: "Write a cover letter to the editor", rating: "good" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "green", outcomeText: "Mostly favourable", body: "<p><strong>Organising comments:</strong> Very easy to validate. <span class='outcome green'>Good</span></p><p><strong>Drafting responses:</strong> Context grounding works very well \u2014 provide the manuscript and reviews. <span class='outcome green'>Good</span></p><p><strong>Revising text:</strong> Requires careful reading. <span class='outcome amber'>Caution</span></p><p>All subtasks are text-native. Good capability fit.</p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "amber", outcomeText: "Moderate concerns", body: "<p>The responses represent the PI\u2019s scientific engagement with reviewers. Transparency norms are evolving.</p><p><strong>Key contrast with Example 8:</strong> Reviewing someone else\u2019s work with AI is an integrity violation. Responding to reviews of your own work with AI is a productivity tool.</p>", verdict: { type: "positive", text: "Generally a reasonable AI use case with context grounding. The contrast with peer review (Example 8) is pedagogically valuable \u2014 same domain, completely different framework outcomes." } }
     ]
   },
   {
@@ -834,52 +504,11 @@ const EXAMPLES = [
     role: "Faculty",
     verdictType: "mixed",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "May involve sensitive descriptions",
-        body: "<p>The application may describe sensitive populations, procedures, and data collection plans. Depending on the study, it could involve identifiable information about participants even at the protocol stage. Consider carefully what\u2019s shared.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>IRB applications are formal regulatory documents. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "amber",
-        outcomeText: "Decomposes into 5 subtasks",
-        body: "<p>A mix of boilerplate, custom content, and a clear capability barrier:</p>",
-        subtasks: [
-          { text: "Draft standard boilerplate sections (data storage, consent withdrawal, risk mitigation)", rating: "good" },
-          { text: "Describe the specific study procedures", rating: "good" },
-          { text: "Draft consent forms", rating: "caution" },
-          { text: "Navigate the institutional IRB submission portal", rating: "poor" },
-          { text: "Ensure compliance with federal regulations", rating: "caution" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "amber",
-        outcomeText: "Text tasks good; portal is a barrier",
-        body: "<p><strong>Boilerplate and study description:</strong> Highly validateable. The PI knows the standards and designed the study. <span class='outcome green'>Good</span></p><p><strong>Consent forms:</strong> Validateable but language must be precise and legally adequate. <span class='outcome amber'>Caution</span></p><p><strong>IRB portal:</strong> Complex institutional web interface with authentication, multi-step workflows, dropdown menus, and conditional logic. AI can\u2019t navigate these. <span class='outcome red'>Capability barrier</span></p><p><strong>Regulatory compliance:</strong> Harder to validate unless the PI has regulatory expertise. Errors have real consequences. <span class='outcome amber'>Depends on PI expertise</span></p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "red",
-        outcomeText: "High stakes",
-        body: "<p>IRB errors can delay research by months, and inadequate consent procedures have serious ethical and legal consequences. Regulatory compliance is not an area where \u201cclose enough\u201d is acceptable.</p>",
-        verdict: {
-          type: "mixed",
-          text: "Mixed, and a strong illustration of the AI capability fit axis. Boilerplate drafting is a good AI candidate \u2014 high validateability, text-native, saves real time. The IRB portal is a clear capability barrier. Even \u201cboring\u201d administrative tasks have real stakes."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "May involve sensitive descriptions", body: "<p>The application may describe sensitive populations, procedures, and data collection plans. Consider carefully what\u2019s shared.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>IRB applications are formal regulatory documents. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "amber", outcomeText: "Decomposes into 5 subtasks", body: "<p>A mix of boilerplate, custom content, and a capability barrier:</p>", subtasks: [ { text: "Draft standard boilerplate (data storage, consent withdrawal, risk mitigation)", rating: "good" }, { text: "Describe the specific study procedures", rating: "good" }, { text: "Draft consent forms", rating: "caution" }, { text: "Navigate the institutional IRB submission portal", rating: "poor" }, { text: "Ensure compliance with federal regulations", rating: "caution" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "amber", outcomeText: "Text tasks good; portal is a barrier", body: "<p><strong>Boilerplate and procedures:</strong> Highly validateable. <span class='outcome green'>Good</span></p><p><strong>Consent forms:</strong> Language must be precise and legally adequate. <span class='outcome amber'>Caution</span></p><p><strong>IRB portal:</strong> Complex institutional web interface. AI can\u2019t navigate these. <span class='outcome red'>Capability barrier</span></p><p><strong>Regulatory compliance:</strong> Depends on PI expertise. <span class='outcome amber'>Caution</span></p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "red", outcomeText: "High stakes", body: "<p>IRB errors can delay research by months. Inadequate consent procedures have serious ethical and legal consequences. \u201cClose enough\u201d is not acceptable.</p>", verdict: { type: "mixed", text: "Mixed. Boilerplate drafting is a good AI candidate. The IRB portal is a clear capability barrier. Even \u201cboring\u201d administrative tasks have real stakes." } }
     ]
   },
   {
@@ -888,132 +517,29 @@ const EXAMPLES = [
     role: "Faculty",
     verdictType: "positive",
     nodes: [
-      {
-        label: "Node 1",
-        heading: "Data Confidentiality Gate",
-        outcome: "amber",
-        outcomeText: "Moderately sensitive",
-        body: "<p>Contains details about ongoing, unpublished research. Moderately sensitive \u2014 the funder expects a report on work in progress. Lower sensitivity than a competing proposal, but the PI may not want it in a training set.</p>"
-      },
-      {
-        label: "Node 2",
-        heading: "Exploratory vs. Considered",
-        outcome: "amber",
-        outcomeText: "Considered mode",
-        body: "<p>Official document to a funder. Considered mode.</p>"
-      },
-      {
-        label: "Node 3",
-        heading: "Task Decomposition",
-        outcome: "green",
-        outcomeText: "Decomposes into mostly good subtasks",
-        body: "<p>Most subtasks are factual and well-suited to AI, especially with context grounding:</p>",
-        subtasks: [
-          { text: "Summarise research progress against original aims", rating: "good" },
-          { text: "List publications, presentations, and personnel changes", rating: "good" },
-          { text: "Describe changes to the research plan", rating: "good" },
-          { text: "Write the next-year plan", rating: "caution" },
-          { text: "Compile budget expenditure summaries", rating: "good" }
-        ]
-      },
-      {
-        label: "Node 4",
-        heading: "Validateability + AI Capability Fit",
-        outcome: "green",
-        outcomeText: "Mostly favourable",
-        body: "<p><strong>Progress summary:</strong> Highly validateable if the PI provides their own notes, lab meeting slides, or manuscript drafts as context. Classic context-grounding use case. <span class='outcome green'>Good</span></p><p><strong>Publications and personnel:</strong> Factual list with clear right answers. <span class='outcome green'>Good</span></p><p><strong>Next-year plan:</strong> The PI must judge whether it reflects their actual plans. <span class='outcome amber'>PI judgement needed</span></p><p><strong>Budget:</strong> Factual, verifiable against financial records. May need export from institutional finance system first (capability barrier for extraction, but once exported, AI handles it well). <span class='outcome green'>Good</span></p>"
-      },
-      {
-        label: "Node 5",
-        heading: "Responsibility",
-        outcome: "green",
-        outcomeText: "Moderate \u2014 accuracy matters, low perception risk",
-        body: "<p>Progress reports are official documents. Accuracy matters, but the tone is more factual and administrative than a grant proposal. Less perception risk \u2014 the funder is checking whether the money was well spent, not evaluating intellectual creativity.</p>",
-        verdict: {
-          type: "positive",
-          text: "Strong AI use case, especially with context grounding. The PI has all the source material \u2014 their own notes, publications, financial data. Most subtasks are factual, validateable, and text-native. AI demonstrably saves hours of tedious but important writing, with low risk if the PI reviews the output."
-        }
-      }
+      { label: "Node 1", heading: "Data Confidentiality Gate", outcome: "amber", outcomeText: "Moderately sensitive", body: "<p>Contains details about ongoing, unpublished research. Lower sensitivity than a competing proposal, but the PI may not want it in a training set.</p>" },
+      { label: "Node 2", heading: "Exploratory vs. Considered", outcome: "amber", outcomeText: "Considered mode", body: "<p>Official document to a funder. Considered mode.</p>" },
+      { label: "Node 3", heading: "Task Decomposition", outcome: "green", outcomeText: "Decomposes into mostly good subtasks", body: "<p>Most subtasks are factual and well-suited to AI:</p>", subtasks: [ { text: "Summarise research progress against original aims", rating: "good" }, { text: "List publications, presentations, and personnel changes", rating: "good" }, { text: "Describe changes to the research plan", rating: "good" }, { text: "Write the next-year plan", rating: "caution" }, { text: "Compile budget expenditure summaries", rating: "good" } ] },
+      { label: "Node 4", heading: "Validateability + AI Capability Fit", outcome: "green", outcomeText: "Mostly favourable", body: "<p><strong>Progress summary:</strong> Highly validateable with context grounding (provide notes, slides, drafts). <span class='outcome green'>Good</span></p><p><strong>Publications/personnel:</strong> Factual list, clear right answers. <span class='outcome green'>Good</span></p><p><strong>Next-year plan:</strong> PI must judge whether it reflects actual plans. <span class='outcome amber'>PI judgement</span></p><p><strong>Budget:</strong> Factual, verifiable against records. <span class='outcome green'>Good</span></p>" },
+      { label: "Node 5", heading: "Responsibility", outcome: "green", outcomeText: "Low perception risk", body: "<p>Accuracy matters, but the tone is factual and administrative. The funder is checking whether the money was well spent, not evaluating intellectual creativity.</p>", verdict: { type: "positive", text: "Strong AI use case with context grounding. The PI has all the source material. Most subtasks are factual, validateable, and text-native. AI saves hours of tedious but important writing with low risk." } }
     ]
   }
 ];
 
-const NODE_NAMES = [
-  "Data Confidentiality",
-  "Mode",
-  "Decomposition",
-  "Axes",
-  "Responsibility"
-];
-
-let currentExample = null;
-let currentNode = 0;
-
-const grid = document.getElementById("exampleGrid");
-const flowTitle = document.getElementById("flowTitle");
-const flowBody = document.getElementById("flowBody");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-
-function buildGrid() {
-  for (const ex of EXAMPLES) {
-    const card = document.createElement("div");
-    card.className = "example-card";
-    card.dataset.id = ex.id;
-    card.innerHTML = `<div class="card-num">Example ${ex.id}</div><div class="card-title">${esc(ex.title)}</div><div class="card-role">${esc(ex.role)}</div>`;
-    card.addEventListener("click", () => selectExample(ex.id));
-    grid.appendChild(card);
-  }
+// Build dropdown
+const select = document.getElementById("exampleSelect");
+for (const ex of EXAMPLES) {
+  const opt = document.createElement("option");
+  opt.value = ex.id;
+  opt.textContent = `${ex.id}. ${ex.title} (${ex.role})`;
+  select.appendChild(opt);
 }
 
-function selectExample(id) {
-  currentExample = EXAMPLES.find(e => e.id === id);
-  currentNode = 0;
-  document.querySelectorAll(".example-card").forEach(c => {
-    c.classList.toggle("active", Number(c.dataset.id) === id);
-  });
-  renderNode();
-}
-
-function renderNode() {
-  if (!currentExample) return;
-  const nodes = currentExample.nodes;
-  const n = nodes[currentNode];
-
-  prevBtn.disabled = currentNode === 0;
-  nextBtn.disabled = false;
-  nextBtn.textContent = currentNode === nodes.length - 1 ? "Done" : "Next";
-  flowTitle.textContent = currentExample.title;
-
-  let html = "";
-
-  // progress pips
-  html += '<div class="node-progress">';
-  for (let i = 0; i < nodes.length; i++) {
-    const cls = i < currentNode ? "done" : i === currentNode ? "current" : "";
-    html += `<div class="node-pip ${cls}"></div>`;
-  }
-  html += "</div>";
-
-  html += `<div class="node-label">${esc(n.label)} of 5</div>`;
-  html += `<div class="node-heading">${esc(n.heading)}</div>`;
-  html += `<span class="outcome ${n.outcome}">${esc(n.outcomeText)}</span>`;
-  html += `<div class="node-text">${n.body}</div>`; // body contains trusted HTML
-
-  if (n.subtasks) {
-    html += '<ul class="subtask-list">';
-    for (const st of n.subtasks) {
-      html += `<li class="${st.rating}"><span class="subtask-label">${esc(st.text)}</span></li>`;
-    }
-    html += "</ul>";
-  }
-
-  if (n.verdict) {
-    html += `<div class="verdict-box ${n.verdict.type}"><div class="verdict-label">Verdict</div><div class="verdict-text">${esc(n.verdict.text)}</div></div>`;
-  }
-
-  flowBody.innerHTML = html;
-}
+select.addEventListener("change", () => {
+  const id = Number(select.value);
+  if (id) render(EXAMPLES.find(e => e.id === id));
+  else renderEmpty();
+});
 
 function esc(s) {
   const el = document.createElement("span");
@@ -1021,31 +547,104 @@ function esc(s) {
   return el.innerHTML;
 }
 
-prevBtn.addEventListener("click", () => {
-  if (currentNode > 0) {
-    currentNode--;
-    renderNode();
+function buildNodeCard(n, extraClass) {
+  let html = `<div class="node-card border-${n.outcome} ${extraClass || ""}">`;
+  html += `<div class="node-num">${esc(n.label)}</div>`;
+  html += `<div class="node-title">${esc(n.heading)}</div>`;
+  html += `<span class="outcome ${n.outcome}">${esc(n.outcomeText)}</span>`;
+  html += `<div class="node-body">${n.body}</div>`;
+  if (n.subtasks) {
+    html += '<ul class="subtask-list">';
+    for (const st of n.subtasks) {
+      html += `<li class="${st.rating}">${esc(st.text)}</li>`;
+    }
+    html += "</ul>";
   }
-});
-
-nextBtn.addEventListener("click", () => {
-  if (!currentExample) return;
-  if (currentNode < currentExample.nodes.length - 1) {
-    currentNode++;
-    renderNode();
-  } else {
-    // "Done" — reset to card selection
-    currentExample = null;
-    currentNode = 0;
-    flowTitle.textContent = "Select an example above";
-    flowBody.innerHTML = '<div class="placeholder">Choose another task from the grid to compare how different tasks flow through the framework.</div>';
-    prevBtn.disabled = true;
-    nextBtn.disabled = true;
-    document.querySelectorAll(".example-card").forEach(c => c.classList.remove("active"));
+  if (n.verdict) {
+    html += `<div class="verdict-box ${n.verdict.type}"><div class="verdict-label">Verdict</div><div>${esc(n.verdict.text)}</div></div>`;
   }
-});
+  html += "</div>";
+  return html;
+}
 
-buildGrid();
+function buildEmptyCard(label, heading) {
+  return `<div class="node-card empty"><div class="node-num">${esc(label)}</div><div class="node-title">${esc(heading)}</div><div class="node-body">Select an example task above to see this node\u2019s evaluation.</div></div>`;
+}
+
+function render(ex) {
+  const d = document.getElementById("diamond");
+  const n = ex.nodes; // [0]=node1, [1]=node2, [2]=node3, [3]=node4, [4]=node5
+
+  let html = "";
+
+  // Node 1: top center
+  html += `<div style="width:100%;max-width:600px;">${buildNodeCard(n[0], "top-node")}</div>`;
+
+  // Connector down
+  html += '<div class="connector"></div>';
+
+  // Node 2: center
+  html += `<div style="width:100%;max-width:600px;">${buildNodeCard(n[1])}</div>`;
+
+  // Fork connector
+  html += '<div class="connector-fork"><div class="connector-fork-down-left"></div><div class="connector-fork-down-right"></div></div>';
+
+  // Split row: left = exploratory label, right = nodes 3+4
+  html += '<div class="split-row">';
+
+  // Left: exploratory path
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += '<div class="node-card" style="border-style:dashed;text-align:center;">';
+  html += '<div class="node-num">Exploratory path</div>';
+  html += '<div class="node-title">Lighter evaluation</div>';
+  html += '<div class="node-body"><p>In exploratory mode, you might try things that are hard to validate or that AI isn\u2019t well suited for \u2014 because learning is the point.</p><p>The axes (nodes 3\u20134) can be applied less rigorously. But responsibility (node 5) still applies fully.</p></div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Right: considered path (nodes 3 + 4)
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += buildNodeCard(n[2]);
+  html += '<div class="connector" style="height:8px;"></div>';
+  html += buildNodeCard(n[3]);
+  html += '</div>';
+
+  html += '</div>'; // end split-row
+
+  // Merge connector
+  html += '<div class="connector-merge"><div class="connector-merge-up-left"></div><div class="connector-merge-up-right"></div></div>';
+
+  // Node 5: bottom center
+  html += `<div style="width:100%;max-width:600px;">${buildNodeCard(n[4], "bottom-node")}</div>`;
+
+  d.innerHTML = html;
+}
+
+function renderEmpty() {
+  const d = document.getElementById("diamond");
+  let html = "";
+
+  html += `<div style="width:100%;max-width:600px;">${buildEmptyCard("Node 1", "Data Confidentiality Gate")}</div>`;
+  html += '<div class="connector"></div>';
+  html += `<div style="width:100%;max-width:600px;">${buildEmptyCard("Node 2", "Exploratory vs. Considered")}</div>`;
+  html += '<div class="connector-fork"><div class="connector-fork-down-left"></div><div class="connector-fork-down-right"></div></div>';
+  html += '<div class="split-row">';
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += '<div class="node-card empty" style="border-style:dashed;text-align:center;"><div class="node-num">Exploratory path</div><div class="node-title">Lighter evaluation</div><div class="node-body">Select an example to see this path.</div></div>';
+  html += '</div>';
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += buildEmptyCard("Node 3", "Task Decomposition");
+  html += '<div class="connector" style="height:8px;"></div>';
+  html += buildEmptyCard("Node 4", "Validateability + AI Capability Fit");
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="connector-merge"><div class="connector-merge-up-left"></div><div class="connector-merge-up-right"></div></div>';
+  html += `<div style="width:100%;max-width:600px;">${buildEmptyCard("Node 5", "Responsibility")}</div>`;
+
+  d.innerHTML = html;
+}
+
+// Initial empty state
+renderEmpty();
 </script>
 </body>
 </html>
