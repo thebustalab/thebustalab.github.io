@@ -1,0 +1,297 @@
+/*
+    Blog — Tufte-inspired layout for thebustalab.github.io
+    Sits on top of main.css; uses the site's existing palette and typography.
+*/
+
+/* ---- Article layout ---- */
+
+.blog-article {
+    max-width: 54rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem 1.5rem;
+    position: relative;
+}
+
+/* ---- Hero image ---- */
+
+.blog-hero {
+    width: 100%;
+    max-height: 28rem;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+}
+
+.blog-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* ---- Title block ---- */
+
+.blog-title-block {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    padding-bottom: 1.5rem;
+}
+
+.blog-title-block h1 {
+    font-size: 2.4rem;
+    line-height: 1.2;
+    color: #000;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.blog-title-block .blog-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #555;
+    margin-bottom: 0.75rem;
+}
+
+.blog-title-block .blog-meta {
+    font-size: 0.85rem;
+    color: #999;
+    letter-spacing: 0.03em;
+}
+
+.blog-title-block .blog-meta a {
+    color: #8a4680;
+}
+
+/* ---- Body text ---- */
+
+.blog-body {
+    position: relative;
+}
+
+.blog-body p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #444;
+    margin-bottom: 1.4rem;
+}
+
+.blog-body h2 {
+    display: block;
+    font-size: 1.6rem;
+    color: #000;
+    margin: 2.5rem 0 1rem 0;
+}
+
+.blog-body h3 {
+    font-size: 1.25rem;
+    color: #000;
+    margin: 2rem 0 0.75rem 0;
+}
+
+.blog-body a {
+    color: #8a4680;
+    border-bottom: 1px solid rgba(138, 70, 128, 0.3);
+    text-decoration: none;
+}
+
+.blog-body a:hover {
+    border-bottom-color: #8a4680;
+}
+
+.blog-body blockquote {
+    border-left: 3px solid #8a4680;
+    margin: 1.5rem 0;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    font-style: italic;
+    color: #555;
+}
+
+.blog-body ul,
+.blog-body ol {
+    margin: 0 0 1.4rem 1.5rem;
+    list-style: disc;
+    color: #444;
+}
+
+.blog-body ol {
+    list-style: decimal;
+}
+
+.blog-body li {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 0.4rem;
+}
+
+.blog-body figure {
+    margin: 2rem 0;
+}
+
+.blog-body figure img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.blog-body figcaption {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 0.5rem;
+}
+
+/* ---- Margin notes (Tufte-style) ---- */
+
+.blog-body .margin-note {
+    float: right;
+    clear: right;
+    width: 14rem;
+    margin-right: -16rem;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #777;
+    position: relative;
+}
+
+.blog-body .margin-note::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: #8a4680;
+    margin-bottom: 0.4rem;
+    opacity: 0.5;
+}
+
+/* Superscript marker in body text that links to a margin note */
+.blog-body .margin-ref {
+    font-size: 0.75em;
+    vertical-align: super;
+    line-height: 0;
+    color: #8a4680;
+    cursor: default;
+    font-weight: 600;
+}
+
+/* ---- Footnotes section ---- */
+
+.blog-footnotes {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+}
+
+.blog-footnotes h3 {
+    font-size: 1rem;
+    color: #000;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.blog-footnotes ol {
+    list-style: decimal;
+    margin-left: 1.5rem;
+    color: #666;
+}
+
+.blog-footnotes li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+}
+
+.blog-footnotes a {
+    color: #8a4680;
+}
+
+/* ---- Blog index (listing page) ---- */
+
+.blog-listing {
+    max-width: 54rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem 1.5rem;
+}
+
+.blog-listing-item {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.blog-listing-item:first-child {
+    padding-top: 0;
+}
+
+.blog-listing-thumb {
+    flex: 0 0 12rem;
+    overflow: hidden;
+}
+
+.blog-listing-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.blog-listing-text h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+}
+
+.blog-listing-text h3 a {
+    color: #000;
+    text-decoration: none;
+}
+
+.blog-listing-text h3 a:hover {
+    color: #8a4680;
+}
+
+.blog-listing-text .blog-meta {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.03em;
+}
+
+.blog-listing-text p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: #666;
+}
+
+/* ---- Responsive: collapse margin notes into inline on smaller screens ---- */
+
+@media screen and (max-width: 1280px) {
+    .blog-body .margin-note {
+        float: none;
+        width: 100%;
+        margin: 0.75rem 0 1.25rem 0;
+        padding: 0.75rem 1rem;
+        background: #f9f6f8;
+        border-left: 3px solid #8a4680;
+        font-size: 0.88rem;
+    }
+
+    .blog-body .margin-note::before {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    .blog-title-block h1 {
+        font-size: 1.7rem;
+    }
+
+    .blog-listing-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .blog-listing-thumb {
+        flex: none;
+        width: 100%;
+    }
+}

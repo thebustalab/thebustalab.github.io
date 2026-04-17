@@ -560,11 +560,14 @@ function buildNodeCard(n, extraClass) {
     }
     html += "</ul>";
   }
-  if (n.verdict) {
-    html += `<div class="verdict-box ${n.verdict.type}"><div class="verdict-label">Verdict</div><div>${esc(n.verdict.text)}</div></div>`;
-  }
+  // verdict is rendered separately below node 5
   html += "</div>";
   return html;
+}
+
+function buildVerdictCard(verdict) {
+  if (!verdict) return "";
+  return `<div class="verdict-box ${verdict.type}" style="max-width:600px;width:100%;"><div class="verdict-label">Verdict</div><div>${esc(verdict.text)}</div></div>`;
 }
 
 function buildEmptyCard(label, heading) {
@@ -592,17 +595,19 @@ function render(ex) {
   // Split row: left = exploratory label, right = nodes 3+4
   html += '<div class="split-row">';
 
-  // Left: exploratory path
-  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  // Left: exploratory path — card + continuous line filling remaining space
+  html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;">';
   html += '<div class="node-card" style="border-style:dashed;text-align:center;">';
   html += '<div class="node-num">Exploratory path</div>';
   html += '<div class="node-title">Lighter evaluation</div>';
   html += '<div class="node-body"><p>In exploratory mode, you might try things that are hard to validate or that AI isn\u2019t well suited for \u2014 because learning is the point.</p><p>The axes (nodes 3\u20134) can be applied less rigorously. But responsibility (node 5) still applies fully.</p></div>';
   html += '</div>';
+  // Continuous line filling the gap down to the merge point
+  html += '<div style="flex:1;width:2px;min-height:20px;background:var(--line);"></div>';
   html += '</div>';
 
   // Right: considered path (nodes 3 + 4)
-  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">';
   html += buildNodeCard(n[2]);
   html += '<div class="connector" style="height:8px;"></div>';
   html += buildNodeCard(n[3]);
@@ -616,6 +621,13 @@ function render(ex) {
   // Node 5: bottom center
   html += `<div style="width:100%;max-width:600px;">${buildNodeCard(n[4], "bottom-node")}</div>`;
 
+  // Verdict below node 5
+  const verdict = n[4].verdict;
+  if (verdict) {
+    html += '<div class="connector"></div>';
+    html += buildVerdictCard(verdict);
+  }
+
   d.innerHTML = html;
 }
 
@@ -628,10 +640,11 @@ function renderEmpty() {
   html += `<div style="width:100%;max-width:600px;">${buildEmptyCard("Node 2", "Exploratory vs. Considered")}</div>`;
   html += '<div class="connector-fork"><div class="connector-fork-down-left"></div><div class="connector-fork-down-right"></div></div>';
   html += '<div class="split-row">';
-  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;">';
   html += '<div class="node-card empty" style="border-style:dashed;text-align:center;"><div class="node-num">Exploratory path</div><div class="node-title">Lighter evaluation</div><div class="node-body">Select an example to see this path.</div></div>';
+  html += '<div style="flex:1;width:2px;min-height:20px;background:var(--line);"></div>';
   html += '</div>';
-  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">';
+  html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">';
   html += buildEmptyCard("Node 3", "Task Decomposition");
   html += '<div class="connector" style="height:8px;"></div>';
   html += buildEmptyCard("Node 4", "Validateability + AI Capability Fit");
@@ -639,6 +652,8 @@ function renderEmpty() {
   html += '</div>';
   html += '<div class="connector-merge"><div class="connector-merge-up-left"></div><div class="connector-merge-up-right"></div></div>';
   html += `<div style="width:100%;max-width:600px;">${buildEmptyCard("Node 5", "Responsibility")}</div>`;
+  html += '<div class="connector"></div>';
+  html += '<div class="verdict-box mixed" style="max-width:600px;width:100%;opacity:0.5;border-style:dashed;"><div class="verdict-label">Verdict</div><div>Select an example task to see the overall assessment.</div></div>';
 
   d.innerHTML = html;
 }
