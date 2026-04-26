@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>protein language models | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="To run the analyses in this chapter, you will need three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta property="og:title" content="protein language models | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="To run the analyses in this chapter, you will need three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="protein language models | Integrated Bioanalytics">
+<meta name="twitter:description" content="To run the analyses in this chapter, you will need three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="active" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="protein-language-models" class="section level1 unnumbered">
+<h1>protein language models<a class="anchor" aria-label="anchor" href="#protein-language-models"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;"></div>
+<p>To run the analyses in this chapter, you will need three things.</p>
+<ol style="list-style-type: decimal">
+<li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
+</ol>
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R"</span><span class="op">)</span></span>
+<span><span class="co">## Loading language model module...</span></span>
+<span><span class="co">## Done with language model loading!</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Please create an account at and obtain an API key from <a href="https://biolm.ai/" class="uri">https://biolm.ai/</a> (Login &gt; Account &gt; API Tokens)</li>
+<li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
+</ol>
+<p>Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.</p>
+<p>In the last chapter, we saw how language models can convert text into numerical vectors, allowing us to apply statistical and machine learning methods to language data. The same fundamental idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and learn to convert amino acid sequences into numerical embeddings that capture biologically meaningful patterns — including evolutionary relationships, structural features, and functional properties.</p>
+<div id="pre-reading-1" class="section level2 unnumbered">
+<h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading-1"><i class="fas fa-link"></i></a>
+</h2>
+<p>Please read over the following:</p>
+<ul>
+<li>
+<a href="https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution">ESM3: Simulating 500 million years of evolution with a language model</a>. The 2024 blog article “ESM3: Simulating 500 million years of evolution with a language model” by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural natural variants. The article highlights the model’s potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the “Open Model” section of the blog, which highlights applications of ESM models in the natural sciences.</li>
+</ul>
+</div>
+<div id="protein-embeddings" class="section level2 unnumbered">
+<h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
+</h2>
+<p>Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
+<p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
+<p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
+<p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
+<p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span>, <span class="st">"__diterpene_synthase"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"monoterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span>, <span class="st">"__monoterpene_synthase"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span></code></pre></div>
+<p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<span>  amino_acid_stringset <span class="op">=</span> <span class="va">all_sequences</span>,</span>
+<span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/biolm_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  nvidia_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/nvidia_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  platform <span class="op">=</span> <span class="st">"nvidia"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></code></pre></div>
+<p>Nice! Once we’ve got the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">all_sequences_embedded</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"product"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded_pca</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*__"</span>, <span class="st">""</span>, <span class="va">all_sequences_embedded_pca</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">all_sequences_embedded_pca</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">name</span><span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="section-16" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-9" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3">using protein embeddings in biochemical research</a>. This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.</p></li>
+<li><p><a href="https://ig.ft.com/generative-ai/">attention mechanisms and transformers explained</a>. This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.</p></li>
+<li><p><a href="https://build.nvidia.com/nim?q=protein">other types of protein language models</a>. <em>3D Protein Structure Prediction</em> deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. <em>Protein Embedding Generation</em> meta / esm2-650m: Generates protein embeddings from amino acid sequences. <em>Protein Sequence Design</em> ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. <em>Generative Protein Design</em> ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. <em>Molecule-Protein Interaction Prediction</em> mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).</p></li>
+</ul>
+<!-- ## exercises {-}
+
+3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
+
+
+--><hr>
+<hr>
+<hr>
+</div>
+</div>
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="language-models.html">language models</a></div>
+<div class="next"><a href="homology.html">homology</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#protein-language-models">protein language models</a></li>
+<li><a class="nav-link" href="#pre-reading-1">pre-reading</a></li>
+<li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
+<li><a class="nav-link" href="#section-16"></a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-04-26.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

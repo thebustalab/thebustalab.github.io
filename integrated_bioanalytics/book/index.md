@@ -1,14 +1,14 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-03-02"
+date: "2026-04-26"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown
 # cover-image: path to the social sharing image like images/cover.jpg
 description: |
-  Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses.
+  Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses.
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 output:
@@ -130,7 +130,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -349,7 +349,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="50%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
@@ -360,7 +360,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="50%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
@@ -372,7 +372,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
@@ -382,7 +382,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
@@ -392,7 +392,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="50%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -402,7 +402,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-91-1.png" width="50%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -415,7 +415,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-91-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-92-1.png" width="50%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -426,7 +426,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-92-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="50%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -434,7 +434,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## markdown {-}
 
@@ -496,7 +496,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -582,7 +582,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -614,7 +614,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -627,7 +627,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -643,7 +643,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -653,7 +653,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -663,7 +663,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
@@ -675,7 +675,7 @@ ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) +
   facet_wrap(chemical_species~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## scales {-}
 
@@ -690,7 +690,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
 
 One particularly useful type of scale are the color scales provided by RColorBrewer:
 
@@ -699,7 +699,7 @@ One particularly useful type of scale are the color scales provided by RColorBre
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 ggplot(mtcars) +
@@ -710,7 +710,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes {-}
   
@@ -728,7 +728,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -740,7 +740,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
   
 
 ``` r
@@ -752,7 +752,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
@@ -768,7 +768,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
@@ -793,8 +793,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-175-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-175)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-176)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
 In some cases, the following diagram illustrates a useful way to think about the `ggplot()` / `geom_*()` / `scale_*()` / `theme_*()` situation. It shows how we use these things together to achieve a sharp-looking plot:
@@ -828,7 +828,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- ## exercises {-}
 
@@ -973,7 +973,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### network plots {-}
 
@@ -1042,7 +1042,7 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### marginal summaries {-}
 
@@ -1063,7 +1063,7 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### representing distributions {-}
 
@@ -1080,7 +1080,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### venn digrams {-}
 
@@ -1103,7 +1103,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -1124,7 +1124,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ## map data {-}
@@ -1190,7 +1190,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -1202,7 +1202,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -1218,7 +1218,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -1233,7 +1233,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -1262,7 +1262,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. We could do something simple like plot total abundances as the size of a point:
 
@@ -1287,7 +1287,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -1334,7 +1334,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -1355,7 +1355,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -1531,7 +1531,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1542,7 +1542,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1685,7 +1685,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1735,7 +1735,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1767,7 +1767,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -2018,7 +2018,7 @@ ggtree() +
   scale_x_continuous(limits = c(0,700))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-295-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2036,7 +2036,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
 
@@ -2063,7 +2063,7 @@ ggtree() +
 ## Replacing NAs in your data with mean
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-298-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## Annotating trees {-}
 
@@ -2097,7 +2097,7 @@ tree_plot <- ggtree(hclust_out) +
 tree_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-299-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-300-1.png" width="100%" style="display: block; margin: auto;" />
 
 Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
 
@@ -2114,7 +2114,7 @@ heat_plot <- hclust_out %>%
 heat_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-300-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-301-1.png" width="100%" style="display: block; margin: auto;" />
 
 With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
 
@@ -2123,7 +2123,7 @@ With matching y scales, `plot_grid()` can align the tree and the heat map so the
 plot_grid(tree_plot, heat_plot, axis = "tb", align = "h")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-301-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-302-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
 
@@ -2135,7 +2135,7 @@ chemical_blooms %>%
   geom_tile()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-302-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-303-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ## further reading {-}
@@ -2164,7 +2164,7 @@ chemical_blooms %>%
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-317)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
+<p class="caption">(\#fig:unnamed-chunk-318)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
 </div>
 
 In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalyses()`, a function that is loaded into your R Session when you run the source() command.
@@ -2206,7 +2206,7 @@ PCA looks at all the variance in a high dimensional data set and chooses new axe
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-319)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
+<p class="caption">(\#fig:unnamed-chunk-320)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
 </div>
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
@@ -2276,8 +2276,8 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-321-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-321)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
+<img src="index_files/figure-html/unnamed-chunk-322-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-322)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
 </div>
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
@@ -2332,8 +2332,8 @@ ggplot(AK_lakes_pca_ord) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-323-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-323)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
+<img src="index_files/figure-html/unnamed-chunk-324-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-324)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
 </div>
 
 Great! Here is how to read the ordination plot:
@@ -2383,8 +2383,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-324-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-324)PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
+<img src="index_files/figure-html/unnamed-chunk-325-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-325)PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
 </div>
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
@@ -2399,8 +2399,8 @@ AK_lakes_pca_ord %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-325-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-325)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
+<img src="index_files/figure-html/unnamed-chunk-326-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-326)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
 </div>
 
 ### principal components {-}
@@ -2436,8 +2436,8 @@ ggplot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-326-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-326)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
+<img src="index_files/figure-html/unnamed-chunk-327-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-327)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
 </div>
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
@@ -2448,7 +2448,7 @@ Static plots are great for reporting, but exploring PCA interactively can make i
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-327)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
+<p class="caption">(\#fig:unnamed-chunk-328)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
 </div>
 
 The function takes three key arguments:
@@ -2512,8 +2512,8 @@ wq %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-330-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-330)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
+<img src="index_files/figure-html/unnamed-chunk-331-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-331)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
 </div>
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
@@ -2538,8 +2538,8 @@ runMatrixAnalyses(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-331-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-331)UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
+<img src="index_files/figure-html/unnamed-chunk-332-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-332)UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
 </div>
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
@@ -2639,7 +2639,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-353-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-354-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -2683,7 +2683,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-355-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-356-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -2754,7 +2754,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-356-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-357-1.png" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -2941,7 +2941,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-383-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-384-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -3023,7 +3023,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-386-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-387-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -3036,7 +3036,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-387-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-388-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3125,7 +3125,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-392-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-393-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3139,7 +3139,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-393-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-394-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3249,7 +3249,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-399-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-400-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3319,7 +3319,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-402-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-403-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3334,7 +3334,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-403-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-404-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3484,7 +3484,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-408-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-409-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -3573,7 +3573,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-441-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-442-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
@@ -3672,7 +3672,7 @@ plot1 <- ggplot() +
 plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-446-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-447-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3684,7 +3684,7 @@ ggplot(predictions_from_basic_linear_model) +
   geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-447-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-448-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3705,7 +3705,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-449-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-450-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3717,7 +3717,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-450-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-451-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -3781,7 +3781,7 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-452-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-453-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -3933,7 +3933,7 @@ plot3 <- ggplot(model_comparison_data) + geom_point(aes(
 plot_grid(plot1, plot2, plot3, nrow = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-454-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-455-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -4003,8 +4003,6 @@ multiple_regression_model <- buildModel2(
 
 check_model(multiple_regression_model$model)
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-455-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -4080,7 +4078,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-458-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-459-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -4107,7 +4105,7 @@ ggplot() +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-459-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-460-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -4159,7 +4157,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-461-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-462-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4303,11 +4301,11 @@ model$metrics
 <!-- start embedding models -->
 
 
-# embedding models {-}
+# language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
-To run the analyses in this chapter, you will need four things. 
+To run the analyses in this chapter, you will need three things.
 
 1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
 
@@ -4318,12 +4316,10 @@ source("https://thebustalab.github.io/phylochemistry/modules/language_model_anal
 ```
 2. Please create an account at and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
 3. Please create an account at and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
-4. Please create an account at and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
-5. Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from https://build.nvidia.com/. (To get API key, go to: https://build.nvidia.com/meta/esm2-650m, switch "input" to python and click "Get API Key" > Generate Key)
 
 Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
 
-In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data — such as written text — into the numerical domain, enabling that data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
@@ -4331,9 +4327,7 @@ A basic form of an embedding model is a neural network called an autoencoder. Au
 
 Please read over the following:
 
-- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
-
-- [ESM3: Simulating 500 million years of evolution with a language model](https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution). The 2024 blog article "ESM3: Simulating 500 million years of evolution with a language model" by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model's potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the "Open Model" section of the blog, which highlights applications of ESM models in the natural sciences.
+- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI's embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
 
 ## text embeddings {-}
 
@@ -4357,18 +4351,18 @@ select(search_results, term, title)
 ## # A tibble: 12 × 2
 ##    term                       title                         
 ##    <chr>                      <chr>                         
-##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
-##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
-##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
+##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
+##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
 ##  5 friedelin synthase         Friedelin Synthase from Mayte…
 ##  6 friedelin synthase         Functional characterization o…
-##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
-##  8 sorghum bicolor            Potential food applications o…
-##  9 sorghum bicolor            Current status and prospects …
-## 10 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
-## 11 cuticular wax biosynthesis Regulatory mechanisms underly…
-## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
+##  7 sorghum bicolor            Current status and prospects …
+##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
+##  9 sorghum bicolor            Potential food applications o…
+## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
+## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
+## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
 ```
 
 From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
@@ -4403,7 +4397,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-492-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-493-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -4426,9 +4420,9 @@ search_results_embedded[1:3,1:10]
 ## # A tibble: 3 × 10
 ##   entry_number term  date       journal title doi   abstract
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
-## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
-## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
-## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
+## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
+## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -4453,7 +4447,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-494-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-495-1.png" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4469,7 +4463,7 @@ runMatrixAnalysis(
     geom_label_repel(
       aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
       size = 2, min.segment.length = 0.5, force = 50
-    ) +  
+    ) +
     geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
     scale_fill_brewer(palette = "Set1") +
     scale_x_continuous(expand = c(0,1)) +
@@ -4477,7 +4471,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-495-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-496-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4513,20 +4507,18 @@ ggplot(pca_out) +
   geom_label_repel(
     aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
     size = 2, min.segment.length = 0.5, force = 25
-  ) +  
+  ) +
   geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
-  # scale_x_continuous(expand = c(1,0)) +
-  # scale_y_continuous(expand = c(1,0)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-496-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-497-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
-Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
 
-In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
+In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
 
 
 ``` r
@@ -4544,115 +4536,19 @@ select(search_results, title, generation)
 ## # A tibble: 12 × 2
 ##    title                                          generation
 ##    <chr>                                          <chr>     
-##  1 Ginsenosides in Panax genus and their biosynt… plant-che…
-##  2 β-Amyrin synthase from Conyza blinii expresse… plant-bio…
-##  3 β-Amyrin biosynthesis: catalytic mechanism an… enzymolog…
+##  1 β-Amyrin synthase from Conyza blinii expresse… Plant-Med…
+##  2 Ginsenosides in Panax genus and their biosynt… botany, p…
+##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… plant-bio…
 ##  4 Friedelin in Maytenus ilicifolia Is Produced … triterpen…
 ##  5 Friedelin Synthase from Maytenus ilicifolia: … plant-bio…
 ##  6 Functional characterization of an oxidosquale… Plant-Bio…
-##  7 Sorghum (Sorghum bicolor).                     genetic-e…
-##  8 Potential food applications of sorghum (Sorgh… nutrition…
-##  9 Current status and prospects of herbicide-res… Agronomy,…
-## 10 Cuticular wax in wheat: biosynthesis, genetic… plant-bio…
-## 11 Regulatory mechanisms underlying cuticular wa… plant-bio…
-## 12 Update on Cuticular Wax Biosynthesis and Its … plant-pat…
+##  7 Current status and prospects of herbicide-res… agricultu…
+##  8 Sorghum (Sorghum bicolor).                     plant-gen…
+##  9 Potential food applications of sorghum (Sorgh… nutrition…
+## 10 Regulatory mechanisms underlying cuticular wa… plant-bio…
+## 11 Cuticular wax in wheat: biosynthesis, genetic… plant-bio…
+## 12 Advances in Biosynthesis, Regulation, and Fun… plant-bio…
 ```
-
-## protein embeddings {-}
-
-<!-- Protein Language Models: -->
-<!--     The goal in these models is to train them so that the embeddings they create capture important biological features of proteins. -->
-<!--     The attention mechanism in transformer models allows capturing both local and global information in a protein sequence: -->
-<!--         Local Information: Might include interactions between neighboring amino acids. -->
-<!--         Global Information: Could encompass long-range relationships between distant parts of the sequence. -->
-<!--     While embedding models can be simple autoencoders, many embedding models, especially in protein language modeling, use transformers with attention mechanisms to capture complex patterns in the data. -->
-
-<!-- Attention Mechanism: -->
-<!--     The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element. -->
-<!--     It generates attention scores to weigh how much attention one amino acid should give to another. -->
-<!--     The attention mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. -->
-
-<!-- Why Attention is Beneficial: -->
-<!--     Long-Range Dependencies: Captures interactions between distant amino acids. -->
-<!--     Structural Complexity: Weighs relationships between amino acids to account for protein folding and interactions. -->
-<!--     Handling Variable Sequence Lengths: Adjusts focus across sequences of varying lengths. -->
-<!--     Multi-Dimensional Relationships: Multi-head attention allows capturing different kinds of relationships, like hydrophobic interactions or secondary structures. -->
-<!--     Contextualized Embeddings: Embeddings reflect the broader sequence environment, not just local motifs. -->
-
-<!-- Additional Mechanisms in Protein Language Models: -->
-<!--     Positional Encoding: Adds position information to the sequence so that the model can differentiate between identical amino acids at different positions. -->
-<!--     Masked Language Modeling (MLM): Trains the model to predict masked amino acids, learning patterns in the sequence. -->
-<!--     Multiscale Representations: Allows capturing both fine-grained and coarse-grained structural information. -->
-<!--     Evolutionary Information: Incorporates multiple sequence alignments (MSAs) to learn from conserved regions. -->
-<!--     Residual Connections: Helps information flow through the network and stabilizes training by allowing the model to retain original input data as it processes through layers. -->
-<!--     Normalization and Regularization: Techniques like layer normalization and dropout are used to stabilize training and prevent overfitting. -->
-
-Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
-
-Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.
-
-Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.
-
-By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
-
-In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
-
-
-``` r
-g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
-g1@ranges@NAMES <- paste0(g1@ranges@NAMES, "__diterpene_synthase")
-
-g2 <- searchNCBI(search_term = "monoterpene synthase", retmax = 10)
-g2@ranges@NAMES <- paste0(g2@ranges@NAMES, "__monoterpene_synthase")
-
-all_sequences <- c(g1, g2)
-```
-
-Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
-
-
-``` r
-all_sequences_embedded <- embedAminoAcids(
-  amino_acid_stringset = all_sequences,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
-  nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
-  platform = "nvidia"
-)
-all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
-all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
-all_sequences_embedded[1:5,1:6]
-## # A tibble: 5 × 6
-##   name           product embedding_1 embedding_2 embedding_3
-##   <chr>          <chr>         <dbl>       <dbl>       <dbl>
-## 1 pdb|9RP2|B Ch… syntha…      0.0133     -0.0428     -0.0450
-## 2 pdb|9RP2|A Ch… syntha…      0.0133     -0.0428     -0.0450
-## 3 pdb|9RP1|B Ch… syntha…      0.0108     -0.0442     -0.0462
-## 4 pdb|9RP1|A Ch… syntha…      0.0108     -0.0442     -0.0462
-## 5 pdb|9X0F|R Ch… syntha…     -0.0299     -0.0832     -0.0525
-## # ℹ 1 more variable: embedding_4 <dbl>
-```
-
-Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
-
-
-``` r
-all_sequences_embedded_pca <- runMatrixAnalysis(
-  data = all_sequences_embedded,
-  analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(all_sequences_embedded)[3:dim(all_sequences_embedded)[2]],
-  columns_w_sample_ID_info = c("name", "product")
-)
-all_sequences_embedded_pca$name <- gsub(".*__", "", all_sequences_embedded_pca$name)
-ggplot(all_sequences_embedded_pca) +
-  geom_jitter(
-    aes(x = Dim.1, y = Dim.2, fill = name),
-    shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
-  ) +
-  scale_fill_manual(values = discrete_palette) +
-  theme_minimal()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-500-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -4661,12 +4557,6 @@ ggplot(all_sequences_embedded_pca) +
 - [creating knowledge graphs with LLMs](https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17). This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.
 
 - [creating RAG systems with LLMs](https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f). This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.
-
-- [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
-
-- [attention mechanims and transformers explained](https://ig.ft.com/generative-ai/). This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.
-
-- [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
 
 <!-- ## exercises {-}
 
@@ -4707,11 +4597,110 @@ search_results_ex_embed_pca %>%
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
 
+-->
+
+
+# protein language models {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;" />
+
+To run the analyses in this chapter, you will need three things.
+
+1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+
+``` r
+source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
+## Loading language model module...
+## Done with language model loading!
+```
+2. Please create an account at and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
+3. Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from https://build.nvidia.com/. (To get API key, go to: https://build.nvidia.com/meta/esm2-650m, switch "input" to python and click "Get API Key" > Generate Key)
+
+Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
+
+In the last chapter, we saw how language models can convert text into numerical vectors, allowing us to apply statistical and machine learning methods to language data. The same fundamental idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and learn to convert amino acid sequences into numerical embeddings that capture biologically meaningful patterns — including evolutionary relationships, structural features, and functional properties.
+
+## pre-reading {-}
+
+Please read over the following:
+
+- [ESM3: Simulating 500 million years of evolution with a language model](https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution). The 2024 blog article "ESM3: Simulating 500 million years of evolution with a language model" by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural natural variants. The article highlights the model's potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the "Open Model" section of the blog, which highlights applications of ESM models in the natural sciences.
+
+## protein embeddings {-}
+
+Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
+
+Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.
+
+Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.
+
+By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
+
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
+
+
+``` r
+g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
+g1@ranges@NAMES <- paste0(g1@ranges@NAMES, "__diterpene_synthase")
+
+g2 <- searchNCBI(search_term = "monoterpene synthase", retmax = 10)
+g2@ranges@NAMES <- paste0(g2@ranges@NAMES, "__monoterpene_synthase")
+
+all_sequences <- c(g1, g2)
+```
+
+Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
+
+
+``` r
+all_sequences_embedded <- embedAminoAcids(
+  amino_acid_stringset = all_sequences,
+  biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
+  nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
+  platform = "nvidia"
+)
+all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
+all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
+all_sequences_embedded[1:5,1:6]
+```
+
+Nice! Once we've got the embeddings, we can run a PCA analysis to visualize them in 2D space:
+
+
+``` r
+all_sequences_embedded_pca <- runMatrixAnalysis(
+  data = all_sequences_embedded,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(all_sequences_embedded)[3:dim(all_sequences_embedded)[2]],
+  columns_w_sample_ID_info = c("name", "product")
+)
+all_sequences_embedded_pca$name <- gsub(".*__", "", all_sequences_embedded_pca$name)
+ggplot(all_sequences_embedded_pca) +
+  geom_jitter(
+    aes(x = Dim.1, y = Dim.2, fill = name),
+    shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
+  ) +
+  scale_fill_manual(values = discrete_palette) +
+  theme_minimal()
+
+```
+
+## {-}
+
+## further reading {-}
+
+- [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
+
+- [attention mechanisms and transformers explained](https://ig.ft.com/generative-ai/). This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.
+
+- [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
+
+<!-- ## exercises {-}
 
 3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 
-asdf -->
+-->
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -4938,7 +4927,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-538-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-545-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4966,7 +4955,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-539-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-546-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5011,7 +5000,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-541-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-548-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5027,7 +5016,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-542-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-549-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5036,7 +5025,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-543-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-550-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5107,7 +5096,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-545-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-552-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5127,7 +5116,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-546-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-553-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5205,7 +5194,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-551-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-558-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5240,7 +5229,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-552-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-559-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -5462,7 +5451,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-574-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-581-1.png" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -5614,7 +5603,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
 Plot insets
 
@@ -5637,7 +5626,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
 
 Image insets
 
@@ -5661,7 +5650,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### paneled figures {-}
 
@@ -5714,21 +5703,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5810,8 +5799,8 @@ Figures are critical tools for clearly and effectively communicating scientific 
 ### example captions {-}
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-30-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-30)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
+<img src="index_files/figure-html/unnamed-chunk-31-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-31)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
 </div>
 
 ### buildCaption {-}
@@ -6161,7 +6150,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-36-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-37-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6203,7 +6192,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-38-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-39-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6292,7 +6281,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-44-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-45-1.png" width="100%" style="display: block; margin: auto;" />
 
 # templates {-}
 
