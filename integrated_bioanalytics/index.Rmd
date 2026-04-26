@@ -8,7 +8,7 @@ bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown
 # cover-image: path to the social sharing image like images/cover.jpg
 description: |
-  Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses.
+  Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses.
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 output:
@@ -124,7 +124,7 @@ ________________________________________________________________________________
 ```{r child="chapters/11_numerical_models.Rmd"}
 ```
 
-```{r child="chapters/12_embedding_models.Rmd"}
+```{r child="chapters/12_language_models.Rmd"}
 ```
 
 ```{r child="chapters/13_protein_language_models.Rmd"}

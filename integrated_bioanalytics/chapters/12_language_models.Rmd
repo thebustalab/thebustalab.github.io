@@ -1,4 +1,4 @@
-# embedding models {-}
+# language models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)

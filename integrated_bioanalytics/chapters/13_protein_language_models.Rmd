@@ -15,7 +15,7 @@ source("https://thebustalab.github.io/phylochemistry/modules/language_model_anal
 
 Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
 
-In the last chapter, we saw how embedding models can convert text into numerical vectors, allowing us to apply statistical and machine learning methods to language data. The same fundamental idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and learn to convert amino acid sequences into numerical embeddings that capture biologically meaningful patterns — including evolutionary relationships, structural features, and functional properties.
+In the last chapter, we saw how language models can convert text into numerical vectors, allowing us to apply statistical and machine learning methods to language data. The same fundamental idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and learn to convert amino acid sequences into numerical embeddings that capture biologically meaningful patterns — including evolutionary relationships, structural features, and functional properties.
 
 ## pre-reading {-}
 
@@ -47,7 +47,7 @@ all_sequences <- c(g1, g2)
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
 
-```{r, cache = TRUE}
+```{r, cache = TRUE, eval = FALSE}
 all_sequences_embedded <- embedAminoAcids(
   amino_acid_stringset = all_sequences,
   biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
@@ -61,7 +61,7 @@ all_sequences_embedded[1:5,1:6]
 
 Nice! Once we've got the embeddings, we can run a PCA analysis to visualize them in 2D space:
 
-```{r, fig.width = 10}
+```{r, fig.width = 10, eval = FALSE}
 all_sequences_embedded_pca <- runMatrixAnalysis(
   data = all_sequences_embedded,
   analysis = "pca",
