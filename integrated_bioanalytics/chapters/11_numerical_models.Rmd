@@ -482,20 +482,21 @@ data.frame(
 
 ## further reading {-}
 
-- More on assessing regression models: [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
+- [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
 
-- [common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.
+- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient you in the landscape of ML methods.
 
-Classification with random forests:
-- http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-- https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-- https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+- [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
 
-- Ridge regression (regularization; different from simple/multiple linear regression): https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html. This walks through why ridge stabilizes coefficients when predictors are correlated and shows how the penalty trades bias for variance. It is a good conceptual bridge between OLS and modern predictive modeling. Use it when you want stable coefficients without variable selection.
+- [Tutorial on tidymodels for Machine Learning](https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/). Demonstrates how to use tidymodels as a modular alternative to caret, walking through a complete machine learning project with preprocessing, model building, and hyperparameter tuning.
 
-- Elastic net (regularization; different from simple/multiple linear regression): https://rpubs.com/jmkelly91/881590. This tutorial shows how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection. It includes tuning tips and interpretability notes in an applied workflow. Use it when you want a shortlist of predictors but still respect grouped signals.
+- [Dials, Tune, and Parsnip: Tidymodels' Way to Create and Tune Model Parameters](https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173). Explores three tidymodels packages for managing and tuning hyperparameters, explaining how dials, tune, and parsnip work together in a machine learning workflow.
 
-- Partial least squares regression (regularization; different from simple/multiple linear regression): https://allmodelsarewrong.github.io/regular.html. This resource frames PLSR in the broader context of regularization and dimension reduction for predictive modeling. It emphasizes latent components and how they relate to prediction, which is key for high-dimensional data. Use it when interpreting components is acceptable and prediction is the priority.
+- [Understand ridge regression and hyperparameter selection](https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html). Explains why ridge regression stabilizes coefficients when predictors are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.
+
+- [Ridge, Lasso, and Elastic Net Tutorial](https://rpubs.com/jmkelly91/881590). Covers how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection, with tuning tips and interpretability notes in an applied workflow.
+
+- [Regularization Techniques](https://allmodelsarewrong.github.io/regular.html). Frames PLSR and other regularization methods in the broader context of dimension reduction for predictive modeling, emphasizing latent components and when to prefer each approach.
 
 
 <!-- ## exercises {-}

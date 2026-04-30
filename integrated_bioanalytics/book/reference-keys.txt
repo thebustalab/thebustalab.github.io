@@ -13,7 +13,6 @@ fig:unnamed-chunk-31
 part-getting-started
 part-data-visualization
 part-statistical-methods
-clustering
 part-models
 matrix-analyses
 basic-runmatrixanalyses-template

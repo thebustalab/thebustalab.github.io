@@ -329,15 +329,15 @@ hawaii_aquifers %>%
 
 ## further reading {-}
 
-- Datanovia on comparing multiple means: This step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code. [Open the Datanovia guide](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/).
+- [Comparing Multiple Means in R](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/). Datanovia's step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code.
 
-- Statistics by Jim on parametric vs nonparametric tests: Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation. [Read the comparison](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/).
+- [Parametric vs. Nonparametric Tests](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/). Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation.
 
-- Ulrich Dirnagl on the p value wars: This short commentary captures the ongoing debates about redefining statistical significance, highlights the historical context of *p* < 0.05, and weighs the risks of rigid thresholds versus broader inferential thinking. [Consider the perspective](https://link.springer.com/article/10.1007/s00259-019-04467-5).
+- [The p value wars](https://link.springer.com/article/10.1007/s00259-019-04467-5). A short commentary by Ulrich Dirnagl capturing the ongoing debates about redefining statistical significance, the historical context of *p* < 0.05, and the risks of rigid thresholds versus broader inferential thinking.
 
-- eLife forum on common statistical mistakes: The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, and pair each with pragmatic fixes for both authors and reviewers. [Review the checklist](https://elifesciences.org/articles/48175).
+- [Common statistical mistakes in biomedical research](https://elifesciences.org/articles/48175). The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, pairing each with pragmatic fixes for both authors and reviewers.
 
-- Wolfgang Huber on tiny *p*-values: Huber explains why extremely small *p*-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance. [Study the reporting guidance](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue).
+- [Wolfgang Huber on tiny *p*-values](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue). Huber explains why extremely small *p*-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance.
 
 
 <!-- ## exercises {-}

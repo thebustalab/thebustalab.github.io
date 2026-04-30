@@ -716,20 +716,6 @@ ________________________________________________________________________________
 
 # (PART) APPENDIX {-}
 
-<!-- start links -->
-
-# links {-}
-
-## geoms {-}
-
-[geoms and ggplot2 cheatsheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf)
-
-## colors {-}
-
-[ColorBrewer2](https://colorbrewer2.org/)
-
-<!-- end -->
-
 # datasets {-}
 
 ## alaska_lake_data {-}

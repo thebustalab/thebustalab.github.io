@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-04-26"
+date: "2026-04-30"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -858,21 +858,29 @@ Some pointers:
 
 ## further reading {-}
 
-There is a [handy cheat sheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+- [ggplot2 geom cheat sheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf). A handy reference that maps common plot types to their corresponding geoms, useful for quickly identifying the right geom for a given visualization need.
 
-For additional explanations of ggplot2: [ggplot2-book](https://ggplot2-book.org/).
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/). The official ggplot2 book by Hadley Wickham, covering the grammar of graphics and providing in-depth explanations of layers, scales, coordinates, and themes.
 
-Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
+- [R Graph Gallery](https://r-graph-gallery.com/). A curated collection of R graphics with reproducible code, organized by chart type, making it easy to find inspiration and implementation patterns for attractive figures.
 
-For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
+- [ColorBrewer2](https://colorbrewer2.org/). An interactive tool for selecting perceptually appropriate color schemes for maps and charts, with options filtered by colorblind safety, print friendliness, and data type (sequential, diverging, qualitative).
 
-For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
+- [Top R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). An overview of popular R color palettes including colorblind-friendly options, sequential gradients, and qualitative scales, with example plots for each.
 
-For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
+- [Friends Don't Let Friends Make Bad Graphs](https://github.com/cxli233/FriendsDontLetFriends). A GitHub repository cataloging common data visualization mistakes with visual examples and explanations of why each practice should be avoided.
 
-Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards) and [Data Vis Inspiration](https://www.dataviz-inspiration.com/).
+- [Edward Tufte](https://www.edwardtufte.com/tufte/). The website of Edward Tufte, whose books on information design and data visualization remain foundational references for clear, high-density graphics.
 
-Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
+- [Look at Data](https://socviz.co/lookatdata.html). An open online chapter from Kieran Healy's "Data Visualization: A Practical Introduction," covering principles of visual perception and how they apply to choosing effective chart types.
+
+- [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards). An annual showcase of outstanding data visualization and infographics from around the world, useful for finding inspiration and seeing the range of what's possible.
+
+- [Data Viz Inspiration](https://www.dataviz-inspiration.com/). A curated gallery of data visualization examples from practitioners, organized by chart type and use case, for discovering new approaches and aesthetics.
+
+- [MetBrewer](https://github.com/BlakeRMills/MetBrewer). An R package providing color palettes inspired by works in the Metropolitan Museum of Art, offering aesthetically refined options for both categorical and continuous data.
+
+- [Paletteer](https://github.com/EmilHvitfeldt/paletteer). A comprehensive R package that aggregates hundreds of color palettes from across the R ecosystem into a single consistent interface.
 
 <!-- end -->
 
@@ -1361,11 +1369,11 @@ plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 
 ## further reading {-}
 
-For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
+- [State and County Maps in R with ggplot2](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/). A step-by-step tutorial showing how to create US state and county level choropleth maps using ggplot2 and the `map_data()` function.
 
-For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+- [Drawing beautiful maps programmatically with R, sf and ggplot2](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html). A tutorial from the r-spatial project demonstrating how to use the `sf` package with ggplot2's `geom_sf()` to create publication-quality maps from spatial data.
 
-For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c03)
+- [ggtern: A package for the creation of ternary diagrams](https://www.jstatsoft.org/article/view/v087c03). The Journal of Statistical Software article introducing ggtern, which extends ggplot2 to support ternary diagrams for visualizing three-component compositional data.
 
 <!-- ## exercises {-} -->
 
@@ -1938,7 +1946,7 @@ Some pointers:
 
 ## {-}
 
-## clustering
+## clustering {-}
 
 So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 
@@ -2571,12 +2579,11 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s st
 
 ## further reading {-}
 
-- PCA Explanation Video: This YouTube video provides a detailed and visually intuitive explanation of Principal Component Analysis (PCA), breaking down complex concepts with clear examples and graphics. It is part of a curated playlist that covers a variety of topics related to data visualization and statistical analysis. [Watch the PCA video](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR).
+- [StatQuest: Principal Component Analysis (PCA), Step-by-Step](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR). A visually intuitive YouTube explanation of PCA that breaks down the algorithm step by step using clear graphics, part of a curated playlist on statistical analysis.
 
-- Understanding UMAP: This blog post from Pair Code delves into the fundamentals of UMAP, explaining both the intuition behind the algorithm and its practical applications in data analysis. It provides an accessible overview that bridges the gap between theoretical concepts and real-world use cases, making it a valuable read for both beginners and advanced users. [Explore the Understanding UMAP Article](https://pair-code.github.io/understanding-umap/).
+- [Understanding UMAP](https://pair-code.github.io/understanding-umap/). A Pair Code blog post covering both the intuition and practical applications of UMAP, bridging the gap between the algorithm's theoretical foundations and real-world use cases.
 
-- UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
-[Watch the UMAP Mathematical Details Video](https://www.youtube.com/watch?v=jth4kEvJ3P8).
+- [UMAP: Mathematical Details](https://www.youtube.com/watch?v=jth4kEvJ3P8). A YouTube video that walks through the mathematical underpinnings of UMAP in an accessible way, for viewers who want to understand how the algorithm works behind the scenes.
 
 
 # flat clustering {-}
@@ -2760,13 +2767,13 @@ plot_1 + plot_2
 
 ## further reading {-}
 
-- STHDA DBSCAN tutorial: STHDA walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages. [Read the STHDA DBSCAN guide](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940).
+- [DBSCAN Clustering in R](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940). STHDA's tutorial walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages.
 
-- Ryan Wingate on hierarchical vs. density-based clustering: Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach. [Review the walkthrough](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/).
+- [Hierarchical and Density-Based Clustering](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/). Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach.
 
-- Ryan Wingate dendrogram reference: This figure distills the merge sequence from the accompanying tutorial into a color-coded dendrogram, making it easy to point out where to cut the tree when discussing flat clusters. [Open the dendrogram figure](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png).
+- [Hierarchical clustering dendrogram reference](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png). A color-coded dendrogram figure from the accompanying tutorial that distills the merge sequence, making it easy to visualize where to cut the tree when defining flat clusters.
 
-- GeeksforGeeks DBSCAN in R: GeeksforGeeks uses a step-by-step R workflow to run DBSCAN, visualize clusters, and explain how adjusting `eps` and `MinPts` affects noise handling. [Follow the tutorial](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/).
+- [DBSCAN Clustering in R Programming](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/). GeeksforGeeks' step-by-step R workflow for running DBSCAN, visualizing clusters, and understanding how adjusting `eps` and `MinPts` affects noise handling.
 
 
 <!-- ## exercises {-}
@@ -3490,15 +3497,15 @@ hawaii_aquifers %>%
 
 ## further reading {-}
 
-- Datanovia on comparing multiple means: This step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code. [Open the Datanovia guide](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/).
+- [Comparing Multiple Means in R](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/). Datanovia's step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code.
 
-- Statistics by Jim on parametric vs nonparametric tests: Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation. [Read the comparison](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/).
+- [Parametric vs. Nonparametric Tests](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/). Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation.
 
-- Ulrich Dirnagl on the p value wars: This short commentary captures the ongoing debates about redefining statistical significance, highlights the historical context of *p* < 0.05, and weighs the risks of rigid thresholds versus broader inferential thinking. [Consider the perspective](https://link.springer.com/article/10.1007/s00259-019-04467-5).
+- [The p value wars](https://link.springer.com/article/10.1007/s00259-019-04467-5). A short commentary by Ulrich Dirnagl capturing the ongoing debates about redefining statistical significance, the historical context of *p* < 0.05, and the risks of rigid thresholds versus broader inferential thinking.
 
-- eLife forum on common statistical mistakes: The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, and pair each with pragmatic fixes for both authors and reviewers. [Review the checklist](https://elifesciences.org/articles/48175).
+- [Common statistical mistakes in biomedical research](https://elifesciences.org/articles/48175). The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, pairing each with pragmatic fixes for both authors and reviewers.
 
-- Wolfgang Huber on tiny *p*-values: Huber explains why extremely small *p*-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance. [Study the reporting guidance](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue).
+- [Wolfgang Huber on tiny *p*-values](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue). Huber explains why extremely small *p*-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance.
 
 
 <!-- ## exercises {-}
@@ -4190,20 +4197,21 @@ data.frame(
 
 ## further reading {-}
 
-- More on assessing regression models: [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
+- [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
 
-- [common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.
+- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient you in the landscape of ML methods.
 
-Classification with random forests:
-- http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-- https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-- https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+- [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
 
-- Ridge regression (regularization; different from simple/multiple linear regression): https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html. This walks through why ridge stabilizes coefficients when predictors are correlated and shows how the penalty trades bias for variance. It is a good conceptual bridge between OLS and modern predictive modeling. Use it when you want stable coefficients without variable selection.
+- [Tutorial on tidymodels for Machine Learning](https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/). Demonstrates how to use tidymodels as a modular alternative to caret, walking through a complete machine learning project with preprocessing, model building, and hyperparameter tuning.
 
-- Elastic net (regularization; different from simple/multiple linear regression): https://rpubs.com/jmkelly91/881590. This tutorial shows how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection. It includes tuning tips and interpretability notes in an applied workflow. Use it when you want a shortlist of predictors but still respect grouped signals.
+- [Dials, Tune, and Parsnip: Tidymodels' Way to Create and Tune Model Parameters](https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173). Explores three tidymodels packages for managing and tuning hyperparameters, explaining how dials, tune, and parsnip work together in a machine learning workflow.
 
-- Partial least squares regression (regularization; different from simple/multiple linear regression): https://allmodelsarewrong.github.io/regular.html. This resource frames PLSR in the broader context of regularization and dimension reduction for predictive modeling. It emphasizes latent components and how they relate to prediction, which is key for high-dimensional data. Use it when interpreting components is acceptable and prediction is the priority.
+- [Understand ridge regression and hyperparameter selection](https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html). Explains why ridge regression stabilizes coefficients when predictors are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.
+
+- [Ridge, Lasso, and Elastic Net Tutorial](https://rpubs.com/jmkelly91/881590). Covers how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection, with tuning tips and interpretability notes in an applied workflow.
+
+- [Regularization Techniques](https://allmodelsarewrong.github.io/regular.html). Frames PLSR and other regularization methods in the broader context of dimension reduction for predictive modeling, emphasizing latent components and when to prefer each approach.
 
 
 <!-- ## exercises {-}
@@ -6037,20 +6045,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 
 # (PART) APPENDIX {-}
-
-<!-- start links -->
-
-# links {-}
-
-## geoms {-}
-
-[geoms and ggplot2 cheatsheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf)
-
-## colors {-}
-
-[ColorBrewer2](https://colorbrewer2.org/)
-
-<!-- end -->
 
 # datasets {-}
 

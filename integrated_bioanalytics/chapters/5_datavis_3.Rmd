@@ -376,11 +376,11 @@ plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 
 ## further reading {-}
 
-For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
+- [State and County Maps in R with ggplot2](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/). A step-by-step tutorial showing how to create US state and county level choropleth maps using ggplot2 and the `map_data()` function.
 
-For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+- [Drawing beautiful maps programmatically with R, sf and ggplot2](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html). A tutorial from the r-spatial project demonstrating how to use the `sf` package with ggplot2's `geom_sf()` to create publication-quality maps from spatial data.
 
-For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c03)
+- [ggtern: A package for the creation of ternary diagrams](https://www.jstatsoft.org/article/view/v087c03). The Journal of Statistical Software article introducing ggtern, which extends ggplot2 to support ternary diagrams for visualizing three-component compositional data.
 
 <!-- ## exercises {-} -->
 

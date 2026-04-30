@@ -295,9 +295,8 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s st
 
 ## further reading {-}
 
-- PCA Explanation Video: This YouTube video provides a detailed and visually intuitive explanation of Principal Component Analysis (PCA), breaking down complex concepts with clear examples and graphics. It is part of a curated playlist that covers a variety of topics related to data visualization and statistical analysis. [Watch the PCA video](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR).
+- [StatQuest: Principal Component Analysis (PCA), Step-by-Step](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR). A visually intuitive YouTube explanation of PCA that breaks down the algorithm step by step using clear graphics, part of a curated playlist on statistical analysis.
 
-- Understanding UMAP: This blog post from Pair Code delves into the fundamentals of UMAP, explaining both the intuition behind the algorithm and its practical applications in data analysis. It provides an accessible overview that bridges the gap between theoretical concepts and real-world use cases, making it a valuable read for both beginners and advanced users. [Explore the Understanding UMAP Article](https://pair-code.github.io/understanding-umap/).
+- [Understanding UMAP](https://pair-code.github.io/understanding-umap/). A Pair Code blog post covering both the intuition and practical applications of UMAP, bridging the gap between the algorithm's theoretical foundations and real-world use cases.
 
-- UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
-[Watch the UMAP Mathematical Details Video](https://www.youtube.com/watch?v=jth4kEvJ3P8).
+- [UMAP: Mathematical Details](https://www.youtube.com/watch?v=jth4kEvJ3P8). A YouTube video that walks through the mathematical underpinnings of UMAP in an accessible way, for viewers who want to understand how the algorithm works behind the scenes.

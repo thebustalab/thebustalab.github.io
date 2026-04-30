@@ -8,7 +8,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## {-}
 
-## clustering
+## clustering {-}
 
 So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 

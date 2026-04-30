@@ -170,13 +170,13 @@ plot_1 + plot_2
 
 ## further reading {-}
 
-- STHDA DBSCAN tutorial: STHDA walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages. [Read the STHDA DBSCAN guide](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940).
+- [DBSCAN Clustering in R](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940). STHDA's tutorial walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages.
 
-- Ryan Wingate on hierarchical vs. density-based clustering: Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach. [Review the walkthrough](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/).
+- [Hierarchical and Density-Based Clustering](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/). Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach.
 
-- Ryan Wingate dendrogram reference: This figure distills the merge sequence from the accompanying tutorial into a color-coded dendrogram, making it easy to point out where to cut the tree when discussing flat clusters. [Open the dendrogram figure](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png).
+- [Hierarchical clustering dendrogram reference](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png). A color-coded dendrogram figure from the accompanying tutorial that distills the merge sequence, making it easy to visualize where to cut the tree when defining flat clusters.
 
-- GeeksforGeeks DBSCAN in R: GeeksforGeeks uses a step-by-step R workflow to run DBSCAN, visualize clusters, and explain how adjusting `eps` and `MinPts` affects noise handling. [Follow the tutorial](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/).
+- [DBSCAN Clustering in R Programming](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/). GeeksforGeeks' step-by-step R workflow for running DBSCAN, visualizing clusters, and understanding how adjusting `eps` and `MinPts` affects noise handling.
 
 
 <!-- ## exercises {-}
