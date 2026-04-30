@@ -35,14 +35,15 @@ By adding a mechanism called an "attention mechanism" to an autoencoder, we can 
 
 In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
 
-```{r}
+```{r, cache = TRUE}
 g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
-g1@ranges@NAMES <- paste0(g1@ranges@NAMES, "__diterpene_synthase")
+g1@ranges@NAMES <- paste0(gsub(" .*", "", g1@ranges@NAMES), "__diterpene_synthase")
 
 g2 <- searchNCBI(search_term = "monoterpene synthase", retmax = 10)
-g2@ranges@NAMES <- paste0(g2@ranges@NAMES, "__monoterpene_synthase")
+g2@ranges@NAMES <- paste0(gsub(" .*", "", g2@ranges@NAMES), "__monoterpene_synthase")
 
 all_sequences <- c(g1, g2)
+all_sequences <- all_sequences[all_sequences@ranges@width < 1024]
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
@@ -56,12 +57,17 @@ all_sequences_embedded <- embedAminoAcids(
 )
 all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
 all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
+saveRDS(all_sequences_embedded, "../data/protein_embeddings_example.rds")
 all_sequences_embedded[1:5,1:6]
+```
+
+```{r, echo = FALSE}
+all_sequences_embedded <- readRDS("../data/protein_embeddings_example.rds")
 ```
 
 Nice! Once we've got the embeddings, we can run a PCA analysis to visualize them in 2D space:
 
-```{r, fig.width = 10, eval = FALSE}
+```{r, fig.width = 10}
 all_sequences_embedded_pca <- runMatrixAnalysis(
   data = all_sequences_embedded,
   analysis = "pca",
@@ -74,7 +80,7 @@ ggplot(all_sequences_embedded_pca) +
     aes(x = Dim.1, y = Dim.2, fill = name),
     shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
   ) +
-  scale_fill_manual(values = discrete_palette) +
+  scale_fill_manual(values = c("maroon", "gold")) +
   theme_minimal()
 
 ```
