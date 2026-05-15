@@ -1,0 +1,15 @@
+## The long-term role of the human scientist
+
+If AI continues to improve — absorbing more domain knowledge, digitising more of the unwritten expertise, becoming better at tasks that currently require human judgement — what is the scientist's enduring role?
+
+For the near term, the answer follows from the picture this post has drawn. The scientist's role is converging on what it has always been at its best: not the person who runs every analysis, but the person who *decides what matters* — who chooses what to investigate, judges what to trust, and places findings in a context that makes them meaningful. These acts require someone with stakes, with a position in a community, with the standing to say "I vouch for this work." AI extends the reach of each. It does not perform them.
+
+But there is a harder version of the question. Autonomous AI research systems already exist — systems that generate hypotheses, design experiments, run them in programmable laboratories, analyse results, and write up findings with minimal human involvement. If the trajectory continues, one could imagine a directive as broad as "find a treatment for this disease," with the system orchestrating the entire research programme.
+
+Even in that scenario, the directive itself still requires human judgement — choosing which disease, for whom, with what priority. Those are not scientifically neutral decisions. They involve trade-offs between populations, between short-term and long-term benefit, between what is technically feasible and what is ethically acceptable. A system that discovers a promising treatment but requires testing protocols that violate ethical norms has not solved the problem — it has produced a result that still requires human judgement to evaluate.
+
+I recognise this response has limits. If AI systems become capable enough, the human role could narrow to a thin goal-setting function requiring less domain knowledge over time. The argument for disciplinary expertise then shifts from a practical one to something closer to an existential one: that the practice of science — the struggle, the surprise, the slow accumulation of understanding — is valuable to the person doing it, regardless of whether AI could produce the same outputs more efficiently. That is closer to the question of why people climb mountains when helicopters exist. I plan to return to that longer-term question in a [future post]().
+
+For now, the practical case is strong enough on its own. The risk is not that AI will make scientists obsolete. It is that we will stop training people to do the things that make them scientists — the judgement, the embodied understanding, the hard-won instinct for what is real and what is artefact — because AI makes it possible to produce scientific-looking output without any of that underneath.
+
+Expertise is not what AI is replacing. Expertise is what makes AI worth using. The question is whether we continue to build it.

@@ -1,0 +1,7 @@
+### When the purpose is learning: exploratory mode
+
+Not all AI use is professional output. A graduate student might paste a dataset into a chat window to see whether the model spots trends or suggests a reasonable statistical approach. A postdoc might ask AI to explain an unfamiliar technique from a neighbouring field — not to cite the answer but to orient themselves before reading the primary literature.
+
+This is what I call *exploratory mode*: using AI to build intuition, test boundaries, and learn what the tools can and cannot do. The output is not going into a paper, a grant, or a report — the learning is the point. Evaluation can be lighter, and trying tasks that AI handles poorly is itself valuable, since discovering those limits builds genuine skill. Confidentiality obligations and the prohibition on submitting AI-generated text as your own still apply fully — exploratory mode loosens the evaluation standard, not the ethical one.
+
+The examples that follow are all in *considered mode* — professional work where the output matters. But if you are new to AI and wondering where to start, exploratory mode is the answer: try things, see what works, develop your own sense of where AI adds value and where it doesn't.

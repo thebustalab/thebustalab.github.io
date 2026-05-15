@@ -35,10 +35,12 @@ def main():
     current_semester_arg = sys.argv[1]
     current_rank = parse_semester_arg(current_semester_arg)
 
+    _script_dir = os.path.dirname(os.path.abspath(__file__))
+    _tools_dir = os.path.dirname(os.path.dirname(_script_dir))
     # Path to your Excel file
-    excel_path = "/Users/bust0037/Documents/Master_Plan.xlsx"
+    excel_path = os.path.join(_tools_dir, "research", "Master_Plan.xlsx")
     # Output HTML file
-    output_html = "/Users/bust0037/Documents/Websites/thebustalab.github.io/members.html"
+    output_html = os.path.join(_script_dir, "members.html")
 
     # Read the spreadsheet into a DataFrame
     df = pd.read_excel(excel_path)
@@ -239,7 +241,7 @@ def generate_member_html(row):
     photo = row.get("PhotoPath", "")   # path to the image
 
     # If the image doesn't exist at PhotoPath, use the placeholder image
-    if not os.path.exists(f"/Users/bust0037/Documents/Websites/thebustalab.github.io/{photo}"):
+    if not os.path.exists(os.path.join(_script_dir, photo)):
         photo = "images/members/placeholder.jpg"
 
     snippet = f"""

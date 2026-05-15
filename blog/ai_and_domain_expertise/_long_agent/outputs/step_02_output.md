@@ -1,0 +1,9 @@
+## What expertise actually is
+
+Expertise is not a body of facts. It is the ability to make judgements under uncertainty, recognise what is surprising or anomalous in data, and know which details matter and which can be safely ignored. An experienced organic chemist does not just know reaction mechanisms — she recognises when a yield is unexpectedly low and can generate plausible explanations. An ecologist with twenty years of fieldwork does not just know species names — he notices when a community composition suggests something has changed about the site.
+
+<!-- MARGIN: Judgement under uncertainty — the ability to make informed decisions when the available information is incomplete, ambiguous, or contradictory. This is distinct from following a procedure or applying a rule. Most consequential scientific decisions — what to investigate, what to trust, what to publish — involve uncertainty. -->
+
+AI has a form of knowledge, and it would be dishonest to dismiss it. Frontier models can produce competent summaries, generate reasonable code, identify patterns across large datasets, and even propose experimental designs. But AI's knowledge is statistical — it can tell you what is *typical* in a body of literature. What it struggles with is telling you what is *important*: which common approach has a known limitation that matters for your specific question, which established conclusion has been quietly challenged by recent work, which unexpected observation in your data is an artefact and which might be the most interesting result in the dataset.
+
+That distinction — between typical and important — is what expertise provides. It is not a distinction that more training data resolves, because importance is not a property of the text. It is a judgement that depends on knowing the field's open questions, its history of dead ends, and its current tensions.

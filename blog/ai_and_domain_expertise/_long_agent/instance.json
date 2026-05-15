@@ -1,0 +1,21 @@
+{
+  "task_type": "concision_pass",
+  "instance_path": "websites/thebustalab.github.io/blog/ai_and_domain_expertise/_long_agent",
+  "target_path": "websites/thebustalab.github.io/blog/ai_and_domain_expertise/draft.md",
+  "params": {
+    "target_words_total": 2500,
+    "structural_guidance": [
+      "The centaur chess explanation can be shortened \u2014 the concept is clear, the origin story does not need as much space",
+      "Lin and Sohail and Cotton and Scholle-Cotton quotes can be paraphrased more tightly rather than set up with full attribution sentences each time \u2014 but preserve the key phrases (expertise erosion paradox, short-circuiting the apprenticeship)",
+      "The skill atrophy analogies (language, instrument, cycling) \u2014 all three make the same point. Keep two, cut one. The language and cycling analogies are strongest (language for universality, cycling for the baseline vs high-performance distinction)",
+      "The complacency cascade section and distorted signals section can be merged into a single tighter subsection on population-level effects",
+      "The five training recommendations are verbose \u2014 tighten each to 1-2 sentences while preserving all five points",
+      "The long-term role section (autonomous labs, solve disease X, mountain-climbing analogy) should be kept but compressed \u2014 preserve the reference to a future post and the key examples (disease X trade-offs, mountain-climbing analogy) but tighten the surrounding prose",
+      "The strong/weak bundle paragraph in The two sides together should be preserved \u2014 it is a recent addition and well-integrated",
+      "Preserve all MARGIN comments \u2014 they are part of the post format",
+      "Preserve all cross-reference links to companion posts"
+    ]
+  },
+  "created": "2026-05-02T22:04:03.549909+00:00",
+  "notification_email": "bust0037@d.umn.edu"
+}

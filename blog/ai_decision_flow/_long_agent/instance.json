@@ -1,0 +1,23 @@
+{
+  "task_type": "concision_pass",
+  "instance_path": "websites/thebustalab.github.io/blog/ai_decision_flow/_long_agent",
+  "target_path": "websites/thebustalab.github.io/blog/ai_decision_flow/draft.md",
+  "params": {
+    "target_words_total": 2500,
+    "structural_guidance": [
+      "Remove the NOTE TO SELF comment about Jake co-authoring (line with Consider co-authoring)",
+      "Keep the five principles section largely intact \u2014 it is the conceptual core",
+      "The reference reformatting example is the easy baseline \u2014 keep but tighten",
+      "The literature review example and peer review vs responding to reviews contrast are the strongest \u2014 preserve these with moderate compression",
+      "The grant proposal example covers important unique ground (confidentiality interacting with capability) \u2014 keep but compress",
+      "The email to supervisor example and IRB application example are the most expendable \u2014 compress each to a single short paragraph",
+      "The exploratory mode section can be tightened \u2014 the concept is important but the current explanation is verbose",
+      "The numbered framework underneath section partially restates what the examples demonstrated \u2014 tighten to a concise list without repeating reasoning",
+      "The closing is already concise \u2014 leave roughly as is",
+      "Preserve all MARGIN comments \u2014 they are part of the post format and should not be cut",
+      "Empty placeholder links [separate post](), [companion post on disciplinary expertise](), [interactive version of this decision flow]() should be preserved as-is \u2014 they will be wired up separately"
+    ]
+  },
+  "created": "2026-05-02T22:03:49.395035+00:00",
+  "notification_email": "bust0037@d.umn.edu"
+}

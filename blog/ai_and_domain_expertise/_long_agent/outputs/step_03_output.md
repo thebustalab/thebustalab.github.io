@@ -1,0 +1,11 @@
+## Part one: what happens to the individual
+
+The relationship between AI and individual expertise has two sides, and they pull in opposite directions. On one side, AI amplifies what an expert can do — a scientist who delegates verifiable tasks like reformatting, literature organisation, routine code generation, and data wrangling reclaims time for the work where expertise matters most: designing experiments, interpreting results, mentoring students. This is the force multiplier effect. On the other side, AI can erode or prevent the development of the very expertise it needs in order to be a force multiplier — the "expertise erosion paradox."
+
+### The force multiplier
+
+When a well-trained scientist delegates a task to AI, the delegation works because she can verify the output. She knows what correct looks like — she catches the wrong model in AI-generated code, notices the omitted key paper, recognises the inappropriate analysis. In the [companion post on when to use AI](../ai_decision_flow/), I call this the "validateability" axis: can you efficiently verify what the AI produces? The axis only works if the person in the loop has genuine expertise. When they do, AI is a straightforward productivity gain: it handles the mechanical execution, the expert provides the judgement, and the combination outperforms either alone.
+
+This is the centaur model in practice. In centaur chess, human-AI pairs outperformed both humans and AI alone because each contributed what the other lacked. The analogy extends naturally to research: AI provides computational and analytical reach; the researcher provides direction and judgement about what the results mean.
+
+<!-- MARGIN: Centaur scientist — the term comes from centaur chess, where human-AI teams outperformed both humans and AI alone. MIT's 2026 workshop on AI in the mathematical and physical sciences applied the concept to research, arguing that the most effective model pairs deep disciplinary judgement with AI's analytical reach. -->

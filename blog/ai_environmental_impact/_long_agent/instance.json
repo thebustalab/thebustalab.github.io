@@ -1,0 +1,19 @@
+{
+  "task_type": "concision_pass",
+  "instance_path": "websites/thebustalab.github.io/blog/ai_environmental_impact/_long_agent",
+  "target_path": "websites/thebustalab.github.io/blog/ai_environmental_impact/draft.md",
+  "params": {
+    "target_words_total": 2000,
+    "structural_guidance": [
+      "The aggregate data section has more numbers than strictly needed \u2014 keep the most impactful comparisons (aviation, Japan electricity, 17% growth rate) and trim the rest",
+      "The why the usual framing misleads section makes the same core point (individual action does not map onto the problem) in several ways \u2014 tighten to make it once clearly with one strong example",
+      "The individual picture section is well-paced \u2014 light trim only, preserve the surprising finding about AI vs human emissions",
+      "The intentional use section has four bolded recommendations \u2014 these are already fairly concise but could each lose a sentence",
+      "The closing is already tight \u2014 leave as is",
+      "Preserve all MARGIN comments \u2014 they are part of the post format",
+      "Preserve the link to the interactive tool and companion post links"
+    ]
+  },
+  "created": "2026-05-02T22:07:08.335180+00:00",
+  "notification_email": "bust0037@d.umn.edu"
+}

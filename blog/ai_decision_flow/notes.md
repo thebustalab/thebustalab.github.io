@@ -44,7 +44,7 @@ The framework is structured as a decision flow, not a single evaluation step. So
 │     applies — see node 5)           │
 │                                     │
 │  CONSIDERED ──► full evaluation     │
-│    (nodes 3 + 4 below)             │
+│    (nodes 3 + 4 below)              │
 └──────────┬──────────┬───────────────┘
            │          │
      exploratory   considered

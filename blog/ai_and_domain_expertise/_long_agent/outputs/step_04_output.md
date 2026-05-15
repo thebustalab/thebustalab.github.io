@@ -1,0 +1,13 @@
+### The erosion paradox
+
+But here is the problem. The tasks that AI handles well — reading and summarising literature, writing first drafts, generating and debugging code, designing routine analyses — are not just mechanical chores. They are also the activities through which scientific expertise is *built*. A student who wrestles with a statistical model, gets it wrong, debugs it, and finally understands what the parameters mean has learned something that a student who asks AI for the code and runs it without error has not.
+
+"Unlike previous tools that augmented specific capabilities, GenAI can perform foundational intellectual activities through which scientific expertise itself develops: reading literature, designing studies, writing arguments, and generating code" (Lin & Sohail, *Patterns*, 2026). Previous tools extended what a scientist could *do*. GenAI can substitute for what a scientist needs to *learn*.
+
+Cotton and Scholle-Cotton (2026) call this *short-circuiting the apprenticeship* — bypassing the productive struggle through which understanding is built. As they put it, "the early-career professionals whose output benefits most from AI today may be the least prepared to lead their fields in an AI-driven future."
+
+<!-- MARGIN: Short-circuiting the apprenticeship — a phrase from Cotton & Scholle-Cotton (2026) describing how AI allows trainees to skip the difficult, time-consuming tasks that historically built expertise. The output is polished, but the person has not developed the judgement that would allow them to produce or evaluate such output independently. -->
+
+We have direct experience with skill atrophy. A person who learned a second language as a teenager but did not speak it for a decade finds the fluency has faded — not the basic vocabulary, but the speed, the idiom, the ability to catch a subtle implication. Even cycling: someone who developed real bike-handling skill — jumps, tight cornering, reading terrain — and then did not ride for a decade can still ride. The baseline persists. But the high-performance skills have eroded.
+
+The same logic applies to scientific skills. The concern is not that a researcher who delegates analysis to AI will forget what a p-value is. It is that the honed version of analytical judgement — the ability to sense immediately that something is off, to notice the pattern in the residuals, to catch the subtle specification error — requires regular practice to maintain. And it is precisely those high-performance skills that make the centaur model work. A force multiplier built on eroded expertise is not much of a multiplier.
