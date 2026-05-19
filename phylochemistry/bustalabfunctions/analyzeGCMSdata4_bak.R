@@ -12,43 +12,6 @@
         jupyter = FALSE
     ) {
 
-        ## Detect CDF flavour: "ms" for ANDI-MS (full rt x mz cube),
-        ## "chrom" for ANDI-Chrom single-detector (e.g. GC-TCD, GC-FID, GC-ECD),
-        ## "unknown" otherwise. Used to fork the ingest path below.
-        detect_cdf_type <- function(path) {
-            nc <- ncdf4::nc_open(path)
-            on.exit(ncdf4::nc_close(nc))
-            vars <- names(nc$var)
-            if (all(c("mass_values", "intensity_values", "scan_index") %in% vars)) {
-                return("ms")
-            }
-            if ("ordinate_values" %in% vars) {
-                return("chrom")
-            }
-            "unknown"
-        }
-
-        ## Read an ANDI-Chrom CDF and return a data frame matching the
-        ## framedDataFile shape used downstream (mz, intensity, rt). A
-        ## single-detector trace has no mz axis, so mz is a sentinel 0:
-        ## the TIC pipeline sums by rt to recover the one signal channel,
-        ## and any extracted-ion request returns empty (no spectrum exists).
-        read_chrom_cdf_as_framed <- function(path) {
-            nc <- ncdf4::nc_open(path)
-            on.exit(ncdf4::nc_close(nc))
-            ord <- as.numeric(ncdf4::ncvar_get(nc, "ordinate_values"))
-            var_names <- names(nc$var)
-            delay <- if ("actual_delay_time" %in% var_names) {
-                as.numeric(ncdf4::ncvar_get(nc, "actual_delay_time"))
-            } else 0
-            interval <- if ("actual_sampling_interval" %in% var_names) {
-                as.numeric(ncdf4::ncvar_get(nc, "actual_sampling_interval"))
-            } else 1
-            n <- length(ord)
-            rt <- delay + (seq_len(n) - 1) * interval
-            data.frame(mz = 0, intensity = ord, rt = rt)
-        }
-
         setwd(CDF_directory_path)
         paths_to_cdfs <- dir()[grep("*.CDF$", dir())]
         paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
@@ -71,49 +34,33 @@
 
                         if ( !file.exists(paths_to_cdf_csvs[file]) ) {
 
-                            cdf_type_this <- detect_cdf_type(paths_to_cdfs[file])
+                            cat(paste("CDF to CSV conversion. Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
+                                rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
 
-                            if (cdf_type_this == "chrom") {
+                            cat("   Framing data file ... \n")
+                                rt <- rawDataFile$rt
+                                scanindex <- rawDataFile$scanindex
 
-                                ## ANDI-Chrom single-detector file (e.g. GC-TCD).
-                                ## One row per timepoint with mz=0 sentinel.
-                                cat(paste("CDF (single-detector / chromatography format) to CSV conversion. Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
-                                    framedDataFile <- read_chrom_cdf_as_framed(paths_to_cdfs[file])
+                                filteredRawDataFile <- list()
+                                for ( i in 1:(length(rt)-1) ) {
+                                    filteredRawDataFile[[i]] <- data.frame(
+                                        mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
+                                        intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
+                                        rt = rt[i]
+                                    )
+                                }
+                                framedDataFile <- do.call(rbind, filteredRawDataFile)
+                                framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
+                                framedDataFile <- drop_na(framedDataFile)
 
-                                cat("   Writing out data file as CSV... \n")
-                                    data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
+                            cat("   Merging duplicate rows ...\n")
+                                if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
+                                    framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
+                                    framedDataFile <- as.data.frame(framedDataFile)
+                                }
 
-                            } else {
-
-                                cat(paste("CDF to CSV conversion. Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
-                                    rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
-
-                                cat("   Framing data file ... \n")
-                                    rt <- rawDataFile$rt
-                                    scanindex <- rawDataFile$scanindex
-
-                                    filteredRawDataFile <- list()
-                                    for ( i in 1:(length(rt)-1) ) {
-                                        filteredRawDataFile[[i]] <- data.frame(
-                                            mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
-                                            intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
-                                            rt = rt[i]
-                                        )
-                                    }
-                                    framedDataFile <- do.call(rbind, filteredRawDataFile)
-                                    framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
-                                    framedDataFile <- drop_na(framedDataFile)
-
-                                cat("   Merging duplicate rows ...\n")
-                                    if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
-                                        framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
-                                        framedDataFile <- as.data.frame(framedDataFile)
-                                    }
-
-                                cat("   Writing out data file as CSV... \n")
-                                    data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
-
-                            }
+                            cat("   Writing out data file as CSV... \n")
+                                data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
 
                         }
 
@@ -1426,16 +1373,6 @@
                                 if (!exists("MS_out_1")) {
                                     cat("No mass spectrum extracted yet.\n")
                                     return()
-                                } else if (is.null(MS_out_1) || nrow(MS_out_1) == 0 || (nrow(MS_out_1) == 1 && all(MS_out_1$mz == 0))) {
-                                    # Single-detector data (e.g. GC-TCD): no mass spectrum exists.
-                                    output$massSpectra_1 <- renderPlot({
-                                        ggplot() +
-                                            annotate("text", x = 0.5, y = 0.5,
-                                                     label = "No mass spectrum available\n(non-MS detector - e.g. TCD, FID, ECD)",
-                                                     size = 6, colour = "grey40") +
-                                            theme_void() +
-                                            xlim(0, 1) + ylim(0, 1)
-                                    })
                                 } else {
 
                                     # Normalize to max abu 100
@@ -1702,14 +1639,6 @@
                                 
                                 # Combine all peaks into one data frame
                                     ms_data <<- dplyr::bind_rows(ms_list)
-
-                                # Guard: single-detector data (e.g. GC-TCD) has no
-                                # mass spectrum to classify, so stop here cleanly.
-                                    if (all(ms_data$mz == 0)) {
-                                        message("Mass spectral classification skipped - single-detector data (e.g. TCD) has no spectrum to classify.")
-                                        return()
-                                    }
-
                                     ms_data_reactive(ms_data)
                                     message("Mass spectra extracted successfully.")
 
