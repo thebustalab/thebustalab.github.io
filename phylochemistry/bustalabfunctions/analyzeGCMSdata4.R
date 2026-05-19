@@ -932,6 +932,7 @@
                                     if ( is.null(input$chromatogram_brush) ) {
                                         x_axis_start <<- x_axis_start_default
                                         x_axis_end <<- x_axis_end_default
+                                        y_axis_start <<- 0
                                         y_axis_end <<- max(chromatograms$abundance)
                                     }
 
@@ -941,6 +942,7 @@
                                         peak_points <<- isolate(brushedPoints(chromatograms_updated, input$chromatogram_brush))
                                         x_axis_start <<- min(peak_points$rt)
                                         x_axis_end <<- max(peak_points$rt)
+                                        y_axis_start <<- min(peak_points$abundance)
                                         y_axis_end <<- max(peak_points$abundance)
                                         # x_axis_end <<- max(peak_points$rt)
                                     }
@@ -967,7 +969,7 @@
                                     #     alpha = 0.8
                                     # ) +
                                     scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
-                                    scale_y_continuous(limits = c(0, y_axis_end), name = "Abundance (counts)", oob = scales::squish) +
+                                    scale_y_continuous(limits = c(y_axis_start, y_axis_end), name = "Abundance (counts)", oob = scales::squish) +
                                     facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                     theme_classic() +
                                     guides(fill = "none") +
