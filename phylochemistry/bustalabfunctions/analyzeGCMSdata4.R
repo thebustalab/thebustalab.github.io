@@ -870,10 +870,14 @@
                                     prelim_baseline <- do.call(rbind, prelim_baseline)
 
                                     ## bound baseline to first and last point in chromatogram
+                                    ## (index by position, not by rt value — original code accidentally
+                                    ##  used the rt value as an integer index, which only happened to
+                                    ##  land in-range when rt values were large; on TCD data where rt
+                                    ##  starts near 0, tic$abundance[0] is length-0 and breaks data.frame())
                                     prelim_baseline <- rbind(
-                                        data.frame(rt = min(tic$rt), min = tic$abundance[min(tic$rt)]),
+                                        data.frame(rt = min(tic$rt), min = tic$abundance[which.min(tic$rt)]),
                                         prelim_baseline,
-                                        data.frame(rt = max(tic$rt), min = tic$abundance[max(tic$rt)])
+                                        data.frame(rt = max(tic$rt), min = tic$abundance[which.max(tic$rt)])
                                     )
 
                                     tic$in_prelim_baseline <- FALSE
