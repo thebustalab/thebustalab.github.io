@@ -50,7 +50,36 @@
         }
 
         setwd(CDF_directory_path)
-        paths_to_cdfs <- dir()[grep("*.CDF$", dir())]
+
+        ## Chemstation exports detector channels as SIGNAL01.CDF, SIGNAL02.CDF, etc.
+        ## Rename to <sample_name>.CDF using the file's sample_name global attribute
+        ## so downstream labels are meaningful instead of channel numbers.
+        signal_files <- dir()[grep("^SIGNAL.*\\.cdf$", dir(), ignore.case = TRUE)]
+        for (sf in signal_files) {
+            sample_name <- tryCatch({
+                nc <- ncdf4::nc_open(sf)
+                att <- ncdf4::ncatt_get(nc, 0, "sample_name")
+                ncdf4::nc_close(nc)
+                if (isTRUE(att$hasatt) && is.character(att$value)) att$value else ""
+            }, error = function(e) "")
+            if (!nzchar(sample_name)) next
+            safe_name <- gsub("[^A-Za-z0-9._-]+", "_", sample_name)
+            ext <- sub("^.*(\\.[Cc][Dd][Ff])$", "\\1", sf)
+            target <- paste0(safe_name, ext)
+            if (target == sf) next
+            if (file.exists(target)) {
+                i <- 2L
+                while (file.exists(paste0(safe_name, "_", i, ext))) i <- i + 1L
+                target <- paste0(safe_name, "_", i, ext)
+            }
+            file.rename(sf, target)
+            if (file.exists(paste0(sf, ".csv"))) {
+                file.rename(paste0(sf, ".csv"), paste0(target, ".csv"))
+            }
+            cat(paste0("Renamed ", sf, " -> ", target, "\n"))
+        }
+
+        paths_to_cdfs <- dir()[grep("\\.CDF$", dir(), ignore.case = TRUE)]
         paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
 
         ## PREPARE DATA: Check for CDF to CSV conversion, check chromatograms
@@ -254,7 +283,7 @@
 
             ## Filter chromatograms so only the CDFs in this folder are included
 
-                chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep(".CDF.csv", dir())],]
+                chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep("\\.CDF\\.csv$", dir(), ignore.case = TRUE)],]
 
             ## Set up several variables, plot_height, and x_axis limits if not specified in function call
                 
@@ -955,7 +984,7 @@
 
                             ## Plot
                                     
-                                facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated_filtered$path_to_cdf_csv))
+                                facet_labels <- gsub("\\.CDF\\.csv$", "", gsub(".*/", "", chromatograms_updated_filtered$path_to_cdf_csv), ignore.case = TRUE)
                                 names(facet_labels) <- chromatograms_updated_filtered$path_to_cdf_csv
 
                                 chromatogram_plot <- ggplot() +
