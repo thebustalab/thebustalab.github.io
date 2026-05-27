@@ -3,8 +3,9 @@
  *
  * Deployment (one-time):
  *   1. Create a Google Sheet with one tab named "labels"; first row is headers
- *        timestamp | labeller | abstract_id | compound | pathogen | direction |
- *        no_relationships_found | submission_id | elapsed_seconds | client_timestamp
+ *        timestamp | labeller | abstract_id | abstract_title | abstract_text |
+ *        compound | pathogen | direction | no_relationships_found |
+ *        submission_id | elapsed_seconds | client_timestamp
  *   2. Extensions → Apps Script. Paste this file's contents into Code.gs.
  *   3. Set the CONFIG constants below (SHEET_ID, ACCESS_KEY).
  *   4. Deploy → New deployment → type: Web app → execute as Me, access "Anyone".
@@ -57,11 +58,16 @@ function doPost(e) {
   const ts = new Date().toISOString();
   const rows = [];
 
+  const title = payload.abstract_title || "";
+  const text = payload.abstract_text || "";
+
   if (payload.no_relationships_found || !payload.triples || payload.triples.length === 0) {
     rows.push([
       ts,
       payload.labeller,
       payload.abstract_id,
+      title,
+      text,
       "",   // compound
       "",   // pathogen
       "",   // direction
@@ -76,6 +82,8 @@ function doPost(e) {
         ts,
         payload.labeller,
         payload.abstract_id,
+        title,
+        text,
         t.compound || "",
         t.pathogen || "",
         t.direction || "",

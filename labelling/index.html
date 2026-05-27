@@ -452,6 +452,8 @@ async function submit() {
     k: state.k,
     labeller: state.labeller,
     abstract_id: state.current.id,
+    abstract_title: state.current.title || "",
+    abstract_text: state.current.abstract || "",
     triples: triples,
     no_relationships_found: state.noRelMode,
     submission_id: cryptoRandomId(),
