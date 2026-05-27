@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abstract labelling</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #222;
+    --muted: #777;
+    --border: #ddd;
+    --accent: #2b5d8a;
+    --accent-hover: #1e4566;
+    --warn: #b85c00;
+    --ok: #2e7d32;
+    --row-bg: #fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding: 2rem 1rem;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .progress {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  .abstract-block {
+    background: var(--row-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .abstract-block h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--fg);
+  }
+  .abstract-meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .abstract-text {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+  .triples {
+    margin-top: 0.5rem;
+  }
+  .triple-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.1fr 2rem;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+  .triple-row input, .triple-row select {
+    font: inherit;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    width: 100%;
+  }
+  .triple-row .remove {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+  }
+  .triple-row .remove:hover {
+    color: var(--warn);
+  }
+  .triple-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.1fr 2rem;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  button.add-row, button.no-rel, button.submit {
+    font: inherit;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  button.add-row:hover { background: #eee; }
+  button.no-rel.active {
+    background: var(--warn);
+    color: #fff;
+    border-color: var(--warn);
+  }
+  button.submit {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  button.submit:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  button.submit:disabled, button.no-rel:disabled, button.add-row:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .form-actions {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .form-actions .spacer { flex: 1; }
+  .name-prompt {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .name-prompt label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .name-prompt input {
+    font: inherit;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 18rem;
+    margin-right: 0.5rem;
+  }
+  .status {
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    min-height: 1.2em;
+  }
+  .status.error { color: var(--warn); }
+  .status.ok { color: var(--ok); }
+  .hidden { display: none !important; }
+  .all-done {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--ok);
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Abstract labelling</h1>
+  <div class="progress" id="progress">Loading…</div>
+
+  <!-- Name prompt: shown only on first visit -->
+  <div class="name-prompt hidden" id="name-prompt">
+    <label for="name-input">Your name (used to track which labels you submitted):</label>
+    <input id="name-input" type="text" placeholder="e.g., Alice" autocomplete="off">
+    <button class="submit" id="name-save">Save</button>
+  </div>
+
+  <!-- Main labelling card -->
+  <div id="labelling-card" class="hidden">
+    <div class="abstract-block">
+      <h2 id="abstract-title"></h2>
+      <div class="abstract-meta" id="abstract-meta"></div>
+      <div class="abstract-text" id="abstract-text"></div>
+    </div>
+
+    <div class="triple-header">
+      <div>Compound</div>
+      <div>Pathogen</div>
+      <div>Effect</div>
+      <div></div>
+    </div>
+    <div class="triples" id="triples"></div>
+
+    <div class="form-actions">
+      <button class="add-row" id="add-row">+ Add another pair</button>
+      <button class="no-rel" id="no-rel">No relationships found</button>
+      <div class="spacer"></div>
+      <button class="submit" id="submit">Submit &amp; next →</button>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- All-done screen -->
+  <div id="all-done" class="all-done hidden">
+    ✓ All abstracts have two labellers. Thanks for your help!
+  </div>
+
+</main>
+
+<script>
+/*
+ * Abstract labelling — single-page client for lab-internal NLP gold-standard labels.
+ *
+ * Storage backend is a Google Apps Script web app (URL set below in CONFIG).
+ * Submissions POST as JSON-encoded text/plain to work around Apps Script's
+ * cross-origin POST limitations.
+ *
+ * Access control: a soft "knock" parameter ?k=<token> is read from the URL on
+ * page load and forwarded with every request. The Apps Script rejects calls
+ * that don't carry the expected token.
+ *
+ * Labeller identity: the labeller enters their name on first visit; it is
+ * saved to localStorage and reused. Names are also used to compute
+ * inter-rater agreement after the run.
+ */
+
+// ───────────────────────────────────────────────────────────────────────────
+// CONFIG — fill in after deploying the Apps Script web app
+// ───────────────────────────────────────────────────────────────────────────
+const CONFIG = {
+  // Replace with your deployed Apps Script web app URL
+  // (Deploy → Web app → Anyone, then copy the /exec URL)
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyQQfJfR7YD9jCoPyL7OEmGLIJP0-tuNPwHP6CsaLGuBfDkLd9KWB7UDh50LskOUYg5AQ/exec",
+
+  // The expected number of distinct labellers per abstract before it's "done"
+  LABELLERS_PER_ABSTRACT: 2,
+
+  // Direction dropdown options (order matters for display)
+  DIRECTIONS: [
+    { value: "", label: "— select —" },
+    { value: "inhibits", label: "inhibits / antagonises" },
+    { value: "induces", label: "induces / promotes" },
+    { value: "no_effect_observed", label: "no effect observed" },
+    { value: "mentioned_no_effect_stated", label: "mentioned, no effect stated" },
+  ],
+};
+// ───────────────────────────────────────────────────────────────────────────
+
+const $ = (id) => document.getElementById(id);
+const state = {
+  k: null,                    // access token from URL
+  labeller: null,             // labeller name (from localStorage)
+  abstracts: [],              // pool of all abstracts (from abstracts.json)
+  serverState: {},            // map: abstract_id -> array of distinct labeller names
+  current: null,              // currently displayed abstract record
+  startTimeMs: null,          // when this abstract was first shown
+  noRelMode: false,           // toggle for "no relationships found" mode
+};
+
+// ─── Bootstrap ─────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", async () => {
+  state.k = new URLSearchParams(window.location.search).get("k") || "";
+  state.labeller = localStorage.getItem("labeller") || null;
+
+  if (!state.labeller) {
+    $("name-prompt").classList.remove("hidden");
+    $("name-input").focus();
+    $("name-save").addEventListener("click", saveName);
+    $("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") saveName(); });
+  }
+
+  try {
+    state.abstracts = await fetchAbstracts();
+  } catch (err) {
+    setStatus("Failed to load abstracts: " + err.message, "error");
+    return;
+  }
+
+  await refreshServerState();
+  bindControls();
+  if (state.labeller) {
+    showNextAbstract();
+  }
+});
+
+async function fetchAbstracts() {
+  const r = await fetch("abstracts.json", { cache: "no-store" });
+  if (!r.ok) throw new Error("abstracts.json HTTP " + r.status);
+  return r.json();
+}
+
+async function refreshServerState() {
+  // Fetch labels-per-abstract summary from Apps Script.
+  // Gracefully degrade to "no one has labelled anything" if the request fails
+  // (useful while testing locally before the script is deployed).
+  if (!CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.startsWith("REPLACE_")) {
+    state.serverState = {};
+    setStatus("[dev mode] APPS_SCRIPT_URL not configured; submissions will print to console only.", "error");
+    return;
+  }
+  try {
+    const url = `${CONFIG.APPS_SCRIPT_URL}?action=state&k=${encodeURIComponent(state.k)}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("state HTTP " + r.status);
+    state.serverState = await r.json();
+  } catch (err) {
+    setStatus("Could not load state: " + err.message + ". Showing anyway.", "error");
+    state.serverState = {};
+  }
+}
+
+// ─── Name flow ─────────────────────────────────────────────────────────────
+function saveName() {
+  const v = $("name-input").value.trim();
+  if (!v) return;
+  state.labeller = v;
+  localStorage.setItem("labeller", v);
+  $("name-prompt").classList.add("hidden");
+  showNextAbstract();
+}
+
+// ─── Abstract selection ────────────────────────────────────────────────────
+function eligiblePool() {
+  return state.abstracts.filter((a) => {
+    const labellers = state.serverState[a.id] || [];
+    return labellers.length < CONFIG.LABELLERS_PER_ABSTRACT && !labellers.includes(state.labeller);
+  });
+}
+
+function showNextAbstract() {
+  const pool = eligiblePool();
+  if (pool.length === 0) {
+    $("labelling-card").classList.add("hidden");
+    $("all-done").classList.remove("hidden");
+    $("progress").textContent = "All abstracts complete.";
+    return;
+  }
+  state.current = pool[Math.floor(Math.random() * pool.length)];
+  state.startTimeMs = Date.now();
+  state.noRelMode = false;
+  renderCurrent();
+}
+
+function renderCurrent() {
+  const a = state.current;
+  $("abstract-title").textContent = a.title || "(no title)";
+  const meta = [a.authors, a.journal, a.year].filter(Boolean).join(" · ");
+  $("abstract-meta").textContent = meta + (a.doi ? "  ·  doi:" + a.doi : "");
+  $("abstract-text").textContent = a.abstract || "(no abstract)";
+
+  // Reset form
+  $("triples").innerHTML = "";
+  addTripleRow();
+  $("no-rel").classList.remove("active");
+  $("no-rel").textContent = "No relationships found";
+  $("status").textContent = "";
+
+  // Progress
+  const total = state.abstracts.length;
+  const done = state.abstracts.filter((a) =>
+    (state.serverState[a.id] || []).length >= CONFIG.LABELLERS_PER_ABSTRACT
+  ).length;
+  $("progress").textContent =
+    `${done}/${total} abstracts have ${CONFIG.LABELLERS_PER_ABSTRACT} labellers. ` +
+    `Your name: ${state.labeller}.`;
+
+  $("labelling-card").classList.remove("hidden");
+}
+
+// ─── Triple rows ───────────────────────────────────────────────────────────
+function addTripleRow() {
+  const div = document.createElement("div");
+  div.className = "triple-row";
+  div.innerHTML = `
+    <input type="text" class="t-compound" placeholder="compound" autocomplete="off">
+    <input type="text" class="t-pathogen" placeholder="pathogen" autocomplete="off">
+    <select class="t-direction">
+      ${CONFIG.DIRECTIONS.map(d => `<option value="${d.value}">${d.label}</option>`).join("")}
+    </select>
+    <button class="remove" title="remove row" aria-label="remove row">×</button>
+  `;
+  div.querySelector(".remove").addEventListener("click", () => {
+    if ($("triples").children.length > 1) div.remove();
+  });
+  $("triples").appendChild(div);
+}
+
+function readTriples() {
+  const rows = $("triples").querySelectorAll(".triple-row");
+  const triples = [];
+  for (const row of rows) {
+    const compound = row.querySelector(".t-compound").value.trim();
+    const pathogen = row.querySelector(".t-pathogen").value.trim();
+    const direction = row.querySelector(".t-direction").value;
+    if (!compound && !pathogen && !direction) continue; // empty row, skip silently
+    triples.push({ compound, pathogen, direction });
+  }
+  return triples;
+}
+
+// ─── Controls ──────────────────────────────────────────────────────────────
+function bindControls() {
+  $("add-row").addEventListener("click", () => addTripleRow());
+  $("no-rel").addEventListener("click", toggleNoRel);
+  $("submit").addEventListener("click", submit);
+}
+
+function toggleNoRel() {
+  state.noRelMode = !state.noRelMode;
+  const btn = $("no-rel");
+  if (state.noRelMode) {
+    btn.classList.add("active");
+    btn.textContent = "✓ No relationships";
+    // Hide / clear triples since they're irrelevant in no-rel mode
+    $("triples").innerHTML = "";
+    $("add-row").disabled = true;
+  } else {
+    btn.classList.remove("active");
+    btn.textContent = "No relationships found";
+    $("add-row").disabled = false;
+    addTripleRow();
+  }
+}
+
+// ─── Submission ────────────────────────────────────────────────────────────
+async function submit() {
+  if (!state.current) return;
+
+  const triples = state.noRelMode ? [] : readTriples();
+  if (!state.noRelMode) {
+    // Validate non-empty rows
+    if (triples.length === 0) {
+      setStatus("Add at least one compound–pathogen pair, or click 'No relationships found'.", "error");
+      return;
+    }
+    for (const t of triples) {
+      if (!t.compound || !t.pathogen || !t.direction) {
+        setStatus("Each row needs a compound, a pathogen, and a direction. Use the 'No relationships' button if none apply.", "error");
+        return;
+      }
+    }
+  }
+
+  const payload = {
+    k: state.k,
+    labeller: state.labeller,
+    abstract_id: state.current.id,
+    triples: triples,
+    no_relationships_found: state.noRelMode,
+    submission_id: cryptoRandomId(),
+    elapsed_seconds: Math.round((Date.now() - state.startTimeMs) / 1000),
+    client_timestamp: new Date().toISOString(),
+  };
+
+  setStatus("Submitting…");
+  $("submit").disabled = true;
+
+  if (!CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.startsWith("REPLACE_")) {
+    // Dev mode: print payload to console and pretend to advance
+    console.log("[dev mode] payload:", payload);
+    setStatus("[dev mode] payload printed to console. Configure APPS_SCRIPT_URL to send to Sheet.", "ok");
+    $("submit").disabled = false;
+    // Mark locally so the next pick advances
+    state.serverState[state.current.id] = (state.serverState[state.current.id] || []).concat([state.labeller]);
+    showNextAbstract();
+    return;
+  }
+
+  try {
+    const r = await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const result = await r.json();
+    if (result.status !== "ok") throw new Error(result.error || "unknown");
+
+    setStatus("Submitted ✓", "ok");
+    await refreshServerState();
+    showNextAbstract();
+  } catch (err) {
+    setStatus("Submit failed: " + err.message, "error");
+  } finally {
+    $("submit").disabled = false;
+  }
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────
+function setStatus(msg, cls) {
+  const el = $("status");
+  el.textContent = msg;
+  el.className = "status " + (cls || "");
+}
+
+function cryptoRandomId() {
+  // 16 bytes of entropy as a hex string
+  const buf = new Uint8Array(16);
+  crypto.getRandomValues(buf);
+  return Array.from(buf).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+</script>
+
+</body>
+</html>
