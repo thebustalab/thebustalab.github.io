@@ -49,6 +49,7 @@
         path_to_reference_library = busta_spectral_library,
         samples_monolist_subset = NULL,
         ions = 0,
+        ms_classifier_path = "/project_data/shared/mass_spectral_library/ms_classifier.py",
         jupyter = FALSE
     ) {
 
@@ -1802,29 +1803,43 @@
                                     group_by(peak_unique_id, mz) %>%
                                     summarize(intensity = sum(intensity)) %>%
                                     bind_rows(data.frame(peak_unique_id = 0, mz = 0:1000, intensity = 0)) %>%
-                                    pivot_wider(names_from = mz, values_from = intensity, values_fill = 0) -> ms_wide
-                                ms_wide <- ms_wide[ms_wide$peak_unique_id != 0,][,-1]
-                                ms_wide <<- as_tibble(t(apply(ms_wide, 1, function(x) (x / max(x)) * 100))) # normalize to 100
+                                    pivot_wider(names_from = mz, values_from = intensity, values_fill = 0) -> ms_wide_raw
+                                ms_wide_pre <- ms_wide_raw[ms_wide_raw$peak_unique_id != 0, ]
+                                ms_wide_norm <- as_tibble(t(apply(ms_wide_pre[,-1], 1, function(x) (x / max(x)) * 100))) # normalize to 100
+                                ms_wide <<- ms_wide_norm
 
                                 message("ms_wide made and saved for inspection and plotting.")
 
-                                predictions <<- as.character(predictWithModel(
-                                    data = ms_wide,
-                                    model_type = "random_forest_classification",
-                                    model = readRDS("/project_data/shared/mass_spectral_library/busta_lab_rfc_model_v1.rds")
-                                ))
+                                # Classify peaks with the Python classifier (XGBoost, or sklearn
+                                # HistGradientBoosting fallback). The trained model pkl must sit beside
+                                # ms_classifier.py, which resolves it relative to its own __file__.
+                                if (is.null(ms_classifier_path) || !file.exists(ms_classifier_path)) {
+                                    message(paste0("Classification skipped - ms_classifier.py not found at: ",
+                                                   ifelse(is.null(ms_classifier_path), "NULL", ms_classifier_path)))
+                                    return()
+                                }
+
+                                # Export ms_wide (with peak_unique_id) for the Python classifier
+                                ms_wide_export <- cbind(peak_unique_id = ms_wide_pre$peak_unique_id, ms_wide_norm)
+                                write.csv(ms_wide_export, "ms_wide_for_prediction.csv", row.names = FALSE)
+
+                                exit_code <- system(paste0("python3 ", shQuote(ms_classifier_path),
+                                                           " predict ms_wide_for_prediction.csv predictions.csv"))
+                                if (exit_code != 0 || !file.exists("predictions.csv")) {
+                                    message("ERROR: Python classifier failed. Check that ms_classifier.py is trained and its model pkl is present.")
+                                    return()
+                                }
+
+                                # Read predictions back (columns: predicted_compound, confidence)
+                                pred_df <- read.csv("predictions.csv", stringsAsFactors = FALSE)
+                                predictions <<- pred_df$predicted_compound
 
                                 message("predictions made:")
-                                # message(predictions)
-                                
-                                peak_table$peak_ID <- paste0("(predicted) ", predictions)
+
+                                peak_table$peak_ID <- paste0("(predicted) ", predictions,
+                                                             " [", round(pred_df$confidence * 100, 0), "%]")
                                 writeMonolist(peak_table, "peaks_monolist.csv")
-                                
-                                # # Render the results in the UI table.
-                                # output$ms_results <- DT::renderDataTable({
-                                #     ms_results_reactive()
-                                # })
-                                
+
                                 message("Mass spectral classification completed.")
                             }
 
