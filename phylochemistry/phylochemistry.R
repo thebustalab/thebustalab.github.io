@@ -2,6 +2,56 @@
 ## PHYLOCHEMISTRY v1 ##
 #######################
 
+###### Shiny port pool for jupyter = TRUE Shiny launchers
+####
+#### The lab's nginx config on host1 (bustalab.d.umn.edu) proxies 13 named
+#### subdomains to fixed localhost ports. Any Shiny app started inside a
+#### JupyterHub R session can claim one of those ports; nginx then routes
+#### the matching public URL to the user's app over HTTPS.
+####
+#### Use pick_shiny_port() instead of inlining the pool logic at each
+#### launcher (it used to be ~50 lines per call site).
+####
+####    slot <- pick_shiny_port()
+####    if (is.null(slot)) {
+####        cat("All shiny ports are in use. Please try again later.")
+####        return(invisible(NULL))
+####    }
+####    cat(paste0("Connect at: ", slot$url))
+####    runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
+####
+#### To add a slot: append a row to .shiny_port_pool below and add the
+#### matching server block in /etc/nginx/sites-enabled/bustalab.d.umn.edu
+#### on host1 (with a Let's Encrypt cert).
+
+    .shiny_port_pool <- data.frame(
+        port      = c(10101:10110, 10123, 10456, 10789),
+        subdomain = c(paste0("shiny", 1:10), "shiny123", "shiny456", "shiny789"),
+        stringsAsFactors = FALSE
+    )
+
+    .shiny_port_is_free <- function(port) {
+        tryCatch({
+            s <- httpuv::startServer("127.0.0.1", port,
+                                     list(call = function(req) list(status = 200, body = "")))
+            s$stop()
+            TRUE
+        }, error = function(e) FALSE)
+    }
+
+    pick_shiny_port <- function() {
+        for (i in sample(nrow(.shiny_port_pool))) {
+            p <- .shiny_port_pool$port[i]
+            if (.shiny_port_is_free(p)) {
+                return(list(
+                    port = p,
+                    url  = paste0("https://", .shiny_port_pool$subdomain[i], ".bustalab.d.umn.edu")
+                ))
+            }
+        }
+        NULL
+    }
+
 ###### Libraries
 
     ## Load bustalab-specific libraries and functions
@@ -3489,52 +3539,12 @@
 
                 if (jupyter == TRUE) {
 
-                    available_ports <- vector()
-
-                    if ( length( unique( c(
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                    if ( length( unique( c(
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                    if ( length( unique( c(
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                    if (length(available_ports) > 0) {
-                        cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                        return(runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1]))
-                    } else {
+                    slot <- pick_shiny_port()
+                    if (is.null(slot)) {
                         cat("All available ports are in use. Please try again later.")
+                    } else {
+                        cat(paste0("Connect at: ", slot$url))
+                        return(runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port))
                     }
 
                 }
@@ -6772,52 +6782,12 @@
                         
                         if ( jupyter == TRUE) {
 
-                            available_ports <- vector()
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                            if (length(available_ports) > 0) {
-                                cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                                runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                            } else {
+                            slot <- pick_shiny_port()
+                            if (is.null(slot)) {
                                 cat("All available ports are in use. Please try again later.")
+                            } else {
+                                cat(paste0("Connect at: ", slot$url))
+                                runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                             }
                         
                         }
@@ -7977,52 +7947,12 @@
                         
                         if ( jupyter == TRUE) {
 
-                            available_ports <- vector()
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                            if ( length( unique( c(
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                            ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                            if (length(available_ports) > 0) {
-                                cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                                runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                            } else {
+                            slot <- pick_shiny_port()
+                            if (is.null(slot)) {
                                 cat("All available ports are in use. Please try again later.")
+                            } else {
+                                cat(paste0("Connect at: ", slot$url))
+                                runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                             }
                         
                         }
@@ -9624,52 +9554,12 @@
                     
                     if ( jupyter == TRUE) {
 
-                        available_ports <- vector()
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                        if (length(available_ports) > 0) {
-                            cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                        } else {
+                        slot <- pick_shiny_port()
+                        if (is.null(slot)) {
                             cat("All available ports are in use. Please try again later.")
+                        } else {
+                            cat(paste0("Connect at: ", slot$url))
+                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                         }
                     
                     }
@@ -10351,52 +10241,12 @@
 
                 if ( jupyter == TRUE) {
 
-                    available_ports <- vector()
-
-                    if ( length( unique( c(
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                    if ( length( unique( c(
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                    if ( length( unique( c(
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                    ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                    if (length(available_ports) > 0) {
-                        cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                        runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                    } else {
+                    slot <- pick_shiny_port()
+                    if (is.null(slot)) {
                         cat("All available ports are in use. Please try again later.")
+                    } else {
+                        cat(paste0("Connect at: ", slot$url))
+                        runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                     }
 
                 }
@@ -11081,52 +10931,12 @@
 
                     if ( jupyter == TRUE) {
 
-                        available_ports <- vector()
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10123) }
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10456) }
-
-                        if ( length( unique( c(
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10789) }
-
-                        if (length(available_ports) > 0) {
-                            cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                        } else {
+                        slot <- pick_shiny_port()
+                        if (is.null(slot)) {
                             cat("All available ports are in use. Please try again later.")
+                        } else {
+                            cat(paste0("Connect at: ", slot$url))
+                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                         }
 
                     }

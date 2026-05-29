@@ -166,6 +166,37 @@
     color: var(--ok);
     font-size: 1.2rem;
   }
+  .leaderboard {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--row-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .leaderboard h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.2rem 0;
+    color: var(--fg);
+  }
+  .leaderboard-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  #leaderboard-table {
+    width: auto;
+    font-size: 0.9rem;
+    border-collapse: collapse;
+  }
+  #leaderboard-table td {
+    padding: 0.15rem 0.8rem 0.15rem 0;
+  }
+  #leaderboard-table td.count {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  #leaderboard-table tr.me td { font-weight: 600; color: var(--accent); }
 </style>
 </head>
 <body>
@@ -174,10 +205,10 @@
   <h1>Abstract labelling</h1>
   <div class="progress" id="progress">Loading…</div>
 
-  <!-- Name prompt: shown only on first visit -->
+  <!-- Name prompt: shown only on first visit. Dropdown sourced from CONFIG.ROSTER below. -->
   <div class="name-prompt hidden" id="name-prompt">
-    <label for="name-input">Your name (used to track which labels you submitted):</label>
-    <input id="name-input" type="text" placeholder="e.g., Alice" autocomplete="off">
+    <label for="name-select">Your name (used to track which labels you submitted):</label>
+    <select id="name-select"></select>
     <button class="submit" id="name-save">Save</button>
   </div>
 
@@ -212,6 +243,13 @@
     ✓ All abstracts have two labellers. Thanks for your help!
   </div>
 
+  <!-- Leaderboard: one point per labelling triple OR newsletter submission. -->
+  <div id="leaderboard" class="leaderboard hidden">
+    <h3>Leaderboard</h3>
+    <div class="leaderboard-sub">One point per labelling triple or newsletter submission (photo / data update / abstract / reminder).</div>
+    <table id="leaderboard-table"><tbody></tbody></table>
+  </div>
+
 </main>
 
 <script>
@@ -242,6 +280,16 @@ const CONFIG = {
   // The expected number of distinct labellers per abstract before it's "done"
   LABELLERS_PER_ABSTRACT: 2,
 
+  // Lab roster — labellers must pick a name from this list. Update each
+  // semester to reflect who's currently in the lab. Keep in sync with
+  // newsletter/links.json (the same names appear in the newsletter form).
+  ROSTER: [
+    "Mady Larson", "Jenny Ruliffson", "Rory Westerman", "Becky Goetsch",
+    "Makenna Karshbaum", "Mariona Checa", "Ellie Horsnell", "Bri Beebe",
+    "Sam Saenger", "Skylar Vargas", "Brandon Bayard", "Lucas Busta",
+    "Jenna Fette",
+  ],
+
   // Direction dropdown options (order matters for display)
   DIRECTIONS: [
     { value: "", label: "— select —" },
@@ -268,12 +316,20 @@ const state = {
 window.addEventListener("DOMContentLoaded", async () => {
   state.k = new URLSearchParams(window.location.search).get("k") || "";
   state.labeller = localStorage.getItem("labeller") || null;
+  // If a stored name isn't in the current roster (e.g. roster updated mid-
+  // semester), force the picker to reappear so the labeller updates it.
+  if (state.labeller && !CONFIG.ROSTER.includes(state.labeller)) {
+    state.labeller = null;
+    localStorage.removeItem("labeller");
+  }
+
+  populateNameDropdown();
 
   if (!state.labeller) {
     $("name-prompt").classList.remove("hidden");
-    $("name-input").focus();
+    $("name-select").focus();
     $("name-save").addEventListener("click", saveName);
-    $("name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") saveName(); });
+    $("name-select").addEventListener("keydown", (e) => { if (e.key === "Enter") saveName(); });
   }
 
   try {
@@ -288,7 +344,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (state.labeller) {
     showNextAbstract();
   }
+  refreshLeaderboard();
 });
+
+function populateNameDropdown() {
+  const select = $("name-select");
+  if (!select) return;
+  select.innerHTML = '<option value="">— select your name —</option>' +
+    CONFIG.ROSTER.map(n => `<option value="${n}">${n}</option>`).join("");
+}
 
 async function fetchAbstracts() {
   const r = await fetch("abstracts.json", { cache: "no-store" });
@@ -318,12 +382,13 @@ async function refreshServerState() {
 
 // ─── Name flow ─────────────────────────────────────────────────────────────
 function saveName() {
-  const v = $("name-input").value.trim();
+  const v = $("name-select").value.trim();
   if (!v) return;
   state.labeller = v;
   localStorage.setItem("labeller", v);
   $("name-prompt").classList.add("hidden");
   showNextAbstract();
+  refreshLeaderboard();
 }
 
 // ─── Abstract selection ────────────────────────────────────────────────────
@@ -488,11 +553,43 @@ async function submit() {
     setStatus("Submitted ✓", "ok");
     await refreshServerState();
     showNextAbstract();
+    refreshLeaderboard();
   } catch (err) {
     setStatus("Submit failed: " + err.message, "error");
   } finally {
     $("submit").disabled = false;
   }
+}
+
+// ─── Leaderboard ───────────────────────────────────────────────────────────
+async function refreshLeaderboard() {
+  if (!CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.startsWith("REPLACE_")) {
+    return;  // dev mode — no server to ask
+  }
+  let rows;
+  try {
+    const url = `${CONFIG.APPS_SCRIPT_URL}?action=leaderboard&k=${encodeURIComponent(state.k)}`;
+    const r = await fetch(url);
+    if (!r.ok) return;
+    rows = await r.json();
+  } catch {
+    return;
+  }
+  // Seed any missing roster names with 0 so everyone shows up.
+  const counts = {};
+  for (const n of CONFIG.ROSTER) counts[n] = 0;
+  if (Array.isArray(rows)) {
+    for (const r of rows) {
+      if (r && typeof r.name === "string") counts[r.name] = r.count | 0;
+    }
+  }
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const tbody = document.querySelector("#leaderboard-table tbody");
+  tbody.innerHTML = sorted.map(([name, count]) => {
+    const cls = name === state.labeller ? "me" : "";
+    return `<tr class="${cls}"><td>${name}</td><td class="count">${count}</td></tr>`;
+  }).join("");
+  $("leaderboard").classList.remove("hidden");
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────

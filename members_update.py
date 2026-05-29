@@ -38,7 +38,7 @@ def main():
     _script_dir = os.path.dirname(os.path.abspath(__file__))
     _tools_dir = os.path.dirname(os.path.dirname(_script_dir))
     # Path to your Excel file
-    excel_path = os.path.join(_tools_dir, "research", "Master_Plan.xlsx")
+    excel_path = os.path.join(_tools_dir, "research", "lab_roster.xlsx")
     # Output HTML file
     output_html = os.path.join(_script_dir, "members.html")
 
