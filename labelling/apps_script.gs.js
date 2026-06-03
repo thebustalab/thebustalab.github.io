@@ -29,7 +29,7 @@
  *      is headers
  *        timestamp | labeller | abstract_id | abstract_title | abstract_text |
  *        compound | pathogen | direction | no_relationships_found |
- *        submission_id | elapsed_seconds | client_timestamp
+ *        submission_id | elapsed_seconds | client_timestamp | notes
  *   2. Extensions → Apps Script. Paste this file's contents into Code.gs.
  *   3. Set the CONFIG constants below (see REDEPLOY CHECKLIST).
  *   4. Deploy → New deployment → type: Web app → execute as Me, access "Anyone".
@@ -93,6 +93,7 @@ function doPost(e) {
 
   const title = payload.abstract_title || "";
   const text = payload.abstract_text || "";
+  const notes = payload.notes || "";  // per-submission, denormalised into every row
 
   if (payload.no_relationships_found || !payload.triples || payload.triples.length === 0) {
     rows.push([
@@ -108,6 +109,7 @@ function doPost(e) {
       payload.submission_id,
       payload.elapsed_seconds || "",
       payload.client_timestamp || "",
+      notes,
     ]);
   } else {
     for (const t of payload.triples) {
@@ -124,6 +126,7 @@ function doPost(e) {
         payload.submission_id,
         payload.elapsed_seconds || "",
         payload.client_timestamp || "",
+        notes,
       ]);
     }
   }

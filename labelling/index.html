@@ -130,6 +130,25 @@
     gap: 0.4rem;
   }
   .form-actions .spacer { flex: 1; }
+  .notes-block {
+    margin-top: 1rem;
+  }
+  .notes-block label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .notes-block textarea {
+    font: inherit;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+  }
   .name-prompt {
     margin-bottom: 1.5rem;
     padding: 1rem 1.25rem;
@@ -228,6 +247,11 @@
     </div>
     <div class="triples" id="triples"></div>
 
+    <div class="notes-block">
+      <label for="notes">Notes (optional) — anything confusing, or e.g. several compounds tested in combination</label>
+      <textarea id="notes" rows="2" placeholder="optional notes for this abstract…"></textarea>
+    </div>
+
     <div class="form-actions">
       <button class="add-row" id="add-row">+ Add another pair</button>
       <button class="no-rel" id="no-rel">No relationships found</button>
@@ -296,7 +320,6 @@ const CONFIG = {
     { value: "inhibits", label: "inhibits / antagonises" },
     { value: "induces", label: "induces / promotes" },
     { value: "no_effect_observed", label: "no effect observed" },
-    { value: "mentioned_no_effect_stated", label: "mentioned, no effect stated" },
   ],
 };
 // ───────────────────────────────────────────────────────────────────────────
@@ -423,6 +446,7 @@ function renderCurrent() {
   // Reset form
   $("triples").innerHTML = "";
   addTripleRow();
+  $("notes").value = "";
   $("no-rel").classList.remove("active");
   $("no-rel").textContent = "No relationships found";
   $("status").textContent = "";
@@ -521,6 +545,7 @@ async function submit() {
     abstract_text: state.current.abstract || "",
     triples: triples,
     no_relationships_found: state.noRelMode,
+    notes: $("notes").value.trim(),
     submission_id: cryptoRandomId(),
     elapsed_seconds: Math.round((Date.now() - state.startTimeMs) / 1000),
     client_timestamp: new Date().toISOString(),
