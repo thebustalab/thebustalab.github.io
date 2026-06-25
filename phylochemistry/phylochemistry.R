@@ -54,6 +54,71 @@
 
 ###### Libraries
 
+    ## Install/load preflight — stop early with a clear, actionable message
+    ## instead of a cryptic error partway through installing ~280 packages.
+    ## Targets the two things students trip on most: an old / pre-existing R,
+    ## and a package library that R has no permission to write to.
+
+        .phylochemistry_min_R <- "4.1.0"
+
+        .phylochemistry_preflight <- function(min_R = .phylochemistry_min_R) {
+
+            ## 1. R version
+            if (getRversion() < min_R) {
+                stop(paste0(
+                    "\n\n[phylochemistry] Your R is version ", getRversion(),
+                    ", but phylochemistry needs R ", min_R, " or newer.\n",
+                    "  -> Install the latest R from https://cloud.r-project.org\n",
+                    "  -> Then FULLY quit and reopen RStudio so it uses the new R, and source phylochemistry again.\n",
+                    "     (you can check your version any time with:  R.version.string )\n"
+                ), call. = FALSE)
+            }
+
+            ## 2. A writable package library must exist on the path
+            libs <- .libPaths()
+            if (!any(file.access(libs, mode = 2) == 0)) {
+                userlib <- path.expand(Sys.getenv("R_LIBS_USER"))
+                fixed <- FALSE
+                if (nzchar(userlib)) {
+                    if (!dir.exists(userlib))
+                        try(dir.create(userlib, recursive = TRUE, showWarnings = FALSE), silent = TRUE)
+                    if (dir.exists(userlib) && file.access(userlib, mode = 2) == 0) {
+                        .libPaths(c(userlib, libs))
+                        message("[phylochemistry] No writable library was on the path; ",
+                                "using your personal one:\n  ", userlib)
+                        fixed <- TRUE
+                    }
+                }
+                if (!fixed) {
+                    stop(paste0(
+                        "\n\n[phylochemistry] R has nowhere it can install packages -- every folder\n",
+                        "on your library path is read-only:\n  ",
+                        paste(libs, collapse = "\n  "), "\n",
+                        "Create a personal library by running these two lines, then source phylochemistry again:\n",
+                        "  dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE)\n",
+                        "  .libPaths(Sys.getenv('R_LIBS_USER'))\n"
+                    ), call. = FALSE)
+                }
+            }
+
+            invisible(TRUE)
+        }
+
+        ## Lightweight, NON-fatal connectivity probe; only consulted when
+        ## something actually needs downloading. A blocking proxy can fail this
+        ## yet still allow install.packages(), so it only warns.
+        .phylochemistry_online <- function(test_url = "https://cloud.r-project.org") {
+            old <- options(timeout = 10); on.exit(options(old), add = TRUE)
+            suppressWarnings(tryCatch({
+                con <- url(test_url, open = "rb", method = "libcurl")
+                on.exit(close(con), add = TRUE)
+                readBin(con, "raw", 1L)
+                TRUE
+            }, error = function(e) FALSE))
+        }
+
+        .phylochemistry_preflight()
+
     ## Load bustalab-specific libraries and functions
 
         if (exists("bustalab")) {
@@ -64,7 +129,7 @@
                 
                 CRAN_packages <- c(
                     # "imager",
-                    "minpack.lm", "XML", "eulerr"
+                    "minpack.lm", "XML"
                 )
 
                 Bioconductor_packages <- c(
@@ -90,104 +155,104 @@
         if ( !exists("packages") ) {
 
             ## Define necessary libraries
-                
+            ##
+            ## Scope controls how much gets installed/loaded:
+            ##   "core" = everything chapters 1–11 of the course need (default for
+            ##            students — data viz, stats, clustering/PCA, modelling).
+            ##   "full" = also the chapters 12–18 stack (sequence homology,
+            ##            alignments, phylogenetics, language models).
+            ## The lab build (bustalab = TRUE) always gets the full set. Anyone
+            ## working past chapter 11 can request it with
+            ##   phylochemistry_scope <- "full"   # before source()-ing this file
+
+                if (!exists("phylochemistry_scope")) {
+                    phylochemistry_scope <- if (exists("bustalab") && isTRUE(bustalab)) "full" else "core"
+                }
+
+                ## Core — chapters 1–11. These are ATTACHED (library()) at load.
+                CRAN_core <- c(
+                    ## data IO + wrangling
+                        "tidyverse", "dplyr", "stringr", "readxl", "data.table",
+                        "jsonlite", "DT", "rhandsontable", "progress",
+                    ## ggplot ecosystem
+                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", "ggpmisc",
+                        "viridis", "RColorBrewer", "treemapify", "ggnewscale",
+                        "patchwork", "gridExtra", "grid",
+                    ## statistics
+                        "rstatix", "agricolae", "multcompView", "performance", "Hmisc",
+                    ## clustering / dimensional reduction
+                        "FactoMineR", "ape", "ips", "fpc", "dbscan", "Rtsne", "umap",
+                        "shipunov", "Rfast",
+                    ## modelling — tidymodels (ch11)
+                        "recipes", "rsample", "workflows", "tune", "yardstick", "parsnip",
+                    ## networks (buildNetwork)
+                        "network", "ggnetwork",
+                    ## shiny (interactive matrix/PCA visualisers) + install infrastructure
+                        "shiny", "shinyjs", "shinythemes", "httpuv", "later",
+                        "parallel", "BiocManager", "remotes"
+                )
+
+                ## Required by chapters 1–11 but only INSTALLED, never attached
+                ## globally: they are used via namespace (pkg::fn) or attached
+                ## locally in a single chapter. Attaching them for the whole book
+                ## would mask other packages (ggtern overrides ggplot2's S3 methods,
+                ## plyr masks dplyr's mutate/summarize, etc.).
+                CRAN_core_install <- c(
+                    "ggtern",     # ch5 ternary plots — attached locally via library(ggtern)
+                    "maps",       # ggplot2::map_data() backend (ch5)
+                    "mapproj",    # ggplot2 coord_map() projection backend (ch5)
+                    "geosphere",  # geosphere::distHaversine (ch5)
+                    "eulerr",     # vennAnalysis -> eulerr::euler
+                    "plyr",       # points3D -> plyr::round_any
+                    "see",        # performance::check_model diagnostic plots (ch11)
+                    "ranger",     # parsnip random-forest engine (ch11)
+                    "igraph"      # buildNetwork (requireNamespace)
+                )
+                Bioc_core <- c("ggtree")
+
+                ## Extended — chapters 12–18 only (attached when scope == "full")
+                CRAN_extended <- c(
+                    ## API / network (language-model + NCBI chapters)
+                        "httr", "rentrez", "RCurl", "base64enc",
+                    ## sequence / phylogenetics
+                        "phangorn", "seqinr", "picante", "phytools", "bio3d",
+                    ## misc
+                        "png", "exifr", "rhdf5",
+                        "googlesheets4", "googledrive", "pracma", "lubridate"
+                )
+                Bioc_extended <- c("ggtreeExtra", "Biostrings", "GenomeInfoDb")
+
+                ## Assemble the install/load lists for the requested scope.
+                ## (Any packages pre-seeded by the bustalab block are preserved.)
                 if (!exists("CRAN_packages")) {CRAN_packages <- vector()}
-                CRAN_packages <- c(CRAN_packages, 
-                    "gridExtra",
-                    "ape",
-                    "multcompView",
-                    "jsonlite",
-                    "performance",
-                    
-                    ## ML packages
-                        "recipes",
-                        "rsample",
-                        "workflows",
-                        "tune",
-                        "yardstick",
-
-                    # "imager",
-                    "httr",
-                    "rentrez",
-                    
-                    "shiny",
-                    "shinyjs",
-                    "shinythemes",
-                    
-                    "png",
-                    "DT",
-                    "RColorBrewer",
-                    "data.table",
-                    "rhandsontable",
-                    "ips",
-                    "phangorn",
-                    "seqinr",
-                    "Rfast",
-                    "picante",
-                    "BiocManager",
-                    "googlesheets4",
-                    "googledrive",
-                    "Hmisc",
-                    "parsnip",
-                    "ggforce",
-                    "network",
-                    "pracma",
-                    "ggnetwork",
-                    "FactoMineR",
-                    "dplyr",
-                    "stringr", 
-                    "progress",
-                    "tidyverse",
-                    "ggrepel",
-                    "cowplot",
-                    "rstatix",
-                    "agricolae",
-                    "ggpmisc",
-                    "exifr",
-                    "lubridate",
-                    "bio3d",
-                    "remotes",
-                    "gdata",
-                    "treemapify",
-                    "viridis",
-                    "umap",
-                    "ggside",
-                    "fpc",
-                    "dbscan",
-                    "Rtsne",
-                    "readxl",
-                    "httpuv",
-                    "ggdist",
-                    "grid",
-                    "patchwork",
-                    "ggnewscale",
-                    "later",
-                    "shipunov",
-                    "parallel",
-                    "phytools",
-                    "rhdf5",
-                    "RCurl",
-                    "base64enc"
-                )
-
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
-                Bioconductor_packages <- c(
-                    Bioconductor_packages,
-                    "ggtree",
-                    "ggtreeExtra",
-                    "Biostrings",
-                    "GenomeInfoDb"
-                )
+                ## attach set — loaded with library()
+                CRAN_packages <- unique(c(CRAN_packages, CRAN_core,
+                    if (phylochemistry_scope == "full") CRAN_extended))
+                Bioconductor_packages <- unique(c(Bioconductor_packages, Bioc_core,
+                    if (phylochemistry_scope == "full") Bioc_extended))
+                ## install-only set — ensured installed, NOT attached
+                CRAN_install_only <- CRAN_core_install
+                ## everything that must be present on disk (attach + install-only)
+                CRAN_to_install <- unique(c(CRAN_packages, CRAN_install_only))
 
                 Github_packages <- c(
                     # "HajkD/orthologr"
                 )
 
-                packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
+                packages_needed <- c(CRAN_to_install, Bioconductor_packages, Github_packages)[!c(CRAN_to_install, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
 
             ## Determine if anything needs to be installed
                 
                 if (length(packages_needed) > 0) {
+
+                    if (!.phylochemistry_online()) {
+                        warning(
+                            "[phylochemistry] Can't reach CRAN (https://cloud.r-project.org). ",
+                            "If the install below fails, check your internet connection or campus VPN/proxy and try again.",
+                            call. = FALSE, immediate. = TRUE
+                        )
+                    }
 
                     message <- paste0(
                         "You need to install the following packages before proceeding: ",
@@ -203,16 +268,16 @@
 
                     if(response) {
                         
-                        if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                            install.packages(CRAN_packages[CRAN_packages %in% packages_needed], dependencies = TRUE)
+                        if (length(CRAN_to_install[CRAN_to_install %in% packages_needed]) > 0) {
+                            install.packages(CRAN_to_install[CRAN_to_install %in% packages_needed], dependencies = NA)
                         }
 
                         if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
-                            BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = TRUE)
+                            BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = NA)
                         }
 
                         if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
-                            remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = TRUE)
+                            remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = NA)
                         }
 
                     } else {

@@ -32,17 +32,24 @@ message("Loading datasets module...")
     # pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
     for (i in 1:dim(sample_datasets)[1]) {
         temp_obj <- readr::read_csv(sample_datasets[i,2], show_col_types = FALSE)
-        gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
+        assign(as.character(sample_datasets[i,1]), temp_obj, envir = globalenv())
         # pb$tick()
     }
+    if (exists("temp_obj")) rm(temp_obj)
 
-    tmpfile <- tempfile(fileext = ".fasta")
-    utils::download.file(
-      "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta",
-      tmpfile,
-      quiet = TRUE
-    )
-    OSC_sequences <- Biostrings::readAAStringSet(tmpfile)
+    ## OSC_sequences (protein data) is only used in the sequence chapters (12-18),
+    ## which require the "full" scope. Skip it for the core install so students
+    ## don't need the Biostrings Bioconductor package for chapters 1-11.
+    if ((exists("phylochemistry_scope") && phylochemistry_scope == "full") ||
+        (exists("bustalab") && isTRUE(bustalab))) {
+        tmpfile <- tempfile(fileext = ".fasta")
+        utils::download.file(
+          "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta",
+          tmpfile,
+          quiet = TRUE
+        )
+        OSC_sequences <- Biostrings::readAAStringSet(tmpfile)
+    }
 
 ## Busta lab specific datasets
 

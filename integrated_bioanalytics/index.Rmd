@@ -66,7 +66,91 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 ```{r, message = FALSE, echo = FALSE}
 bustalab <- TRUE
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+local_pc <- "../phylochemistry/phylochemistry.R"
+
+# --- build-harness only: no-op on Lucas's Mac (where /Users/bust0037 exists) ---
+# On the Linux CI box this makes the book test the *local* phylochemistry.R end to
+# end (chapters 2 and 3 re-source the published URL, which would otherwise silently
+# revert to the published library), resolves the chapters' hardcoded Mac key/data
+# paths to this box's copies, and busts every cached chunk when the library changes.
+if (!dir.exists("/Users/bust0037")) {
+  .G <- globalenv()
+  .local_pc_abs <- if (file.exists(local_pc)) normalizePath(local_pc) else NA
+  .harness_map <- c(
+    "pubmed_api_key.txt" = "~/host1/Documents/api_keys/pubmed_api_key.txt",
+    "hf_api_key.txt"     = "~/host1/Documents/writing/api_keys/hf_api_key.txt",
+    "biolm_api_key.txt"  = "~/host1/Documents/writing/api_keys/biolm_api_key.txt",
+    "nvidia_api_key.txt" = "~/host1/Documents/writing/api_keys/nvidia_api_key.txt",
+    "glove.6B.50d.txt"   = "~/glove/glove.6B.50d.txt",
+    "lake_superior_shoreline.csv" = "/home/bustalab/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv",
+    "pfas_data_private.csv" = "/home/bustalab/Documents/Tools/websites/private_data/pfas_data_private.csv"
+  )
+  assign(".harness_map", .harness_map, envir = .G)
+  .harness_resolve <- function(p) {
+    if (length(p) == 1 && !file.exists(p) && basename(p) %in% names(.harness_map))
+      return(path.expand(.harness_map[[basename(p)]]))
+    p
+  }
+  assign(".harness_resolve", .harness_resolve, envir = .G)
+  # Wrap a function wherever it actually lives (globalenv or any attached env),
+  # skipping anything already wrapped so repeated calls stay idempotent.
+  .harness_rebind <- function(name, factory) {
+    seen <- character(0)
+    for (env in c(list(.G), lapply(search(), as.environment))) {
+      key <- environmentName(env)
+      if (nzchar(key) && key %in% seen) next
+      seen <- c(seen, key)
+      if (exists(name, envir = env, inherits = FALSE) &&
+          is.function(get(name, envir = env, inherits = FALSE))) {
+        orig <- get(name, envir = env, inherits = FALSE)
+        if (isTRUE(attr(orig, "harness_wrapped"))) next
+        if (bindingIsLocked(name, env)) try(unlockBinding(name, env), silent = TRUE)
+        w <- factory(orig); attr(w, "harness_wrapped") <- TRUE
+        assign(name, w, envir = env)
+      }
+    }
+  }
+  assign(".harness_rebind", .harness_rebind, envir = .G)
+  .apply_redirects <- function() {
+    rl <- function(con = stdin(), ...) {
+      if (is.character(con)) con <- .harness_resolve(con)
+      base::readLines(con, ...)
+    }
+    attr(rl, "harness_wrapped") <- TRUE
+    assign("readLines", rl, envir = .G)
+    .harness_rebind("embedText", function(orig) { force(orig)
+      function(..., path_to_glove_file = NULL) {
+        if (!is.null(path_to_glove_file))
+          path_to_glove_file <- .harness_resolve(path_to_glove_file)
+        orig(..., path_to_glove_file = path_to_glove_file)
+      } })
+    .harness_rebind("readMonolist", function(orig) { force(orig)
+      function(monolist_in_path) orig(.harness_resolve(monolist_in_path)) })
+  }
+  assign(".apply_redirects", .apply_redirects, envir = .G)
+  # Redirect every in-chapter source() of phylochemistry to the local copy, then
+  # re-install the redirects (each reload re-defines the wrapped functions).
+  .source_orig <- base::source
+  .src <- function(file, ...) {
+    if (is.character(file) && length(file) == 1 &&
+        grepl("phylochemistry\\.R$", file) && !is.na(.local_pc_abs)) {
+      file <- .local_pc_abs
+    }
+    res <- .source_orig(file, ...)
+    .apply_redirects()
+    invisible(res)
+  }
+  attr(.src, "harness_wrapped") <- TRUE
+  assign("source", .src, envir = .G)
+
+  if (!is.na(.local_pc_abs)) source(local_pc) else
+    source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+  if (!is.na(.local_pc_abs))
+    knitr::opts_chunk$set(cache.extra = tools::md5sum(.local_pc_abs))
+} else {
+  if (file.exists(local_pc)) source(local_pc) else
+    source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+}
 ```
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
