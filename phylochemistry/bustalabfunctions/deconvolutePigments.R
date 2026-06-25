@@ -2,13 +2,17 @@
 ####
 #### Shiny app to deconvolve a UV-Vis absorbance spectrum of a leaf/flower
 #### extract (e.g. a 96-well plate reader scan, ~300-800 nm) into relative MASS
-#### fractions of chlorophyll a, chlorophyll b and total carotenoid, by
-#### non-negative least squares (NNLS) against pure-pigment reference spectra,
-#### with an optional scattering/offset baseline.
+#### fractions of pigment standards, by non-negative least squares (NNLS) against
+#### pure-pigment reference spectra.
 ####
-#### Self-contained per the bustalabfunctions/ rule: the reference spectra are
-#### EMBEDDED below (no external data files), so the file can be sourced straight
-#### from a GitHub raw URL and run anywhere with only `shiny` + `nnls`.
+#### v1 (deliberately bare-bones): tick which standards to include, point at a
+#### sample CSV by path, fit. One checkbox per standard; no baseline term yet
+#### (scattering baseline is the most likely next addition).
+####
+#### Self-contained per the bustalabfunctions/ rule: all standards live in ONE
+#### CSV (pigment_standards.csv), EMBEDDED below (no external data files), so the
+#### file can be sourced straight from a GitHub raw URL and run anywhere with
+#### only `shiny` + `nnls`.
 ####
 #### Usage (student / local):
 ####   source("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/master/phylochemistry/bustalabfunctions/deconvolutePigments.R")
@@ -21,9 +25,9 @@
 #### (mass-specific absorption a*, m^2 mg^-1; chlorophylls/pheophytin in 90%
 #### acetone, xanthophylls in ethanol, beta-carotene in acetone). Because the
 #### basis is in a* units, fitted coefficients are proportional to MASS, so the
-#### reported fractions are relative MASS fractions. Carotenoids are LUMPED
-#### (the individual xanthophylls are collinear in 420-500 nm and NNLS splits
-#### them unstably). Embedded on a 2 nm grid, 350-750 nm.
+#### reported fractions are relative MASS fractions. Embedded on a 2 nm grid,
+#### 350-750 nm. Note: the xanthophylls are collinear in 420-500 nm, so ticking
+#### several carotenoid standards at once gives unstable individual estimates.
 
 #### ---------------------------------------------------------------------------
 #### Shiny port pool for jupyter = TRUE
@@ -272,111 +276,98 @@
 .pigment_references <- utils::read.csv(text = .pigment_reference_csv, check.names = TRUE)
 
 #### ---------------------------------------------------------------------------
-#### Fit logic (pure functions; mirror projects/flower_pigments/.../R/fit.R but
-#### read from the embedded reference table).
+#### Standards metadata + provenance (displayed in the app).
 
-# Resample the reference set onto a common grid and lump carotenoids.
-.pigment_load_references <- function(working_range = c(400, 700),
-                                     grid_step = 1,
-                                     carotenoid = c("lump", "lutein", "beta_carotene")) {
-    carotenoid <- match.arg(carotenoid)
-    refs <- .pigment_references
-    grid <- seq(working_range[1], working_range[2], by = grid_step)
-    resample <- function(col) approx(refs$wavelength_nm, refs[[col]], xout = grid, rule = 1)$y
+.pigment_standard_choices <- c(
+    "Chlorophyll a"  = "chl_a",
+    "Chlorophyll b"  = "chl_b",
+    "Pheophytin a"   = "pheophytin_a",
+    "Neoxanthin"     = "neoxanthin",
+    "Violaxanthin"   = "violaxanthin",
+    "Antheraxanthin" = "antheraxanthin",
+    "Zeaxanthin"     = "zeaxanthin",
+    "Lutein"         = "lutein",
+    "beta-carotene"  = "beta_carotene"
+)
+.pigment_standard_labels <- setNames(names(.pigment_standard_choices),
+                                     .pigment_standard_choices)
 
-    chl_a <- resample("chl_a")
-    chl_b <- resample("chl_b")
-    caro_cols <- c("neoxanthin", "violaxanthin", "antheraxanthin",
-                   "zeaxanthin", "lutein", "beta_carotene")
-    caro_mat <- sapply(caro_cols, resample)
-    carotenoid_spec <- switch(carotenoid,
-        lump = rowMeans(caro_mat, na.rm = TRUE),       # equal-mass mean of the six
-        lutein = caro_mat[, "lutein"],
-        beta_carotene = caro_mat[, "beta_carotene"])
+.pigment_provenance_html <- paste0(
+    "<b>Reference standards</b><br>",
+    "Source: Clementson &amp; Wojtasiewicz (2019), <i>Data in Brief</i> 25:103875 ",
+    "(open access). Pure-pigment absorption spectra, all standards in one CSV ",
+    "(<code>pigment_standards.csv</code>), embedded here on a 350&ndash;750&nbsp;nm, 2&nbsp;nm grid.<br><br>",
+    "Values are the mass-specific absorption coefficient <i>a*</i> (m&sup2;&nbsp;mg&#8315;&sup1;), so the ",
+    "fitted amounts are proportional to <b>mass</b> &mdash; results are relative <b>mass</b> fractions.<br><br>",
+    "<b>Solvents:</b> chlorophylls &amp; pheophytin&nbsp;a in 90% acetone; ",
+    "xanthophylls (neoxanthin, violaxanthin, antheraxanthin, zeaxanthin, lutein) in ethanol; ",
+    "&beta;-carotene in 100% acetone. Mixed solvents shift peaks a few nm &mdash; fine for relative work.<br><br>",
+    "<b>Caveat:</b> the xanthophylls overlap strongly in 420&ndash;500&nbsp;nm; ticking several together ",
+    "gives unstable individual estimates. A single carotenoid standard (e.g. &beta;-carotene) is the robust ",
+    "starting choice.<br><br>",
+    "<i>A smooth scattering/offset baseline is fitted automatically (extracts scatter light) and is ",
+    "excluded from the reported fractions.</i>"
+)
 
-    pig <- cbind(chl_a = chl_a, chl_b = chl_b, carotenoid = carotenoid_spec)
-    ok <- stats::complete.cases(pig)
-    list(grid = grid[ok], pigments = pig[ok, , drop = FALSE], comps = colnames(pig))
-}
+#### ---------------------------------------------------------------------------
+#### Fit logic: NNLS of the SELECTED standards over the wavelength range the
+#### sample and standards share. Bare-bones v1 — no baseline term yet.
 
-# Build the NNLS design matrix: pigment columns (native a* units, untouched so
-# coefficients stay mass-proportional) + optional flat offset and lambda^-2 /
-# lambda^-4 scattering columns (each normalised to unit max for conditioning).
-.pigment_build_design <- function(refs, baseline = TRUE) {
-    A <- refs$pigments
-    if (baseline) {
-        g <- refs$grid
-        l2 <- (min(g) / g)^2
-        l4 <- (min(g) / g)^4
-        A <- cbind(A,
-                   base_offset   = rep(1, length(g)),
-                   base_scatter2 = l2 / max(l2),
-                   base_scatter4 = l4 / max(l4))
-    }
-    A
-}
-
-# Deconvolve one spectrum. Interpolates the measured spectrum onto the reference
-# grid, solves the NNLS, returns coefficients, relative mass fractions, the
-# reconstruction (full and pigment-only), residual and fit metrics.
-.pigment_deconvolve <- function(sample_wl, sample_abs,
-                                working_range = c(400, 700),
-                                grid_step = 1,
-                                baseline = TRUE,
-                                carotenoid = "lump") {
-    refs <- .pigment_load_references(working_range, grid_step, carotenoid)
-    A <- .pigment_build_design(refs, baseline)
-
-    b <- approx(sample_wl, sample_abs, xout = refs$grid, rule = 1)$y
-    keep <- !is.na(b)
-    if (sum(keep) < 10)
-        stop("Sample spectrum does not overlap the working range enough to fit.")
-
-    A_fit <- A[keep, , drop = FALSE]
-    b_fit <- b[keep]
-    sol <- nnls::nnls(A_fit, b_fit)
-    coefs <- setNames(sol$x, colnames(A))
-
-    pig_comps <- refs$comps
-    pig_coefs <- coefs[pig_comps]
-    total_pig <- sum(pig_coefs)
-    fractions <- if (total_pig > 0) pig_coefs / total_pig else pig_coefs * NA
-
-    recon_full <- as.numeric(A_fit %*% coefs)
-    recon_pig  <- as.numeric(A_fit[, pig_comps, drop = FALSE] %*% pig_coefs)
-    resid <- b_fit - recon_full
-    ss_res <- sum(resid^2); ss_tot <- sum((b_fit - mean(b_fit))^2)
-
-    list(grid = refs$grid[keep], observed = b_fit,
-         reconstructed = recon_full, reconstructed_pigment = recon_pig,
-         residual = resid, coefficients = coefs, fractions = fractions,
-         pigment_components = pig_comps,
-         r2 = if (ss_tot > 0) 1 - ss_res / ss_tot else NA,
-         rmse = sqrt(mean(resid^2)), baseline = baseline)
-}
-
-# Synthesise a deterministic test spectrum from known fractions, so the app can
-# be exercised before real plate data exists ("Load synthetic example" button).
-.pigment_make_example <- function() {
-    refs <- .pigment_load_references(working_range = c(350, 750), grid_step = 1, carotenoid = "lump")
-    A <- .pigment_build_design(refs, baseline = TRUE)
-    truth <- c(chl_a = 0.50, chl_b = 0.17, carotenoid = 0.30,
-               base_offset = 0.015, base_scatter2 = 0.0, base_scatter4 = 0.04)
-    truth <- truth[colnames(A)]
-    set.seed(42)
-    clean <- as.numeric(A %*% truth)
-    absorbance <- pmax(clean + rnorm(length(clean), sd = 0.004), 0)
-    data.frame(wavelength_nm = round(refs$grid, 1), absorbance = round(absorbance, 6))
-}
-
-# Read an uploaded CSV: first column = wavelength, every other numeric column is
-# a candidate sample/well.
-.pigment_read_spectrum_csv <- function(path) {
+# Read a sample spectrum from a file path: column 1 = wavelength, column 2 = absorbance.
+.pigment_read_sample <- function(path) {
     df <- utils::read.csv(path, check.names = TRUE)
     num <- df[, vapply(df, is.numeric, logical(1)), drop = FALSE]
     if (ncol(num) < 2)
-        stop("Need at least two numeric columns: wavelength + one absorbance column.")
-    list(wl = num[[1]], samples = num[, -1, drop = FALSE])
+        stop("Sample CSV needs at least two numeric columns: wavelength then absorbance.")
+    list(wl = num[[1]], abs = num[[2]])
+}
+
+# Fit one sample against the chosen standards. A smooth scattering/offset
+# baseline (flat + lambda^-2 + lambda^-4) is fitted automatically -- plate/cuvette
+# extracts scatter light, and without it the NNLS cannot reproduce the broad
+# background and the fit collapses. The baseline columns are EXCLUDED from the
+# reported fractions, which are over the chosen standards only.
+# Returns coefficients, relative mass fractions, the reconstruction, residual,
+# the pigment-only reconstruction, and fit metrics.
+.pigment_fit <- function(sample_wl, sample_abs, standards, grid_step = 1) {
+    refs <- .pigment_references
+    lo <- max(min(sample_wl), min(refs$wavelength_nm))
+    hi <- min(max(sample_wl), max(refs$wavelength_nm))
+    if (!is.finite(lo) || !is.finite(hi) || hi - lo < 10)
+        stop("Sample and standards do not overlap enough in wavelength to fit.")
+    grid <- seq(ceiling(lo), floor(hi), by = grid_step)
+
+    rs <- function(x, y) approx(x, y, xout = grid, rule = 1)$y
+    A <- sapply(standards, function(s) rs(refs$wavelength_nm, refs[[s]]))
+    A <- matrix(A, nrow = length(grid), dimnames = list(NULL, standards))
+    b <- rs(sample_wl, sample_abs)
+
+    keep <- stats::complete.cases(A) & !is.na(b)
+    A <- A[keep, , drop = FALSE]; b <- b[keep]; grid <- grid[keep]
+    if (length(b) < 10) stop("Not enough overlapping data points to fit.")
+
+    # Automatic scattering/offset baseline columns (not standards; not in fractions).
+    l2 <- (min(grid) / grid)^2; l4 <- (min(grid) / grid)^4
+    base <- cbind(base_offset = rep(1, length(grid)),
+                  base_scatter2 = l2 / max(l2),
+                  base_scatter4 = l4 / max(l4))
+    design <- cbind(A, base)
+
+    sol <- nnls::nnls(design, b)
+    coefs <- setNames(sol$x, colnames(design))
+    pig_coefs <- coefs[standards]
+    total <- sum(pig_coefs)
+    fractions <- if (total > 0) pig_coefs / total else pig_coefs * NA
+
+    recon <- as.numeric(design %*% coefs)
+    recon_pig <- as.numeric(A %*% pig_coefs)
+    resid <- b - recon
+    ss_res <- sum(resid^2); ss_tot <- sum((b - mean(b))^2)
+    list(grid = grid, observed = b, reconstructed = recon,
+         reconstructed_pigment = recon_pig, residual = resid,
+         coefficients = coefs, fractions = fractions,
+         r2 = if (ss_tot > 0) 1 - ss_res / ss_tot else NA,
+         rmse = sqrt(mean(resid^2)), range = c(min(grid), max(grid)))
 }
 
 # Ensure shiny + nnls are present.
@@ -397,9 +388,7 @@
 #### ---------------------------------------------------------------------------
 #### deconvolutePigments — build the UI/server and launch.
 
-deconvolutePigments <- function(jupyter = FALSE,
-                                install_dependencies = FALSE,
-                                working_range = c(400, 700)) {
+deconvolutePigments <- function(jupyter = FALSE, install_dependencies = FALSE) {
 
     .pigment_require(install = install_dependencies)
     library(shiny)
@@ -409,26 +398,16 @@ deconvolutePigments <- function(jupyter = FALSE,
         sidebarLayout(
             sidebarPanel(
                 width = 4,
-                fileInput("file", "Upload spectrum CSV", accept = c(".csv", "text/csv")),
-                helpText("First column = wavelength (nm); remaining numeric columns = samples/wells."),
-                actionButton("use_example", "Load synthetic example", class = "btn-info"),
+                h4("Standards to include"),
+                checkboxGroupInput("standards", NULL,
+                                   choices = .pigment_standard_choices,
+                                   selected = c("chl_a", "chl_b", "beta_carotene")),
                 tags$hr(),
-                uiOutput("sample_picker"),
-                sliderInput("range", "Working range (nm)",
-                            min = 350, max = 750, value = working_range, step = 5),
-                checkboxInput("baseline", "Include scattering/offset baseline", TRUE),
-                selectInput("carotenoid", "Carotenoid basis",
-                            choices = c("Lumped (mean of 6)" = "lump",
-                                        "Lutein" = "lutein",
-                                        "beta-carotene" = "beta_carotene"),
-                            selected = "lump"),
+                textInput("sample_path", "Path to sample spectrum (CSV)", "",
+                          placeholder = "/path/to/sample.csv"),
+                helpText("CSV with wavelength (nm) in column 1 and absorbance in column 2."),
                 tags$hr(),
-                downloadButton("download", "Download fractions (CSV)"),
-                tags$hr(),
-                tags$small(
-                    "Relative ", tags$b("mass"), " fractions (Clementson 2019 a* basis, 90% acetone assumed). ",
-                    "Carotenoids lumped: per-xanthophyll splits are collinear and unstable in v1."
-                )
+                htmlOutput("provenance")
             ),
             mainPanel(
                 width = 8,
@@ -439,54 +418,43 @@ deconvolutePigments <- function(jupyter = FALSE,
                            tableOutput("frac_table"),
                            htmlOutput("metrics"))
                 ),
-                plotOutput("resid_plot", height = "180px")
+                plotOutput("resid_plot", height = "160px")
             )
         )
     )
 
     server <- function(input, output, session) {
 
-        spectrum <- reactiveVal(NULL)
+        output$provenance <- renderUI(HTML(.pigment_provenance_html))
 
-        observeEvent(input$file, {
-            res <- tryCatch(.pigment_read_spectrum_csv(input$file$datapath),
-                            error = function(e) { showNotification(conditionMessage(e), type = "error", duration = 8); NULL })
-            if (!is.null(res)) spectrum(res)
-        })
-        observeEvent(input$use_example, {
-            ex <- .pigment_make_example()
-            spectrum(list(wl = ex$wavelength_nm, samples = ex["absorbance"]))
-        })
-
-        output$sample_picker <- renderUI({
-            sp <- spectrum(); req(sp)
-            if (ncol(sp$samples) <= 1) return(NULL)
-            selectInput("sample_col", "Sample / well",
-                        choices = names(sp$samples), selected = names(sp$samples)[1])
+        sample <- reactive({
+            validate(need(nzchar(input$sample_path),
+                          "Enter the path to a sample CSV to begin."))
+            validate(need(file.exists(input$sample_path),
+                          paste("File not found:", input$sample_path)))
+            tryCatch(.pigment_read_sample(input$sample_path),
+                     error = function(e) validate(need(FALSE, conditionMessage(e))))
         })
 
         fit <- reactive({
-            sp <- spectrum(); req(sp)
-            col <- if (!is.null(input$sample_col) && input$sample_col %in% names(sp$samples))
-                input$sample_col else names(sp$samples)[1]
-            .pigment_deconvolve(sp$wl, sp$samples[[col]],
-                                working_range = input$range,
-                                baseline = input$baseline,
-                                carotenoid = input$carotenoid)
+            validate(need(length(input$standards) >= 1, "Tick at least one standard."))
+            s <- sample()
+            tryCatch(.pigment_fit(s$wl, s$abs, input$standards),
+                     error = function(e) validate(need(FALSE, conditionMessage(e))))
         })
 
         output$fit_plot <- renderPlot({
             f <- fit()
             par(mar = c(4, 4, 2, 1))
-            yl <- range(c(f$observed, f$reconstructed))
             plot(f$grid, f$observed, type = "l", lwd = 2, col = "black",
                  xlab = "Wavelength (nm)", ylab = "Absorbance",
-                 main = "Observed vs reconstructed", ylim = yl)
+                 main = "Observed vs reconstructed",
+                 ylim = range(c(f$observed, f$reconstructed)))
             lines(f$grid, f$reconstructed, col = "firebrick", lwd = 2)
             lines(f$grid, f$reconstructed_pigment, col = "forestgreen", lwd = 1.5, lty = 2)
             legend("topright", bty = "n", lwd = 2,
                    col = c("black", "firebrick", "forestgreen"), lty = c(1, 1, 2),
-                   legend = c("Observed", "Reconstructed (+baseline)", "Pigment only"))
+                   legend = c("Observed", "Reconstructed (+baseline)", "Standards only"))
         })
 
         output$resid_plot <- renderPlot({
@@ -500,29 +468,19 @@ deconvolutePigments <- function(jupyter = FALSE,
 
         output$frac_table <- renderTable({
             f <- fit()
-            data.frame(Component = names(f$fractions),
-                       `Mass fraction` = sprintf("%.1f%%", 100 * f$fractions),
-                       check.names = FALSE)
+            data.frame(
+                Standard = .pigment_standard_labels[names(f$fractions)],
+                `Mass fraction` = sprintf("%.1f%%", 100 * f$fractions),
+                check.names = FALSE
+            )
         }, striped = TRUE)
 
         output$metrics <- renderUI({
             f <- fit()
-            chl_ratio <- if (!is.na(f$fractions["chl_b"]) && f$fractions["chl_b"] > 0)
-                sprintf("%.2f", f$fractions["chl_a"] / f$fractions["chl_b"]) else "n/a"
             HTML(sprintf(
-                "<p><b>Fit R&sup2;:</b> %.4f<br><b>RMSE:</b> %.5f<br><b>Chl a/b ratio:</b> %s<br><b>Baseline:</b> %s</p>",
-                f$r2, f$rmse, chl_ratio, ifelse(f$baseline, "on", "off")))
+                "<p><b>Fit R&sup2;:</b> %.4f<br><b>RMSE:</b> %.5f<br><b>Fit range:</b> %d&ndash;%d nm</p>",
+                f$r2, f$rmse, f$range[1], f$range[2]))
         })
-
-        output$download <- downloadHandler(
-            filename = function() "pigment_fractions.csv",
-            content = function(file) {
-                f <- fit()
-                utils::write.csv(data.frame(component = names(f$fractions),
-                                            mass_fraction = as.numeric(f$fractions)),
-                                 file, row.names = FALSE)
-            }
-        )
     }
 
     if (jupyter) {
