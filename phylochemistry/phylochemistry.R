@@ -218,7 +218,8 @@
                 CRAN_to_install <- unique(c(CRAN_packages, CRAN_install_only))
 
                 Github_packages <- c(
-                    # "HajkD/orthologr"
+                    # (orthologr removed 2026-07-01: its only use, codon alignment in
+                    #  alignSequences(), is now handled in pure R by codonAlignFromAA())
                 )
 
                 packages_needed <- c(CRAN_to_install, Bioconductor_packages, Github_packages)[!c(CRAN_to_install, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
@@ -3072,6 +3073,84 @@
                     cat("\nDone!\n\n")
             }
 
+        #### codonAlignFromAA
+
+            #' Back-translate an amino-acid alignment onto its codons
+            #'
+            #' Given an aligned set of amino-acid sequences and the *ungapped* coding
+            #' nucleotide sequences they were translated from, produce the corresponding
+            #' codon (nucleotide) alignment: each non-gap residue becomes its three
+            #' nucleotides and each gap ("-") becomes "---". This is the in-frame core of
+            #' PAL2NAL and replaces the former orthologr::codon_aln() dependency. It assumes
+            #' each peptide is an exact, in-frame translation of its nucleotide sequence
+            #' (equal codon counts, no frameshift) -- which holds inside alignSequences(),
+            #' where the peptides are translated from the same ORFs. If that correspondence
+            #' is broken it stops with a clear message rather than misaligning silently.
+            #'
+            #' @param aa_alignment A named character vector (or object coercible with
+            #'   as.character, e.g. an AAStringSet) of aligned, gapped amino-acid sequences.
+            #' @param nucl_seqs A named DNAStringSet (or named character vector) of the
+            #'   ungapped coding nucleotides, one per aligned sequence, matched by name.
+            #' @return A named character vector of codon-aligned nucleotide sequences.
+            #' @export
+            codonAlignFromAA <- function(aa_alignment, nucl_seqs) {
+
+                ## as.character() drops names on a base vector but keeps them on an
+                ## XStringSet, so restore them from the original where needed.
+                aa <- as.character(aa_alignment)
+                if (is.null(names(aa))) names(aa) <- names(aa_alignment)
+                nt_all <- as.character(nucl_seqs)
+                if (is.null(names(nt_all))) names(nt_all) <- names(nucl_seqs)
+
+                if (is.null(names(aa)) || is.null(names(nt_all))) {
+                    stop("codonAlignFromAA: both aa_alignment and nucl_seqs must be named.", call. = FALSE)
+                }
+
+                out <- setNames(character(length(aa)), names(aa))
+
+                for (nm in names(aa)) {
+
+                    if (!nm %in% names(nt_all)) {
+                        stop(paste0(
+                            "codonAlignFromAA: no nucleotide sequence named '", nm,
+                            "' to match the aligned peptide. Peptide and nucleotide names must correspond."
+                        ), call. = FALSE)
+                    }
+
+                    residues <- strsplit(aa[[nm]], "")[[1]]
+                    nt <- nt_all[[nm]]
+                    n_res <- sum(residues != "-")
+
+                    ## Guard: the peptide must be an exact, in-frame translation of the nucleotides.
+                    if (nchar(nt) != n_res * 3L) {
+                        stop(paste0(
+                            "codonAlignFromAA: inconsistency between the peptide and nucleotide sequences for '", nm, "'.\n",
+                            "  The aligned peptide has ", n_res, " residues (excluding gaps), needing ",
+                            n_res * 3L, " nucleotides,\n",
+                            "  but the coding sequence has ", nchar(nt), " nucleotides.\n",
+                            "  Codon alignment expects each peptide to be an exact, in-frame translation of its\n",
+                            "  nucleotide sequence (no frameshifts, no extra leading/trailing bases). Common causes:\n",
+                            "  duplicate accessions in the monolist, an off-by-one ORF, or a stop codon present on\n",
+                            "  one side only."
+                        ), call. = FALSE)
+                    }
+
+                    codons <- character(length(residues))
+                    pos <- 1L
+                    for (j in seq_along(residues)) {
+                        if (residues[j] == "-") {
+                            codons[j] <- "---"
+                        } else {
+                            codons[j] <- substr(nt, pos, pos + 2L)
+                            pos <- pos + 3L
+                        }
+                    }
+                    out[nm] <- paste0(codons, collapse = "")
+                }
+
+                out
+            }
+
         #### alignSequences
 
             #' Align sequences in a seqlist
@@ -3151,11 +3230,12 @@
                                     extractORFs(file = paste0(alignment_out_path, "_unaligned"), write_out_ORFs = TRUE)
                                     if (file.exists(paste0(alignment_out_path, "_unaligned"))) {file.remove(paste0(alignment_out_path, "_unaligned"))}
                                 
-                                    amin_seqs_set <- Biostrings::translate(
-                                        Biostrings::readDNAStringSet(paste0(alignment_out_path, "_unaligned_orfs")),
-                                        if.fuzzy.codon = "solve"
-                                    )
+                                    ## The ORF nucleotides are what the peptides are translated from, so they
+                                    ## are the correct sequences to codon-align against (matched by name).
+                                    orf_seqs_set <- Biostrings::readDNAStringSet(paste0(alignment_out_path, "_unaligned_orfs"))
                                     if (file.exists(paste0(alignment_out_path, "_unaligned_orfs"))) {file.remove(paste0(alignment_out_path, "_unaligned_orfs"))}
+
+                                    amin_seqs_set <- Biostrings::translate(orf_seqs_set, if.fuzzy.codon = "solve")
 
                                     amin_seqs_set_aligned <- msa::msa(amin_seqs_set, order = c("input"))
                                     msa <- msa::msaConvert(amin_seqs_set_aligned, type = "seqinr::alignment")
@@ -3168,19 +3248,13 @@
                                         file.out = paste0(alignment_out_path, "_amin_seqs_aligned.fa")
                                     )
 
-                                ## Run codon alignment and write to nucl_seqs_aligned.fa
-                                    nucl_seqs_codon_aligned <-  orthologr::codon_aln(
-                                                                    file_aln = paste0(alignment_out_path, "_amin_seqs_aligned.fa"),
-                                                                    file_nuc = paste0(alignment_out_path, "_unaligned"), 
-                                                                    get_aln = TRUE
-                                                                )
-                                    msa <- nucl_seqs_codon_aligned
-                                    for (i in 1:dim(as.data.frame(msa$seq))[1]) {
-                                        msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))
-                                    }
+                                ## Back-translate the peptide alignment onto codons (pure-R, replaces the
+                                ## former orthologr::codon_aln() / PAL2NAL dependency), then write out.
+                                    aa_aligned <- setNames(as.character(msa$seq), msa$nam)
+                                    nucl_seqs_codon_aligned <- codonAlignFromAA(aa_aligned, orf_seqs_set)
                                     seqinr::write.fasta(
-                                        as.list(msa$seq),
-                                        as.list(msa$nam),
+                                        as.list(unname(nucl_seqs_codon_aligned)),
+                                        as.list(names(nucl_seqs_codon_aligned)),
                                         file.out = alignment_out_path
                                     )
                             }

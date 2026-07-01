@@ -20,3 +20,7 @@ Thumbs.db
 
 # script
 members_update.py
+
+# Blog research (private, not for public repo)
+blog/literature/
+blog/online-research/
