@@ -42,8 +42,11 @@ def main():
     # Output HTML file
     output_html = os.path.join(_script_dir, "members.html")
 
-    # Read the spreadsheet into a DataFrame
-    df = pd.read_excel(excel_path)
+    # Read the spreadsheet into a DataFrame. The roster's column headers live in
+    # row 2 (row 1 holds budget annotations like "(salary only)"), so skip the
+    # first row — header=1 is the 0-indexed second row. If the header row ever
+    # moves, update this offset (and note the newsletter reader auto-detects it).
+    df = pd.read_excel(excel_path, header=1)
 
     # 1) Drop rows where PhotoPath is missing (NaN)
     df.dropna(subset=["PhotoPath"], inplace=True)

@@ -1,0 +1,50 @@
+[
+  {
+    "task_type": "enzyme",
+    "id": "enz_sample_001",
+    "title": "Functional characterization of a diterpene synthase from Salvia miltiorrhiza producing miltiradiene",
+    "authors": "Sample et al.",
+    "journal": "Sample Journal",
+    "year": 2024,
+    "doi": "10.0000/sample.001",
+    "link": "https://doi.org/10.0000/sample.001",
+    "abstract": "SAMPLE ITEM (placeholder for the cron feed). We report the cloning and functional characterization of SmDTS1, a class II diterpene synthase from Salvia miltiorrhiza. Heterologous expression in Escherichia coli and in vitro assays with geranylgeranyl diphosphate demonstrated that the recombinant enzyme catalyses the formation of miltiradiene. The protein sequence and biochemical parameters are reported; kinetic constants were determined for the purified enzyme.",
+    "prefill": {
+      "enzyme_name": "SmDTS1",
+      "product": "miltiradiene",
+      "doi": "doi:10.0000/sample.001"
+    }
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_sample_002",
+    "title": "A cytochrome P450 from Arabidopsis oxidises a triterpene scaffold in planta",
+    "authors": "Sample et al.",
+    "journal": "Sample Journal",
+    "year": 2023,
+    "doi": "10.0000/sample.002",
+    "link": "https://doi.org/10.0000/sample.002",
+    "abstract": "SAMPLE ITEM (placeholder for the cron feed). Expression of CYP716-family candidates in Nicotiana benthamiana followed by GC-MS analysis identified a P450 that introduces a hydroxyl group onto a triterpene backbone, yielding a single oxidised product. The corresponding coding sequence and the mass spectra supporting product identity are provided.",
+    "prefill": {
+      "enzyme_name": "CYP716A-candidate",
+      "product": "hydroxy-triterpene",
+      "doi": "doi:10.0000/sample.002"
+    }
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_sample_003",
+    "title": "Transcriptomic survey of terpenoid biosynthesis genes across the mint family",
+    "authors": "Sample et al.",
+    "journal": "Sample Journal",
+    "year": 2022,
+    "doi": "10.0000/sample.003",
+    "link": "https://doi.org/10.0000/sample.003",
+    "abstract": "SAMPLE ITEM (placeholder for the cron feed). We assembled transcriptomes from twelve Lamiaceae species and annotated putative terpene synthase and cytochrome P450 genes by sequence homology. Expression patterns are described across tissues. No enzymes were expressed or assayed; candidate functions are inferred from phylogeny only. This sample exercises the 'Not a functional characterisation' path.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.0000/sample.003"
+    }
+  }
+]

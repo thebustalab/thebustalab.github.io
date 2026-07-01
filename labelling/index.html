@@ -216,6 +216,64 @@
     color: var(--muted);
   }
   #leaderboard-table tr.me td { font-weight: 600; color: var(--accent); }
+
+  /* ── Task-type additions ──────────────────────────────────────────── */
+  .task-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 4px;
+    padding: 0.1rem 0.45rem;
+    margin-bottom: 0.6rem;
+  }
+  .task-badge.enzyme { background: #6a4a8a; }
+  .abstract-link { font-size: 0.85rem; margin-top: 0.6rem; }
+  .abstract-link a { color: var(--accent); }
+  .enzyme-row {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem 0.9rem;
+    margin-bottom: 0.75rem;
+    background: #fff;
+    position: relative;
+  }
+  .enzyme-row .field { margin-bottom: 0.6rem; }
+  .enzyme-row .field:last-child { margin-bottom: 0; }
+  .enzyme-row label.field-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .enzyme-row input, .enzyme-row textarea, #enzyme-doi {
+    font: inherit;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    width: 100%;
+  }
+  .enzyme-row textarea.seq {
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    white-space: pre;
+    word-break: break-all;
+  }
+  .enzyme-row .remove-enzyme {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+  .enzyme-row .remove-enzyme:hover { color: var(--warn); }
 </style>
 </head>
 <body>
@@ -234,33 +292,59 @@
   <!-- Main labelling card -->
   <div id="labelling-card" class="hidden">
     <div class="abstract-block">
+      <div class="task-badge" id="task-badge"></div>
       <h2 id="abstract-title"></h2>
       <div class="abstract-meta" id="abstract-meta"></div>
       <div class="abstract-text" id="abstract-text"></div>
+      <div class="abstract-link" id="abstract-link"></div>
     </div>
 
-    <div class="triple-header">
-      <div>Compound</div>
-      <div>Pathogen</div>
-      <div>Effect</div>
-      <div></div>
-    </div>
-    <div class="triples" id="triples"></div>
+    <!-- ── Pathogen form: (compound, pathogen, effect) triples ──────────── -->
+    <div id="pathogen-form" class="hidden">
+      <div class="triple-header">
+        <div>Compound</div>
+        <div>Pathogen</div>
+        <div>Effect</div>
+        <div></div>
+      </div>
+      <div class="triples" id="triples"></div>
 
+      <div class="form-actions">
+        <button class="add-row" id="add-row">+ Add another pair</button>
+        <button class="no-rel" id="no-rel">No relationships found</button>
+      </div>
+    </div>
+
+    <!-- ── Enzyme form: (sequence ↔ product) records the human retrieves ── -->
+    <div id="enzyme-form" class="hidden">
+      <div class="field" style="margin-bottom:0.75rem;">
+        <label class="field-label" for="enzyme-doi">DOI / link the record came from</label>
+        <input type="text" id="enzyme-doi" autocomplete="off" placeholder="doi:…">
+      </div>
+      <div id="enzymes"></div>
+
+      <div class="form-actions">
+        <button class="add-row" id="add-enzyme">+ Add another enzyme</button>
+        <button class="no-rel" id="not-char">Not a functional characterisation</button>
+      </div>
+    </div>
+
+    <!-- shared notes + submit -->
     <div class="notes-block">
-      <label for="notes">Notes (optional) — anything confusing, or e.g. several compounds tested in combination</label>
+      <label for="notes">Notes (optional) — anything confusing about this record</label>
       <textarea id="notes" rows="2" placeholder="optional notes for this abstract…"></textarea>
     </div>
 
     <div class="form-actions">
-      <button class="add-row" id="add-row">+ Add another pair</button>
-      <button class="no-rel" id="no-rel">No relationships found</button>
       <div class="spacer"></div>
       <button class="submit" id="submit">Submit &amp; next →</button>
     </div>
 
     <div class="status" id="status"></div>
   </div>
+
+  <!-- Product typeahead suggestions, populated from the enzyme sheet -->
+  <datalist id="product-suggestions"></datalist>
 
   <!-- All-done screen -->
   <div id="all-done" class="all-done hidden">
@@ -301,8 +385,26 @@ const CONFIG = {
   // (Deploy → Web app → Anyone, then copy the /exec URL)
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyQQfJfR7YD9jCoPyL7OEmGLIJP0-tuNPwHP6CsaLGuBfDkLd9KWB7UDh50LskOUYg5AQ/exec",
 
-  // The expected number of distinct labellers per abstract before it's "done"
+  // Fallback distinct-labellers threshold, used only if a task type below
+  // omits `labellersRequired`. Per-type values in TASK_TYPES take precedence.
   LABELLERS_PER_ABSTRACT: 2,
+
+  // Task-type registry. Every pool item carries a `task_type`; this maps it to
+  // its display label and how many distinct labellers "complete" it. Phase-1
+  // seed of the config-driven registry — the per-type FORM and destination
+  // SHEET are still branched in code here and in the Apps Script backend; a
+  // later phase folds those into this same registry.
+  TASK_TYPES: {
+    pathogen: { label: "Compound–pathogen", labellersRequired: 2 },
+    enzyme:   { label: "Characterised enzyme", labellersRequired: 1 },
+  },
+  DEFAULT_TASK_TYPE: "pathogen",  // items with no task_type are pathogen items
+
+  // Extra pool files fetched alongside abstracts.json and concatenated. Each
+  // item should carry its own task_type. (Phase 1: enzyme items are a static
+  // sample; a later phase serves the pool from the backend so the cron can
+  // append discovered items live.)
+  EXTRA_POOL_FILES: ["enzyme_items.json"],
 
   // Lab roster — labellers must pick a name from this list. Update each
   // semester to reflect who's currently in the lab. Keep in sync with
@@ -328,12 +430,26 @@ const $ = (id) => document.getElementById(id);
 const state = {
   k: null,                    // access token from URL
   labeller: null,             // labeller name (from localStorage)
-  abstracts: [],              // pool of all abstracts (from abstracts.json)
-  serverState: {},            // map: abstract_id -> array of distinct labeller names
-  current: null,              // currently displayed abstract record
-  startTimeMs: null,          // when this abstract was first shown
-  noRelMode: false,           // toggle for "no relationships found" mode
+  abstracts: [],              // full pool of items across all task types
+  serverState: {},            // map: item_id -> array of distinct labeller names
+  current: null,              // currently displayed item record
+  startTimeMs: null,          // when this item was first shown
+  noRelMode: false,           // pathogen: "no relationships found" toggle
+  notCharMode: false,         // enzyme: "not a functional characterisation" toggle
+  products: [],               // distinct product names for the enzyme typeahead
 };
+
+// Task-type helpers ─────────────────────────────────────────────────────────
+function itemType(item) {
+  return (item && item.task_type) || CONFIG.DEFAULT_TASK_TYPE;
+}
+function typeConf(item) {
+  const t = CONFIG.TASK_TYPES[itemType(item)] || {};
+  return {
+    label: t.label || itemType(item),
+    labellersRequired: t.labellersRequired || CONFIG.LABELLERS_PER_ABSTRACT,
+  };
+}
 
 // ─── Bootstrap ─────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", async () => {
@@ -363,6 +479,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   await refreshServerState();
+  fetchProducts();          // best-effort; populates the enzyme typeahead
   bindControls();
   if (state.labeller) {
     showNextAbstract();
@@ -378,9 +495,49 @@ function populateNameDropdown() {
 }
 
 async function fetchAbstracts() {
-  const r = await fetch("abstracts.json", { cache: "no-store" });
-  if (!r.ok) throw new Error("abstracts.json HTTP " + r.status);
-  return r.json();
+  // Load the base pathogen pool plus any extra per-type pool files, tag each
+  // item with a task_type (defaulting to pathogen for the untyped base file),
+  // and concatenate into one mixed pool.
+  const files = ["abstracts.json", ...(CONFIG.EXTRA_POOL_FILES || [])];
+  const lists = await Promise.all(files.map(async (f) => {
+    try {
+      const r = await fetch(f, { cache: "no-store" });
+      if (!r.ok) throw new Error(f + " HTTP " + r.status);
+      const items = await r.json();
+      return Array.isArray(items) ? items : [];
+    } catch (err) {
+      // A missing optional pool file (e.g. enzyme_items.json not yet built) is
+      // not fatal — the base abstracts.json still loads.
+      if (f === "abstracts.json") throw err;
+      console.warn("Optional pool file skipped:", f, err.message);
+      return [];
+    }
+  }));
+  const pool = [];
+  for (const items of lists) {
+    for (const it of items) {
+      if (!it.task_type) it.task_type = CONFIG.DEFAULT_TASK_TYPE;
+      pool.push(it);
+    }
+  }
+  return pool;
+}
+
+async function fetchProducts() {
+  // Distinct product names already in the enzyme sheet — drives the product
+  // typeahead so spellings converge. Silent no-op in dev mode.
+  if (!CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.startsWith("REPLACE_")) return;
+  try {
+    const url = `${CONFIG.APPS_SCRIPT_URL}?action=products&k=${encodeURIComponent(state.k)}`;
+    const r = await fetch(url);
+    if (!r.ok) return;
+    const list = await r.json();
+    if (Array.isArray(list)) {
+      state.products = list.filter((s) => typeof s === "string" && s.trim());
+      const dl = $("product-suggestions");
+      if (dl) dl.innerHTML = state.products.map((p) => `<option value="${p.replace(/"/g, "&quot;")}">`).join("");
+    }
+  } catch { /* typeahead is best-effort */ }
 }
 
 async function refreshServerState() {
@@ -414,11 +571,11 @@ function saveName() {
   refreshLeaderboard();
 }
 
-// ─── Abstract selection ────────────────────────────────────────────────────
+// ─── Item selection ────────────────────────────────────────────────────────
 function eligiblePool() {
   return state.abstracts.filter((a) => {
     const labellers = state.serverState[a.id] || [];
-    return labellers.length < CONFIG.LABELLERS_PER_ABSTRACT && !labellers.includes(state.labeller);
+    return labellers.length < typeConf(a).labellersRequired && !labellers.includes(state.labeller);
   });
 }
 
@@ -427,40 +584,144 @@ function showNextAbstract() {
   if (pool.length === 0) {
     $("labelling-card").classList.add("hidden");
     $("all-done").classList.remove("hidden");
-    $("progress").textContent = "All abstracts complete.";
+    $("progress").textContent = "All items complete.";
     return;
   }
   state.current = pool[Math.floor(Math.random() * pool.length)];
   state.startTimeMs = Date.now();
   state.noRelMode = false;
+  state.notCharMode = false;
   renderCurrent();
 }
 
 function renderCurrent() {
   const a = state.current;
+  const type = itemType(a);
+  const conf = typeConf(a);
+
+  // Shared header
+  const badge = $("task-badge");
+  badge.textContent = conf.label;
+  badge.className = "task-badge" + (type === "enzyme" ? " enzyme" : "");
   $("abstract-title").textContent = a.title || "(no title)";
   const meta = [a.authors, a.journal, a.year].filter(Boolean).join(" · ");
   $("abstract-meta").textContent = meta + (a.doi ? "  ·  doi:" + a.doi : "");
   $("abstract-text").textContent = a.abstract || "(no abstract)";
+  renderLink(a);
 
-  // Reset form
-  $("triples").innerHTML = "";
-  addTripleRow();
+  // Reset shared fields, then render the type-specific form
   $("notes").value = "";
-  $("no-rel").classList.remove("active");
-  $("no-rel").textContent = "No relationships found";
   $("status").textContent = "";
+  $("pathogen-form").classList.toggle("hidden", type !== "pathogen");
+  $("enzyme-form").classList.toggle("hidden", type !== "enzyme");
+  if (type === "enzyme") renderEnzymeForm(a);
+  else renderPathogenForm(a);
 
-  // Progress
+  // Progress — each item counts as complete by its own per-type threshold
   const total = state.abstracts.length;
-  const done = state.abstracts.filter((a) =>
-    (state.serverState[a.id] || []).length >= CONFIG.LABELLERS_PER_ABSTRACT
+  const done = state.abstracts.filter((it) =>
+    (state.serverState[it.id] || []).length >= typeConf(it).labellersRequired
   ).length;
   $("progress").textContent =
-    `${done}/${total} abstracts have ${CONFIG.LABELLERS_PER_ABSTRACT} labellers. ` +
+    `${done}/${total} items complete. This one: ${conf.label} ` +
+    `(needs ${conf.labellersRequired} labeller${conf.labellersRequired === 1 ? "" : "s"}). ` +
     `Your name: ${state.labeller}.`;
 
   $("labelling-card").classList.remove("hidden");
+}
+
+function renderLink(a) {
+  const el = $("abstract-link");
+  const url = a.link || a.url ||
+    (a.doi ? "https://doi.org/" + String(a.doi).replace(/^doi:/i, "") : "");
+  if (url) {
+    el.innerHTML = `<a href="${url}" target="_blank" rel="noopener">Open article ↗</a>`;
+  } else {
+    el.textContent = "";
+  }
+}
+
+// ─── Pathogen form ─────────────────────────────────────────────────────────
+function renderPathogenForm() {
+  state.noRelMode = false;
+  $("triples").innerHTML = "";
+  addTripleRow();
+  $("add-row").disabled = false;
+  const btn = $("no-rel");
+  btn.classList.remove("active");
+  btn.textContent = "No relationships found";
+}
+
+// ─── Enzyme form ───────────────────────────────────────────────────────────
+function renderEnzymeForm(a) {
+  state.notCharMode = false;
+  const pf = a.prefill || {};
+  $("enzyme-doi").value = pf.doi ||
+    (a.doi ? "doi:" + String(a.doi).replace(/^doi:/i, "") : "");
+  $("enzymes").innerHTML = "";
+  addEnzymeRow(pf);           // seed one row with any prefilled name/product
+  $("add-enzyme").disabled = false;
+  const btn = $("not-char");
+  btn.classList.remove("active");
+  btn.textContent = "Not a functional characterisation";
+}
+
+function addEnzymeRow(prefill) {
+  prefill = prefill || {};
+  const div = document.createElement("div");
+  div.className = "enzyme-row";
+  div.innerHTML = `
+    <button class="remove-enzyme" title="remove enzyme" aria-label="remove enzyme">×</button>
+    <div class="field">
+      <label class="field-label">Enzyme name / accession</label>
+      <input type="text" class="e-name" autocomplete="off" placeholder="e.g. AtTPS03 / Q9SF08">
+    </div>
+    <div class="field">
+      <label class="field-label">Product (chemical the enzyme makes)</label>
+      <input type="text" class="e-product" list="product-suggestions" autocomplete="off" placeholder="start typing — suggestions match existing entries">
+    </div>
+    <div class="field">
+      <label class="field-label">Amino-acid sequence (paste from the paper / supplement)</label>
+      <textarea class="e-sequence seq" rows="3" placeholder="MASV… (paste the protein sequence)"></textarea>
+    </div>
+  `;
+  div.querySelector(".e-name").value = prefill.enzyme_name || prefill.name || "";
+  div.querySelector(".e-product").value = prefill.product || "";
+  div.querySelector(".remove-enzyme").addEventListener("click", () => {
+    if ($("enzymes").children.length > 1) div.remove();
+  });
+  $("enzymes").appendChild(div);
+}
+
+function readEnzymes() {
+  const rows = $("enzymes").querySelectorAll(".enzyme-row");
+  const out = [];
+  for (const row of rows) {
+    const enzyme_name = row.querySelector(".e-name").value.trim();
+    const product = row.querySelector(".e-product").value.trim();
+    const sequence = row.querySelector(".e-sequence").value.replace(/\s+/g, "").trim();
+    if (!enzyme_name && !product && !sequence) continue;   // empty row, skip
+    out.push({ enzyme_name, product, sequence });
+  }
+  return out;
+}
+
+function toggleNotChar() {
+  state.notCharMode = !state.notCharMode;
+  const btn = $("not-char");
+  if (state.notCharMode) {
+    btn.classList.add("active");
+    btn.textContent = "✓ Not a characterisation";
+    $("enzymes").innerHTML = "";
+    $("enzyme-doi").disabled = true;
+    $("add-enzyme").disabled = true;
+  } else {
+    btn.classList.remove("active");
+    btn.textContent = "Not a functional characterisation";
+    $("enzyme-doi").disabled = false;
+    $("add-enzyme").disabled = false;
+    addEnzymeRow(state.current && state.current.prefill);
+  }
 }
 
 // ─── Triple rows ───────────────────────────────────────────────────────────
@@ -498,6 +759,8 @@ function readTriples() {
 function bindControls() {
   $("add-row").addEventListener("click", () => addTripleRow());
   $("no-rel").addEventListener("click", toggleNoRel);
+  $("add-enzyme").addEventListener("click", () => addEnzymeRow(null));
+  $("not-char").addEventListener("click", toggleNotChar);
   $("submit").addEventListener("click", submit);
 }
 
@@ -521,35 +784,8 @@ function toggleNoRel() {
 // ─── Submission ────────────────────────────────────────────────────────────
 async function submit() {
   if (!state.current) return;
-
-  const triples = state.noRelMode ? [] : readTriples();
-  if (!state.noRelMode) {
-    // Validate non-empty rows
-    if (triples.length === 0) {
-      setStatus("Add at least one compound–pathogen pair, or click 'No relationships found'.", "error");
-      return;
-    }
-    for (const t of triples) {
-      if (!t.compound || !t.pathogen || !t.direction) {
-        setStatus("Each row needs a compound, a pathogen, and a direction. Use the 'No relationships' button if none apply.", "error");
-        return;
-      }
-    }
-  }
-
-  const payload = {
-    k: state.k,
-    labeller: state.labeller,
-    abstract_id: state.current.id,
-    abstract_title: state.current.title || "",
-    abstract_text: state.current.abstract || "",
-    triples: triples,
-    no_relationships_found: state.noRelMode,
-    notes: $("notes").value.trim(),
-    submission_id: cryptoRandomId(),
-    elapsed_seconds: Math.round((Date.now() - state.startTimeMs) / 1000),
-    client_timestamp: new Date().toISOString(),
-  };
+  const payload = buildPayload();
+  if (!payload) return;    // validation failed; status already set
 
   setStatus("Submitting…");
   $("submit").disabled = true;
@@ -577,6 +813,7 @@ async function submit() {
 
     setStatus("Submitted ✓", "ok");
     await refreshServerState();
+    if (payload.task_type === "enzyme") fetchProducts();   // new products may now exist
     showNextAbstract();
     refreshLeaderboard();
   } catch (err) {
@@ -584,6 +821,60 @@ async function submit() {
   } finally {
     $("submit").disabled = false;
   }
+}
+
+// Build the type-specific submission payload, or null (with a status message
+// already set) if the current form fails validation.
+function buildPayload() {
+  const a = state.current;
+  const type = itemType(a);
+  const base = {
+    k: state.k,
+    labeller: state.labeller,
+    task_type: type,
+    abstract_id: a.id,
+    abstract_title: a.title || "",
+    abstract_text: a.abstract || "",
+    notes: $("notes").value.trim(),
+    submission_id: cryptoRandomId(),
+    elapsed_seconds: Math.round((Date.now() - state.startTimeMs) / 1000),
+    client_timestamp: new Date().toISOString(),
+  };
+
+  if (type === "enzyme") {
+    const doi = $("enzyme-doi").value.trim();
+    if (state.notCharMode) {
+      return Object.assign(base, { not_characterization: true, doi, enzymes: [] });
+    }
+    const enzymes = readEnzymes();
+    if (enzymes.length === 0) {
+      setStatus("Add at least one enzyme, or click 'Not a functional characterisation'.", "error");
+      return null;
+    }
+    for (const e of enzymes) {
+      if (!e.enzyme_name || !e.product || !e.sequence) {
+        setStatus("Each enzyme needs a name/accession, a product, and a pasted sequence.", "error");
+        return null;
+      }
+    }
+    return Object.assign(base, { not_characterization: false, doi, enzymes });
+  }
+
+  // Pathogen (default type)
+  const triples = state.noRelMode ? [] : readTriples();
+  if (!state.noRelMode) {
+    if (triples.length === 0) {
+      setStatus("Add at least one compound–pathogen pair, or click 'No relationships found'.", "error");
+      return null;
+    }
+    for (const t of triples) {
+      if (!t.compound || !t.pathogen || !t.direction) {
+        setStatus("Each row needs a compound, a pathogen, and a direction. Use the 'No relationships' button if none apply.", "error");
+        return null;
+      }
+    }
+  }
+  return Object.assign(base, { triples, no_relationships_found: state.noRelMode });
 }
 
 // ─── Leaderboard ───────────────────────────────────────────────────────────

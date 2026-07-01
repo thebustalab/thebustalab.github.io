@@ -498,7 +498,7 @@ dev.off()
 ```{r, eval = FALSE}
 plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
 
-pdf(filename = <path_to_file_you_want_to_create>, width = 8, height = 8)
+pdf(file = <path_to_file_you_want_to_create>, width = 8, height = 8)
 
 plot
 
