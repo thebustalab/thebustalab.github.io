@@ -1,6 +1,15 @@
 # example R options set globally
 options(width = 60)
 
+# Ensure a CRAN mirror is always set. Each chapter renders in its own
+# non-interactive session (new_session: true), where repos defaults to
+# "@CRAN@". phylochemistry.R calls install.packages() for any missing
+# package, which errors ("trying to use CRAN without setting a mirror")
+# unless a real mirror is set here first.
+if (is.null(getOption("repos")) || any(getOption("repos") == "@CRAN@")) {
+  options(repos = c(CRAN = "https://cloud.r-project.org"))
+}
+
 # example chunk options set globally
 knitr::opts_chunk$set(
   comment = "#>",

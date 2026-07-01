@@ -7,7 +7,7 @@
 <title>figures &amp; captions | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
-<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="figures &amp; captions | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
@@ -19,7 +19,7 @@
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
-<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <script>
@@ -110,7 +110,7 @@
 <li>Representing Data:</li>
 </ul>
 <p>Appropriate Geoms and Annotations: Choose geoms that best represent the data and help the viewer evaluate the hypothesis or make the desired comparison. Include raw data points where possible for detailed data distribution understanding. Consider apply statistical transformations like smoothing lines or histograms where appropriate to provide deeper insights into the data. Consider using facets for visualizing multiple categories or groups, allowing for easier comparison while maintaining a consistent scale and layout. Adhere to specific standards or conventions relevant to your field, including the representation of data, error bars, or statistical significance markers.</p>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div id="insets" class="section level3 unnumbered">
 <h3>insets<a class="anchor" aria-label="anchor" href="#insets"><i class="fas fa-link"></i></a>
 </h3>
@@ -134,7 +134,7 @@
 <span>           xmin <span class="op">=</span> <span class="fl">4.9</span>, xmax <span class="op">=</span> <span class="fl">6.2</span>, ymin <span class="op">=</span> <span class="fl">13</span>, ymax <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>           linetype <span class="op">=</span> <span class="st">"dotted"</span>, fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-21-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Plot insets</p>
 <div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, <span class="va">hwy</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -152,7 +152,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Engine displacement (l)"</span>, y <span class="op">=</span> <span class="st">"Fuel use efficiency (MPG)"</span>,</span>
 <span>       colour <span class="op">=</span> <span class="st">"Engine cylinders\n(number)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Image insets</p>
 <div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Isoquercitin_synthase</span> <span class="op">&lt;-</span> <span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png"</span><span class="op">)</span></span>
@@ -171,7 +171,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expansion.html">expansion</a></span><span class="op">(</span>mult <span class="op">=</span> <span class="fl">0.3</span>, add <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expansion.html">expansion</a></span><span class="op">(</span>mult <span class="op">=</span> <span class="fl">0.2</span>, add <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-23-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="paneled-figures" class="section level3 unnumbered">
 <h3>paneled figures<a class="anchor" aria-label="anchor" href="#paneled-figures"><i class="fas fa-link"></i></a>
@@ -217,13 +217,13 @@
 <p>Now, add them together to lay them out. Let’s look at various ways to lay this out:</p>
 <div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-25-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb195"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>,<span class="va">plot2</span><span class="op">)</span>, <span class="va">plot1</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="exporting-graphics" class="section level3 unnumbered">
 <h3>exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
@@ -238,7 +238,7 @@
 <span id="cb197-7"><a href="figures-captions.html#cb197-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="figures-captions.html#cb198-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
 <span id="cb198-2"><a href="figures-captions.html#cb198-2" tabindex="-1"></a></span>
-<span id="cb198-3"><a href="figures-captions.html#cb198-3" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb198-3"><a href="figures-captions.html#cb198-3" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">file =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
 <span id="cb198-4"><a href="figures-captions.html#cb198-4" tabindex="-1"></a></span>
 <span id="cb198-5"><a href="figures-captions.html#cb198-5" tabindex="-1"></a>plot</span>
 <span id="cb198-6"><a href="figures-captions.html#cb198-6" tabindex="-1"></a></span>
@@ -336,8 +336,8 @@
 <h3>example captions<a class="anchor" aria-label="anchor" href="#example-captions"><i class="fas fa-link"></i></a>
 </h3>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-31"></span>
-<img src="index_files/figure-html/unnamed-chunk-31-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-30"></span>
+<img src="index_files/figure-html/unnamed-chunk-30-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%"><p class="caption">
 Figure 4.1: Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.
 </p>
 </div>
@@ -416,7 +416,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-04-30.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

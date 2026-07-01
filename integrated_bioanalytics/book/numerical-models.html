@@ -7,7 +7,7 @@
 <title>numerical models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
-<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="numerical models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
@@ -19,7 +19,7 @@
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
-<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <script>
@@ -96,7 +96,7 @@
 <h1>numerical models<a class="anchor" aria-label="anchor" href="#numerical-models"><i class="fas fa-link"></i></a>
 </h1>
 <!-- explain cross validation and rmse in some sort of metrics section -->
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div id="model-use" class="section level2 unnumbered">
 <h2>model use<a class="anchor" aria-label="anchor" href="#model-use"><i class="fas fa-link"></i></a>
 </h2>
@@ -128,7 +128,7 @@
 <div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-442-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-443-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>It looks like there might be a relationship! Let’s build an linear regression model and use it inferentially to examine the details of that that relationship:</p>
 <div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
@@ -166,6 +166,7 @@
 <span><span class="co">## 4           0</span></span>
 <span><span class="co">## 5           0</span></span></code></pre></div>
 <p>It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for iso-Leucine (i.e. the slope, m), as well some other things (we will talk about them in a second).</p>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use a function called <code>predictWithModel</code> to make some predictions using the model. Let’s try that for iso-Leucine and Valine. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of Valine for each value of iso-Leucine in our data set. We can do that like this:</p>
 <div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predicted_Valine_values</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
@@ -206,14 +207,14 @@
 <span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="va">plot1</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-447-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-449-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good. Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.</p>
 <div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iso_Leucine_values</span>, y <span class="op">=</span> <span class="va">measured_Valine_values</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iso_Leucine_values</span>, y <span class="op">=</span> <span class="va">predicted_Valine_values</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iso_Leucine_values</span>, y <span class="op">=</span> <span class="va">measured_Valine_values</span>, xend <span class="op">=</span> <span class="va">iso_Leucine_values</span>, yend <span class="op">=</span> <span class="va">predicted_Valine_values</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-448-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-450-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can calculate the sum of the squared residuals:</p>
 <div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
@@ -225,14 +226,14 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-450-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-452-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>A pretty bad model, I agree. How much better is our linear model that the flat line model? Let’s create a measure of the distance between each point and the point predicted for that same x value on the model:</p>
 <div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span>, xend <span class="op">=</span> <span class="va">`iso-Leucine`</span>, yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-451-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-453-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
@@ -285,7 +286,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">top</span>, <span class="va">bottom</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-453-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-455-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="multiple-linear-regression" class="section level2 unnumbered">
 <h2>multiple linear regression<a class="anchor" aria-label="anchor" href="#multiple-linear-regression"><i class="fas fa-link"></i></a>
@@ -430,7 +431,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, <span class="va">plot3</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-455-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-457-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <!-- # ggplot() + -->
 <!-- #   geom_point( -->
 <!-- #     data = metabolomics_data, -->
@@ -497,12 +498,13 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">check_model</span><span class="op">(</span><span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-458-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="random-forests" class="section level2 unnumbered">
 <h2>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
 </h2>
 <p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree’s output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest’s final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).</p>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can use the <code>buildModel()</code> function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_n_leaves</code>. Here is more information on those parameters:</p>
 <ul>
 <li><p>n_vars_at_split (often called “mtry” in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.</p></li>
@@ -564,7 +566,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-459-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can easily use the model to make predictions by using the <code>predictWithModel()</code> function:</p>
 <div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -586,7 +588,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-460-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-462-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
@@ -607,16 +609,16 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## # A tibble: 300 × 9</span></span>
 <span><span class="co">##    n_vars_tried_at_split n_trees min_leaf_size .metric </span></span>
 <span><span class="co">##                    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   </span></span>
-<span><span class="co">##  1                    25      20             2 accuracy</span></span>
-<span><span class="co">##  2                     5      50             1 accuracy</span></span>
-<span><span class="co">##  3                    10      60             2 accuracy</span></span>
-<span><span class="co">##  4                     5      80             2 accuracy</span></span>
-<span><span class="co">##  5                    10     100             2 accuracy</span></span>
-<span><span class="co">##  6                     5      60             3 accuracy</span></span>
-<span><span class="co">##  7                    10      70             3 accuracy</span></span>
-<span><span class="co">##  8                    30      20             1 accuracy</span></span>
-<span><span class="co">##  9                    25      50             2 accuracy</span></span>
-<span><span class="co">## 10                    20      90             2 accuracy</span></span>
+<span><span class="co">##  1                    20      70             3 accuracy</span></span>
+<span><span class="co">##  2                     5      30             1 accuracy</span></span>
+<span><span class="co">##  3                    20      50             3 accuracy</span></span>
+<span><span class="co">##  4                    20      10             2 accuracy</span></span>
+<span><span class="co">##  5                    10      90             3 accuracy</span></span>
+<span><span class="co">##  6                    15      10             3 accuracy</span></span>
+<span><span class="co">##  7                    30      10             1 accuracy</span></span>
+<span><span class="co">##  8                     5      20             3 accuracy</span></span>
+<span><span class="co">##  9                     5      50             1 accuracy</span></span>
+<span><span class="co">## 10                    20      40             2 accuracy</span></span>
 <span><span class="co">## # ℹ 290 more rows</span></span>
 <span><span class="co">## # ℹ 5 more variables: .estimator &lt;chr&gt;, mean &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   std_err &lt;dbl&gt;, .config &lt;chr&gt;,</span></span>
@@ -629,7 +631,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-462-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">unknown</span>,</span>
@@ -642,18 +644,18 @@ Now, let’s put it all together and make it pretty:</p>
 <span>  predicted_status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">predictions</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">##                          real_status predicted_status</span></span>
-<span><span class="co">## .pred_healthy1               healthy             0.90</span></span>
-<span><span class="co">## .pred_healthy2               healthy             0.80</span></span>
-<span><span class="co">## .pred_healthy3               healthy             0.90</span></span>
-<span><span class="co">## .pred_healthy4        kidney_disease             0.10</span></span>
-<span><span class="co">## .pred_healthy5        kidney_disease             0.00</span></span>
-<span><span class="co">## .pred_healthy6        kidney_disease             0.05</span></span>
-<span><span class="co">## .pred_kidney_disease1        healthy             0.10</span></span>
-<span><span class="co">## .pred_kidney_disease2        healthy             0.20</span></span>
-<span><span class="co">## .pred_kidney_disease3        healthy             0.10</span></span>
-<span><span class="co">## .pred_kidney_disease4 kidney_disease             0.90</span></span>
-<span><span class="co">## .pred_kidney_disease5 kidney_disease             1.00</span></span>
-<span><span class="co">## .pred_kidney_disease6 kidney_disease             0.95</span></span></code></pre></div>
+<span><span class="co">## .pred_healthy1               healthy       0.82857143</span></span>
+<span><span class="co">## .pred_healthy2               healthy       0.90000000</span></span>
+<span><span class="co">## .pred_healthy3               healthy       0.79285714</span></span>
+<span><span class="co">## .pred_healthy4        kidney_disease       0.01904762</span></span>
+<span><span class="co">## .pred_healthy5        kidney_disease       0.03571429</span></span>
+<span><span class="co">## .pred_healthy6        kidney_disease       0.04285714</span></span>
+<span><span class="co">## .pred_kidney_disease1        healthy       0.17142857</span></span>
+<span><span class="co">## .pred_kidney_disease2        healthy       0.10000000</span></span>
+<span><span class="co">## .pred_kidney_disease3        healthy       0.20714286</span></span>
+<span><span class="co">## .pred_kidney_disease4 kidney_disease       0.98095238</span></span>
+<span><span class="co">## .pred_kidney_disease5 kidney_disease       0.96428571</span></span>
+<span><span class="co">## .pred_kidney_disease6 kidney_disease       0.95714286</span></span></code></pre></div>
 </div>
 <div id="section-14" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
@@ -801,7 +803,7 @@ model$metrics
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-04-30.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

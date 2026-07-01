@@ -105,9 +105,15 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
 First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
+```{r, echo = FALSE, cache = FALSE}
+bustalab <- TRUE
+```
+
 ```{r, message = FALSE, cache = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
+
+
 
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
 

@@ -291,7 +291,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
 Now we could add some data. We could do something simple like plot total abundances as the size of a point:
 
 ```{r, fig.width = 8, fig.height = 4}
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Websites/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Tools/websites/private_data/pfas_data_private.csv")
 lake_superior_PFAS %>%
   group_by(site, lon, lat) %>%
   summarize(total = sum(abundance)) -> lake_superior_PFAS_summarized
@@ -314,7 +314,7 @@ Or we could do something more sophisticated like add pie charts at each point:
 
 
 ```{r, fig.width = 8, fig.height = 4}
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Websites/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Tools/websites/private_data/pfas_data_private.csv")
 
 grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
 site_less_than_90lon <- filter(grouped_by_site, lon <= -90)
@@ -357,7 +357,7 @@ ggplot() +
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
 ```{r, fig.width = 8, fig.height = 4}
-shore <- readMonolist("/Users/bust0037/Documents/Websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+shore <- readMonolist("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
 
 wide_view <- ggplot(shore) +
     geom_point(aes(y = lat, x = lon), size = 0.01) +

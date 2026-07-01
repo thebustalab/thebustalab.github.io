@@ -7,7 +7,7 @@
 <title>wrangling and summaries | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
-<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="wrangling and summaries | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
@@ -19,7 +19,7 @@
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
 <link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
-<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <script>
@@ -95,7 +95,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="wrangling-and-summaries" class="section level1 unnumbered">
 <h1>wrangling and summaries<a class="anchor" aria-label="anchor" href="#wrangling-and-summaries"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.</p>
 <div id="section-5" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a></h2>
@@ -225,15 +225,15 @@
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-243-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Neat! Another way to think about the pipe:</p>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
 </div>
 <div id="summary-statistics" class="section level2 unnumbered">
@@ -347,7 +347,7 @@
 <span>        xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
@@ -388,7 +388,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
@@ -415,7 +415,7 @@
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    plot.caption <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
 <div id="ordering" class="section level2 unnumbered">
@@ -491,7 +491,7 @@
 <span><span class="co">##  3 Kuzitrin_Lake       BELA  S           0.29     15.1 </span></span>
 <span><span class="co">##  4 Lava_Lake           BELA  S           0.59     30.7 </span></span>
 <span><span class="co">##  5 North_Killeak_Lake  BELA  S           0.04      2.08</span></span>
-<span><span class="co">##  6 White_Fish_Lake     BELA  S           0.18      9.37</span></span>
+<span><span class="co">##  6 White_Fish_Lake     BELA  S           0.18      9.38</span></span>
 <span><span class="co">##  7 Iniakuk_Lake        GAAR  S          12.1      13.2 </span></span>
 <span><span class="co">##  8 Kurupa_Lake         GAAR  S          12.4      13.6 </span></span>
 <span><span class="co">##  9 Lake_Matcharak      GAAR  S          13.3      14.5 </span></span>
@@ -605,7 +605,7 @@ Some pointers:
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-04-30.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
