@@ -17,3 +17,6 @@ index_cache/
 # OS files
 .DS_Store
 Thumbs.db
+
+# script
+members_update.py
