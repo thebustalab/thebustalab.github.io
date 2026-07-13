@@ -1,50 +1,110 @@
 [
   {
     "task_type": "enzyme",
-    "id": "enz_sample_001",
-    "title": "Functional characterization of a diterpene synthase from Salvia miltiorrhiza producing miltiradiene",
-    "authors": "Sample et al.",
-    "journal": "Sample Journal",
-    "year": 2024,
-    "doi": "10.0000/sample.001",
-    "link": "https://doi.org/10.0000/sample.001",
-    "abstract": "SAMPLE ITEM (placeholder for the cron feed). We report the cloning and functional characterization of SmDTS1, a class II diterpene synthase from Salvia miltiorrhiza. Heterologous expression in Escherichia coli and in vitro assays with geranylgeranyl diphosphate demonstrated that the recombinant enzyme catalyses the formation of miltiradiene. The protein sequence and biochemical parameters are reported; kinetic constants were determined for the purified enzyme.",
+    "id": "enz_09bc4db8a5f9",
+    "title": "Adaptive evolution of oxidosqualene cyclases driving triterpene scaffold diversification for limonoid biosynthesis in Melia toosendan",
+    "authors": "Bo Liu; Laibao Feng; Keke Zhang; Yanhong Guo; Changkang Li; Fan Zhang; Haojun Ji; Bingzhu Hou; Bin Han; Jungui Dai; Zheyong Xue; Xiaoquan Qi",
+    "journal": "Plant Communications",
+    "year": 2026,
+    "doi": "10.1016/j.xplc.2026.101965",
+    "link": "https://doi.org/10.1016/j.xplc.2026.101965",
+    "abstract": "Limonoids are a structurally diverse class of highly oxidized triterpenoids produced by Meliaceae and Rutaceae species. They exhibit remarkable biological activities but are difficult to produce due to their complex biosynthesis. Plants evolve ecologically adaptive specialized metabolites through the amplification and functional differentiation of gene families, yet our understanding of the molecular mechanisms remains very limited. A chromosome-level genome assembly of Melia toosendan (219.5 Mb) showed no recent whole-genome duplication, and we annotated 14 key enzymes for triterpenoid biosynthesis, the oxidosqualene cyclases (OSCs). Transient expression of these OSCs in Nicotiana benthamiana produced 11 distinct triterpene skeletons, including eupha-7,24-dien-3β-ol, the product of MtOSC10. Phylogenetic analysis and dN/dS ratio assessments suggest that this OSC lineage may have undergone neofunctionalization events, correlating with signals of strong positive selection. Ancestral sequence reconstruction traced the divergence of an ancestral β-amyrin synthase into two evolutionary lineages: one lineage retains the conserved activity of tirucalla-7,24-dien-3β-ol synthase, which produces the canonical limonoid precursor, and the other diversifies into novel eupha-7,24-dien-3β-ol synthases that produce a hypothetical alternative precursor. Strikingly, four key amino acid residue substitutions (W258L, T413S, M730Y, L735H) in tirucalla-7,24-dien-3β-ol synthase were sufficient to switch MtOSC1 product specificity from tirucalla-7,24-dien-3β-ol to eupha-7,24-dien-3β-ol. Our findings uncover a potential alternative pathway for limonoid biosynthesis and reveal the molecular basis of triterpene skeleton diversification in Meliaceae. More broadly, they illustrate how neofunctionalization of OSCs under positive selection drives metabolic innovation across plant lineages. The finding also provides a foundation for synthetic biology approaches to engineer plant-derived insecticides.",
     "prefill": {
-      "enzyme_name": "SmDTS1",
-      "product": "miltiradiene",
-      "doi": "doi:10.0000/sample.001"
-    }
+      "enzyme_name": "MtOSC10",
+      "product": "eupha-7,24-dien-3β-ol",
+      "doi": "doi:10.1016/j.xplc.2026.101965"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-07"
   },
   {
     "task_type": "enzyme",
-    "id": "enz_sample_002",
-    "title": "A cytochrome P450 from Arabidopsis oxidises a triterpene scaffold in planta",
-    "authors": "Sample et al.",
-    "journal": "Sample Journal",
-    "year": 2023,
-    "doi": "10.0000/sample.002",
-    "link": "https://doi.org/10.0000/sample.002",
-    "abstract": "SAMPLE ITEM (placeholder for the cron feed). Expression of CYP716-family candidates in Nicotiana benthamiana followed by GC-MS analysis identified a P450 that introduces a hydroxyl group onto a triterpene backbone, yielding a single oxidised product. The corresponding coding sequence and the mass spectra supporting product identity are provided.",
+    "id": "enz_e4ca89eac377",
+    "title": "The Oplopanax elatus genome reveals dammaradienol synthase evolution enabling reconstruction of RK type ginsenosides biosynthesis",
+    "authors": "Xin Wang; He Zhang; 康梦影; Zeyu An; Yuxin Song; Dongran Zheng; Wanjie Xue; Chang Yang; Yangxin Wang; Yangxin Wang; Jie Zhang; Shuping Zhou; Zhuo Zhang; Chang Li; Hao Wu; Wei Song; Peng Zhang; Hailong Shen; Zhong‐Jian Liu; Saneyuki Kawabata; Zhichao Xu; Xin Hua; Yuhua Li; Yang Zhang; Yue Wang; Yue Wang",
+    "journal": "Nature Communications",
+    "year": 2026,
+    "doi": "10.1038/s41467-026-74686-6",
+    "link": "https://doi.org/10.1038/s41467-026-74686-6",
+    "abstract": "RK-type ginsenosides are a subgroup of dehydrated dammarane saponins with valuable bioactivities, but they are not naturally produced in cultivated ginseng. The ginseng relative Oplopanax elatus accumulates dammaradienol, the precursor scaffold of RK-type ginsenosides, but does not produce RK-type ginsenosides. Here, we identify OeOSC14 as a specialized dammaradienol synthase that evolved through duplication and neofunctionalization of an ancestral multifunctional triterpene synthase by combining chromosome-level genome assembly, comparative genomics and biochemical analyses. Consistent with this evolutionary transition, a single N260Y substitution converts OeOSC14 from a dammaradienol-specific enzyme back into a multifunctional triterpene synthase. We further show that loss of functional C12 hydroxylase blocks the downstream oxidative step required for RK-type ginsenoside biosynthesis in O. elatus. Reconstitution of the pathway in Nicotiana benthamiana enables de novo production of ginsenosides Rk1, Rk2, and Rk3, providing evolutionary insight into triterpene diversification and establishing a plant-based route for producing these compounds.",
     "prefill": {
-      "enzyme_name": "CYP716A-candidate",
-      "product": "hydroxy-triterpene",
-      "doi": "doi:10.0000/sample.002"
-    }
+      "enzyme_name": "OeOSC14",
+      "product": "dammaradienol",
+      "doi": "doi:10.1038/s41467-026-74686-6"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-07"
   },
   {
     "task_type": "enzyme",
-    "id": "enz_sample_003",
-    "title": "Transcriptomic survey of terpenoid biosynthesis genes across the mint family",
-    "authors": "Sample et al.",
-    "journal": "Sample Journal",
-    "year": 2022,
-    "doi": "10.0000/sample.003",
-    "link": "https://doi.org/10.0000/sample.003",
-    "abstract": "SAMPLE ITEM (placeholder for the cron feed). We assembled transcriptomes from twelve Lamiaceae species and annotated putative terpene synthase and cytochrome P450 genes by sequence homology. Expression patterns are described across tissues. No enzymes were expressed or assayed; candidate functions are inferred from phylogeny only. This sample exercises the 'Not a functional characterisation' path.",
+    "id": "enz_eebd35aef705",
+    "title": "Mining and Functional Characterization of Four Oxidosqualene Cyclases from Cereals",
+    "authors": "Shan Yan; Jiaojiao Lu; Yizhuo Zhang; Zishuo Xu; Mingyue Zhang; Lei Han; Li Wen; Wei Song; Chang Cheng Li; Zheyong Xue",
+    "journal": "Journal of Agricultural and Food Chemistry",
+    "year": 2026,
+    "doi": "10.1021/acs.jafc.5c14937",
+    "link": "https://doi.org/10.1021/acs.jafc.5c14937",
+    "abstract": "Cereals serve as both essential food sources and prolific producers of diverse triterpenoids. In this study, we identified four previously uncharacterized cereal OSCs through genome mining and heterologous expression in Nicotiana benthamiana . Among them, maize ZmαβAS, ZmMDDS, and ZmGLS yielded β-amyrin ( 1 )/α-amyrin ( 2 ), (3 S,13 S )-malabarica-17,21-dien-3β,14-diol ( 3 ) and glutinol ( 4 ), respectively. While oat AsLCS functioned as a new multifunctional OSC, predominantly generating lactucenyl ( 5 ). Site-directed mutagenesis of ZmMDDS, ZmGLS, and AsLCS identified critical residues governing catalytic activity. It was worth noticing that Y407 in AsLCS played a decisive role in modulating D-ring expansion versus the deprotonation process via the dammarenyl cation, which becomes a switch to produce 5 or dammara-20,24-dien-3β-ol ( 6 ). Evolutionary relationship analysis revealed that cereal OSC genes experienced complex diversification to yield various triterpenoids. These findings lay the foundation for further understanding the diversity of triterpenoids from cereals.",
     "prefill": {
       "enzyme_name": "",
       "product": "",
-      "doi": "doi:10.0000/sample.003"
-    }
+      "doi": "doi:10.1021/acs.jafc.5c14937"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-07"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_ffaa6365afe5",
+    "title": "Atomic basis for functional evolution of plant lanosterol synthase",
+    "authors": "Aimin Ma; Hongjuan Diao; Tong Xia; Juncong Sun; Laibao Feng; Michael J. Stephenson; Anne Osbourn; Ruibo Wu; Xiaoquan Qi",
+    "journal": "New Phytologist",
+    "year": 2025,
+    "doi": "10.1111/nph.70642",
+    "link": "https://doi.org/10.1111/nph.70642",
+    "abstract": "Lanosterol synthase (LAS) and cycloartenol synthase (CAS) use 2,3-oxidosqualene as their substrate to produce lanosterol and cycloartenol for biosynthesis of essential sterols in animals and fungi (lanosterol) and plants (cycloartenol), respectively. Although LASs are also found in plants, their evolutionary origin and the question of whether their catalytic mechanism aligns with animal/fungal LAS remain unresolved. In this study, we use QM/MM MD simulations to reveal the atomic-level catalytic mechanisms of LASs from all three lineages. Our simulations reveal a dominant reaction path from a C8 cation intermediate to lanosterol for plant LASs, which is different from the reaction path for animal and fungal LASs. Phylogenetic and microcollinearity analyses demonstrate that plant LASs evolved from an ancestral plant CAS and are restricted to eudicots. Combining these findings with mechanistic insights, we demonstrate that plant LASs have undergone convergent evolution with their animal and fungal counterparts, independently acquiring a role in root development. This study establishes the lanosterol biosynthesis pathway as a remarkable example of convergent evolution across eukaryotes, having arisen independently in plants, animals, and fungi. By defining the role of plant LAS in root development, this research provides key molecular targets for breeding stress-resilient crops.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "lanosterol",
+      "doi": "doi:10.1111/nph.70642"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-07"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_ba5ee8f754ab",
+    "title": "Molecular mechanism underlying regulation of chalcone synthase by chalcone isomerase-like protein",
+    "authors": "Song Wang; Li-Ying Ma; Zhou-Geng Xu; Riga Wu; Ji-Ping Qu; Jie Hao; Chen-Jing Hu; Zhiyu Chen; Miao-Lian Ma; Wen-Yi Zhang; Tengyu Xie; Jing-Jing Xu; Mu-Lan Zhu; Ai-Xia Cheng; Peng Zhang; Jia-Wei Wang; Fang Yu; Jianxu Li",
+    "journal": "Nature Communications",
+    "year": 2026,
+    "doi": "10.1038/s41467-026-70563-4",
+    "link": "https://doi.org/10.1038/s41467-026-70563-4",
+    "abstract": "Flavonoids are essential for plant growth and environmental adaptation. Chalcone synthase (CHS) directs metabolic flux into flavonoid biosynthesis, but its catalytic promiscuity limits the biosynthetic efficiency. Although the chalcone isomerase-like protein (CHIL) has been characterized as physically interacting with and regulating CHS, the underlying mechanism remains elusive. Here, we report the crystal structure of the CHS-CHIL complex, revealing that CHIL modulates CHS function by gating the substrate-binding pocket entrance through its β-hairpin region. Molecular dynamics simulations indicate that regulation occurs early in the catalytic cycle, affecting substrate binding or early intermediate formation. CHIL enhances CHS activity and product specificity by promoting CoA release and stabilizing key amino acid residues. His36 within the β-hairpin is functionally critical; its substitution with leucine in Arabidopsis and other plant species markedly improves CHS catalytic efficiency and specificity. This regulatory mechanism is evolutionarily conserved across land plants, from bryophytes to angiosperms. Guided by evolutionary analysis, we engineer a CHIL variant (H36E/F37T) that significantly enhances CHS activity. Collectively, our findings establish a conserved binding-conformational regulation paradigm that governs metabolic flux into the flavonoid biosynthetic pathway and provides practical strategies for enhancing flavonoid production and composition in crops.",
+    "prefill": {
+      "enzyme_name": "CHS",
+      "product": "chalcone",
+      "doi": "doi:10.1038/s41467-026-70563-4"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-07"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_570b2d2e9a1e",
+    "title": "Integrative structural and physicochemical characterization of chalcone synthase enzymes from medicinal plants using AlphaFold, molecular docking, and molecular dynamics",
+    "authors": "ZIDNI MUFLIKHATI; Dave Mangindaan; Chukwunwike Uchenna Enyi",
+    "journal": "Scientific Reports",
+    "year": 2026,
+    "doi": "10.1038/s41598-026-45190-0",
+    "link": "https://doi.org/10.1038/s41598-026-45190-0",
+    "abstract": "Chalcone synthase (CHS) is the entry-point enzyme of the flavonoid biosynthetic pathway, catalyzing the first committed step toward the production of diverse bioactive metabolites with antioxidant, anti-inflammatory, and anticancer properties. Here, we conducted a comparative in silico characterization of CHS from 13 medicinal plants, with Arabidopsis thaliana included as reference species. Protein sequences retrieved from UniProtKB were aligned using ClustalW, revealing strong conservation of key motifs, particularly the catalytic triad (Cys-His-Asn), GFGPG motif, and catalytic loop. Physicochemical profiling indicated interspecies variability in predicted protein stability, hydrophobicity, and thermostability, reflecting structural adaptation rather than direct functional divergence. AlphaFold-predicted structures consistently adopted the conserved thiolase-like αβαβα-fold characteristic of type III polyketide synthases, while exhibiting species-specific variations in the substrate-binding channel architecture. These variations are interpreted as structural features that may influence substrate accommodation and selectivity. To assess functional relevance, molecular docking with p-coumaroyl-CoA further confirmed stable substrate placement within the conserved catalytic pocket across species. Furthermore, 100-ns molecular dynamics simulations of representative crystal-derived and AlphaFold-predicted CHS-ligand complexes confirmed conformational stability, which was supported by MM-PBSA calculations revealing favorable binding energetics dominated by van der Waals interactions. Collectively, this study integrates sequence, structural, and dynamic analyses to establish a computational framework for comparative CHS characterization in medicinal plants. While the findings are derived exclusively from in silico approaches, they provide structurally grounded hypotheses that may guide future experimental validation, enzyme engineering, and pathway-oriented exploration of flavonoid biosynthesis.",
+    "prefill": {
+      "enzyme_name": "CHS",
+      "product": "chalcone",
+      "doi": "doi:10.1038/s41598-026-45190-0"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-07"
   }
 ]
