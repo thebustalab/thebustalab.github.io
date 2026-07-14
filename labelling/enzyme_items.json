@@ -106,5 +106,59 @@
     },
     "source_topic": "pks",
     "discovered": "2026-07-07"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_2744767f05b7",
+    "title": "Metabolic engineering reveals <i>LUP5</i> as a determinant of saponin composition and insect feeding preference in <i>Barbarea vulgaris</i>",
+    "authors": "Jincheng Shen; Jan Günther; Sebastian Kjeldgaard-Nintemann; Pablo D. Cárdenas; Søren Bak",
+    "journal": "PLANT PHYSIOLOGY",
+    "year": 2026,
+    "doi": "10.1093/plphys/kiag291",
+    "link": "https://doi.org/10.1093/plphys/kiag291",
+    "abstract": "Plant-insect coevolution has been a major driver of specialized metabolite diversification, yet the genetic basis of natural variation in defensive chemistry remains poorly understood. The wild crucifer winter cress (Barbarea vulgaris) comprises 2 ecotypes, an insect-resistant G-type and a susceptible P-type, characterized by distinct triterpenoid saponin profiles. To investigate the causal relationship between saponin composition and insect feeding preference, we established a stable transformation system for B. vulgaris. P-type B. vulgaris accumulates lupeol-derived saponins, and expression of the G-type β-amyrin synthase gene LUP5 in the susceptible P-type conferred up to a 95% reduction in diamondback moth (Plutella xylostella) feeding, accompanied by increased accumulation of 3 hederagenin-derived monodesmosidic saponins. Comparison of LUP5 expression driven by its native promoter and by the constitutive 35S promoter revealed that the native promoter is activated in young leaves, but not in young developing shoots, and leads to increased hederagenin accumulation in leaves. This expression pattern reflects the coordinated expression of downstream pathway genes and prevents expression in developing shoots. Our results provide direct in planta evidence that LUP5 is a key determinant of natural variation in insect feeding preference in B. vulgaris, underscoring the pivotal role of the saponin backbone in herbivore deterrence. By linking promoter activity to metabolite structural diversity, this work provides mechanistic and conceptual insights into how plants coordinate specialized metabolism and defense.",
+    "prefill": {
+      "enzyme_name": "LUP5",
+      "product": "β-amyrin",
+      "doi": "doi:10.1093/plphys/kiag291"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-14"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_a4441268c519",
+    "title": "Transient dynamics of flavonoid metabolons tune chalcone synthase specificity",
+    "authors": "Riki Imaizumi; Toshiyuki Waki; Yoshikazu Hattori; Kohei Takeshita; Miru Sumita; Kazutomo Kawaguchi; Hiroyuki Kumeta; Kenichi Umeda; Kyohei Sato; Taro Yanai; Hiroaki Matsuura; Takeshi Yokoyama; Risa Omura; Kayo Nakatani; Naoki Sakai; Yukimura Kawagiwa; Yamato Doi; AOI YASUDA; Takuya Nakano; Kaichi Uno; Kunihiro Yoshida; Misato Tsunashima; Tomohide Saio; Yoshikazu Tanaka; Seiji Takahashi; Noriyuki Kodera; Kunishige Kataoka; Masaki Yamamoto; Satoshi Yamashita; Tôru Nakayama",
+    "journal": "Nature Catalysis",
+    "year": 2026,
+    "doi": "10.1038/s41929-026-01551-6",
+    "link": "https://doi.org/10.1038/s41929-026-01551-6",
+    "abstract": "Cells achieve metabolic precision by assembling enzymes into dynamic complexes, but the regulatory mechanism of these metabolons is unclear. Here we characterize the chalcone synthase (CHS)–chalcone isomerase-like protein (CHIL) complex, a key component of flavonoid metabolons. While crystallography provides a static view, our analyses reveal that CHS undergoes rapid, reversible binding cycles with CHIL that regulate catalysis in real time. CHIL removes coenzyme A, an inhibitor of Claisen cyclization, transiently reshapes the CHS active site and guides the tetraketide intermediate towards productive cyclization, thereby suppressing derailment by-products. These findings demonstrate a previously unproven and generalizable regulatory effect in metabolons: guided active-site tuning via transient enzyme association. This concept enhances our understanding of metabolon function and opens avenues for synthetic biology and metabolic engineering. Enzyme assemblies can enhance metabolic efficiency, yet the ways in which transient interactions fine tune catalytic outcomes remain poorly understood. This study demonstrates that a flexible partner protein transiently remodels an enzyme’s active site to favour productive chemistry in a flavonoid metabolon.",
+    "prefill": {
+      "enzyme_name": "CHS",
+      "product": "",
+      "doi": "doi:10.1038/s41929-026-01551-6"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-14"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_f09828885cb1",
+    "title": "Elucidating the Iterative Elongation Mechanism in a Type III Polyketide Synthase",
+    "authors": "Rebecca N. Re; James J. La Clair; Joseph P. Noel; Michael D. Burkart",
+    "journal": "Journal of the American Chemical Society",
+    "year": 2025,
+    "doi": "10.1021/jacs.5c05635",
+    "link": "https://doi.org/10.1021/jacs.5c05635",
+    "abstract": "Type III polyketide synthases (PKSs) have a much simpler three-dimensional architecture compared with their type I and type II counterparts, yet they catalyze iterative polyketide elongation to generate a myriad of products in plants, fungi, and eubacteria. Despite this mechanistic complexity occurring within a single active site, the mechanism by which type III PKSs stabilize and direct their highly reactive keto and enolate intermediates has yet to be fully understood. Here, we report the synthesis and deployment of stable polyketone CoA analogues for each putative intermediate involved in the biphenyl synthase (BIS) mechanism together with three high-resolution crystal structures of each in complex with BIS from Malus domestica . This set of structures reveals key mechanistic features that control the number of iterative elongation steps and that shape the static architectural features responsible for organization of a water-mediated hydrogen bonding network necessary for termination of the elongation reaction by an intramolecular aldol cyclization and production of the 3,5-dihydroxybiphenyl BIS product. Elucidating these protein–substrate interactions provides a foundation for using polyketone CoA analogues to further unravel the control mechanisms of PKS catalysis and gain the insight necessary for predictive engineering of these enzymes.",
+    "prefill": {
+      "enzyme_name": "BIS",
+      "product": "3,5-dihydroxybiphenyl",
+      "doi": "doi:10.1021/jacs.5c05635"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-14"
   }
 ]

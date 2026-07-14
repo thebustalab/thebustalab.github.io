@@ -181,4 +181,22 @@ if (identical(environment(), globalenv()) && sys.nframe() == 0) {
   cat("Wrong-id decode valid (should be FALSE):", wrong$valid, "\n")
   g <- grade_one(code, "bust0037", ALASKA_KEY)
   cat("Points:", g$points, "|", g$detail, "\n")
+
+  # Regression: long (10-step) code round-trip.
+  # FAILURE MODE this guards against: the base32 accumulator must be reduced
+  # (value %% 2^bits) after each byte is emitted. Without it, codes longer than
+  # ~6 bytes let `value` grow past 2^53, at which point the browser's JS doubles
+  # lose precision and silently disagree with this R decoder — long/large
+  # scenarios would produce codes that decode to the wrong answers. This
+  # asserts a 10-step path survives the round-trip exactly.
+  long_steps <- lapply(0:9, function(i) list(answer = (i * 3) %% 20,
+                                             attempts = (i %% 4) + 1))
+  long_code <- encode_code(version = 1, scenario_id = 2, steps = long_steps,
+                           student_id = "test_student")
+  ld <- decode_code(long_code, "test_student")
+  exp_ans <- vapply(long_steps, function(s) as.integer(s$answer), integer(1))
+  exp_att <- vapply(long_steps, function(s) as.integer(s$attempts), integer(1))
+  ok <- ld$valid && identical(ld$answers, exp_ans) && identical(ld$attempts, exp_att)
+  cat("Long-code (10-step) round-trip OK (should be TRUE):", ok, "\n")
+  if (!ok) stop("REGRESSION: long-code round-trip failed — check base32 accumulator reduction")
 }
