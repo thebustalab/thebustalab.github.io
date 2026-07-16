@@ -1,0 +1,44 @@
+{
+  "image": "gpt_room1_2.png",
+  "haov": 360,
+  "vaov": 95,
+  "vOffset": -5,
+  "hotspots": [
+    {
+      "id": "laptop",
+      "label": "laptop",
+      "box": [
+        0.4651,
+        0.6019,
+        0.5237,
+        0.6917
+      ],
+      "action": "puzzle",
+      "target": "puzzle1"
+    },
+    {
+      "id": "notebook",
+      "label": "notebook",
+      "box": [
+        0.3154,
+        0.6624,
+        0.3733,
+        0.764
+      ],
+      "action": "note",
+      "target": "a mysterious notebook"
+    },
+    {
+      "id": "bottle",
+      "label": "bottle",
+      "box": [
+        0.0901,
+        0.503,
+        0.1064,
+        0.6046
+      ],
+      "action": "clue",
+      "target": "another thing is????"
+    }
+  ]
+}

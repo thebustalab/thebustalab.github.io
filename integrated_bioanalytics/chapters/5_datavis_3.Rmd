@@ -6,11 +6,13 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png', dpi = NA)
 ```
 
+By now you can build and polish a wide range of standard plots. This chapter is a tour of the less common ones. Some data have a shape that the usual scatter and bar plots do not capture well: three components that sum to a whole, the similarities among many samples at once, or a distribution you want to show in full rather than summarize. Here we work through a set of more specialized plots for these situations, including 3D scatter plots, similarity networks, marginal summaries, ternary diagrams, and Venn diagrams. We will also look at mapping geographic data, from drawing coastlines and boundaries to layering your own measurements on top of a map.
+
 ## advanced plots {-}
 
 ### 3D scatter plots {-}
 
-`phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
+`phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. We give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
 ```{r}
 pivot_wider(hawaii_aquifers, names_from = "analyte", values_from = "abundance") %>%
@@ -33,7 +35,7 @@ output <- points3D(
 str(output)
 ```
 
-The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segment. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
+The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segment. We can take the output from points3D and join it with the original data, which will occur according to our sample_unique_ID column. Then, we can also plot point metadata:
 
 ```{r}
 output$points <- left_join(output$points, aquifers)
@@ -135,8 +137,8 @@ i2 <- iris %>%
 p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
   geom_point()
 
-p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")+
-  geom_ysidedensity(aes(x=stat(density), yfill = Species2), position = "stack") +
+p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
   theme_bw() + 
   facet_grid(Species~Species2, space = "free", scales = "free") +
   labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
@@ -159,7 +161,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-### venn digrams {-}
+### venn diagrams {-}
 
 ```{r}
 df <- data.frame(
@@ -288,7 +290,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-Now we could add some data. We could do something simple like plot total abundances as the size of a point:
+Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
 ```{r, fig.width = 8, fig.height = 4}
 lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Tools/websites/private_data/pfas_data_private.csv")
@@ -357,7 +359,7 @@ ggplot() +
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
 ```{r, fig.width = 8, fig.height = 4}
-shore <- readMonolist("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+shore <- lake_superior_shoreline
 
 wide_view <- ggplot(shore) +
     geom_point(aes(y = lat, x = lon), size = 0.01) +

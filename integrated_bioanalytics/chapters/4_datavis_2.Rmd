@@ -1,5 +1,7 @@
 # data visualization II {-}
 
+In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
+
 ## {-}
 
 ## more geoms {-}
@@ -23,7 +25,7 @@ ggplot(
   data = filter(algae_data, harvesting_regime == "Heavy"),
   aes(x = algae_strain, y = chemical_species)
 ) + 
-  geom_tile(aes(fill = abundance), color = "black", size = 1)
+  geom_tile(aes(fill = abundance), color = "black", linewidth = 1)
 ```
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
@@ -115,7 +117,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   theme_void()
 ```
 
-You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
+You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Here is an example (and google will provide many, many more).
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 

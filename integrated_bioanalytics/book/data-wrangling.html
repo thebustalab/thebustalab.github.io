@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><script>(function(){try{if(localStorage.getItem('ib-theme')!=='light'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
 <title>data wrangling | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
@@ -43,7 +43,7 @@
       <h2>
         <a href="index.html" title="">Integrated Bioanalytics</a>
       </h2>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      <div class="d-flex"><button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button><button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button></div>
     </div>
 
     <div id="main-nav" class="collapse-lg">
@@ -587,5 +587,5 @@
 
 </div></div>
 </footer>
-</body>
+<script>(function(){var b=document.getElementById('dark-mode-toggle');if(!b)return;var r=document.documentElement;function s(){var d=r.getAttribute('data-theme')==='dark';b.innerHTML=d?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';}s();b.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark';if(d){r.removeAttribute('data-theme');}else{r.setAttribute('data-theme','dark');}try{localStorage.setItem('ib-theme',d?'light':'dark');}catch(e){}s();});})();</script></body>
 </html>

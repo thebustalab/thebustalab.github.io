@@ -4,7 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>data visualization I | Integrated Bioanalytics</title>
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>data visualization I | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
@@ -43,7 +51,10 @@
       <h2>
         <a href="index.html" title="">Integrated Bioanalytics</a>
       </h2>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
     </div>
 
     <div id="main-nav" class="collapse-lg">
@@ -196,7 +207,7 @@
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt; 18)</code> ## greater than 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt;= 18)</code> ## greater than or equal to 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18)</code> ## equals than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18)</code> ## equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20))</code> ## equal to 18 or 19 or 20</p>
@@ -223,7 +234,7 @@
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Use geometric shapes to represent other variables in your data.</strong></li>
 </ol>
-<p>Map your variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to your plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end fo the top line. Let’s try it:</p>
+<p>Map your variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to your plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end of the top line. Let’s try it:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -233,7 +244,7 @@
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-90-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
-<p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data(as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
+<p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data (as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
@@ -243,7 +254,7 @@
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-92-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
-<p>** Important note: Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
+<p><strong>Important note:</strong> Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
 <p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -268,10 +279,10 @@
 <p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
 <p>You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a “chunk” or R code. That looks like this:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>You can compilie this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:</p>
+<p>You can compile this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:</p>
 <ol style="list-style-type: decimal">
 <li><p>Headings: When you compile that code, the “# My first analysis” creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, “## Part 1” will create a subheading, “### Part 1.1” will create a sub-subheading, and so on.</p></li>
-<li><p>Plain text: Plain text in an R Markdown document creates a plan text entry in your compiled document. You can use this to explain your analyses and your figures, etc.</p></li>
+<li><p>Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.</p></li>
 <li><p>You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.</p></li>
 </ol>
 <!-- ## exercises {-}
@@ -408,7 +419,22 @@ Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave
 
 
 
-When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. --><!-- end --><!-- start data visualization II -->
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
+</div>
+<div id="section-1" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-1"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://r4ds.hadley.nz/data-transform">R for Data Science: Data transformation</a>. The dplyr chapter of Wickham and Grolemund’s book, covering <code>filter</code>, <code>select</code>, and the other core verbs for reshaping data before plotting.</p></li>
+<li><p><a href="https://rstudio.github.io/cheatsheets/data-transformation.pdf">dplyr cheat sheet</a>. A one-page visual reference for the dplyr data-manipulation verbs, handy to keep beside you while filtering.</p></li>
+<li><p><a href="https://rstudio.github.io/cheatsheets/data-visualization.pdf">ggplot2 cheat sheet</a>. A compact overview of the ggplot2 grammar (geoms, aesthetics, facets), useful for recalling syntax at a glance.</p></li>
+<li><p><a href="https://bookdown.org/yihui/rmarkdown/">R Markdown: The Definitive Guide</a>. Xie, Allaire, and Grolemund’s reference for authoring reproducible reports, covering chunk options, output formats, and document structure.</p></li>
+<li><p><a href="https://rstudio.github.io/cheatsheets/rmarkdown.pdf">R Markdown cheat sheet</a>. A two-page summary of R Markdown syntax and knitr chunk options for quickly formatting reports.</p></li>
+</ul>
+<!-- end --><!-- start data visualization II -->
 </div>
 </div>
   <div class="chapter-nav">
@@ -432,6 +458,8 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <li><a class="nav-link" href="#functions">functions</a></li>
 <li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
 <li><a class="nav-link" href="#markdown">markdown</a></li>
+<li><a class="nav-link" href="#section-1"></a></li>
+<li><a class="nav-link" href="#further-reading">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -449,7 +477,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -457,6 +485,24 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
   </div>
 
 </div></div>
-</footer>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
 </body>
 </html>

@@ -5,8 +5,8 @@
  *   A short alphanumeric string (e.g. "7QF2-K93X") that encodes, for one
  *   student's run of one scenario:
  *     - a header byte: version (high nibble) + scenario id (low nibble)
- *     - one byte per step: chosen answer index (low 5 bits, 0-31)
- *                          + attempts taken (high 3 bits, capped at 7)
+ *     - one byte per step/node: chosen answer index (low 5 bits, 0-31)
+ *                          + attempts taken (high 3 bits, 0-7; 0 = not attempted)
  *     - a checksum byte over the payload
  *   The payload is XOR-scrambled with a keystream derived from a shared
  *   secret AND the student's id, then Crockford base32 encoded.
@@ -91,7 +91,9 @@
     var payload = [(version << 4) | scenarioId];
     opts.steps.forEach(function (s) {
       var ans = s.answer & 0x1f;               // 5 bits
-      var att = Math.min(Math.max(s.attempts, 1), 7) & 0x07; // 3 bits
+      // 3 bits; 0 = "not attempted" (a hub-and-spoke node the student skipped
+      // under an N-of-M gate). Solved/resolved nodes carry attempts >= 1.
+      var att = Math.min(Math.max(s.attempts, 0), 7) & 0x07;
       payload.push((att << 5) | ans);
     });
     var chk = hashBytes(payload) % 256;

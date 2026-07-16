@@ -110,6 +110,7 @@ Each post in the series has a companion interactive. Ideas for this one:
 - Stack Overflow "Domain expertise still wanted" (March 2026)
 - Lubars & Tan (2019) — task delegability, trust as key factor
 - "Delegation and Verification Under AI" (2026) — contract-first verification principle
+- Segal & Rachitsky, "How tech workers are feeling in 2026: a workforce splitting in two" (Lenny's Newsletter, 7 Jul 2026) — second annual tech-worker sentiment survey (n≈5,332). Empirical, worker-voice evidence for two threads: **(§4 deskilling)** the comprehension-debt quotes — "my brain is rotting," "I just follow Claude, I don't fully understand what I merge," "I don't think hard enough anymore"; and **(§6 training / the on-ramp)** the disappearing-entry-level finding — NPS –39 for recommending one's own field, "the water's fine; don't come in," early-career ICs the most destabilised, and the leadership warning "don't let the bottom rung rot" (AI doing the entry-level work juniors learned on = starving next year's senior talent). Directly supports the student-facing argument that we must be deliberate about which tasks trainees do themselves. Full text: `to_read/z_done/workforce.txt`.
 - Decision framework post (cross-reference: validateability axis, human-in-the-loop, worked examples)
 
 ---

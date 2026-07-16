@@ -1,0 +1,69 @@
+<!--
+  CHAPTER TEMPLATE — integrated_bioanalytics
+  ============================================
+  This is the canonical skeleton for a chapter of the book. To add a chapter:
+
+    1. Copy this file to chapters/<N>_<short_name>.Rmd  (e.g. 19_networks.Rmd)
+    2. Fill in the sections below and delete these guiding comments.
+    3. Register it in ../index.Rmd with a child chunk, in reading order:
+         ```{r child="chapters/<N>_<short_name>.Rmd"}
+         ```
+       (Chapters are merged via explicit child= chunks, NOT auto-collected.)
+    4. Re-render.
+
+  Files whose names begin with "_" are not rendered, so this template never
+  appears in the book.
+
+  Standard structure — keep this order (see any existing chapter for a live example):
+    1. Chapter heading            # title {-}
+    2. Opening image              HTML-only include_graphics chunk
+    3. Opening paragraph          1–3 sentences orienting the reader
+    4. Separator                  ## {-}
+    5. Content sections           ## section {-}  /  ### subsection {-}
+    6. Exercises                  ## exercises {-}  (usually commented out)
+    7. Separator                  ## {-}
+    8. Further reading            ## further reading {-}  (3–5 annotated links)
+
+  Conventions:
+    - The {-} after every heading suppresses bookdown's automatic numbering.
+    - Cite with [@bibkey]; keys live in ../book.bib, rendered with
+      chicago-fullnote-bibliography.csl.
+    - Default chunk options come from ../_common.R and index.Rmd; only set
+      per-chunk options (fig.width, out.width, message, etc.) when needed.
+-->
+
+# chapter title {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/REPLACE_ME.png', dpi = NA)
+```
+
+One to three sentences introducing the chapter's topic and what the reader will be able to do by the end.
+
+## {-}
+
+## first section {-}
+
+Prose goes here, interleaved with code chunks. Use `## section {-}` for sections
+and `### subsection {-}` for subsections.
+
+```{r}
+# example code chunk
+```
+
+<!-- ## exercises {-}
+
+Exercises live here, commented out, until they are assigned. Uncomment to make
+them live (chapter 8 has a worked live example).
+
+-->
+
+## {-}
+
+## further reading {-}
+
+- [Title](https://example.com). One or two sentences describing the resource and why it is useful for this chapter's material.
+
+- [Title](https://example.com). One or two sentences describing the resource and why it is useful for this chapter's material.
+
+<!-- end -->

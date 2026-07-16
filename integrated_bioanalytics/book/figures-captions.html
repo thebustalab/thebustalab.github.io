@@ -4,7 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>figures &amp; captions | Integrated Bioanalytics</title>
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>figures &amp; captions | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
@@ -43,7 +51,10 @@
       <h2>
         <a href="index.html" title="">Integrated Bioanalytics</a>
       </h2>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
     </div>
 
     <div id="main-nav" class="collapse-lg">
@@ -95,8 +106,8 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="figures-captions" class="section level1 unnumbered">
 <h1>figures &amp; captions<a class="anchor" aria-label="anchor" href="#figures-captions"><i class="fas fa-link"></i></a>
 </h1>
-<div id="section-17" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a></h2>
+<div id="section-18" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="figures" class="section level2 unnumbered">
 <h2>figures<a class="anchor" aria-label="anchor" href="#figures"><i class="fas fa-link"></i></a>
@@ -350,11 +361,11 @@ Figure 4.1: Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A b
 <code class="sourceCode R"><span><span class="fu">buildCaption</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="section-18" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
+<div id="section-19" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="further-reading-10" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
+<div id="further-reading-11" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-11"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot">Grammar extensions and insets with <code>ggpp</code></a><br>
@@ -380,7 +391,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#figures-captions">figures &amp; captions</a></li>
-<li><a class="nav-link" href="#section-17"></a></li>
+<li><a class="nav-link" href="#section-18"></a></li>
 <li>
 <a class="nav-link" href="#figures">figures</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#insets">insets</a></li>
@@ -397,8 +408,8 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <li><a class="nav-link" href="#buildcaption">buildCaption</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#section-18"></a></li>
-<li><a class="nav-link" href="#further-reading-10">further reading</a></li>
+<li><a class="nav-link" href="#section-19"></a></li>
+<li><a class="nav-link" href="#further-reading-11">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -416,7 +427,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -424,6 +435,24 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
   </div>
 
 </div></div>
-</footer>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
 </body>
 </html>

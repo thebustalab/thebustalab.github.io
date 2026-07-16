@@ -1,0 +1,434 @@
+[
+  {
+    "file": "cabin_360.png",
+    "label": "orig \u2014 seed 0 (dense)",
+    "seed": 0,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "dense cabin prompt",
+    "gen_seconds": 140
+  },
+  {
+    "file": "cabin_s1.png",
+    "label": "seed 1 (dense)",
+    "seed": 1,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "dense cabin prompt",
+    "gen_seconds": 137
+  },
+  {
+    "file": "cabin_s2.png",
+    "label": "seed 2 (dense)",
+    "seed": 2,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "dense cabin prompt",
+    "gen_seconds": 139
+  },
+  {
+    "file": "cabin_s7.png",
+    "label": "seed 7 (dense) \u2014 Lucas pick",
+    "seed": 7,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "dense cabin prompt",
+    "gen_seconds": 138
+  },
+  {
+    "file": "cabin_simple1.png",
+    "label": "seed 1 (simplified)",
+    "seed": 1,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "simplified cabin prompt",
+    "gen_seconds": 139
+  },
+  {
+    "file": "cabin_simple2.png",
+    "label": "seed 2 (simplified)",
+    "seed": 2,
+    "steps": 28,
+    "guidance": 2.8,
+    "prompt": "simplified cabin prompt",
+    "gen_seconds": 139
+  },
+  {
+    "file": "gen_seed_2_prompt_1.png",
+    "label": "seed 2 prompt 1",
+    "seed": 2,
+    "steps": 10,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. Standing in the heart of a remote mountain search-and-rescue station after dark, you survey a workspace bathed in golden lamplight. A weathered wooden desk anchors the view, its laptop glowing softly beneath a detailed topographic map pinned to rough-hewn logs. The cast-iron stove radiates warmth, a kettle waiting nearby. To your sides stretch cork boards holding urgent notes, while beyond the frost-rimmed window lies an infinite expanse of frozen lake under starlight. The cabin feels suspended between safety and wilderness, intimate yet vigilant.",
+    "gen_seconds": 68
+  },
+  {
+    "file": "gen_seed_2_prompt_2.png",
+    "label": "seed 2 prompt 2",
+    "seed": 2,
+    "steps": 10,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. A 360-degree nocturnal immersion inside a timber-built rescue headquarters, where amber lamplight pools across every surface. The focal point is a functional desk with a laptop nestled beneath hand-drawn topographic charts of surrounding lakes and peaks. Scattered throughout: a heavy storm door reinforced with an iron lantern, a glowing wood stove with copper kettle, a modest cork board documenting ongoing operations. Outside the expansive window, the frozen landscape glows faintly under deep indigo sky. Silence dominates, broken only by the quiet hum of readiness.",
+    "gen_seconds": 67
+  },
+  {
+    "file": "gen_seed_2_prompt_3.png",
+    "label": "seed 2 prompt 3",
+    "seed": 2,
+    "steps": 10,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. Deep within a mountain rescue outpost at midnight, warm lamplight creates a cocoon against the surrounding cold. Your perspective circles a compact operations room: desk with open laptop positioned directly beneath a large, detailed lake survey map on log walls; cast-iron stove radiating amber heat; storm-heavy door with hanging lantern; cork board with scattered mission notes; tall window revealing the dark, icebound lake beyond. The palette shifts gradually from warm interior gold to cool exterior blue. Everything speaks of solitude, preparation, and readiness for emergencies.",
+    "gen_seconds": 65
+  },
+  {
+    "file": "gen_seed_2_prompt_4.png",
+    "label": "seed 2 prompt 4",
+    "seed": 2,
+    "steps": 10,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. Inside a candlelit search-and-rescue lodge carved from heavy timber, 360 degrees of quiet vigilance unfolds around you. Directly ahead, a utilitarian desk holds a laptop beneath laminated topographic maps showing every contour of the surrounding alpine lakes. Warm light from a wood stove and overhead lamps creates dancing shadows across log walls. A weather-beaten door with storm lantern anchors one wall; a cork board holds critical operation notes; a panoramic window frames the moonlit frozen lake, vast and still. The mood is meditative, watchful, and utterly still.",
+    "gen_seconds": 65
+  },
+  {
+    "file": "gen_seed_2_prompt_5.png",
+    "label": "seed 2 prompt 5",
+    "seed": 2,
+    "steps": 10,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. You inhabit the core of a high-altitude rescue station, night-bound and vigilant. The 360-degree view orbits around a compact wooden desk crowned with an operational laptop, positioned beneath topo maps of alpine terrain. Golden lamplight from a cast-iron stove mingles with soft electric glow, illuminating log-grain textures and worn surfaces. A reinforced door with iron lantern marks one threshold; the cork board displays urgent notes; a wide window opens onto the monochromatic vista of a frozen lake disappearing into darkness. The cabin breathes with quiet, focused purpose.",
+    "gen_seconds": 65
+  },
+  {
+    "file": "gen_seed_0.png",
+    "label": "seed 0",
+    "seed": 0,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 53
+  },
+  {
+    "file": "gen_seed_1.png",
+    "label": "seed 1",
+    "seed": 1,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 51
+  },
+  {
+    "file": "gen_seed_2.png",
+    "label": "seed 2",
+    "seed": 2,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_3.png",
+    "label": "seed 3",
+    "seed": 3,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_4.png",
+    "label": "seed 4",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_5.png",
+    "label": "seed 5",
+    "seed": 5,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy and closed internal wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_4_prompt_1.png",
+    "label": "seed 4 prompt 1",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Inside a remote log-cabin search-and-rescue station at night, you stand surrounded by purposeful warmth. A topographic lake map dominates the wooden wall above a desk where a laptop glows softly. To your sides: a crackling cast-iron stove with its kettle, a cork board scattered with mission notes, and a sturdy wooden door framing a storm lantern's amber glow. Through the wide window stretches the frozen lake, silent and dark. Golden lamplight pools across worn floorboards while cool moonlight bleeds through glass, creating deep shadows and intimate pockets of comfort.",
+    "gen_seconds": 52
+  },
+  {
+    "file": "gen_seed_4_prompt_2.png",
+    "label": "seed 4 prompt 2",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. From the heart of a nighttime search-and-rescue base carved from logs, the room breathes quiet vigilance. Warm amber lamps cast long shadows across every surface\u2014the open laptop on the desk flickers with pale blue light, contrasting the deep orange of the wood stove where a kettle rests. Behind you, the storm lantern by the heavy door glows like a sentinel. Above, the topographic map charts unseen territories. The frozen lake beyond the window lies black and still. Everything is arranged with deliberate calm, ready, waiting.",
+    "gen_seconds": 51
+  },
+  {
+    "file": "gen_seed_4_prompt_3.png",
+    "label": "seed 4 prompt 3",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree nocturnal view from within a log-cabin rescue station where golden lamplight pools against indigo shadows. The desk and its glowing laptop sit centered beneath a sprawling topographic map. Ambient warmth radiates from the cast-iron stove, its kettle casting small shadows. The cork board holds weathered notes; the internal door stands closed but not forbidding, flanked by a storm lantern's amber gleam. Beyond the expansive window, the frozen lake stretches into absolute darkness. The palette is muted\u2014burnt amber, deep blue, charcoal\u2014creating an atmosphere of readiness and solitude.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_4_prompt_4.png",
+    "label": "seed 4 prompt 4",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing in the administrative heart of a search-and-rescue lodge, you're enveloped by nighttime calm and functional warmth. Lamplight in warm honey tones illuminates the topographic wall map and the desk's open laptop in careful detail. The cast-iron stove radiates comfort; the storm lantern by the wooden door glows steadily. A cork board holds scattered intelligence. Outside, through the wide window, the frozen lake is a dark mirror reflecting nothing. The room is tidy, efficient, almost meditative\u2014a sanctuary designed for rescue work, now resting in the deep cold of night.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_4_prompt_5.png",
+    "label": "seed 4 prompt 5",
+    "seed": 4,
+    "steps": 6,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Deep in a winter night, you occupy the central room of a log-cabin rescue station where warm amber light wrestles with cool darkness. The topographic map presides above a desk holding an illuminated laptop, its screen casting secondary light. The cast-iron stove breathes warmth; a kettle simmers subtly. Behind, a closed wooden door anchors the room, its storm lantern glowing like a beacon. The cork board documents past missions. The wide window frames a vast frozen lake reduced to shadow and starlight. Every element serves purpose; the space feels both refuge and outpost.",
+    "gen_seconds": 49
+  },
+  {
+    "file": "gen_seed_4_g_2_0.png",
+    "label": "seed 4 g 2.0",
+    "seed": 4,
+    "steps": 12,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing in the administrative heart of a search-and-rescue lodge, you're enveloped by nighttime calm and functional warmth. Lamplight in warm honey tones illuminates the topographic wall map and the desk's open laptop in careful detail. The cast-iron stove radiates comfort; the storm lantern by the wooden door glows steadily. A cork board holds scattered intelligence. Outside, through the wide window, the frozen lake is a dark mirror reflecting nothing. The room is tidy, efficient, almost meditative\u2014a sanctuary designed for rescue work, now resting in the deep cold of night.",
+    "gen_seconds": 75
+  },
+  {
+    "file": "gen_seed_4_g_2_8.png",
+    "label": "seed 4 g 2.8",
+    "seed": 4,
+    "steps": 12,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. Standing in the administrative heart of a search-and-rescue lodge, you're enveloped by nighttime calm and functional warmth. Lamplight in warm honey tones illuminates the topographic wall map and the desk's open laptop in careful detail. The cast-iron stove radiates comfort; the storm lantern by the wooden door glows steadily. A cork board holds scattered intelligence. Outside, through the wide window, the frozen lake is a dark mirror reflecting nothing. The room is tidy, efficient, almost meditative\u2014a sanctuary designed for rescue work, now resting in the deep cold of night.",
+    "gen_seconds": 74
+  },
+  {
+    "file": "gen_seed_4_g_3_5.png",
+    "label": "seed 4 g 3.5",
+    "seed": 4,
+    "steps": 12,
+    "guidance": 3.5,
+    "prompt": "This is a panorama. Standing in the administrative heart of a search-and-rescue lodge, you're enveloped by nighttime calm and functional warmth. Lamplight in warm honey tones illuminates the topographic wall map and the desk's open laptop in careful detail. The cast-iron stove radiates comfort; the storm lantern by the wooden door glows steadily. A cork board holds scattered intelligence. Outside, through the wide window, the frozen lake is a dark mirror reflecting nothing. The room is tidy, efficient, almost meditative\u2014a sanctuary designed for rescue work, now resting in the deep cold of night.",
+    "gen_seconds": 72
+  },
+  {
+    "file": "gen_seed_4_g_4_5.png",
+    "label": "seed 4 g 4.5",
+    "seed": 4,
+    "steps": 12,
+    "guidance": 4.5,
+    "prompt": "This is a panorama. Standing in the administrative heart of a search-and-rescue lodge, you're enveloped by nighttime calm and functional warmth. Lamplight in warm honey tones illuminates the topographic wall map and the desk's open laptop in careful detail. The cast-iron stove radiates comfort; the storm lantern by the wooden door glows steadily. A cork board holds scattered intelligence. Outside, through the wide window, the frozen lake is a dark mirror reflecting nothing. The room is tidy, efficient, almost meditative\u2014a sanctuary designed for rescue work, now resting in the deep cold of night.",
+    "gen_seconds": 73
+  },
+  {
+    "file": "gen_seed_15.png",
+    "label": "seed 15",
+    "seed": 15,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a warm, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_10_prompt_1.png",
+    "label": "seed 10 prompt 1",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree nocturnal view from within a rustic log-cabin search-and-rescue station, bathed in golden lamplight. The room feels both intimate and functional: a weathered wooden desk anchors the front with an open laptop beneath a detailed topographic map, while a glowing cast-iron stove radiates warmth nearby. A cork board scattered with mission notes catches the amber glow. Behind you, a heavy oak door stands closed beside a storm lantern, and a large window reveals the moonlit expanse of a frozen lake stretching into darkness. Everything is orderly, purposeful, slightly austere. The atmosphere is calm and focused, as if waiting.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_10_prompt_2.png",
+    "label": "seed 10 prompt 2",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing at the heart of a log-cabin outpost at midnight, you're surrounded by the quiet readiness of a search-and-rescue station. Soft amber light pools across weathered wood surfaces: a work desk with a glowing laptop screen, a topographic map pinned above it showing familiar water boundaries, and a cast-iron stove exhaling warmth. The space breathes with restrained elegance\u2014cork board notes catch the glow, a storm lantern stands sentinel by the entry, and a wide window opens onto the frozen, silent lake beyond. The palette is muted and cool-warm balanced, the mood introspective and alert.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_10_prompt_3.png",
+    "label": "seed 10 prompt 3",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree immersion in a remote log-cabin station deep in winter night. Lamplight casts warm, honey-toned shadows across every surface: the sturdy desk with its active laptop, the wall-mounted lake map marked with routes and hazards, the trusty cast-iron stove radiating quiet heat. The room's sparse, deliberate arrangement\u2014cork board, storm lantern, solid wooden door\u2014speaks to function over decoration. Through the expansive window, the frozen lake stretches endlessly under starlight and shadow. The dominant feeling is one of purposeful solitude, safety within wilderness, calm before possible action.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_10_prompt_4.png",
+    "label": "seed 10 prompt 4",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. From the centre of a timber-framed search-and-rescue station, night envelops the landscape beyond while golden lamp-glow sanctuaries the interior. A wooden desk commands attention with its open laptop and overhead topographic chart, flanked by the methodical comfort of a cast-iron stove and a cork board of pending operations. The heavy wooden entry door and storm lantern suggest readiness; the expansive dark window frames the frozen lake as both barrier and domain. The palette merges warm interior amber with cool exterior blue, creating contrast without harshness. The mood is serene yet watchful.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_10_prompt_5.png",
+    "label": "seed 10 prompt 5",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. You occupy the calm centre of a log-cabin outpost overlooking a frozen lake at night. Lamplight saturates the wooden interior in warm amber, illuminating a functional desk with open laptop beneath a large topographic map, a cast-iron stove standing ready, and a cork board holding scattered mission notes. The scene is organized but lived-in, with a heavy wooden door and storm lantern securing the entrance, and a tall window revealing only darkness and distant ice. The colour palette is muted\u2014warm golds against cool blues\u2014and the overall mood is one of quiet preparedness, isolation, and purpose in remote wilderness.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_10.png",
+    "label": "seed 10",
+    "seed": 10,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a large, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 109
+  },
+  {
+    "file": "gen_seed_11.png",
+    "label": "seed 11",
+    "seed": 11,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a large, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_12.png",
+    "label": "seed 12",
+    "seed": 12,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a large, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13.png",
+    "label": "seed 13",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a large, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_14.png",
+    "label": "seed 14",
+    "seed": 14,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree view from the centre of a large, lamplit log-cabin search-and-rescue station at night. Ahead stands a sturdy wooden desk with a single open laptop below a large topographic lake map on the log wall. Around the room: a cork board with a few pinned notes, a cast-iron wood stove with a kettle, a heavy closed wooden door with a storm lantern, and a wide window onto a dark frozen lake. Tidy and uncluttered, warm amber light against cool blue night, calm muted palette. No people.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13_prompt_1.png",
+    "label": "seed 13 prompt 1",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Deep inside a remote log-cabin search-and-rescue station at midnight, warm lamplight pools across rough wooden surfaces. A weathered desk faces a detailed topographic map, its surface scattered with an open laptop and navigation tools. Behind, a glowing cast-iron stove radiates amber heat while a kettle steams gently. The wooden door stands sentinel near a storm lantern, while expansive windows reveal the frozen lake beyond, its surface catching starlight. Every corner speaks of readiness and solitude, bathed in golden lamplight against the vast darkness outside.",
+    "gen_seconds": 107
+  },
+  {
+    "file": "gen_seed_13_prompt_2.png",
+    "label": "seed 13 prompt 2",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree sweep through a hushed nocturnal command centre carved from logs, where amber-tinted lamplight creates deep shadows across every surface. The topographic wall map dominates the northern view above an occupied desk, its glowing laptop screen the only bright spot. Organized and deliberate: the cast-iron stove ticks softly, the cork board holds weathered notes, the heavy door waits shut. Through windows, the frozen lake stretches endlessly, a vast black void. The palette is muted\u2014burnt orange against indigo\u2014evoking quiet watchfulness and preparedness.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_13_prompt_3.png",
+    "label": "seed 13 prompt 3",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13_prompt_4.png",
+    "label": "seed 13 prompt 4",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Within a timber-walled search station, the 360-degree view captures a moment of quiet nocturnal duty. Lamplight in warm honey tones pools across wooden beams and surfaces, illuminating the desk where a laptop glows beneath a large topographic map. The cast-iron stove dominates one corner, its warmth radiating outward; a kettle sits ready. Notes pinned to cork suggest recent operations. The heavy wooden door stands closed near a hanging storm lantern, while expansive windows expose the infinite darkness of the frozen lake. An atmosphere of alertness mixed with solitude.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13_prompt_5.png",
+    "label": "seed 13 prompt 5",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. A 360-degree interior of a secluded log-cabin outpost at night, where soft lamplight creates an island of amber warmth in deep blue darkness. The desk beneath the topographic wall map holds an open laptop, its screen the only electronic glow. The cast-iron stove radiates deep golden light; beside it, a kettle waits. A cork board holds scattered notes; a heavy wooden door anchors the space near a storm lantern. Through panoramic windows, the frozen lake stretches into shadow. The mood is contemplative and watchful, colours muted and grounded.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13_g_2_0.png",
+    "label": "seed 13 g 2.0",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_13_g_2_8.png",
+    "label": "seed 13 g 2.8",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 2.8,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 108
+  },
+  {
+    "file": "gen_seed_13_g_3_5.png",
+    "label": "seed 13 g 3.5",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 3.5,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_seed_13_g_4_5.png",
+    "label": "seed 13 g 4.5",
+    "seed": 13,
+    "steps": 20,
+    "guidance": 4.5,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 106
+  },
+  {
+    "file": "gen_final_s13_g2_0_st40.png",
+    "label": "final s13 g2.0 st40",
+    "seed": 13,
+    "steps": 40,
+    "guidance": 2.0,
+    "prompt": "This is a panorama. Standing in the heart of a nocturnal rescue outpost, walls of rough log timber enclose a scene of calm professional order. Topographic maps dominate one wall; below sits an open laptop on the command desk, casting cool blue light. The cast-iron stove breathes warmth and amber glow, while a cork board of notes suggests recent activity. A sealed wooden door and storm lantern guard the entrance. Wide windows frame the dark frozen expanse beyond. Subtle and restrained in colour\u2014warm golds bleeding into cool midnight blues\u2014the space feels both welcoming and vigilant.",
+    "gen_seconds": 190
+  },
+  {
+    "file": "gen_final_s13_g2_0_st40_dooropen.png",
+    "label": "door-open (gen_final_s13_g2_0_st40)",
+    "seed": "inpaint",
+    "steps": 30,
+    "guidance": 3.5,
+    "prompt": "a heavy wooden door standing wide open, revealing a dim room beyond, matching the surrounding lighting and style",
+    "gen_seconds": 140
+  }
+]

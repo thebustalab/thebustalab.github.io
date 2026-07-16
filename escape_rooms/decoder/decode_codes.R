@@ -87,7 +87,9 @@ encode_code <- function(version, scenario_id, steps, student_id, secret = SECRET
   payload <- header
   for (s in steps) {
     ans <- bitwAnd(as.integer(s$answer), 31L)
-    att <- bitwAnd(as.integer(min(max(s$attempts, 1), 7)), 7L)
+    # 0 = "not attempted" (a skipped hub-and-spoke node under an N-of-M gate);
+    # resolved nodes carry attempts >= 1. Mirrors codec.js.
+    att <- bitwAnd(as.integer(min(max(s$attempts, 0), 7)), 7L)
     payload <- c(payload, bitwOr(bitwShiftL(att, 5L), ans))
   }
   chk <- hash_bytes(payload) %% 256
@@ -152,6 +154,99 @@ grade_one <- function(code, student_id, key, secret = SECRET) {
   list(valid = TRUE, points = pts, detail = paste(detail, collapse = "; "))
 }
 
+# ---- graph-mode grading (hub-and-spoke) ----
+#
+# A graph scenario's code carries, in canonical NODE order:
+#   - one byte per spoke (answer + attempts; attempts 0 = the student skipped it
+#     under the N-of-M gate), then
+#   - one trailing boss byte whose answer bit is 1 if the student REACHED the
+#     boss and produced a figure (the figure itself is graded by hand — the code
+#     only records that they got there, for the integrity/watermark link).
+#
+# A graph key: `n_spokes`, the per-spoke `correct` indices (node order), and a
+# per-spoke `score_step`. The boss is not auto-scored here.
+grade_graph <- function(code, student_id, key, secret = SECRET) {
+  d <- tryCatch(decode_code(code, student_id, secret), error = function(e) NULL)
+  if (is.null(d) || !d$valid || d$scenario_id != key$scenario_id) {
+    return(list(valid = FALSE, points = NA_integer_, boss_reached = NA,
+                detail = "invalid/mismatched code"))
+  }
+  n <- key$n_spokes
+  pts <- 0
+  detail <- character(0)
+  for (i in seq_len(n)) {
+    a  <- if (i <= length(d$answers)) d$answers[i] else -1L
+    at <- if (i <= length(d$attempts)) d$attempts[i] else 0L
+    p  <- if (at == 0) 0 else key$score_step(key$correct[i], a, at)  # 0 attempts = skipped
+    pts <- pts + p
+    detail <- c(detail, sprintf("S%d: ans=%d att=%d -> %dpt", i, a, at, p))
+  }
+  boss_reached <- length(d$answers) > n && d$answers[n + 1] == 1
+  detail <- c(detail, sprintf("boss_reached=%s (figure graded by hand)", boss_reached))
+  list(valid = TRUE, points = pts, boss_reached = boss_reached,
+       detail = paste(detail, collapse = "; "))
+}
+
+# Demo/trial hub-and-spoke room (scenario id 2): 3 spokes reusing the Alaska
+# questions + a boss figure task. Spoke `correct` indices match demo_hub/scenario.js.
+DEMO_KEY <- list(
+  scenario_id = 2,
+  n_spokes = 3,
+  correct = c(18, 3, 1),
+  score_step = function(correct, answer, attempts) {
+    if (answer != correct) return(0)
+    if (attempts <= 1) return(10)
+    if (attempts == 2) return(7)
+    if (attempts == 3) return(5)
+    3
+  }
+)
+
+# Journey/chain room (scenario id 3): 2 case-rooms + a boss figure. Same grading
+# shape as a graph key (spokes in room order, trailing boss byte). Spoke `correct`
+# indices match datavis1/scenario.js (Alaska 18, Hawai‘i 2).
+DATAVIS1_KEY <- list(
+  scenario_id = 3,
+  n_spokes = 2,
+  correct = c(18, 2),
+  score_step = function(correct, answer, attempts) {
+    if (answer != correct) return(0)
+    if (attempts <= 1) return(10)
+    if (attempts == 2) return(7)
+    if (attempts == 3) return(5)
+    3
+  }
+)
+
+# Explore/pano room (scenario id 4): 3 rooms, one MC each + a reserved trailing
+# byte (no boss figure in the prototype). Spoke `correct` = Alaska 18/3/1.
+ALASKA_STATION_KEY <- list(
+  scenario_id = 4,
+  n_spokes = 3,
+  correct = c(18, 3, 1),
+  score_step = function(correct, answer, attempts) {
+    if (answer != correct) return(0)
+    if (attempts <= 1) return(10)
+    if (attempts == 2) return(7)
+    if (attempts == 3) return(5)
+    3
+  }
+)
+
+# Panorama explore room (scenario id 5): 2 rooms, one MC each (Alaska 18 / 1).
+ALASKA_PANO_KEY <- list(
+  scenario_id = 5,
+  n_spokes = 2,
+  correct = c(18, 1),
+  score_step = function(correct, answer, attempts) {
+    if (answer != correct) return(0)
+    if (attempts <= 1) return(10)
+    if (attempts == 2) return(7)
+    if (attempts == 3) return(5)
+    3
+  }
+)
+
 # Vectorised over a data frame of submissions.
 grade_submissions <- function(df, key, id_col = "x500", code_col = "code",
                               secret = SECRET) {
@@ -199,4 +294,43 @@ if (identical(environment(), globalenv()) && sys.nframe() == 0) {
   ok <- ld$valid && identical(ld$answers, exp_ans) && identical(ld$attempts, exp_att)
   cat("Long-code (10-step) round-trip OK (should be TRUE):", ok, "\n")
   if (!ok) stop("REGRESSION: long-code round-trip failed — check base32 accumulator reduction")
+
+  # Regression: graph-mode round-trip — a SKIPPED spoke (attempts 0) + boss byte.
+  # FAILURE MODE this guards against: the attempts=0 sentinel for an un-attempted
+  # hub-and-spoke node must survive encode/decode. If the old `max(attempts, 1)`
+  # floor crept back into either codec.js or encode_code(), a skipped node would
+  # decode as attempts=1 and be mis-scored as an attempt. Also asserts the boss
+  # byte (reached=1) round-trips.
+  gsteps <- list(list(answer = 18, attempts = 1),   # spoke 1: solved first try
+                 list(answer = 0,  attempts = 0),    # spoke 2: SKIPPED (not attempted)
+                 list(answer = 1,  attempts = 2),    # spoke 3: solved, 2 tries
+                 list(answer = 1,  attempts = 0))    # boss byte: figure produced
+  gcode <- encode_code(version = 1, scenario_id = 2, steps = gsteps,
+                       student_id = "grid_test")
+  gd <- decode_code(gcode, "grid_test")
+  gok <- gd$valid &&
+    identical(gd$answers,  c(18L, 0L, 1L, 1L)) &&
+    identical(gd$attempts, c(1L, 0L, 2L, 0L))
+  cat("Graph-mode round-trip OK (should be TRUE):", gok, "\n")
+  if (!gok) stop("REGRESSION: graph-mode round-trip failed — check attempts=0 sentinel")
+  gg <- grade_graph(gcode, "grid_test", DEMO_KEY)
+  cat("Graph grade — points:", gg$points, "| boss_reached:", gg$boss_reached, "\n")
+  cat("  detail:", gg$detail, "\n")
+  # spoke1 correct(18) 1 try = 10; spoke2 skipped = 0; spoke3 correct(1) 2 tries = 7 -> 17
+  if (!isTRUE(gg$points == 17 && gg$boss_reached)) {
+    stop("REGRESSION: graph grade wrong — expected 17 pts + boss_reached=TRUE")
+  }
+
+  # Regression: journey/chain round-trip — 2 rooms solved in order + boss byte.
+  jsteps <- list(list(answer = 18, attempts = 1),   # room 1 (Alaska) solved
+                 list(answer = 2,  attempts = 2),    # room 2 (Hawai‘i) solved, 2 tries
+                 list(answer = 1,  attempts = 0))    # boss byte: figure produced
+  jcode <- encode_code(version = 1, scenario_id = 3, steps = jsteps,
+                       student_id = "journey_test")
+  jg <- grade_graph(jcode, "journey_test", DATAVIS1_KEY)
+  cat("Journey grade — points:", jg$points, "| boss_reached:", jg$boss_reached, "\n")
+  # room1 10 + room2 (2 tries) 7 = 17
+  if (!isTRUE(jg$points == 17 && jg$boss_reached)) {
+    stop("REGRESSION: journey grade wrong — expected 17 pts + boss_reached=TRUE")
+  }
 }

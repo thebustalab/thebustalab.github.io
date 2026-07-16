@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>gpt-image-2 scene harness</title>
+  <style>
+    :root { --bg:#06111a; --panel:#0b1b28; --line:rgba(255,255,255,.14); --amber:#ffd88c; --ink:#e8eef2; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.5 system-ui, sans-serif; }
+    header { padding:14px 20px; border-bottom:1px solid var(--line); }
+    header h1 { margin:0; font-size:16px; } header p { margin:4px 0 0; opacity:.6; font-size:12px; }
+    main { max-width:1680px; margin:0 auto; padding:20px; }
+    .stage { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 18px; }
+    .stage h2 { margin:0 0 10px; font-size:14px; } .stage h2 span { opacity:.5; font-weight:400; }
+    textarea { width:100%; min-height:150px; background:#0a1620; color:inherit; border:1px solid var(--line); border-radius:8px; padding:10px; font:inherit; resize:vertical; }
+    label { font-size:12px; opacity:.85; margin-right:6px; }
+    select, input[type=number], input[type=text] { background:#0a1620; color:inherit; border:1px solid var(--line); border-radius:6px; padding:5px 7px; }
+    button { background:var(--amber); color:#10202a; border:0; border-radius:8px; padding:8px 14px; font:inherit; font-weight:600; cursor:pointer; margin:6px 6px 0 0; }
+    button.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); font-weight:400; }
+    button:disabled { opacity:.5; cursor:default; }
+    .row { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
+    /* four generate columns */
+    .cols { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin:0 0 18px; }
+    @media (max-width:1200px) { .cols { grid-template-columns:repeat(2, 1fr); } }
+    @media (max-width:640px) { .cols { grid-template-columns:1fr; } }
+    .col { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 12px 14px; display:flex; flex-direction:column; }
+    .col .tagrow { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+    .col .tagrow b { color:var(--amber); font-size:13px; white-space:nowrap; }
+    .col .tagrow input { flex:1; min-width:0; font-weight:600; }
+    .col textarea.prompt { min-height:130px; }
+    .col textarea.doorprompt { min-height:80px; }
+    .col .collbl { display:block; font-size:11px; opacity:.7; margin:0 0 4px; text-transform:uppercase; letter-spacing:.04em; }
+    .col .doorlbl { margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); }
+    .col .ctl { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:8px; }
+    .col .ctl label { margin:0; }
+    .col button { margin:6px 4px 0 0; padding:7px 11px; }
+    .grid { display:grid; grid-template-columns:1fr; gap:8px; margin-top:10px; }
+    .card { border:2px solid transparent; border-radius:8px; overflow:hidden; cursor:pointer; background:#0a1620; }
+    .card.sel { border-color:var(--amber); }
+    .card img { width:100%; display:block; }
+    .card .cap { font-size:11px; padding:4px 6px; opacity:.8; display:flex; justify-content:space-between; }
+    .status { font-size:12px; opacity:.8; margin-top:8px; min-height:16px; }
+    .err { color:#ff9b9b; }
+    .hint { font-size:12px; opacity:.6; margin-top:8px; }
+    .variants div { padding:6px 8px; border:1px solid var(--line); border-radius:6px; margin-top:6px; cursor:pointer; font-size:12px; }
+    .variants div:hover { border-color:var(--amber); }
+    a { color:var(--amber); }
+    code { background:#0a1620; padding:1px 5px; border-radius:4px; }
+    /* stage 4 — inline hotspot editor */
+    .hstage { background:#02080d; border:1px solid var(--line); border-radius:8px; padding:10px; margin-top:10px; display:flex; justify-content:center; }
+    .hframe { position:relative; line-height:0; cursor:crosshair; user-select:none; max-width:100%; }
+    .hframe img { display:block; max-width:100%; }
+    .hbox { position:absolute; border:2px solid var(--amber); background:rgba(255,216,140,.14); box-shadow:0 0 0 1px rgba(0,0,0,.5); }
+    .hbox.sel { border-color:#7fd1ff; background:rgba(127,209,255,.18); }
+    .hbox .htag { position:absolute; top:-18px; left:-2px; background:var(--amber); color:#10202a; font-size:11px; font-weight:700; padding:0 5px; border-radius:4px 4px 0 0; white-space:nowrap; line-height:16px; }
+    .hitem { border:1px solid var(--line); border-radius:8px; padding:8px; margin-top:8px; }
+    .hitem.sel { border-color:#7fd1ff; }
+    .hitem .htop { display:flex; justify-content:space-between; align-items:center; }
+    .hitem .htop b { color:var(--amber); font-size:12px; }
+    .hitem .hr { display:flex; gap:6px; align-items:center; margin-top:6px; }
+    .hitem .hr label { font-size:11px; opacity:.7; width:46px; margin:0; }
+    .hitem input[type=text], .hitem select { flex:1; min-width:0; background:#0a1620; color:inherit; border:1px solid var(--line); border-radius:6px; padding:4px 6px; font:inherit; }
+    .hitem .hdel { background:transparent; color:#ff9b9b; border:1px solid rgba(255,155,155,.4); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:400; margin:0; }
+    .hdoor { margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+    .hdoor button { padding:5px 10px; font-size:12px; margin:0; }
+    .hdstat { font-size:11px; opacity:.75; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>gpt-image-2 scene harness</h1>
+    <p>Four columns → author a whole room series in one go. Each column: generate → pick. Shared below: wrap → hotspots. Authoring-time only; keys stay on the box.</p>
+  </header>
+  <main>
+
+    <div class="row" style="margin:0 0 12px">
+      <button class="ghost" id="refreshAll">Refresh candidates</button>
+      <span class="hint" id="selName" style="margin:0">nothing selected</span>
+    </div>
+
+    <section class="cols" id="cols"></section>
+
+    <section class="stage">
+      <h2>Wrap <span>— tune &amp; save in the tester (acts on the selected base)</span></h2>
+      <div class="row">
+        <button class="ghost" id="tune" disabled>Open in wrap tester →</button>
+        <button class="ghost" id="loadWrap" disabled>⟳ Load saved params</button>
+      </div>
+      <div class="row">
+        <label>haov</label><input type="number" id="haov" value="360" style="width:64px" readonly />
+        <label>vaov</label><input type="number" id="vaov" value="95" style="width:64px" readonly />
+        <label>hfov</label><input type="number" id="hfov" value="120" style="width:64px" readonly />
+        <label>vOffset</label><input type="number" id="voff" value="-5" style="width:64px" readonly />
+        <label>pitch</label><input type="number" id="pitch" value="0" style="width:64px" readonly />
+      </div>
+      <div class="hint">Tune the wrap by dragging in the tester and hit <b>Save</b> there (saved per image in <code>scene/wrap.json</code>). Load them back here to confirm what's stored.</div>
+      <div class="status" id="wrapStatus"></div>
+    </section>
+
+    <section class="stage">
+      <h2>Hotspots <span>— draw a box per interactable (acts on the selected base)</span></h2>
+      <div class="hint" id="hsNo">Pick a base in any column above to start authoring hotspots.</div>
+      <div id="hsWrap" style="display:none">
+        <div class="hint" id="hsCov" style="margin-top:0"></div>
+        <div class="hstage"><div class="hframe" id="hsFrame"><img id="hsScene" alt="" /></div></div>
+        <div class="row"><button id="hsSave">Save hotspots</button>
+          <span class="hint" id="hsStatus" style="margin:0"></span></div>
+        <div id="hsList"></div>
+      </div>
+      <div class="hint">Drag a box over each interactable → <code>scene/hotspots.json</code>. Coverage comes from the saved wrap; the viewer maps box centre → yaw/pitch across it.</div>
+    </section>
+
+    <section class="stage">
+      <h2>Send to room <span>— commit the closed + open pair to a room directory (acts on the selected base)</span></h2>
+      <div class="row">
+        <label>room dir</label>
+        <input type="text" id="roomDir" placeholder="data_vis/hawaii_aquifers/room1" style="width:360px" />
+        <button id="sendRoom" disabled>Send closed + open pair →</button>
+      </div>
+      <div class="hint">Copies the selected base → <code>&lt;room dir&gt;/scene.png</code> and its <code>_open</code> partner → <code>scene_open.png</code> (kept together, corresponding), plus this image's <code>wrap.json</code> + <code>hotspots.json</code> re-keyed to <code>scene.png</code> — a self-contained, stable-named room dir. Path is relative to <code>escape_rooms/</code>.</div>
+      <div class="status" id="roomStatus"></div>
+    </section>
+  </main>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    let selected = null;
+    let lastScenes = [];
+    const COLS = [0, 1, 2, 3];
+
+    // Default scene prompts for the Hawai‘i Aquifers room series (data-vis chapter).
+    // Same field-station world across all four for visual continuity: dusk/night,
+    // teal-and-amber palette, painterly cinematic, no people, no text. Each carries
+    // natural hotspot candidates (a laptop showing a plot, a map, sample bottles) AND
+    // a CLOSED DOOR — the swap portal that opens on solve. Each closed door has a
+    // matching open-door modifier in DOOR_PROMPTS below (same index), so the columns
+    // pair up all the way down: scene (closed) ↔ open-door edit.
+    const ROOM_PROMPTS = [
+      // Room 1 — Honolulu lab bench: first look at all the samples (overview plot, no filter)
+      "This is a panorama. A 360-degree view from the centre of a warm, lamplit Hawaiian water-resources field lab at dusk. Ahead, a long wooden bench crowded with dozens of labelled glass water-sample bottles and an open laptop whose screen shows a faint scatter-plot of well chemistry. On one wall, a heavy closed wooden door with a small brass handle — the way out, firmly shut. Around the room: weathered lanai walls with tropical foliage just outside, a corkboard of field notes, shelves of sampling gear, and a wide window onto a dark volcanic coastline under a starry sky. Warm amber lamplight against cool teal night, soft volumetric haze, muted painterly palette, subtle film grain. No people, no lettering, no captions, no UI text.",
+      // Room 2 — coastal well site: zeroing in on chloride (one filter)
+      "This is a panorama. A 360-degree view from the centre of a small coastal wellhead shelter on a Hawaiian shore at dusk. Ahead, a concrete wellhead with pipes and a pressure gauge, beside a field table holding a single open laptop showing a faint chloride scatter-plot and one highlighted sample bottle. Set into the one solid plank wall, a weathered wooden supply door, closed and latched. Around: weathered posts, coiled sampling hoses, a salt-streaked crate of glass bottles, and open sides looking out onto black lava rock, breaking surf, distant sugarcane fields and a deep starry sky. Warm lantern light against cool teal ocean night, sea haze, muted painterly palette, subtle film grain. No people, no lettering, no captions, no text.",
+      // Room 3 — back at the bench: sodium vs chloride side by side (facet)
+      "This is a panorama. A 360-degree view from the centre of the same warm Hawaiian field lab, later at night. Ahead, a wooden analysis desk with two open laptops side by side, each screen showing a faint scatter-plot as paired panels — one for sodium, one for chloride. Beside a large wall map of the Hawaiian islands dotted with small well markers, a closed wooden door stands shut for the night. Around the room: shelves of labelled sample bottles arranged in tidy rows, a corkboard of notes, and a window onto the dark coastline. Warm amber light mixed with cool screen glow, teal-and-amber palette, soft volumetric light, subtle film grain. No people, no lettering, no captions, no UI text.",
+      // Boss — big-island map room: decide which community to warn (full analysis + geography)
+      "This is a panorama. A 360-degree view from the centre of a dim planning room in a Hawaiian water-resources office at night. Ahead, a huge illuminated wall map of the Hawaiian islands, wells marked as small glowing pins, a few clustered and circled along one stretch of coastline. Beneath the map, a tall closed door — the exit to the field — held shut. Below the map a broad table with an open laptop showing the final well-chemistry plot, a two-way radio, and a coffee mug. Around: shelves of archived sample bottles, a corkboard of pinned field photos, and a wide window onto a volcanic coast under a starry sky. Warm amber lamplight against cool teal night, dramatic focused light on the map, muted painterly palette, subtle film grain. No people, no lettering, no captions, no UI text.",
+    ];
+
+    // Open-door modifier per room (same index as ROOM_PROMPTS). Fed to the masked
+    // gpt-image-2 edit (/api/dooropen) over the door hotspot's box: only that box is
+    // repainted, so the rest of the scene is untouched. Each names its room's specific
+    // closed door and what lies beyond, keeping lighting/style continuous.
+    const DOOR_PROMPTS = [
+      "The heavy wooden door on the side wall now stands wide open, revealing a dim adjoining corridor beyond. Identical warm lamplight, same painterly teal-and-amber style, no people, no lettering, no text.",
+      "The weathered wooden supply door in the plank wall now stands wide open, revealing a dark shore path and dune grass beyond. Identical lantern light, same painterly teal-and-amber style, no people, no lettering, no text.",
+      "The wooden door beside the island map now stands wide open, revealing a dim adjoining office beyond. Identical warm-and-cool lighting, same painterly teal-and-amber style, no people, no lettering, no text.",
+      "The tall door beneath the wall map now stands wide open, revealing a moonlit volcanic coast path beyond. Identical focused lighting, same painterly teal-and-amber style, no people, no lettering, no text.",
+    ];
+
+    async function api(path, body) {
+      const opt = body ? { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) } : {};
+      const r = await fetch(path, opt); return r.json();
+    }
+
+    // ---- build the four generate+pick columns ----
+    const tagOf = i => (colEl(i).querySelector(".tag").value || ("room" + (i + 1)))
+      .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || ("room" + (i + 1));
+    const colEl = i => document.getElementById("col" + i);
+
+    // which column (room) an image belongs to, by its gpt_<tag>_ filename prefix
+    const roomIndexForImage = f => {
+      const i = COLS.find(k => (f || "").startsWith("gpt_" + tagOf(k) + "_"));
+      return i === undefined ? -1 : i;
+    };
+    // the open-door modifier to default a swap hotspot to, from that room's column
+    const doorPromptForImage = f => {
+      const i = roomIndexForImage(f);
+      const v = i >= 0 ? colEl(i).querySelector(".doorprompt").value.trim() : "";
+      return v || DOOR_PROMPT;
+    };
+
+    function buildCols() {
+      const wrap = $("#cols");
+      COLS.forEach(i => {
+        const c = document.createElement("div");
+        c.className = "col"; c.id = "col" + i;
+        c.innerHTML = `
+          <div class="tagrow"><b>Room ${i + 1}</b><input type="text" class="tag" value="room${i + 1}" title="filename tag for this column"></div>
+          <label class="collbl">scene prompt (closed door)</label>
+          <textarea class="prompt" placeholder="Describe this room's 360 scene…"></textarea>
+          <div class="ctl">
+            <label>n<input type="number" class="n" value="2" min="1" max="6" style="width:48px"></label>
+            <label>quality<select class="quality"><option>medium</option><option>high</option><option>low</option></select></label>
+          </div>
+          <div class="ctl">
+            <label><input type="checkbox" class="wide" checked> wide</label>
+            <label>h<input type="number" class="wideH" value="512" min="384" max="1024" step="32" style="width:60px"></label>
+          </div>
+          <div>
+            <button class="gen">Generate</button>
+            <button class="ghost suggest">Suggest (Claude)</button>
+          </div>
+          <div class="status genStatus"></div>
+          <div class="variants"></div>
+          <div class="grid scenes"></div>
+          <label class="collbl doorlbl">open-door modifier</label>
+          <textarea class="doorprompt" placeholder="How this room's closed door looks once opened…"></textarea>`;
+        wrap.appendChild(c);
+        c.querySelector(".prompt").value = ROOM_PROMPTS[i] || "";
+        c.querySelector(".doorprompt").value = DOOR_PROMPTS[i] || "";
+        c.querySelector(".gen").onclick = () => generate(i);
+        c.querySelector(".suggest").onclick = () => suggest(i);
+        c.querySelector(".tag").oninput = () => renderGrid(i);
+      });
+    }
+
+    // ---- generate (per-slot poll) ----
+    const polls = {};
+    function watch(slot, statusEl, onDone) {
+      clearInterval(polls[slot]);
+      polls[slot] = setInterval(async () => {
+        const j = await api("/api/status?slot=" + slot);
+        if (j.error) { statusEl.innerHTML = `<span class="err">${j.error}</span>`; clearInterval(polls[slot]); return; }
+        statusEl.textContent = `working… ${j.done}/${j.total}`;
+        if (!j.active) { clearInterval(polls[slot]); statusEl.textContent = `done (${j.done})`; onDone && onDone(j); }
+      }, 1500);
+    }
+
+    async function generate(i) {
+      const c = colEl(i);
+      const size = c.querySelector(".wide").checked ? "1536x" + c.querySelector(".wideH").value : "1536x1024";
+      const statusEl = c.querySelector(".genStatus");
+      const r = await api("/api/generate", {
+        prompt: c.querySelector(".prompt").value,
+        n: +c.querySelector(".n").value,
+        quality: c.querySelector(".quality").value,
+        size, slot: String(i), tag: tagOf(i),
+      });
+      if (!r.ok) { statusEl.innerHTML = `<span class="err">${r.error}</span>`; return; }
+      statusEl.textContent = "starting…";
+      watch(String(i), statusEl, fetchScenes);
+    }
+
+    async function suggest(i) {
+      const c = colEl(i), statusEl = c.querySelector(".genStatus"), box = c.querySelector(".variants");
+      statusEl.textContent = "asking Claude…";
+      const r = await api("/api/suggest", { prompt: c.querySelector(".prompt").value, n: 3 });
+      statusEl.textContent = "";
+      box.innerHTML = "";
+      if (!r.ok) { statusEl.innerHTML = `<span class="err">${r.error}</span>`; return; }
+      r.prompts.forEach(p => { const d = document.createElement("div"); d.textContent = p;
+        d.onclick = () => { c.querySelector(".prompt").value = p; }; box.appendChild(d); });
+    }
+
+    // ---- pick (each column shows only its own tag's candidates) ----
+    async function fetchScenes() {
+      const { scenes } = await api("/api/scenes");
+      lastScenes = scenes || [];
+      COLS.forEach(renderGrid);
+    }
+    function renderGrid(i) {
+      const c = colEl(i), grid = c.querySelector(".scenes"), prefix = "gpt_" + tagOf(i) + "_";
+      grid.innerHTML = "";
+      lastScenes
+        .filter(f => f.startsWith(prefix) && !f.includes("_open") && !f.includes("_x2"))
+        .forEach(f => {
+          const card = document.createElement("div");
+          card.className = "card" + (f === selected ? " sel" : "");
+          card.innerHTML = `<img src="scene/${f}?t=${Date.now()}" loading="lazy"><div class="cap"><span>${f}</span></div>`;
+          card.onclick = () => selectScene(f);
+          grid.appendChild(card);
+        });
+    }
+    function selectScene(f) {
+      selected = f;
+      $("#selName").textContent = "selected: " + f;
+      ["tune", "loadWrap", "sendRoom"].forEach(id => $("#" + id).disabled = false);
+      document.querySelectorAll(".card").forEach(card =>
+        card.classList.toggle("sel", card.querySelector(".cap span").textContent === f));
+      activateHotspots(f);
+    }
+
+    // ---- wrap — tune + save happen in the tester; here we just load them back ----
+    $("#tune").onclick = () => { if (selected) window.open("reproject_test.html?img=" + encodeURIComponent(selected), "_blank"); };
+    $("#loadWrap").onclick = async () => {
+      if (!selected) return;
+      const w = await fetch("scene/wrap.json?t=" + Date.now()).then(r => r.json()).catch(() => null);
+      const wi = w && (w[selected] || (w.image === selected ? w : null));
+      if (!wi) { $("#wrapStatus").innerHTML = `<span class="err">no saved wrap for ${selected} yet — tune &amp; save it in the tester</span>`; return; }
+      $("#haov").value = wi.haov ?? 360; $("#vaov").value = wi.vaov ?? 135;
+      $("#hfov").value = wi.hfov ?? 70; $("#voff").value = wi.vOffset ?? 0; $("#pitch").value = wi.pitch ?? 0;
+      $("#wrapStatus").textContent = `loaded saved params for ${selected}`;
+    };
+
+    // ---- hotspots — inline box-draw editor over the selected base ----
+    let hsSpots = [], hsSel = -1, hsSeq = 0, hsCov = { haov:360, vaov:95, vOffset:-5 }, hsTemp = null;
+    const DOOR_PROMPT = "The wooden door now stands wide open, revealing a dim adjoining room beyond; identical lighting, warm lamplight, same style. No people.";
+    const hsFrame = $("#hsFrame");
+    const hsSlug = s => (s||"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"") || "obj";
+    const hsEsc = s => (s||"").replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    const hsPct = b => ({ left:b[0]*100+"%", top:b[1]*100+"%", width:(b[2]-b[0])*100+"%", height:(b[3]-b[1])*100+"%" });
+    const hsHint = a => a==="swap" ? "open-door image .png" : a==="puzzle" ? "puzzle id" : "text to show";
+    const hsUniqueId = (base, self) => { let id=base, n=1; while(hsSpots.some((s,j)=>j!==self&&s.id===id)) id=base+"_"+(++n); return id; };
+
+    async function activateHotspots(f) {
+      $("#hsNo").style.display = "none"; $("#hsWrap").style.display = "";
+      $("#hsScene").src = "scene/" + f + "?t=" + Date.now();
+      hsSpots = []; hsSel = -1; hsSeq = 0; $("#hsStatus").textContent = "";
+      const w = await fetch("scene/wrap.json?t=" + Date.now()).then(r => r.json()).catch(() => null);
+      const wi = w && (w[f] || (w.image === f ? w : null));
+      const h = await fetch("scene/hotspots.json?t=" + Date.now()).then(r => r.json()).catch(() => null);
+      const hi = h && h.image === f ? h : null;
+      // coverage: saved wrap wins; else the hotspots file's own; else defaults
+      hsCov = { haov: wi?.haov ?? hi?.haov ?? 360, vaov: wi?.vaov ?? hi?.vaov ?? 95, vOffset: wi?.vOffset ?? hi?.vOffset ?? -5 };
+      $("#hsCov").innerHTML = `coverage from wrap: haov <b>${hsCov.haov}</b>, vaov <b>${hsCov.vaov}</b>, vOffset <b>${hsCov.vOffset}</b>`
+        + (wi ? "" : " — <i>no saved wrap yet; using defaults</i>");
+      if (hi) hsSpots = (hi.hotspots||[]).map(s => ({ id:s.id||("h"+(++hsSeq)), label:s.label||s.id||"Object", box:s.box.slice(), action:s.action||"puzzle", target:s.target||"", doorPrompt:s.doorPrompt||"" }));
+      hsRender();
+    }
+
+    hsFrame.addEventListener("mousedown", e => {
+      if (e.target.closest(".hbox")) return;
+      const r = hsFrame.getBoundingClientRect();
+      hsTemp = { x0:(e.clientX-r.left)/r.width, y0:(e.clientY-r.top)/r.height };
+      e.preventDefault();
+    });
+    window.addEventListener("mousemove", e => {
+      if (!hsTemp) return;
+      const r = hsFrame.getBoundingClientRect();
+      hsTemp.x1 = Math.min(1, Math.max(0,(e.clientX-r.left)/r.width));
+      hsTemp.y1 = Math.min(1, Math.max(0,(e.clientY-r.top)/r.height));
+      let el = hsFrame.querySelector(".hbox.tmp");
+      if (!el) { el = document.createElement("div"); el.className = "hbox tmp"; hsFrame.appendChild(el); }
+      const b = [Math.min(hsTemp.x0,hsTemp.x1),Math.min(hsTemp.y0,hsTemp.y1),Math.max(hsTemp.x0,hsTemp.x1),Math.max(hsTemp.y0,hsTemp.y1)];
+      Object.assign(el.style, hsPct(b));
+    });
+    window.addEventListener("mouseup", () => {
+      if (!hsTemp) return;
+      if (hsTemp.x1!=null && Math.abs(hsTemp.x1-hsTemp.x0)>0.01 && Math.abs(hsTemp.y1-hsTemp.y0)>0.01) {
+        const box = [Math.min(hsTemp.x0,hsTemp.x1),Math.min(hsTemp.y0,hsTemp.y1),Math.max(hsTemp.x0,hsTemp.x1),Math.max(hsTemp.y0,hsTemp.y1)].map(v => +v.toFixed(4));
+        hsSpots.push({ id:"h"+(++hsSeq), label:"Object "+hsSpots.length, box, action:"puzzle", target:"" });
+        hsSel = hsSpots.length-1;
+      }
+      hsTemp = null; hsRender();
+    });
+
+    function hsRenderBoxes() {
+      hsFrame.querySelectorAll(".hbox").forEach(b => b.remove());
+      hsSpots.forEach((s,i) => {
+        const d = document.createElement("div"); d.className = "hbox" + (i===hsSel?" sel":"");
+        Object.assign(d.style, hsPct(s.box));
+        d.innerHTML = `<span class="htag">${hsEsc(s.label||s.id)}</span>`;
+        d.onclick = ev => { ev.stopPropagation(); hsSel=i; hsRenderBoxes(); hsRenderList(); };
+        hsFrame.appendChild(d);
+      });
+    }
+    function hsRenderList() {
+      const list = $("#hsList"); list.innerHTML = "";
+      hsSpots.forEach((s,i) => {
+        // a swap hotspot defaults its door prompt to this room's open-door modifier
+        if (s.action === "swap" && !s.doorPrompt) s.doorPrompt = doorPromptForImage(selected);
+        const el = document.createElement("div"); el.className = "hitem" + (i===hsSel?" sel":"");
+        el.innerHTML =
+          `<div class="htop"><b>${hsEsc(s.id)}</b><button class="hdel">delete</button></div>
+           <div class="hr"><label>label</label><input type="text" data-k="label" value="${hsEsc(s.label)}"></div>
+           <div class="hr"><label>action</label><select data-k="action">
+             ${["puzzle","note","clue","swap"].map(a=>`<option${a===s.action?" selected":""}>${a}</option>`).join("")}</select></div>
+           <div class="hr"><label>target</label><input type="text" data-k="target" placeholder="${hsHint(s.action)}" value="${hsEsc(s.target)}"></div>
+           <div class="hdoor" style="display:${s.action==='swap'?'block':'none'}">
+             <div class="hr"><label>door&nbsp;prompt</label><input type="text" class="hdprompt" value="${hsEsc(s.doorPrompt||doorPromptForImage(selected))}"></div>
+             <div class="hr"><button class="hdgen">Generate open-door image</button><span class="hdstat"></span></div>
+           </div>`;
+        el.onclick = ev => { if (ev.target.closest("input,select,button")) return; hsSel=i; hsRenderBoxes(); hsRenderList(); };
+        el.querySelector(".hdel").onclick = ev => { ev.stopPropagation(); hsSpots.splice(i,1); if(hsSel>=hsSpots.length)hsSel=hsSpots.length-1; hsRenderBoxes(); hsRenderList(); };
+        el.querySelectorAll("[data-k]").forEach(inp => inp.oninput = () => {
+          s[inp.dataset.k] = inp.value;
+          if (inp.dataset.k === "label") { s.id = hsUniqueId(hsSlug(inp.value), i); el.querySelector(".htop b").textContent = s.id; }
+          if (inp.dataset.k === "action") {
+            el.querySelector('[data-k="target"]').placeholder = hsHint(inp.value);
+            el.querySelector(".hdoor").style.display = inp.value === "swap" ? "block" : "none";
+            if (inp.value === "swap") {
+              if (!s.doorPrompt) s.doorPrompt = doorPromptForImage(selected);
+              const dp = el.querySelector(".hdprompt"); if (dp) dp.value = s.doorPrompt;
+            }
+          }
+          hsRenderBoxes();
+        });
+        // door-open generator (reuses this hotspot's box as the door mask)
+        const dpr = el.querySelector(".hdprompt"), dgen = el.querySelector(".hdgen"), dstat = el.querySelector(".hdstat");
+        dpr.oninput = () => { s.doorPrompt = dpr.value; };
+        dgen.onclick = async () => {
+          s.doorPrompt = dpr.value;
+          const start = await api("/api/dooropen", { image: selected, box: s.box, prompt: dpr.value });
+          if (!start.ok) { dstat.innerHTML = `<span class="err">${start.error}</span>`; return; }
+          dstat.textContent = "generating… (~20s)";
+          watch("door", dstat, j => {
+            if (j.error) return;
+            const out = (j.outputs || []).slice(-1)[0];
+            if (out) { s.target = out; const ti = el.querySelector('[data-k="target"]'); if (ti) ti.value = out;
+              dstat.textContent = "made " + out + " · set as target"; }
+          });
+        };
+        list.appendChild(el);
+      });
+    }
+    function hsRender() { hsRenderBoxes(); hsRenderList(); }
+
+    $("#hsSave").onclick = async () => {
+      if (!selected) return;
+      const r = await api("/api/save-hotspots", {
+        image: selected, haov: hsCov.haov, vaov: hsCov.vaov, vOffset: hsCov.vOffset,
+        hotspots: hsSpots.map(s => ({ id:s.id, label:s.label, box:s.box, action:s.action, target:s.target, ...(s.doorPrompt ? { doorPrompt:s.doorPrompt } : {}) }))
+      });
+      $("#hsStatus").innerHTML = r.ok ? `saved scene/hotspots.json (${r.count} hotspots)` : `<span class="err">${r.error}</span>`;
+    };
+
+    // ---- send the finished closed+open pair to a room directory (stable names) ----
+    $("#sendRoom").onclick = async () => {
+      if (!selected) return;
+      const roomDir = $("#roomDir").value.trim();
+      if (!roomDir) { $("#roomStatus").innerHTML = `<span class="err">enter a room directory (relative to escape_rooms/)</span>`; return; }
+      $("#roomStatus").textContent = "sending…";
+      const r = await api("/api/commit-room", { image: selected, roomDir });
+      $("#roomStatus").innerHTML = r.ok
+        ? `✓ sent to <code>${roomDir}/</code> — ${r.written.join(", ")}`
+        : `<span class="err">${r.error}</span>`;
+    };
+
+    $("#refreshAll").onclick = fetchScenes;
+    buildCols();
+    fetchScenes();
+  </script>
+</body>
+</html>

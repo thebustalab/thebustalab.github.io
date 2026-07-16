@@ -4,7 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>numerical models | Integrated Bioanalytics</title>
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>numerical models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
@@ -43,7 +51,10 @@
       <h2>
         <a href="index.html" title="">Integrated Bioanalytics</a>
       </h2>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
     </div>
 
     <div id="main-nav" class="collapse-lg">
@@ -657,11 +668,11 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## .pred_kidney_disease5 kidney_disease       0.96428571</span></span>
 <span><span class="co">## .pred_kidney_disease6 kidney_disease       0.95714286</span></span></code></pre></div>
 </div>
-<div id="section-14" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
+<div id="section-15" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="further-reading-7" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-7"><i class="fas fa-link"></i></a>
+<div id="further-reading-8" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-8"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://github.com/easystats/performance">performance R package</a>. Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.</p></li>
@@ -784,8 +795,8 @@ model$metrics
 <li><a class="nav-link" href="#multiple-linear-regression">multiple linear regression</a></li>
 <li><a class="nav-link" href="#assessing-regression-models">assessing regression models</a></li>
 <li><a class="nav-link" href="#random-forests">random forests</a></li>
-<li><a class="nav-link" href="#section-14"></a></li>
-<li><a class="nav-link" href="#further-reading-7">further reading</a></li>
+<li><a class="nav-link" href="#section-15"></a></li>
+<li><a class="nav-link" href="#further-reading-8">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -803,7 +814,7 @@ model$metrics
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -811,6 +822,24 @@ model$metrics
   </div>
 
 </div></div>
-</footer>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
 </body>
 </html>

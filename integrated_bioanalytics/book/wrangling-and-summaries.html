@@ -4,7 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>wrangling and summaries | Integrated Bioanalytics</title>
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>wrangling and summaries | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
@@ -43,7 +51,10 @@
       <h2>
         <a href="index.html" title="">Integrated Bioanalytics</a>
       </h2>
-      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
     </div>
 
     <div id="main-nav" class="collapse-lg">
@@ -97,8 +108,8 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.</p>
-<div id="section-5" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a></h2>
+<div id="section-6" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="data-import" class="section level2 unnumbered">
 <h2>data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
@@ -547,11 +558,11 @@ Some pointers:
 
 7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
 </div>
-<div id="section-6" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
+<div id="section-7" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="further-reading-2" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-2"><i class="fas fa-link"></i></a>
+<div id="further-reading-3" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://tidydatatutor.com/vis.html">Tidy Data Tutor</a>. This interactive site animates what happens to a data frame as you apply verbs like <code>select()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, or <code>pivot_longer()</code>, making it easier to see how each operation reshapes your tables.</p></li>
@@ -578,7 +589,7 @@ Some pointers:
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#wrangling-and-summaries">wrangling and summaries</a></li>
-<li><a class="nav-link" href="#section-5"></a></li>
+<li><a class="nav-link" href="#section-6"></a></li>
 <li><a class="nav-link" href="#data-import">data import</a></li>
 <li><a class="nav-link" href="#subsetting">subsetting</a></li>
 <li><a class="nav-link" href="#wide-and-long-data">wide and long data</a></li>
@@ -586,8 +597,8 @@ Some pointers:
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
 <li><a class="nav-link" href="#mutate">mutate</a></li>
-<li><a class="nav-link" href="#section-6"></a></li>
-<li><a class="nav-link" href="#further-reading-2">further reading</a></li>
+<li><a class="nav-link" href="#section-7"></a></li>
+<li><a class="nav-link" href="#further-reading-3">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -605,7 +616,7 @@ Some pointers:
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -613,6 +624,24 @@ Some pointers:
   </div>
 
 </div></div>
-</footer>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
 </body>
 </html>

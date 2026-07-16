@@ -255,10 +255,11 @@ function collectLabellers(sheetId, sheetName, map) {
 function buildLeaderboard() {
   const counts = {};
 
-  // Labelling sheets — one point per row (one triple, or one enzyme, per row).
-  tallyLabellerColumn(SHEET_ID, SHEET_NAME, counts);
+  // Labelling sheets — one point per pathogen triple, ENZYME_POINTS_PER_ROW per
+  // characterised enzyme (heavier task). Each sheet is weighted separately.
+  tallyLabellerColumn(SHEET_ID, SHEET_NAME, counts, 1);
   if (ENZYME_SHEET_ID && String(ENZYME_SHEET_ID).indexOf("REPLACE_") !== 0) {
-    tallyLabellerColumn(ENZYME_SHEET_ID, ENZYME_SHEET_NAME, counts);
+    tallyLabellerColumn(ENZYME_SHEET_ID, ENZYME_SHEET_NAME, counts, ENZYME_POINTS_PER_ROW);
   }
 
   // Newsletter form-response sheet — one point per submission (any type).
@@ -298,17 +299,41 @@ function buildLeaderboard() {
   return out;
 }
 
-// Add one point per data row's labeller (column 2) to `counts`.
-function tallyLabellerColumn(sheetId, sheetName, counts) {
+// Data rows are counted per abstract per labeller and capped at
+// MAX_ROWS_PER_ABSTRACT so a row-dense abstract can't dominate the board; the
+// capped row count is then multiplied by the sheet's per-row point weight. A
+// "no relationships found" / triage-reject row is one row, so it keeps its
+// single (weighted) point. Item ids are unique across the whole pool, so
+// capping within each sheet is equivalent to capping across both.
+var MAX_ROWS_PER_ABSTRACT = 5;
+// Points a single characterised-enzyme row earns (vs 1 for a pathogen triple).
+// Keep in step with TASK_TYPES[...].points in index.html and points_per_row in
+// newsletter/newsletter.py.
+var ENZYME_POINTS_PER_ROW = 3;
+
+// Add each labeller's capped, weighted points from one sheet (labeller =
+// column 2, abstract_id = column 3) into `counts`. `pointsPerRow` weights each
+// counted row (1 for triples, ENZYME_POINTS_PER_ROW for enzymes).
+function tallyLabellerColumn(sheetId, sheetName, counts, pointsPerRow) {
+  const weight = pointsPerRow || 1;
   try {
     const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
     if (!sheet) return;
     const lastRow = sheet.getLastRow();
     if (lastRow < 2) return;
-    const col = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
-    for (const row of col) {
+    const rows = sheet.getRange(2, 2, lastRow - 1, 2).getValues();
+    const perAbstract = {}; // name -> { abstract_id -> row count }
+    for (const row of rows) {
       const name = String(row[0]).trim();
-      if (name) counts[name] = (counts[name] || 0) + 1;
+      if (!name) continue;
+      const absId = String(row[1]).trim();
+      if (!perAbstract[name]) perAbstract[name] = {};
+      perAbstract[name][absId] = (perAbstract[name][absId] || 0) + 1;
+    }
+    for (const name in perAbstract) {
+      for (const absId in perAbstract[name]) {
+        counts[name] = (counts[name] || 0) + Math.min(perAbstract[name][absId], MAX_ROWS_PER_ABSTRACT) * weight;
+      }
     }
   } catch (err) {
     // Don't fail the leaderboard if a sheet is missing/unconfigured.

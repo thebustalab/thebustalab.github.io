@@ -59,7 +59,7 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> >= 18)` ## greater than or equal to 18
 
-`filter(<data>, <variable> == 18)` ## equals than 18
+`filter(<data>, <variable> == 18)` ## equal to 18
 
 `filter(<data>, <variable> != 18)` ## not equal to 18
 
@@ -91,7 +91,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 
 3. **Use geometric shapes to represent other variables in your data.**
 
-Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Let's try it:
+Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
@@ -105,7 +105,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
+In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
@@ -119,7 +119,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
+**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -154,11 +154,11 @@ You can think of your markdown document as a stand-alone R Session. This means y
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png', dpi = NA)
 ```
 
-You can compilie this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:
+You can compile this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:
 
 1. Headings: When you compile that code, the "# My first analysis" creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, "## Part 1" will create a subheading, "### Part 1.1" will create a sub-subheading, and so on.
 
-2. Plain text: Plain text in an R Markdown document creates a plan text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
+2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 
@@ -396,6 +396,20 @@ ggplot(
 ```
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
+
+## {-}
+
+## further reading {-}
+
+- [R for Data Science: Data transformation](https://r4ds.hadley.nz/data-transform). The dplyr chapter of Wickham and Grolemund's book, covering `filter`, `select`, and the other core verbs for reshaping data before plotting.
+
+- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep beside you while filtering.
+
+- [ggplot2 cheat sheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf). A compact overview of the ggplot2 grammar (geoms, aesthetics, facets), useful for recalling syntax at a glance.
+
+- [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/). Xie, Allaire, and Grolemund's reference for authoring reproducible reports, covering chunk options, output formats, and document structure.
+
+- [R Markdown cheat sheet](https://rstudio.github.io/cheatsheets/rmarkdown.pdf). A two-page summary of R Markdown syntax and knitr chunk options for quickly formatting reports.
 
 <!-- end -->
 

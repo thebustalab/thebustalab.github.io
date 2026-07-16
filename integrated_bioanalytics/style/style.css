@@ -15,3 +15,137 @@ div.rmdnote, div.rstudio-tip, div.rmdwarning {
 div.rmdnote {
   background-image: url("../images/globe.png");
 }
+
+/* ============================================================
+   Dark mode
+   Activated by data-theme="dark" on <html> (set by the toggle
+   in style/bs4_book.html). Light remains the default; figures
+   are intentionally left as-is (white PNG backgrounds).
+   ============================================================ */
+
+#dark-mode-toggle {
+  border: none;
+  background: transparent;
+}
+
+html[data-theme="dark"] {
+  --primary: #6ea8fe;
+}
+
+/* Page + text */
+html[data-theme="dark"] body {
+  background-color: #1a1d21;
+  color: #d7dbe0;
+}
+html[data-theme="dark"] main {
+  background-color: #1a1d21;
+}
+
+/* Sidebars */
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .sidebar-book,
+html[data-theme="dark"] .sidebar-chapter {
+  background-color: #16181c;
+  color: #d7dbe0;
+}
+
+/* Links */
+html[data-theme="dark"] a {
+  color: #6ea8fe;
+}
+html[data-theme="dark"] .sidebar a,
+html[data-theme="dark"] #book-toc a,
+html[data-theme="dark"] #book-on-this-page a {
+  color: #c2c8d0;
+}
+html[data-theme="dark"] .sidebar a:hover,
+html[data-theme="dark"] #book-toc a:hover,
+html[data-theme="dark"] #book-toc .active > a,
+html[data-theme="dark"] #book-on-this-page a:hover {
+  color: #6ea8fe;
+}
+
+/* Headings + muted text */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+  color: #eaecef;
+}
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .header-section-number {
+  color: #9aa0a8 !important;
+}
+
+/* Code blocks + inline code */
+html[data-theme="dark"] pre,
+html[data-theme="dark"] .section > .sourceCode > pre {
+  background-color: #26292e;
+}
+html[data-theme="dark"] pre,
+html[data-theme="dark"] code {
+  color: #d7dbe0;
+}
+html[data-theme="dark"] code {
+  background-color: #26292e;
+}
+html[data-theme="dark"] pre code {
+  background-color: transparent;
+}
+/* Syntax tokens that are too dark to read on a dark background */
+html[data-theme="dark"] code span.co,
+html[data-theme="dark"] code span.cv,
+html[data-theme="dark"] code span.wa,
+html[data-theme="dark"] code span.an,
+html[data-theme="dark"] code span.in { color: #9aa0a8; }
+html[data-theme="dark"] code span.va { color: #c792ea; }
+html[data-theme="dark"] code span.fu { color: #8ab4ff; }
+html[data-theme="dark"] code span.op { color: #b0b0b0; }
+
+/* Callout boxes */
+html[data-theme="dark"] div.rmdnote,
+html[data-theme="dark"] div.rstudio-tip,
+html[data-theme="dark"] div.rmdwarning {
+  background-color: #22303f;
+  color: #d7dbe0;
+}
+
+/* Search box */
+html[data-theme="dark"] #search,
+html[data-theme="dark"] .form-control {
+  background-color: #26292e;
+  color: #d7dbe0;
+  border-color: #33373d;
+}
+html[data-theme="dark"] .form-control::placeholder {
+  color: #9aa0a8;
+}
+html[data-theme="dark"] mark {
+  background-color: #4a4300;
+  color: #fff;
+}
+
+/* Tables */
+html[data-theme="dark"] table,
+html[data-theme="dark"] .table {
+  color: #d7dbe0;
+}
+html[data-theme="dark"] .table td,
+html[data-theme="dark"] .table th {
+  border-color: #33373d;
+}
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #202327;
+}
+
+/* Blockquotes, rules, borders */
+html[data-theme="dark"] blockquote {
+  color: #9aa0a8;
+  border-left-color: #33373d;
+}
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .sidebar hr {
+  border-color: #33373d;
+}

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-07-01"
+date: "2026-07-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -330,7 +330,7 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> >= 18)` ## greater than or equal to 18
 
-`filter(<data>, <variable> == 18)` ## equals than 18
+`filter(<data>, <variable> == 18)` ## equal to 18
 
 `filter(<data>, <variable> != 18)` ## not equal to 18
 
@@ -368,7 +368,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 
 3. **Use geometric shapes to represent other variables in your data.**
 
-Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Let's try it:
+Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
 
 
 ``` r
@@ -388,7 +388,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-90-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
+In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
 
 ``` r
@@ -408,7 +408,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-92-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
+**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -450,11 +450,11 @@ You can think of your markdown document as a stand-alone R Session. This means y
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-You can compilie this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:
+You can compile this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:
 
 1. Headings: When you compile that code, the "# My first analysis" creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, "## Part 1" will create a subheading, "### Part 1.1" will create a sub-subheading, and so on.
 
-2. Plain text: Plain text in an R Markdown document creates a plan text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
+2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 
@@ -594,12 +594,28 @@ Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
 
+## {-}
+
+## further reading {-}
+
+- [R for Data Science: Data transformation](https://r4ds.hadley.nz/data-transform). The dplyr chapter of Wickham and Grolemund's book, covering `filter`, `select`, and the other core verbs for reshaping data before plotting.
+
+- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep beside you while filtering.
+
+- [ggplot2 cheat sheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf). A compact overview of the ggplot2 grammar (geoms, aesthetics, facets), useful for recalling syntax at a glance.
+
+- [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/). Xie, Allaire, and Grolemund's reference for authoring reproducible reports, covering chunk options, output formats, and document structure.
+
+- [R Markdown cheat sheet](https://rstudio.github.io/cheatsheets/rmarkdown.pdf). A two-page summary of R Markdown syntax and knitr chunk options for quickly formatting reports.
+
 <!-- end -->
 
 <!-- start data visualization II -->
 
 
 # data visualization II {-}
+
+In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
 
 ## {-}
 
@@ -628,7 +644,7 @@ ggplot(
   data = filter(algae_data, harvesting_regime == "Heavy"),
   aes(x = algae_strain, y = chemical_species)
 ) + 
-  geom_tile(aes(fill = abundance), color = "black", size = 1)
+  geom_tile(aes(fill = abundance), color = "black", linewidth = 1)
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-165-1.png" alt="" width="100%" style="display: block; margin: auto;" />
@@ -758,7 +774,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 <img src="index_files/figure-html/unnamed-chunk-175-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
+You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Here is an example (and google will provide many, many more).
 
 
 ``` r
@@ -897,11 +913,13 @@ Some pointers:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png" alt="" width="100%" style="display: block; margin: auto;" />
 
+By now you can build and polish a wide range of standard plots. This chapter is a tour of the less common ones. Some data have a shape that the usual scatter and bar plots do not capture well: three components that sum to a whole, the similarities among many samples at once, or a distribution you want to show in full rather than summarize. Here we work through a set of more specialized plots for these situations, including 3D scatter plots, similarity networks, marginal summaries, ternary diagrams, and Venn diagrams. We will also look at mapping geographic data, from drawing coastlines and boundaries to layering your own measurements on top of a map.
+
 ## advanced plots {-}
 
 ### 3D scatter plots {-}
 
-`phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
+`phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. We give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
 
 ``` r
@@ -954,7 +972,7 @@ str(output)
 ##   ..$ sample_unique_ID: chr [1:106] "aquifer_1_Alewa_Heights_Spring" "aquifer_1_Beretania_High_Service" "aquifer_1_Beretania_Low_Service" "aquifer_1_Kuliouou_Well" ...
 ```
 
-The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segment. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
+The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segment. We can take the output from points3D and join it with the original data, which will occur according to our sample_unique_ID column. Then, we can also plot point metadata:
 
 
 ``` r
@@ -1065,8 +1083,8 @@ i2 <- iris %>%
 p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
   geom_point()
 
-p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")+
-  geom_ysidedensity(aes(x=stat(density), yfill = Species2), position = "stack") +
+p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
   theme_bw() + 
   facet_grid(Species~Species2, space = "free", scales = "free") +
   labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
@@ -1094,7 +1112,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
 
 <img src="index_files/figure-html/unnamed-chunk-203-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-### venn digrams {-}
+### venn diagrams {-}
 
 
 ``` r
@@ -1276,7 +1294,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
 
 <img src="index_files/figure-html/unnamed-chunk-214-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Now we could add some data. We could do something simple like plot total abundances as the size of a point:
+Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
 
 ``` r
@@ -1352,7 +1370,7 @@ You can also access a high resolution shoreline dataset for Lake Superior direct
 
 
 ``` r
-shore <- readMonolist("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+shore <- lake_superior_shoreline
 
 wide_view <- ggplot(shore) +
     geom_point(aes(y = lat, x = lon), size = 0.01) +
