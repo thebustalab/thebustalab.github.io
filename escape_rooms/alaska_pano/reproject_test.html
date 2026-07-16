@@ -51,7 +51,7 @@
     const $ = s => document.querySelector(s);
     let HAOV = 360, VAOV = 95, FOV = 120, VOFF = -5, STEP = 40, viewer = null;
     const sel = $("#img");
-    const IMGS_FALLBACK = ["gpt_test_1.png","gpt_test_2.png","gpt_test_3.png","gpt_test_4.png","gpt_test_5.png"];
+    const IMGS_FALLBACK = ["gpt_gen_5.png","gpt_room1_2.png","gpt_room2_2.png","gpt_room3_2.png","gpt_room4_2.png"];
     const startImg = new URLSearchParams(location.search).get("img");
 
     async function getJSON(p){ try { return await (await fetch(p + "?t=" + Date.now())).json(); } catch(e){ return null; } }
