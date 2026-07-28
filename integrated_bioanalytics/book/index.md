@@ -43,16 +43,16 @@ output:
 <!-- start preface-->
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover1.png" width="100%" style="display: block; margin: auto;" />
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book, there are two ways:
+
+1. Use the live R sandboxes provided in this book. These run entirely in your browser and require no installation. The escape room exercises associated with the book will also work using this method. There are R sandboxes in each chapter, and a <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener"><b>general purpose sandbox here</b></a>.
+
+2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 
 ``` r
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
-
-<div style="border:1px solid #cfe0ff;background:#eef5ff;border-radius:10px;padding:14px 16px;margin:18px 0;font-family:system-ui,sans-serif;color:#1a2129">
-<b>🖥 Run R in your browser — nothing to install.</b> Open the <a href="/integrated_bioanalytics/sandbox.html"><b>live R sandbox</b></a> to experiment with the book's datasets straight away, or look for the <b>Try it live</b> cells inside the chapters (starting in <i>Data Visualization</i>). R runs entirely in your browser via WebR — the first load takes ~20–40 s, then fast after that.
-</div>
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -490,25 +490,23 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 For this chapter, the exercises are interactive **escape rooms** that run right in your browser — no installation, nothing to set up. Each one drops you into a short mystery where you practice this chapter's core moves, filtering data with `filter()` and plotting it with `ggplot()`, on a real dataset. You write and run actual R in an embedded console, and the answers are the *product of running your analysis*, not multiple-guess trivia. Pick either room to begin:
 
 
-<div style="display:flex;flex-wrap:wrap;gap:22px;margin:14px 0 8px;justify-content:center;">
-<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
-<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
-<div style="padding:12px 15px;">
-<div style="font-weight:700;font-size:16px;">Signal in the Cold</div>
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Signal in the Cold</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filter() + plotting</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A remote field station on a frozen Alaskan lake. Filter and plot the survey data to trace a signal in the cold.</div>
-<div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
 </div>
-</a>
-<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
-<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
-<div style="padding:12px 15px;">
-<div style="font-weight:700;font-size:16px;">Saltwater Intrusion</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Saltwater Intrusion</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization Assignment 1 &middot; filtering + plotting</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A coastal field campaign in Hawai&lsquo;i. Filter and plot aquifer chemistry to find where the sea is pushing in.</div>
-<div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
 </div>
-</a>
+</div>
 </div>
 
 A couple of notes. The first time a room loads it takes 20&ndash;40 seconds to boot R in your browser (it is downloading the R packages it needs) &mdash; after that it is quick. When you finish a room it gives you a completion code and lets you download your figure; submit those on Canvas.

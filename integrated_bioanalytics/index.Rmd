@@ -59,15 +59,15 @@ random_image <- sample(image_files, 1)
 knitr:::include_graphics(random_image, dpi = NA)
 ```
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book, there are two ways:
+
+1. Use the live R sandboxes provided in this book. These run entirely in your browser and require no installation. The escape room exercises associated with the book will also work using this method. There are R sandboxes in each chapter, and a <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener"><b>general purpose sandbox here</b></a>.
+
+2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
-
-<div style="border:1px solid #cfe0ff;background:#eef5ff;border-radius:10px;padding:14px 16px;margin:18px 0;font-family:system-ui,sans-serif;color:#1a2129">
-<b>🖥 Run R in your browser — nothing to install.</b> Open the <a href="/integrated_bioanalytics/sandbox.html"><b>live R sandbox</b></a> to experiment with the book's datasets straight away, or look for the <b>Try it live</b> cells inside the chapters (starting in <i>Data Visualization</i>). R runs entirely in your browser via WebR — the first load takes ~20–40 s, then fast after that.
-</div>
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
