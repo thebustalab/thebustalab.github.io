@@ -285,6 +285,31 @@
 <li><p>Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.</p></li>
 <li><p>You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.</p></li>
 </ol>
+</div>
+<div id="exercises" class="section level2 unnumbered">
+<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
+</h2>
+<p>For this chapter, the exercises are interactive <strong>escape rooms</strong> that run right in your browser — no installation, nothing to set up. Each one drops you into a short mystery where you practice this chapter’s core moves, filtering data with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> and plotting it with <code>ggplot()</code>, on a real dataset. You write and run actual R in an embedded console, and the answers are the <em>product of running your analysis</em>, not multiple-guess trivia. Pick either room to begin:</p>
+<div style="display:flex;flex-wrap:wrap;gap:22px;margin:14px 0 8px;justify-content:center;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;"><div style="padding:12px 15px;">
+<pre><code>  &lt;div style="font-weight:700;font-size:16px;"&gt;Signal in the Cold&lt;/div&gt;
+  &lt;div style="opacity:.65;font-size:13px;margin-top:2px;"&gt;Data Visualization &amp;middot; filter() + plotting&lt;/div&gt;
+  &lt;div style="margin-top:8px;font-size:13px;line-height:1.4;"&gt;A remote field station on a frozen Alaskan lake. Filter and plot the survey data to trace a signal in the cold.&lt;/div&gt;
+  &lt;div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;"&gt;Enter the room &amp;rarr;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;"><div style="padding:12px 15px;">
+<pre><code>  &lt;div style="font-weight:700;font-size:16px;"&gt;Saltwater Intrusion&lt;/div&gt;
+  &lt;div style="opacity:.65;font-size:13px;margin-top:2px;"&gt;Data Visualization Assignment 1 &amp;middot; filtering + plotting&lt;/div&gt;
+  &lt;div style="margin-top:8px;font-size:13px;line-height:1.4;"&gt;A coastal field campaign in Hawai&amp;lsquo;i. Filter and plot aquifer chemistry to find where the sea is pushing in.&lt;/div&gt;
+  &lt;div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;"&gt;Enter the room &amp;rarr;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p></p>
+</div>
+<p>A couple of notes. The first time a room loads it takes 20–40 seconds to boot R in your browser (it is downloading the R packages it needs) — after that it is quick. When you finish a room it gives you a completion code and lets you download your figure; submit those on Canvas.</p>
+<!-- Legacy pdf-report version of these exercises (kept dormant; the interactive rooms above are the live version). -->
 <!-- ## exercises {-}
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
@@ -327,7 +352,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-102-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-103-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -413,14 +438,13 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-119-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-120-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
 
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
-</div>
 <div id="section-1" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-1"><i class="fas fa-link"></i></a></h2>
 </div>
@@ -436,48 +460,19 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 </ul>
 <!-- end --><!-- start data visualization II -->
 </div>
-</div>
-  <div class="chapter-nav">
-<div class="prev"><a href="installation.html">installation</a></div>
-<div class="next"><a href="data-visualization-ii.html">data visualization II</a></div>
-</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
-    <h2>Note: Second Edition is under construction 🏗</h2>
-    <p>Now is a great time to provide feedback</p>
-        <ul class="list-unstyled">
-<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
-          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
-          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
-          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
-        </ul>
-<hr>
-<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#data-visualization-i">data visualization I</a></li>
-<li><a class="nav-link" href="#section"></a></li>
-<li><a class="nav-link" href="#objects">objects</a></li>
-<li><a class="nav-link" href="#functions">functions</a></li>
-<li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
-<li><a class="nav-link" href="#markdown">markdown</a></li>
-<li><a class="nav-link" href="#section-1"></a></li>
-<li><a class="nav-link" href="#further-reading">further reading</a></li>
-</ul>
+  
 
-      <div class="book-extra">
-        <ul class="list-unstyled">
-<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
-        </ul>
-</div>
-    </nav>
-</div>
+  
 
+</a>
 </div>
+</a>
 </div> <!-- .container -->
 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-07-21.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -504,5 +499,43 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
     });
   })();
 </script>
+</div>
+</div>
+<div class="chapter-nav">
+<div class="prev"><a href="installation.html">installation</a></div>
+<div class="next"><a href="data-visualization-ii.html">data visualization II</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#data-visualization-i">data visualization I</a></li>
+<li><a class="nav-link" href="#section"></a></li>
+<li><a class="nav-link" href="#objects">objects</a></li>
+<li><a class="nav-link" href="#functions">functions</a></li>
+<li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
+<li><a class="nav-link" href="#markdown">markdown</a></li>
+<li><a class="nav-link" href="#exercises">exercises</a></li>
+<li><a class="nav-link" href="#section-1"></a></li>
+<li><a class="nav-link" href="#further-reading">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+</div>
+</div>
 </body>
 </html>

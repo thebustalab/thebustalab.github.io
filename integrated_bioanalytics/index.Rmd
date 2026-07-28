@@ -65,6 +65,10 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
+<div style="border:1px solid #cfe0ff;background:#eef5ff;border-radius:10px;padding:14px 16px;margin:18px 0;font-family:system-ui,sans-serif;color:#1a2129">
+<b>🖥 Run R in your browser — nothing to install.</b> Open the <a href="/integrated_bioanalytics/sandbox.html"><b>live R sandbox</b></a> to experiment with the book's datasets straight away, or look for the <b>Try it live</b> cells inside the chapters (starting in <i>Data Visualization</i>). R runs entirely in your browser via WebR — the first load takes ~20–40 s, then it's fast.
+</div>
+
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

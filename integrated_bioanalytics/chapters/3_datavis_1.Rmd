@@ -105,6 +105,29 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
+**Try it live — right here in your browser, nothing to install.** This is the same idea as a live R console. First make the small algae table, then plot it. Edit the code and press **Run** (or Ctrl/⌘ + Enter); both cells share one R session, so `algae_data_small` from the first cell is available in the second.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
+</script>
+
+<div class="webr-cell"><textarea class="webr-code">algae_data_small <- algae_data %>%
+  filter(chemical_species == "FAs")
+head(algae_data_small)</textarea></div>
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data_small, aes(x = algae_strain, y = abundance)) +
+  geom_point(aes(color = harvesting_regime), size = 4)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="color is mapped inside aes() to harvesting_regime, so the point colours show the harvesting regime.">
+<p class="scq">Self-check: in the plot above, what does the point <b>colour</b> represent?</p>
+<label><input type="radio"> the algae strain</label>
+<label><input type="radio"> the harvesting regime</label>
+<label><input type="radio"> the abundance</label>
+</div>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
 ```{r, message = FALSE, out.width = '50%'}
@@ -161,6 +184,39 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
+
+## exercises {-}
+
+For this chapter, the exercises are interactive **escape rooms** that run right in your browser — no installation, nothing to set up. Each one drops you into a short mystery where you practice this chapter's core moves, filtering data with `filter()` and plotting it with `ggplot()`, on a real dataset. You write and run actual R in an embedded console, and the answers are the *product of running your analysis*, not multiple-guess trivia. Pick either room to begin:
+
+```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
+cat('
+<div style="display:flex;flex-wrap:wrap;gap:22px;margin:14px 0 8px;justify-content:center;">
+  <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+    <img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
+    <div style="padding:12px 15px;">
+      <div style="font-weight:700;font-size:16px;">Signal in the Cold</div>
+      <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filter() + plotting</div>
+      <div style="margin-top:8px;font-size:13px;line-height:1.4;">A remote field station on a frozen Alaskan lake. Filter and plot the survey data to trace a signal in the cold.</div>
+      <div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
+    </div>
+  </a>
+  <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+    <img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
+    <div style="padding:12px 15px;">
+      <div style="font-weight:700;font-size:16px;">Saltwater Intrusion</div>
+      <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization Assignment 1 &middot; filtering + plotting</div>
+      <div style="margin-top:8px;font-size:13px;line-height:1.4;">A coastal field campaign in Hawai&lsquo;i. Filter and plot aquifer chemistry to find where the sea is pushing in.</div>
+      <div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
+    </div>
+  </a>
+</div>
+')
+```
+
+A couple of notes. The first time a room loads it takes 20&ndash;40 seconds to boot R in your browser (it is downloading the R packages it needs) &mdash; after that it is quick. When you finish a room it gives you a completion code and lets you download your figure; submit those on Canvas.
+
+<!-- Legacy pdf-report version of these exercises (kept dormant; the interactive rooms above are the live version). -->
 
 <!-- ## exercises {-}
 

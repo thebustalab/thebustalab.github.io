@@ -30,6 +30,24 @@ ggplot(
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
+Two more geoms are worth knowing at this stage, because they let you write text directly onto the plot. The first, `geom_text()`, draws a piece of text at each data point. To use it, you map a variable to the `label` aesthetic and ggplot prints it. This is enormously useful when you want to know *which* point is which, rather than just where the points sit. Let's go back to the `solvents` scatter plot from earlier and label each point with the name of the solvent:
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
+  geom_point() +
+  geom_text(aes(label = solvent))
+```
+
+That works, but with this many points the labels overlap and can be a bit unreadable. The `ggrepel` package largely solves this with `geom_text_repel()`, a near drop-in replacement that gently nudges the labels away from each other:
+
+```{r}
+library(ggrepel)
+
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
+  geom_point() +
+  geom_text_repel(aes(label = solvent))
+```
+
 ## facets {-}
 
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.

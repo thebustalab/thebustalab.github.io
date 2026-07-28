@@ -175,7 +175,13 @@ Embedding models convert language into numbers so that we can measure similarity
 
 In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
 
-```{r}
+<!-- NOTE (2026-07-21): eval=FALSE is a reversible stopgap. The Hugging Face
+     generate endpoint this chunk calls returns HTTP 402 (credits depleted), which
+     kills the render. The course embed proxy (embed.lbusta.org) is embed-only by
+     design, so generateText has no student-reachable backend yet. Pending a
+     decision on permanent treatment (cache a real output / replace the example /
+     leave disabled). See root todo.md "book LLM API calls break the render". -->
+```{r, eval = FALSE}
 search_results$system <- "You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."
 
 search_results <- generateText(

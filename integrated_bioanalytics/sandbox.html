@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebR sandbox · Integrated Bioanalytics</title>
+  <style>
+    :root { --bg:#06111a; --panel:#0b1b28; --line:rgba(255,255,255,.14); --amber:#ffd88c; --ink:#e8eef2; --green:#8ff0c0; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 system-ui, sans-serif; }
+    main { max-width:1000px; margin:0 auto; padding:22px 20px 60px; }
+    h1 { font-size:20px; margin:0 0 2px; } h1 span { color:var(--amber); }
+    .sub { opacity:.65; font-size:13px; margin:0 0 16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
+    #status { font-size:13px; color:var(--amber); min-height:18px; }
+    .dslabel { font-size:12px; opacity:.7; text-transform:uppercase; letter-spacing:.04em; margin:2px 0 8px; }
+    .chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip { font:12px ui-monospace, Menlo, Consolas, monospace; padding:4px 10px; border-radius:20px; cursor:pointer;
+            border:1px solid var(--line); background:#0a1620; color:var(--amber); }
+    .chip:hover { border-color:var(--amber); background:#12242f; }
+    textarea { width:100%; min-height:150px; resize:vertical; background:#0a1620; color:var(--ink); border:1px solid var(--line);
+               border-radius:8px; padding:12px 14px; font:13px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+    .row { display:flex; align-items:center; gap:12px; margin-top:10px; }
+    button.run { background:var(--amber); color:#10202a; border:0; border-radius:8px; padding:9px 18px; font:600 14px system-ui; cursor:pointer; }
+    button.run:disabled { opacity:.45; cursor:default; }
+    .hint { font-size:12px; opacity:.6; }
+    #output { margin-top:6px; }
+    #output .webr-out { background:#0a1620; border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin:8px 0;
+                        font:12.5px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space:pre-wrap; overflow:auto; }
+    #output .webr-out.err { color:#ff9a9a; } #output .webr-out.muted { opacity:.6; }
+    #output canvas.webr-plot { max-width:100%; border-radius:8px; margin:8px 0; display:block; background:#fff; }
+    code { background:#0a1620; padding:1px 5px; border-radius:4px; }
+    a { color:var(--amber); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>WebR <span>sandbox</span> · Integrated Bioanalytics</h1>
+    <p class="sub">R runs entirely in your browser — nothing to install. First run takes ~20–40s to start R, then it's fast.</p>
+
+    <div class="card">
+      <div id="status">Loading…</div>
+    </div>
+
+    <div class="card">
+      <div class="dslabel">Datasets loaded (click to peek — inserts <code>head(name)</code>)</div>
+      <div class="chips" id="chips"></div>
+      <div class="hint" style="margin-top:8px">Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Packages ready: dplyr, ggplot2, tidyr, readr.</div>
+    </div>
+
+    <div class="card">
+      <textarea id="code" spellcheck="false"></textarea>
+      <div class="row">
+        <button class="run" id="run" disabled>▶ Run</button>
+        <span class="hint">or press Ctrl/⌘ + Enter</span>
+      </div>
+      <div id="output"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js";
+
+    // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
+    const DATASETS = [
+      "alaska_lake_data", "hawaii_aquifers", "solvents", "beer_components",
+      "wine_quality", "chemical_blooms", "tequila_chemistry", "algae_data",
+    ].map(name => ({ name, url: `/phylochemistry/sample_data/${name}.csv` }));
+
+    const console_ = new WebRConsole(
+      {
+        packages: ["dplyr", "ggplot2", "tidyr", "readr"],
+        datasets: DATASETS,
+        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr)})",
+      },
+      { status: document.getElementById("status"), output: document.getElementById("output") }
+    );
+
+    const codeEl = document.getElementById("code");
+    const runBtn = document.getElementById("run");
+    codeEl.value = `# R in your browser. Try it:\nhead(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
+
+    // dataset chips — click to peek
+    const chips = document.getElementById("chips");
+    DATASETS.forEach(ds => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.textContent = ds.name;
+      b.onclick = () => { codeEl.value = `head(${ds.name})`; codeEl.focus(); };
+      chips.appendChild(b);
+    });
+
+    const run = () => { if (!runBtn.disabled) console_.run(codeEl.value); };
+    runBtn.onclick = run;
+    codeEl.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
+
+    console_.init()
+      .then(() => { runBtn.disabled = false; })
+      .catch(e => { document.getElementById("status").textContent = "R failed to start: " + (e.message || e); });
+  </script>
+</body>
+</html>

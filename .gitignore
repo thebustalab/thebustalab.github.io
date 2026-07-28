@@ -24,3 +24,18 @@ members_update.py
 # Blog research (private, not for public repo)
 blog/literature/
 blog/online-research/
+
+# Escape-rooms authoring: rolling scenario.json backups the harness writes on every save
+escape_rooms/**/scenario.json.bak
+# Escape-rooms authoring: the whole _scratch candidate pool is local authoring churn (~20 MB/scenario
+# of gpt-image-2 candidates) — never needed at play time (the player reads the committed room dirs +
+# scenario.json). Keeps the pushed site lean. (Supersedes the old _scratch/draft.json line.)
+escape_rooms/**/_scratch/
+# (The escape-rooms debrief-study publication planning + literature DB was moved out of this public
+#  repo entirely on 2026-07-19, to research/publications/__materials/_2026/_escape_room_debrief/ —
+#  so no ignore rule is needed here any more.)
+
+# integrated_bioanalytics: local history-tier archive (render-cache backups + retired template
+# leftovers) — never needed by the published book, kept off the public repo.
+integrated_bioanalytics/z_archive/
+escape_rooms/

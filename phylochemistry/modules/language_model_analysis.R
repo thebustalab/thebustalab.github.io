@@ -169,7 +169,9 @@ message("Loading language model module...")
           model_id = "BAAI/bge-small-en-v1.5",
           batch_size = 16,
           max_retries = 5,
-          timeout_sec = 60
+          timeout_sec = 60,
+          server_url = Sys.getenv("EMBED_SERVER_URL", ""),
+          server_token = Sys.getenv("EMBED_SERVER_TOKEN", "")
         ) {
           # deps
           suppressPackageStartupMessages({
@@ -232,6 +234,62 @@ message("Loading language model module...")
 
             embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
             colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+            out <- bind_cols(df, embeddings_df)
+            return(out)
+          }
+
+          # ---------- REMOTE (self-hosted embed proxy) ----------
+          # When `server_url` is set (arg or EMBED_SERVER_URL), embed against a
+          # self-hosted, CPU-only embed proxy instead of Hugging Face. The proxy
+          # takes {"texts": [...]} and returns {"embeddings": [[...]], "dim": N}.
+          # No metered API, no key spend; requires a shared class bearer token.
+          if (!is.null(server_url) && nzchar(server_url)) {
+            server_url <- str_trim(server_url[1])
+            embed_endpoint <- paste0(sub("/+$", "", server_url), "/embed")
+            # Explicit browser-like User-Agent: the proxy sits behind Cloudflare,
+            # whose Bot Fight Mode 403s default library agents (e.g. Python-urllib).
+            req_headers <- c(
+              `Content-Type` = "application/json",
+              `User-Agent` = "Mozilla/5.0 (phylochemistry embedText)"
+            )
+            if (nzchar(server_token)) {
+              req_headers <- c(req_headers, Authorization = paste0("Bearer ", str_trim(server_token[1])))
+            }
+
+            n <- length(text_vector)
+            idx <- split(seq_len(n), ceiling(seq_len(n) / batch_size))
+            pb <- txtProgressBar(min = 0, max = length(idx), style = 3)
+            all_rows <- vector("list", length(idx))
+            out_dim <- NULL
+
+            for (b in seq_along(idx)) {
+              batch_text <- as.list(text_vector[idx[[b]]])
+              payload <- jsonlite::toJSON(list(texts = batch_text), auto_unbox = TRUE)
+              resp <- httr::POST(
+                url = embed_endpoint,
+                httr::add_headers(.headers = req_headers),
+                body = payload, encode = "raw", timeout(timeout_sec)
+              )
+              code <- resp$status_code
+              if (code < 200 || code >= 300) {
+                msg <- tryCatch(httr::content(resp, as = "text", encoding = "UTF-8"), error = function(e) "")
+                stop(sprintf("Embed proxy request failed (HTTP %s): %s", code, msg))
+              }
+              parsed <- jsonlite::fromJSON(
+                httr::content(resp, as = "text", encoding = "UTF-8"), simplifyVector = FALSE
+              )
+              emb <- parsed$embeddings
+              mat <- do.call(rbind, lapply(emb, function(v) as.numeric(unlist(v, recursive = TRUE))))
+              if (is.null(out_dim)) out_dim <- ncol(mat)
+              if (ncol(mat) != out_dim) stop("Inconsistent embedding dimensions returned by the proxy.")
+              all_rows[[b]] <- mat
+              setTxtProgressBar(pb, b)
+            }
+            close(pb)
+
+            embeddings_mat <- do.call(rbind, all_rows)
+            colnames(embeddings_mat) <- paste0("embedding_", seq_len(ncol(embeddings_mat)))
+            embeddings_df <- as.data.frame(embeddings_mat, stringsAsFactors = FALSE)
             out <- bind_cols(df, embeddings_df)
             return(out)
           }

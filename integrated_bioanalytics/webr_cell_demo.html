@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Runnable-cell prototype · data visualization</title>
+  <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css" />
+  <style>
+    body { max-width: 760px; margin: 0 auto; padding: 30px 22px 80px; font: 16px/1.65 Georgia, "Times New Roman", serif; color: #1a2129; }
+    h1, h2 { font-family: system-ui, sans-serif; } h1 { font-size: 24px; } h2 { font-size: 18px; margin-top: 30px; }
+    code { background: #eef2f5; padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+    .note { font: 13px/1.5 system-ui, sans-serif; color: #55606b; background: #f2f6fb; border-radius: 8px; padding: 10px 12px; }
+  </style>
+</head>
+<body>
+  <h1>Data visualization <span style="font-family:system-ui;font-size:13px;color:#55606b">— runnable-cell prototype</span></h1>
+  <p class="note">This is a static prototype of what an active-learning book chapter looks like: prose, live R you run in the page (nothing to install), and a self-check. It shares one R session across every cell — a variable you make in one runs in the next.</p>
+
+  <h2>ggplot &amp; geoms</h2>
+  <p>Let's summarize the algae data and then plot it. First, take the mean abundance for each algae strain. Edit the code if you like, then press <b>Run</b> (or Ctrl/⌘ + Enter):</p>
+
+  <div class="webr-cell"><textarea class="webr-code">avg <- algae_data %>%
+  group_by(algae_strain) %>%
+  summarise(mean_abundance = mean(abundance))
+avg</textarea></div>
+
+  <p>Now map <code>algae_strain</code> to the x-axis and <code>mean_abundance</code> to the y-axis, and draw bars. Notice this cell uses <code>avg</code> — the table you just made above — because both cells share one R session:</p>
+
+  <div class="webr-cell"><textarea class="webr-code">ggplot(avg, aes(x = algae_strain, y = mean_abundance)) +
+  geom_col(fill = "steelblue")</textarea></div>
+
+  <p>Try changing <code>geom_col()</code> to <code>geom_point()</code> in the cell above and re-running to see the difference.</p>
+
+  <div class="selfcheck" data-answer="1" data-explain="geom_col() draws bars; geom_point() draws points and geom_line() draws a line.">
+    <p class="scq">Self-check: which geom did we use to draw the bars?</p>
+    <label><input type="radio"> <code>geom_point()</code></label>
+    <label><input type="radio"> <code>geom_col()</code></label>
+    <label><input type="radio"> <code>geom_line()</code></label>
+  </div>
+
+  <!-- page-level WebR config: packages + datasets loaded once, shared by every cell above -->
+  <script>
+    window.WEBR_CELL_CONFIG = {
+      packages: ["dplyr", "ggplot2", "readr"],
+      datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }],
+      setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})",
+    };
+  </script>
+  <script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+</body>
+</html>

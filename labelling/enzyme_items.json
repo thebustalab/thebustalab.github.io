@@ -160,5 +160,59 @@
     },
     "source_topic": "pks",
     "discovered": "2026-07-14"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_a6450db4ee53",
+    "title": "Chalcone Synthase: From Discovery to Biotechnological Applications",
+    "authors": "Yongxing Chen; Caiyan Liang; Liu Y; Min Jiang; Lin Qiu; Haizheng Yu; Lei Zhang",
+    "journal": "Journal of Experimental Botany",
+    "year": 2026,
+    "doi": "10.1093/jxb/erag350",
+    "link": "https://doi.org/10.1093/jxb/erag350",
+    "abstract": "Flavonoids, a class of phenolic compounds widely distributed throughout the plant kingdom, exhibit extensive physiological and pharmacological properties. Chalcone synthase (CHS), the key and rate-limiting gateway enzyme in flavonoid biosynthesis, catalyzes the condensation reaction between malonyl-CoA and p-coumaroyl-CoA to produce chalcone, the core C6-C3-C6 skeleton of flavonoids and related secondary metabolites. This review systematically summarizes the current knowledge of CHS, focusing on its protein structure, catalytic mechanism, evolutionary origin, and divergence patterns. It further elaborates on the precisely orchestrated multilayered regulation of CHS, including tissue-specific and developmental transcription mediated by MYB, bHLH, and WD40 transcription factors, responses to key environmental cues (light and biotic/abiotic stress stimuli), and post-translational modifications (ubiquitination and phosphorylation) that modulate its stability and catalytic activity. Additionally, targeted rational design and metabolic engineering strategies (gene-directed evolution, heterologous expression, pathway optimization) to efficiently enhance CHS performance in microbial and plant cell factories for boosted flavonoid production are summarized. This comprehensive analysis provides a solid theoretical and practical basis for optimizing CHS function and flavonoid biosynthesis, facilitating the sustainable development and practical implementation of industrial and agricultural applications of these bioactive compounds.",
+    "prefill": {
+      "enzyme_name": "CHS",
+      "product": "chalcone",
+      "doi": "doi:10.1093/jxb/erag350"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-21"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_84576105aac3",
+    "title": "Integrated multi-omics analyses reveal that p-coumaroyl-CoA 2′-hydroxylases act upstream of stilbene synthases to mediate oxyresveratrol biosynthesis in mulberry (Morus alba)",
+    "authors": "Antonio Santiago; Gastón A. Pizzio; Pablo Romero; Ascensión Martínez-Márquez; María José Martínez-Esteso; Jone Echeverría; Susana Sellés‐Marchart; Raquel Alvarez-Urdiola; Chen Zhang; David Navarro-Payá; Estel·la Micó; Antonio Samper-Herrero; Jaime Morante-Carriel; Riccardo Aiese Cigliano; David Manzano; Roque Bru-Martínez; José Tomás Matus",
+    "journal": "Plant Communications",
+    "year": 2026,
+    "doi": "10.1016/j.xplc.2026.101751",
+    "link": "https://doi.org/10.1016/j.xplc.2026.101751",
+    "abstract": "Oxyresveratrol is a bioactive stilbenoid with strong antioxidant, anti-inflammatory, and tyrosinase-inhibitory activities that accumulates in mulberry (Morus alba) tissues. Despite its importance, the biosynthetic origin of oxyresveratrol has remained unclear, with competing hypotheses proposing either hydroxylation of resveratrol or synthesis from a distinct precursor. Moreover, resveratrol and oxyresveratrol predominantly accumulate in non-renewable parts of mulberry trees, limiting their efficient extraction. To overcome these spatiotemporal constraints, we established cell suspension cultures from mulberry twigs and demonstrated that combined treatment with methyl jasmonate and methyl- or hydroxypropyl-β-cyclodextrins elicits high levels of both resveratrol and oxyresveratrol, which accumulate both intra- and extracellularly. Using this system, we investigated the molecular basis of oxyresveratrol biosynthesis in mulberry. We first improved the structural and functional annotation of the mulberry genome by integrating short- and long-read sequencing data derived from elicited cell suspension transcriptomes. By combining these resources with integrative transcriptomic, proteomic, and metabolomic analyses, we identified coordinated induction of multiple stilbene synthases (STSs) and a group of p-coumaroyl-CoA 2'-hydroxylases (C2'Hs) that were strongly co-expressed with resveratrol and oxyresveratrol accumulation. Functional validation in Nicotiana benthamiana, grapevine cell cultures, and in vitro enzyme assays demonstrated that C2'Hs catalyze the hydroxylation of p-coumaroyl-CoA upstream of the STS reaction, generating 2',4'-dihydroxycinnamoyl-CoA as an alternative substrate for STSs. These findings demonstrate that oxyresveratrol is produced via a biosynthetic pathway parallel to resveratrol formation rather than through post-synthetic hydroxylation. In addition, we provide genomic and transcriptomic resources within the context of jasmonate-mediated elicitation, facilitating the discovery of novel phenylpropanoid structural and regulatory genes in the Morus genus. Together, our work establishes a new biosynthetic paradigm for stilbenoid diversification in plants and delivers molecular tools and resources for the biotechnological production of oxyresveratrol.",
+    "prefill": {
+      "enzyme_name": "C2'H",
+      "product": "2',4'-dihydroxycinnamoyl-CoA",
+      "doi": "doi:10.1016/j.xplc.2026.101751"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-07-21"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_1792d91cda66",
+    "title": "Identification of 2,3-oxidosqualene cyclase gene in <i>Eleutherococcus senticosus</i> and its regulatory mechanism in saponin synthesis",
+    "authors": "Yaqi Cui; Jiacheng Ma; Mengying Jiao; Xueying Zhao; Jingwen Ding; Chenran Feng; Peng Liu; Yuehong Long; Zhaobin Xing",
+    "journal": "Horticulture Research",
+    "year": 2025,
+    "doi": "10.1093/hr/uhaf133",
+    "link": "https://doi.org/10.1093/hr/uhaf133",
+    "abstract": "Abstract Oleanane-type triterpenoid saponins are the primary medicinal components of Eleutherococcus senticosus. During saponin biosynthesis in E. senticosus, various members of the 2,3-oxidosqualene cyclase (OSC) gene family can direct 2,3-oxidosqualene into triterpene saponin and sterol synthesis pathways. However, the precise molecular mechanism underlying this phenomenon remains unclear. We initially screened for β-amyrin synthase 1 (bAS1) and cycloartenol synthase 1 (CAS1) among 10 EsOSC genes using genome-wide identification and correlation analysis. Subcellular localization, catalytic experiments, and in vivo transient overexpression demonstrated that EsbAS1 and EsCAS1 catalyze the formation of the triterpene skeleton β-amyrin and sterol precursor cycloartenol exclusively in the cytoplasm, enhancing and inhibiting the in vivo biosynthesis of oleanane-type saponins, respectively. Results from site-directed mutagenesis and molecular docking indicated that W-WY and Y-WH triplets characterized the active sites of EsbAS1 and EsCAS1, respectively. GUS (β-glucuronidase) staining and electrophoretic mobility shift assay (EMSA) experiments on the promoter region revealed that various colored light quality, DNA methylation, and five transcription factors (EsNAC047, EsNAC098, EsWRKY40, EsMYB4, and EsERF66) regulated the expression of EsbAS1 and EsCAS1. This study provides preliminary insights into the molecular mechanisms by which EsbAS1 and EsCAS1 regulate saponin synthesis in E. senticosus.",
+    "prefill": {
+      "enzyme_name": "EsbAS1",
+      "product": "β-amyrin",
+      "doi": "doi:10.1093/hr/uhaf133"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-07-28"
   }
 ]
