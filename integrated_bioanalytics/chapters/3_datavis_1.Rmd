@@ -192,24 +192,24 @@ For this chapter, the exercises are interactive **escape rooms** that run right 
 ```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
 cat('
 <div style="display:flex;flex-wrap:wrap;gap:22px;margin:14px 0 8px;justify-content:center;">
-  <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
-    <img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
-    <div style="padding:12px 15px;">
-      <div style="font-weight:700;font-size:16px;">Signal in the Cold</div>
-      <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filter() + plotting</div>
-      <div style="margin-top:8px;font-size:13px;line-height:1.4;">A remote field station on a frozen Alaskan lake. Filter and plot the survey data to trace a signal in the cold.</div>
-      <div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
-    </div>
-  </a>
-  <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
-    <img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
-    <div style="padding:12px 15px;">
-      <div style="font-weight:700;font-size:16px;">Saltwater Intrusion</div>
-      <div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization Assignment 1 &middot; filtering + plotting</div>
-      <div style="margin-top:8px;font-size:13px;line-height:1.4;">A coastal field campaign in Hawai&lsquo;i. Filter and plot aquifer chemistry to find where the sea is pushing in.</div>
-      <div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
-    </div>
-  </a>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
+<div style="padding:12px 15px;">
+<div style="font-weight:700;font-size:16px;">Signal in the Cold</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filter() + plotting</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A remote field station on a frozen Alaskan lake. Filter and plot the survey data to trace a signal in the cold.</div>
+<div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
+</div>
+</a>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/play.html" style="display:block;text-decoration:none;color:inherit;width:300px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.09);background:#fff;">
+<img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/hawaii_aquifers/cover.png" alt="Saltwater Intrusion cover" style="width:100%;display:block;aspect-ratio:1/1;object-fit:cover;">
+<div style="padding:12px 15px;">
+<div style="font-weight:700;font-size:16px;">Saltwater Intrusion</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization Assignment 1 &middot; filtering + plotting</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A coastal field campaign in Hawai&lsquo;i. Filter and plot aquifer chemistry to find where the sea is pushing in.</div>
+<div style="margin-top:10px;color:#b26a00;font-weight:600;font-size:13px;">Enter the room &rarr;</div>
+</div>
+</a>
 </div>
 ')
 ```
