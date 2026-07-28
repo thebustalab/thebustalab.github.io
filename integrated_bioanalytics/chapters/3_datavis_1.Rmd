@@ -84,7 +84,9 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> %in% c(18, 19, 20))` ## equal to 18 or 19 or 20
 
-**Concept check.** Fill in the blank so that only rows where `chemical_species` equals `"FAs"` are kept, then press **Run**.
+### concept check {-}
+
+Fill in the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea></div>
 

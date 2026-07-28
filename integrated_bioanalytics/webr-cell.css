@@ -1,25 +1,25 @@
 /* webr-cell.css — styling for in-book runnable R cells + self-checks (works over any book theme). */
-.webr-cell { border: 1px solid #d6dde3; border-radius: 10px; margin: 16px 0; overflow: hidden; background: #f7f9fb; }
+.webr-cell { border: 1px solid #d6dde3; border-radius: 0; margin: 16px 0; overflow: hidden; background: #f7f9fb; }
 .webr-cell textarea { width: 100%; min-height: 84px; resize: vertical; border: 0; border-bottom: 1px solid #e3e8ec;
   background: #0d1b26; color: #e8eef2; padding: 12px 14px; margin: 0; display: block;
   font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .webr-cell textarea:focus { outline: none; box-shadow: inset 0 0 0 2px #ffd88c; }
 .webr-cell .webr-bar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; }
-.webr-cell .webr-run { background: #1f6feb; color: #fff; border: 0; border-radius: 7px; padding: 6px 15px;
+.webr-cell .webr-run { background: #004529; color: #fff; border: 0; border-radius: 0; padding: 6px 15px;
   font: 600 13px system-ui, sans-serif; cursor: pointer; }
 .webr-cell .webr-run:disabled { opacity: .5; cursor: default; }
 .webr-cell .webr-status { font-size: 12px; color: #8a6d1f; }
 .webr-cell .webr-output { padding: 0 12px 12px; }
-.webr-cell .webr-output .webr-out { background: #0d1b26; color: #e8eef2; border-radius: 8px; padding: 10px 12px; margin: 8px 0;
+.webr-cell .webr-output .webr-out { background: #0d1b26; color: #e8eef2; border-radius: 0; padding: 10px 12px; margin: 8px 0;
   white-space: pre-wrap; overflow: auto; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .webr-cell .webr-output .webr-out.err { color: #ff9a9a; } .webr-cell .webr-output .webr-out.muted { opacity: .6; }
-.webr-cell .webr-output canvas.webr-plot { max-width: 100%; border-radius: 8px; margin: 8px 0; display: block; background: #fff; }
+.webr-cell .webr-output canvas.webr-plot { max-width: 100%; border-radius: 0; margin: 8px 0; display: block; background: #fff; }
 
-.selfcheck { border: 1px solid #d6dde3; border-left: 4px solid #1f6feb; border-radius: 8px; padding: 12px 14px; margin: 16px 0; background: #f2f6fb; }
+.selfcheck { border: 1px solid #d6dde3; border-left: 4px solid #004529; border-radius: 0; padding: 12px 14px; margin: 16px 0; background: #eef5ee; }
 .selfcheck .scq { font-weight: 600; margin: 0 0 8px; }
 .selfcheck label { display: block; margin: 4px 0; cursor: pointer; }
 .selfcheck input[type="radio"] { margin-right: 7px; }
-.selfcheck .sccheck { margin-top: 8px; background: #1f6feb; color: #fff; border: 0; border-radius: 7px; padding: 5px 14px;
+.selfcheck .sccheck { margin-top: 8px; background: #004529; color: #fff; border: 0; border-radius: 0; padding: 5px 14px;
   font: 600 12.5px system-ui, sans-serif; cursor: pointer; }
 .selfcheck .scfb { margin-top: 8px; font-size: 13px; min-height: 16px; }
 .selfcheck .scfb.ok { color: #16794b; } .selfcheck .scfb.no { color: #b42318; }
