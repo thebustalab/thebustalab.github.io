@@ -1913,10 +1913,39 @@
 
     ##### Sequence data handling
 
+        #### annotateAminoAcidSequence    
+
+            annotateAminoAcidSequence <- function(sequence, email, applications = "PfamA") {
+              base <- "https://www.ebi.ac.uk/Tools/services/rest/iprscan5"
+              
+              # submit (EBI requires an email as the abuse contact)
+              job <- content(POST(paste0(base, "/run"),
+                                  body = list(email = email, stype = "p",
+                                              appl = applications, goterms = "true",
+                                              sequence = sequence),
+                                  encode = "form"), "text", encoding = "UTF-8")
+              message("job = ", job)
+              
+              # poll
+              repeat {
+                Sys.sleep(5)
+                st <- content(GET(paste0(base, "/status/", job)), "text", encoding = "UTF-8")
+                if (st == "FINISHED") break
+                if (st %in% c("ERROR", "FAILURE", "NOT_FOUND")) stop("InterProScan ", st, ": ", job)
+              }
+              
+              # fetch the TSV result and parse to a tibble
+              tsv <- content(GET(paste0(base, "/result/", job, "/tsv")), "text", encoding = "UTF-8")
+              cols <- c("query","md5","length","analysis","sig_acc","sig_desc","start","stop",
+                        "score","status","date","interpro_acc","interpro_desc","go","pathways")
+              as_tibble(read.delim(text = tsv, header = FALSE, sep = "\t",
+                                   col.names = cols, fill = TRUE, quote = ""))
+            }
+
         #### blastNCBI
 
             blastNCBI <- function(query_sequence, program, database) {
-    
+
                 # Reference: https://blast.ncbi.nlm.nih.gov/doc/blast-help/urlapi.html#urlapi
                 # Adjust program parameter if necessary
                 if (program == "megablast") { 
@@ -1925,6 +1954,13 @@
                     program <- "blastp&SERVICE=rpsblast" 
                 } else if (program == "blastp") {
                     program <- "blastp"  # Enable protein->protein BLAST
+                }
+
+                # Allow friendly aliases for the clustered nr database (ClusteredNR).
+                # Searches run against one representative sequence per 90/90 cluster, and
+                # each hit title is the cluster's well-annotated representative protein.
+                if (database %in% c("clusteredNR", "clustered_nr", "clusterednr")) {
+                    database <- "nr_cluster_seq"
                 }
                 
                 # Build the request and post the initial request to start the search
