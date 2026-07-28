@@ -428,17 +428,19 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-90-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-**Try it live — right here in your browser, nothing to install.** This is the same idea as a live R console. First make the small algae table, then plot it. Edit the code and press **Run** (or Ctrl/⌘ + Enter); both cells share one R session, so `algae_data_small` from the first cell is available in the second.
+#### Concept check {-}
+
+First make the small algae table by filling in the blank (first window below), then plot it (second window below). Edit the code and press Run.
 
 <div class="webr-cell"><textarea class="webr-code">algae_data_small <- algae_data %>%
-  filter(chemical_species == "FAs")
+  filter(chemical_species == _____)
 head(algae_data_small)</textarea></div>
 
-<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data_small, aes(x = algae_strain, y = abundance)) +
+<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data_small, aes(x = _____, y = _____)) +
   geom_point(aes(color = harvesting_regime), size = 4)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="color is mapped inside aes() to harvesting_regime, so the point colours show the harvesting regime.">
-<p class="scq">Self-check: in the plot above, what does the point <b>colour</b> represent?</p>
+<div class="selfcheck" data-answer="1" data-explain="color is mapped inside aes() to harvesting_regime, so the point colors show the harvesting regime.">
+<p class="scq">Self-check: in the plot above, what does the point <b>color</b> represent?</p>
 <label><input type="radio"> the algae strain</label>
 <label><input type="radio"> the harvesting regime</label>
 <label><input type="radio"> the abundance</label>
@@ -548,6 +550,8 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 </div>
 </div>
 </div>
+
+<hr>
 
 <!-- Legacy pdf-report version of these exercises (kept dormant; the interactive rooms above are the live version). -->
 
@@ -700,6 +704,8 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/). Xie, Allaire, and Grolemund's reference for authoring reproducible reports, covering chunk options, output formats, and document structure.
 
 - [R Markdown cheat sheet](https://rstudio.github.io/cheatsheets/rmarkdown.pdf). A two-page summary of R Markdown syntax and knitr chunk options for quickly formatting reports.
+
+<hr>
 
 <!-- end -->
 
