@@ -33,7 +33,9 @@ Easy! Let's look at one of the objects that comes with our class code base. What
 algae_data
 ```
 
-**Concept check.** Fill in the blank (`____`) to store the number `5` in an object called `my_number`, then print it. Press **Run** (or Ctrl/⌘ + Enter).
+#### concept check {-}
+
+Fill in the blank (`____`) to store the number `5` in an object called `my_number`, then print it. Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">my_number <- ____
 my_number</textarea></div>
@@ -44,6 +46,8 @@ my_number</textarea></div>
 <label><input type="radio"> the double equals, ==</label>
 <label><input type="radio"> the plus sign, +</label>
 </div>
+
+<hr>
 
 ## functions {-}
 
@@ -84,9 +88,9 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> %in% c(18, 19, 20))` ## equal to 18 or 19 or 20
 
-### concept check {-}
+#### concept check {-}
 
-Fill in the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run.
+Fill in the the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea></div>
 
@@ -96,6 +100,8 @@ Fill in the blank below so that only rows where `chemical_species` equals `"FAs"
 <label><input type="radio"> a double equals, ==</label>
 <label><input type="radio"> the arrow, &lt;-</label>
 </div>
+
+<hr>
 
 ## ggplot & geoms {-}
 
@@ -188,10 +194,14 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-**Concept check.** Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press **Run**.
+#### concept check {-}
+
+Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = abundance)) +
   ____</textarea></div>
+
+<hr>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
 

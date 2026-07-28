@@ -15,8 +15,8 @@
 .webr-cell .webr-output .webr-out.err { color: #ff9a9a; } .webr-cell .webr-output .webr-out.muted { opacity: .6; }
 .webr-cell .webr-output canvas.webr-plot { max-width: 100%; border-radius: 0; margin: 8px 0; display: block; background: #fff; }
 
-.selfcheck { border: 1px solid #d6dde3; border-left: 4px solid #004529; border-radius: 0; padding: 12px 14px; margin: 16px 0; background: #eef5ee; }
-.selfcheck .scq { font-weight: 600; margin: 0 0 8px; }
+.selfcheck { border: 1px solid #d6dde3; border-radius: 0; padding: 12px 14px; margin: 16px 0; background: #eef5ee; color: #000; font-weight: normal; }
+.selfcheck .scq { font-weight: normal; margin: 0 0 8px; }
 .selfcheck label { display: block; margin: 4px 0; cursor: pointer; }
 .selfcheck input[type="radio"] { margin-right: 7px; }
 .selfcheck .sccheck { margin-top: 8px; background: #004529; color: #fff; border: 0; border-radius: 0; padding: 5px 14px;

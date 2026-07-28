@@ -142,7 +142,10 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <span><span class="co">## 10         1 Tsv1         Heavy             non_essential_A…</span></span>
 <span><span class="co">## # ℹ 170 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
-<p><strong>Concept check.</strong> Fill in the blank (<code>____</code>) to store the number <code>5</code> in an object called <code>my_number</code>, then print it. Press <strong>Run</strong> (or Ctrl/⌘ + Enter).</p>
+<div id="concept-check" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank (<code>____</code>) to store the number <code>5</code> in an object called <code>my_number</code>, then print it. Press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">my_number &lt;- ____
 my_number</textarea>
@@ -154,6 +157,8 @@ Self-check: which operator stores a value inside an object in R?
 <p><label><input type="radio"> the arrow, &lt;-</label>
 <label><input type="radio"> the double equals, ==</label>
 <label><input type="radio"> the plus sign, +</label></p>
+</div>
+<hr>
 </div>
 </div>
 <div id="functions" class="section level2 unnumbered">
@@ -227,10 +232,10 @@ Self-check: which operator stores a value inside an object in R?
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20))</code> ## equal to 18 or 19 or 20</p>
-<div id="concept-check" class="section level3 unnumbered">
-<h3>concept check<a class="anchor" aria-label="anchor" href="#concept-check"><i class="fas fa-link"></i></a>
-</h3>
-<p>Fill in the blank below so that only rows where <code>chemical_species</code> equals <code>"FAs"</code> are kept, then press Run.</p>
+<div id="concept-check-1" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-1"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the the blank below so that only rows where <code>chemical_species</code> equals <code>"FAs"</code> are kept, then press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea>
 </div>
@@ -242,6 +247,7 @@ Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()<
 <label><input type="radio"> a double equals, ==</label>
 <label><input type="radio"> the arrow, &lt;-</label></p>
 </div>
+<hr>
 </div>
 </div>
 <div id="ggplot-geoms" class="section level2 unnumbered">
@@ -321,11 +327,15 @@ Self-check: in the plot above, what does the point <b>colour</b> represent?
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-95-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
-<p><strong>Concept check.</strong> Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press <strong>Run</strong>.</p>
+<div id="concept-check-2" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-2"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = abundance)) +
   ____</textarea>
 </div>
+<hr>
 <script type="module" src="/integrated_bioanalytics/webr-cell.js"></script><!--
 ## markdown {-}
 
@@ -345,6 +355,7 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 -->
+</div>
 </div>
 <div id="exercises" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
@@ -537,9 +548,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <li><a class="nav-link" href="#data-visualization-i">data visualization I</a></li>
 <li><a class="nav-link" href="#section"></a></li>
 <li><a class="nav-link" href="#objects">objects</a></li>
-<li>
-<a class="nav-link" href="#functions">functions</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#concept-check">concept check</a></li></ul>
-</li>
+<li><a class="nav-link" href="#functions">functions</a></li>
 <li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
 <li><a class="nav-link" href="#exercises">exercises</a></li>
 <li><a class="nav-link" href="#section-1"></a></li>
