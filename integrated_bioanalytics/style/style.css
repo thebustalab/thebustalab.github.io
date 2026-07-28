@@ -17,6 +17,31 @@ div.rmdnote {
 }
 
 /* ============================================================
+   Code blocks — dark background on ALL pages (both light and dark
+   themes), square corners, with Spectral-palette syntax accents:
+   #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5
+   !important is used to reliably override the bs4/bootstrap theme;
+   the light base text colour guarantees readability on the dark bg.
+   ============================================================ */
+pre, div.sourceCode > pre {
+  background-color: #26292e !important;
+  border: 1px solid #3a3f46 !important;
+  border-radius: 0 !important;
+}
+pre, pre code, pre span { color: #e6e9ed !important; }
+pre code { background-color: transparent !important; }
+
+/* syntax token accents (comments stay muted grey) */
+pre span.co, pre span.cv, pre span.do, pre span.an, pre span.wa, pre span.in { color: #9aa0a8 !important; font-style: italic; }
+pre span.st, pre span.ss, pre span.vs, pre span.ch { color: #e6f598 !important; }
+pre span.fu, pre span.bu { color: #66c2a5 !important; }
+pre span.kw, pre span.cf, pre span.dt, pre span.im { color: #f46d43 !important; }
+pre span.va { color: #fee08b !important; }
+pre span.dv, pre span.fl, pre span.bn, pre span.cn { color: #abdda4 !important; }
+pre span.op, pre span.sc, pre span.at, pre span.ot { color: #fdae61 !important; }
+pre span.er { color: #f46d43 !important; }
+
+/* ============================================================
    Dark mode
    Activated by data-theme="dark" on <html> (set by the toggle
    in style/bs4_book.html). Light remains the default; figures

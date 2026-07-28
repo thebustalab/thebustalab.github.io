@@ -1,25 +1,29 @@
-/* webr-cell.css — styling for in-book runnable R cells + self-checks (works over any book theme). */
-.webr-cell { border: 1px solid #d6dde3; border-radius: 0; margin: 16px 0; overflow: hidden; background: #f7f9fb; }
-.webr-cell textarea { width: 100%; min-height: 84px; resize: vertical; border: 0; border-bottom: 1px solid #e3e8ec;
-  background: #0d1b26; color: #e8eef2; padding: 12px 14px; margin: 0; display: block;
-  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.webr-cell textarea:focus { outline: none; box-shadow: inset 0 0 0 2px #ffd88c; }
+/* webr-cell.css — runnable R cells + self-checks, dark to match the book's code chunks.
+   Code-chunk styling (dark bg + palette syntax accents) lives in style/style.css so it
+   applies book-wide; this file styles the interactive cells + self-checks to match.
+   Spectral accent palette: #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 */
+
+.webr-cell { border: 1px solid #3a3f46; border-radius: 0; margin: 16px 0; overflow: hidden; background: #26292e; }
+.webr-cell textarea { width: 100%; min-height: 84px; resize: vertical; border: 0; border-bottom: 1px solid #3a3f46;
+  background: #26292e; color: #e6e9ed; padding: 10px 12px; margin: 0; display: block;
+  font: 87.5%/1.5 "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.webr-cell textarea:focus { outline: none; box-shadow: inset 0 0 0 2px #fee08b; }
 .webr-cell .webr-bar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; }
-.webr-cell .webr-run { background: #004529; color: #fff; border: 0; border-radius: 0; padding: 6px 15px;
+.webr-cell .webr-run { background: #66c2a5; color: #0f231b; border: 0; border-radius: 0; padding: 6px 15px;
   font: 600 13px system-ui, sans-serif; cursor: pointer; }
 .webr-cell .webr-run:disabled { opacity: .5; cursor: default; }
-.webr-cell .webr-status { font-size: 12px; color: #8a6d1f; }
+.webr-cell .webr-status { font-size: 12px; color: #fee08b; }
 .webr-cell .webr-output { padding: 0 12px 12px; }
-.webr-cell .webr-output .webr-out { background: #0d1b26; color: #e8eef2; border-radius: 0; padding: 10px 12px; margin: 8px 0;
-  white-space: pre-wrap; overflow: auto; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.webr-cell .webr-output .webr-out.err { color: #ff9a9a; } .webr-cell .webr-output .webr-out.muted { opacity: .6; }
-.webr-cell .webr-output canvas.webr-plot { max-width: 100%; border-radius: 0; margin: 8px 0; display: block; background: #fff; }
+.webr-cell .webr-output .webr-out { background: #26292e; color: #e6e9ed; border: 1px solid #3a3f46; border-radius: 0; padding: 10px 12px; margin: 8px 0;
+  white-space: pre-wrap; overflow: auto; font: 87.5%/1.5 "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.webr-cell .webr-output .webr-out.err { color: #f46d43; } .webr-cell .webr-output .webr-out.muted { opacity: .6; }
+.webr-cell .webr-output canvas.webr-plot { max-width: 100%; border: 1px solid #3a3f46; border-radius: 0; margin: 8px 0; display: block; background: #fff; }
 
-.selfcheck { border: 1px solid #d6dde3; border-radius: 0; padding: 12px 14px; margin: 16px 0; background: #eef5ee; color: #000; font-weight: normal; }
-.selfcheck .scq { font-weight: normal; margin: 0 0 8px; }
+.selfcheck { border: 1px solid #3a3f46; border-radius: 0; padding: 12px 14px; margin: 16px 0; background: #26292e; color: #e6e9ed; font-weight: normal; }
+.selfcheck .scq { font-weight: normal; margin: 0 0 8px; color: #e6e9ed; }
 .selfcheck label { display: block; margin: 4px 0; cursor: pointer; }
 .selfcheck input[type="radio"] { margin-right: 7px; }
-.selfcheck .sccheck { margin-top: 8px; background: #004529; color: #fff; border: 0; border-radius: 0; padding: 5px 14px;
+.selfcheck .sccheck { margin-top: 8px; background: #66c2a5; color: #0f231b; border: 0; border-radius: 0; padding: 5px 14px;
   font: 600 12.5px system-ui, sans-serif; cursor: pointer; }
 .selfcheck .scfb { margin-top: 8px; font-size: 13px; min-height: 16px; }
-.selfcheck .scfb.ok { color: #16794b; } .selfcheck .scfb.no { color: #b42318; }
+.selfcheck .scfb.ok { color: #abdda4; } .selfcheck .scfb.no { color: #f46d43; }

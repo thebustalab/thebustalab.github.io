@@ -264,7 +264,7 @@ algae_data
 
 #### concept check {-}
 
-Fill in the blank (`____`) to store the number `5` in an object called `my_number`, then print it. Press Run.
+Fill in the blank below to store the number `5` in an object called `my_number`. Then, on a new line, type the name of the object. That tells R to show the contents of the object on the screen.
 
 <div class="webr-cell"><textarea class="webr-code">my_number <- ____
 my_number</textarea></div>
@@ -365,7 +365,7 @@ Here are a variety of ways to filter:
 
 #### concept check {-}
 
-Fill in the the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run.
+Fill in the the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run to see the output of the filter.
 
 <div class="webr-cell"><textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea></div>
 
