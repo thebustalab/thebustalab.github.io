@@ -29,6 +29,9 @@ pre, div.sourceCode > pre {
   border-radius: 0 !important;
 }
 pre, pre code, pre span { color: #e6e9ed !important; }
+/* inline code chips in prose — dark to match the code blocks */
+code { background-color: #26292e !important; color: #e6e9ed !important; border-radius: 0 !important; }
+/* keep block code transparent so it shows the <pre> background + palette tokens */
 pre code { background-color: transparent !important; }
 
 /* syntax token accents (comments stay muted grey) */
