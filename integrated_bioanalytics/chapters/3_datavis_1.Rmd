@@ -6,6 +6,11 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google "data visualization" and see what happens). Data visualization is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
+</script>
+
 ## {-}
 
 ## objects {-}
@@ -27,6 +32,18 @@ Easy! Let's look at one of the objects that comes with our class code base. What
 ```{r, message = FALSE}
 algae_data
 ```
+
+**Concept check.** Fill in the blank (`____`) to store the number `5` in an object called `my_number`, then print it. Press **Run** (or Ctrl/⌘ + Enter).
+
+<div class="webr-cell"><textarea class="webr-code">my_number <- ____
+my_number</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The arrow &lt;- takes the value on the right and stores it in the object named on the left.">
+<p class="scq">Self-check: which operator stores a value inside an object in R?</p>
+<label><input type="radio"> the arrow, &lt;-</label>
+<label><input type="radio"> the double equals, ==</label>
+<label><input type="radio"> the plus sign, +</label>
+</div>
 
 ## functions {-}
 
@@ -66,6 +83,17 @@ Here are a variety of ways to filter:
 `filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
 
 `filter(<data>, <variable> %in% c(18, 19, 20))` ## equal to 18 or 19 or 20
+
+**Concept check.** Fill in the blank so that only rows where `chemical_species` equals `"FAs"` are kept, then press **Run**.
+
+<div class="webr-cell"><textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Inside filter(), == tests for equality. A single = would try to assign, and &lt;- is the assignment arrow.">
+<p class="scq">Self-check: inside <code>filter()</code>, which operator tests whether two values are equal?</p>
+<label><input type="radio"> a single equals, =</label>
+<label><input type="radio"> a double equals, ==</label>
+<label><input type="radio"> the arrow, &lt;-</label>
+</div>
 
 ## ggplot & geoms {-}
 
@@ -107,11 +135,6 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 **Try it live — right here in your browser, nothing to install.** This is the same idea as a live R console. First make the small algae table, then plot it. Edit the code and press **Run** (or Ctrl/⌘ + Enter); both cells share one R session, so `algae_data_small` from the first cell is available in the second.
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
-<script>
-window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
-</script>
-
 <div class="webr-cell"><textarea class="webr-code">algae_data_small <- algae_data %>%
   filter(chemical_species == "FAs")
 head(algae_data_small)</textarea></div>
@@ -125,8 +148,6 @@ head(algae_data_small)</textarea></div>
 <label><input type="radio"> the harvesting regime</label>
 <label><input type="radio"> the abundance</label>
 </div>
-
-<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
@@ -165,6 +186,14 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
+**Concept check.** Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press **Run**.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = abundance)) +
+  ____</textarea></div>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+
+<!--
 ## markdown {-}
 
 Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: `File -> New File -> R Markdown`. You should get a template document that compiles when you press "knit".
@@ -184,6 +213,7 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
+-->
 
 ## exercises {-}
 
@@ -194,7 +224,7 @@ cat('
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/cover.png" alt="Signal in the Cold cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Signal in the Cold</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filter() + plotting</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization &middot; filtering + plotting</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A remote field station on a frozen Alaskan lake. Filter and plot the survey data to save a lost pilot.</div>
 </div>
 </div>

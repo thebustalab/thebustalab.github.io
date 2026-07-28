@@ -15,9 +15,8 @@
     #status { font-size:13px; color:var(--amber); min-height:18px; }
     .dslabel { font-size:12px; opacity:.7; text-transform:uppercase; letter-spacing:.04em; margin:2px 0 8px; }
     .chips { display:flex; flex-wrap:wrap; gap:6px; }
-    .chip { font:12px ui-monospace, Menlo, Consolas, monospace; padding:4px 10px; border-radius:20px; cursor:pointer;
+    .chip { font:12px ui-monospace, Menlo, Consolas, monospace; padding:4px 10px; border-radius:20px;
             border:1px solid var(--line); background:#0a1620; color:var(--amber); }
-    .chip:hover { border-color:var(--amber); background:#12242f; }
     textarea { width:100%; min-height:150px; resize:vertical; background:#0a1620; color:var(--ink); border:1px solid var(--line);
                border-radius:8px; padding:12px 14px; font:13px/1.5 ui-monospace, Menlo, Consolas, monospace; }
     .row { display:flex; align-items:center; gap:12px; margin-top:10px; }
@@ -42,7 +41,7 @@
     </div>
 
     <div class="card">
-      <div class="dslabel">Datasets loaded (click to peek — inserts <code>head(name)</code>)</div>
+      <div class="dslabel">Datasets loaded</div>
       <div class="chips" id="chips"></div>
       <div class="hint" style="margin-top:8px">Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Packages ready: dplyr, ggplot2, tidyr, readr.</div>
     </div>
@@ -79,12 +78,11 @@
     const runBtn = document.getElementById("run");
     codeEl.value = `# R in your browser. Try it:\nhead(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
 
-    // dataset chips — click to peek
+    // dataset chips — static labels of what's loaded (no click-to-insert; it clobbered the editor)
     const chips = document.getElementById("chips");
     DATASETS.forEach(ds => {
-      const b = document.createElement("button");
+      const b = document.createElement("span");
       b.className = "chip"; b.textContent = ds.name;
-      b.onclick = () => { codeEl.value = `head(${ds.name})`; codeEl.focus(); };
       chips.appendChild(b);
     });
 

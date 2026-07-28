@@ -108,7 +108,10 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google “data visualization” and see what happens). Data visualization is also rife with “trendy” visuals, misleading visuals, and visuals that look cool but don’t actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let’s get started!</p>
-<div id="section" class="section level2 unnumbered">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
+</script><div id="section" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="objects" class="section level2 unnumbered">
@@ -139,6 +142,19 @@
 <span><span class="co">## 10         1 Tsv1         Heavy             non_essential_A…</span></span>
 <span><span class="co">## # ℹ 170 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
+<p><strong>Concept check.</strong> Fill in the blank (<code>____</code>) to store the number <code>5</code> in an object called <code>my_number</code>, then print it. Press <strong>Run</strong> (or Ctrl/⌘ + Enter).</p>
+<div class="webr-cell">
+<textarea class="webr-code">my_number &lt;- ____
+my_number</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="The arrow &lt;- takes the value on the right and stores it in the object named on the left.">
+<p class="scq">
+Self-check: which operator stores a value inside an object in R?
+</p>
+<p><label><input type="radio"> the arrow, &lt;-</label>
+<label><input type="radio"> the double equals, ==</label>
+<label><input type="radio"> the plus sign, +</label></p>
+</div>
 </div>
 <div id="functions" class="section level2 unnumbered">
 <h2>functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
@@ -211,6 +227,18 @@
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20))</code> ## equal to 18 or 19 or 20</p>
+<p><strong>Concept check.</strong> Fill in the blank so that only rows where <code>chemical_species</code> equals <code>"FAs"</code> are kept, then press <strong>Run</strong>.</p>
+<div class="webr-cell">
+<textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Inside filter(), == tests for equality. A single = would try to assign, and &lt;- is the assignment arrow.">
+<p class="scq">
+Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, which operator tests whether two values are equal?
+</p>
+<p><label><input type="radio"> a single equals, =</label>
+<label><input type="radio"> a double equals, ==</label>
+<label><input type="radio"> the arrow, &lt;-</label></p>
+</div>
 </div>
 <div id="ggplot-geoms" class="section level2 unnumbered">
 <h2>ggplot &amp; geoms<a class="anchor" aria-label="anchor" href="#ggplot-geoms"><i class="fas fa-link"></i></a>
@@ -245,10 +273,7 @@
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-90-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p><strong>Try it live — right here in your browser, nothing to install.</strong> This is the same idea as a live R console. First make the small algae table, then plot it. Edit the code and press <strong>Run</strong> (or Ctrl/⌘ + Enter); both cells share one R session, so <code>algae_data_small</code> from the first cell is available in the second.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
-<script>
-window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
-</script><div class="webr-cell">
+<div class="webr-cell">
 <textarea class="webr-code">algae_data_small &lt;- algae_data %&gt;%
   filter(chemical_species == "FAs")
 head(algae_data_small)</textarea>
@@ -265,7 +290,7 @@ Self-check: in the plot above, what does the point <b>colour</b> represent?
 <label><input type="radio"> the harvesting regime</label>
 <label><input type="radio"> the abundance</label></p>
 </div>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script><p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data (as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
+<p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data (as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
@@ -292,20 +317,30 @@ Self-check: in the plot above, what does the point <b>colour</b> represent?
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-95-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<p><strong>Concept check.</strong> Fill in the blank with the geom that draws points, so each measurement shows up as a dot. Press <strong>Run</strong>.</p>
+<div class="webr-cell">
+<textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = abundance)) +
+  ____</textarea>
 </div>
-<div id="markdown" class="section level2 unnumbered">
-<h2>markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
-</h2>
-<p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit”.</p>
-<p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
-<p>You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a “chunk” or R code. That looks like this:</p>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>You can compile this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:</p>
-<ol style="list-style-type: decimal">
-<li><p>Headings: When you compile that code, the “# My first analysis” creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, “## Part 1” will create a subheading, “### Part 1.1” will create a sub-subheading, and so on.</p></li>
-<li><p>Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.</p></li>
-<li><p>You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.</p></li>
-</ol>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script><!--
+## markdown {-}
+
+Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: `File -> New File -> R Markdown`. You should get a template document that compiles when you press "knit".
+
+Customize this document by modifying the title, and add `author: "your_name"` to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.
+
+You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a "chunk" or R code. That looks like this:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+You can compile this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:
+
+1. Headings: When you compile that code, the "# My first analysis" creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, "## Part 1" will create a subheading, "### Part 1.1" will create a sub-subheading, and so on.
+
+2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
+
+3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
+-->
 </div>
 <div id="exercises" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
@@ -316,7 +351,7 @@ Self-check: in the plot above, what does the point <b>colour</b> represent?
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis/alaska/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Signal in the Cold</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">
-Data Visualization · filter() + plotting
+Data Visualization · filtering + plotting
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
 A remote field station on a frozen Alaskan lake. Filter and plot the survey data to save a lost pilot.
@@ -500,7 +535,6 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <li><a class="nav-link" href="#objects">objects</a></li>
 <li><a class="nav-link" href="#functions">functions</a></li>
 <li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
-<li><a class="nav-link" href="#markdown">markdown</a></li>
 <li><a class="nav-link" href="#exercises">exercises</a></li>
 <li><a class="nav-link" href="#section-1"></a></li>
 <li><a class="nav-link" href="#further-reading">further reading</a></li>
