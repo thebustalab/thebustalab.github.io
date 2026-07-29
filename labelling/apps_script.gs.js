@@ -14,6 +14,9 @@
  *                             may be the same spreadsheet as SHEET_ID with a
  *                             different tab, or a separate spreadsheet)
  *   ENZYME_SHEET_NAME       = "enzyme_labels"  (the enzyme data tab)
+ *   ESCAPE_SHEET_ID         = the Escape-room Feedback Sheet's ID (may be a tab
+ *                             in an existing spreadsheet or its own)
+ *   ESCAPE_SHEET_NAME       = "escape_feedback"  (the escape-feedback tab)
  *   ACCESS_KEY              = the token in the labeller link's ?k=...  (the
  *                             real value lives in the link / password manager,
  *                             NOT here — keep it out of git)
@@ -39,6 +42,10 @@
  *        timestamp | labeller | abstract_id | abstract_title | abstract_text |
  *        doi | enzyme_name | product | sequence | not_characterization |
  *        submission_id | elapsed_seconds | client_timestamp | notes
+ *      And the escape-feedback tab (ESCAPE_SHEET_NAME, in ESCAPE_SHEET_ID's
+ *      spreadsheet); first row is headers
+ *        timestamp | labeller | scenario | scenario_title | comments |
+ *        submission_id | client_timestamp
  *   2. Extensions → Apps Script. Paste this file's contents into Code.gs.
  *   3. Set the CONFIG constants below (see REDEPLOY CHECKLIST).
  *   4. Deploy → New deployment → type: Web app → execute as Me, access "Anyone".
@@ -71,6 +78,15 @@ const ENZYME_SHEET_NAME = "enzyme_labels";
 const FORM_RESPONSES_SHEET_ID = "REPLACE_WITH_FORM_RESPONSES_SHEET_ID";
 const FORM_RESPONSES_SHEET_NAME = "Form Responses 1";
 
+// Escape-room test-drive feedback destination. Students play a ready escape
+// room and leave feedback; each submission is one row here and scores
+// ESCAPE_POINTS_PER_ROW on the leaderboard, capped at one row per scenario per
+// person (so re-submitting the same room can't stack points). May be a tab in
+// an existing spreadsheet or its own. Set in the cloud editor; keep the
+// placeholder in git.
+const ESCAPE_SHEET_ID   = "REPLACE_WITH_ESCAPE_SHEET_ID";
+const ESCAPE_SHEET_NAME = "escape_feedback";
+
 // ───────────────────────────────────────────────────────────────────────────
 // HTTP handlers
 // ───────────────────────────────────────────────────────────────────────────
@@ -102,6 +118,13 @@ function doPost(e) {
   if (payload.k !== ACCESS_KEY) {
     return jsonResponse({ status: "error", error: "bad token" });
   }
+
+  // Escape-room feedback is keyed by `scenario`, not `abstract_id`, so route it
+  // before the shared abstract_id check and let it validate its own fields.
+  if (payload.task_type === "escape") {
+    return handleEscapePost(payload);
+  }
+
   if (!payload.labeller || !payload.abstract_id || !payload.submission_id) {
     return jsonResponse({ status: "error", error: "missing required fields" });
   }
@@ -199,6 +222,34 @@ function handleEnzymePost(payload) {
   return jsonResponse({ status: "ok", appended: rows.length });
 }
 
+// ─── Escape-room feedback → ESCAPE_SHEET_ID / ESCAPE_SHEET_NAME ──────────────
+// One row per (student, scenario) test-drive. `scenario` sits in column 3 (the
+// same slot as abstract_id in the other sheets), so tallyLabellerColumn scores
+// it unchanged; the cap of 1 per scenario keeps a re-submission from stacking.
+function handleEscapePost(payload) {
+  if (!payload.labeller || !payload.scenario || !payload.submission_id) {
+    return jsonResponse({ status: "error", error: "missing required fields" });
+  }
+  const comments = String(payload.comments || "").trim();
+  if (!comments) {
+    return jsonResponse({ status: "error", error: "feedback comments are required" });
+  }
+  if (!ESCAPE_SHEET_ID || String(ESCAPE_SHEET_ID).indexOf("REPLACE_") === 0) {
+    return jsonResponse({ status: "error", error: "escape sheet not configured" });
+  }
+  const row = [[
+    new Date().toISOString(),
+    payload.labeller,
+    payload.scenario,            // column 3 = id (mirrors abstract_id)
+    payload.scenario_title || "",
+    comments,
+    payload.submission_id,
+    payload.client_timestamp || "",
+  ]];
+  appendRows(ESCAPE_SHEET_ID, ESCAPE_SHEET_NAME, row);
+  return jsonResponse({ status: "ok", appended: 1 });
+}
+
 // Batched append to minimise quota use.
 function appendRows(sheetId, sheetName, rows) {
   if (!rows || rows.length === 0) return;
@@ -261,6 +312,11 @@ function buildLeaderboard() {
   if (ENZYME_SHEET_ID && String(ENZYME_SHEET_ID).indexOf("REPLACE_") !== 0) {
     tallyLabellerColumn(ENZYME_SHEET_ID, ENZYME_SHEET_NAME, counts, ENZYME_POINTS_PER_ROW);
   }
+  // Escape-room feedback — ESCAPE_POINTS_PER_ROW per scenario, capped at one row
+  // per scenario per person so a re-submission can't stack points.
+  if (ESCAPE_SHEET_ID && String(ESCAPE_SHEET_ID).indexOf("REPLACE_") !== 0) {
+    tallyLabellerColumn(ESCAPE_SHEET_ID, ESCAPE_SHEET_NAME, counts, ESCAPE_POINTS_PER_ROW, 1);
+  }
 
   // Newsletter form-response sheet — one point per submission (any type).
   // Submitter name lives in the "Your name" column added in May 2026.
@@ -310,12 +366,19 @@ var MAX_ROWS_PER_ABSTRACT = 5;
 // Keep in step with TASK_TYPES[...].points in index.html and points_per_row in
 // newsletter/newsletter.py.
 var ENZYME_POINTS_PER_ROW = 3;
+// Points a single escape-room test-drive earns. Keep in step with
+// TASK_TYPES.escape.points in index.html and the escape source in
+// newsletter/newsletter.py.
+var ESCAPE_POINTS_PER_ROW = 10;
 
 // Add each labeller's capped, weighted points from one sheet (labeller =
 // column 2, abstract_id = column 3) into `counts`. `pointsPerRow` weights each
-// counted row (1 for triples, ENZYME_POINTS_PER_ROW for enzymes).
-function tallyLabellerColumn(sheetId, sheetName, counts, pointsPerRow) {
+// counted row (1 for triples, ENZYME_POINTS_PER_ROW for enzymes,
+// ESCAPE_POINTS_PER_ROW for escape rooms). `maxRowsPerAbstract` overrides the
+// per-id row cap (escape passes 1 so a re-submission can't stack).
+function tallyLabellerColumn(sheetId, sheetName, counts, pointsPerRow, maxRowsPerAbstract) {
   const weight = pointsPerRow || 1;
+  const cap = maxRowsPerAbstract || MAX_ROWS_PER_ABSTRACT;
   try {
     const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
     if (!sheet) return;
@@ -332,7 +395,7 @@ function tallyLabellerColumn(sheetId, sheetName, counts, pointsPerRow) {
     }
     for (const name in perAbstract) {
       for (const absId in perAbstract[name]) {
-        counts[name] = (counts[name] || 0) + Math.min(perAbstract[name][absId], MAX_ROWS_PER_ABSTRACT) * weight;
+        counts[name] = (counts[name] || 0) + Math.min(perAbstract[name][absId], cap) * weight;
       }
     }
   } catch (err) {

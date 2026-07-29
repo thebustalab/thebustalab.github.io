@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Abstract labelling</title>
+<title>Lab Quests</title>
 <style>
   :root {
     --bg: #fafafa;
@@ -32,6 +32,11 @@
   h1 {
     font-size: 1.4rem;
     margin: 0 0 0.5rem 0;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
   }
   .progress {
     color: var(--muted);
@@ -230,6 +235,42 @@
     margin-bottom: 0.6rem;
   }
   .task-badge.enzyme { background: #6a4a8a; }
+  .task-badge.escape { background: #2f8a5b; }
+
+  /* Mode switch bar */
+  .mode-bar { display: flex; gap: 0.5rem; margin: 0.75rem 0 1rem; }
+  .mode-btn {
+    font: inherit; cursor: pointer; padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: #fff; color: var(--fg);
+  }
+  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Escape-room list */
+  .escape-intro p { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 1rem; }
+  .escape-row {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.8rem 1rem; margin-bottom: 0.8rem;
+  }
+  .escape-row-head { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+  .escape-title { font-weight: 600; font-size: 1.05rem; }
+  .escape-sub { color: var(--muted); font-size: 0.85rem; }
+  .escape-new {
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #fff; background: #2f8a5b; border-radius: 4px; padding: 0.05rem 0.35rem;
+  }
+  .escape-row-actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.6rem; }
+  .escape-play {
+    color: var(--accent); font-weight: 600; text-decoration: none;
+    border: 1px solid var(--accent); border-radius: 6px; padding: 0.3rem 0.7rem;
+  }
+  .escape-play:hover { background: var(--accent); color: #fff; }
+  .escape-feedback { margin-top: 0.8rem; }
+  .escape-feedback textarea {
+    width: 100%; box-sizing: border-box; font: inherit;
+    border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem;
+  }
+  .escape-row.done { opacity: 0.7; }
   .abstract-link { font-size: 0.85rem; margin-top: 0.6rem; }
   .abstract-link a { color: var(--accent); }
   .enzyme-row {
@@ -279,8 +320,16 @@
 <body>
 <main>
 
-  <h1>Abstract labelling</h1>
+  <h1>Lab Quests</h1>
+  <p class="subtitle">Pick a way to pitch in — every one earns leaderboard points.</p>
   <div class="progress" id="progress">Loading…</div>
+
+  <!-- Mode switch: labelling queue vs escape-room test-drives. Hidden until a
+       name is saved; the escape button appears only when ready rooms exist. -->
+  <div class="mode-bar hidden" id="mode-bar">
+    <button class="mode-btn active" id="mode-label" data-mode="label">Label abstracts</button>
+    <button class="mode-btn hidden" id="mode-escape" data-mode="escape">Test escape rooms</button>
+  </div>
 
   <!-- Name prompt: shown only on first visit. Dropdown sourced from CONFIG.ROSTER below. -->
   <div class="name-prompt hidden" id="name-prompt">
@@ -351,10 +400,47 @@
     ✓ All abstracts have two labellers. Thanks for your help!
   </div>
 
+  <!-- ── Escape-room test-drive card ─────────────────────────────────────── -->
+  <div id="escape-card" class="hidden">
+    <div class="escape-intro">
+      <div class="task-badge escape">Escape-room test-drive · 10 pts</div>
+      <p>Play a room end to end, then tell us how it went. Each room is worth
+         <strong>10 points</strong> the first time you give feedback on it.</p>
+    </div>
+    <div id="escape-list"></div>
+    <div id="escape-empty" class="all-done hidden">
+      No escape rooms are ready to test just yet — check back soon.
+    </div>
+  </div>
+
+  <!-- Template for one ready-room row (cloned per scenario in JS) -->
+  <template id="escape-row-tpl">
+    <div class="escape-row">
+      <div class="escape-row-head">
+        <span class="escape-new hidden">NEW</span>
+        <span class="escape-title"></span>
+        <span class="escape-sub"></span>
+      </div>
+      <div class="escape-row-actions">
+        <a class="escape-play" target="_blank" rel="noopener">Play ↗</a>
+        <button class="add-row escape-feedback-toggle">Leave feedback</button>
+      </div>
+      <div class="escape-feedback hidden">
+        <label class="field-label">How was it? What worked, what was confusing, any bugs? (required)</label>
+        <textarea class="escape-comments" rows="3" placeholder="your feedback on this room…"></textarea>
+        <div class="form-actions">
+          <div class="spacer"></div>
+          <button class="submit escape-submit">Submit feedback →</button>
+        </div>
+        <div class="status escape-status"></div>
+      </div>
+    </div>
+  </template>
+
   <!-- Leaderboard: one point per labelling triple OR newsletter submission. -->
   <div id="leaderboard" class="leaderboard hidden">
     <h3>Leaderboard</h3>
-    <div class="leaderboard-sub">One point per compound–pathogen triple, three points per characterised enzyme, and points for each newsletter submission (photo / data update / abstract / reminder).</div>
+    <div class="leaderboard-sub">One point per compound–pathogen triple, three points per characterised enzyme, ten points per escape-room test-drive, and points for each newsletter submission (photo / data update / abstract / reminder).</div>
     <table id="leaderboard-table"><tbody></tbody></table>
   </div>
 
@@ -362,7 +448,9 @@
 
 <script>
 /*
- * Abstract labelling — single-page client for lab-internal NLP gold-standard labels.
+ * Lab Quests (formerly "Abstract labelling") — single-page client for lab-internal
+ * contribution tasks: NLP gold-standard labelling (pathogen / enzyme) plus
+ * escape-room test-drives, each scoring leaderboard points.
  *
  * Storage backend is a Google Apps Script web app (URL set below in CONFIG).
  * Submissions POST as JSON-encoded text/plain to work around Apps Script's
@@ -402,8 +490,20 @@ const CONFIG = {
   TASK_TYPES: {
     pathogen: { label: "Compound–pathogen", labellersRequired: 2, points: 1 },
     enzyme:   { label: "Characterised enzyme", labellersRequired: 1, points: 3 },
+    escape:   { label: "Escape-room test-drive", labellersRequired: 1, points: 10 },
   },
   DEFAULT_TASK_TYPE: "pathogen",  // items with no task_type are pathogen items
+
+  // Escape-room test-drive task. Unlike the labelling tasks (a queue of pool
+  // items you work through), this is a list of ready escape rooms a student
+  // plays and gives feedback on. Ready scenarios are read live from the
+  // escape_rooms inventory (same github.io origin) filtered to
+  // status === "ready"; feedback routes to the escape sheet via Apps Script and
+  // scores TASK_TYPES.escape.points on the leaderboard (capped one per scenario
+  // per person, so re-submitting the same room doesn't stack). Absolute paths
+  // resolve from the GitHub Pages site root regardless of this tool's subpath.
+  ESCAPE_INVENTORY_URL: "/escape_rooms/rooms/scenario_inventory.json",
+  ESCAPE_PLAY_BASE: "/escape_rooms/",   // + "<chapter>/<scenario>/play.html"
 
   // Extra pool files fetched alongside abstracts.json and concatenated. Each
   // item should carry its own task_type. (Phase 1: enzyme items are a static
@@ -442,6 +542,8 @@ const state = {
   noRelMode: false,           // pathogen: "no relationships found" toggle
   notCharMode: false,         // enzyme: "not a functional characterisation" toggle
   products: [],               // distinct product names for the enzyme typeahead
+  readyScenarios: [],         // ready escape-room scenarios (from the inventory)
+  mode: "label",              // "label" | "escape"
 };
 
 // Task-type helpers ─────────────────────────────────────────────────────────
@@ -487,7 +589,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   await refreshServerState();
   fetchProducts();          // best-effort; populates the enzyme typeahead
   bindControls();
+
+  // Escape-room test-drives: load ready rooms and expose the mode switch.
+  state.readyScenarios = await fetchReadyScenarios();
+  if (state.readyScenarios.length > 0) $("mode-escape").classList.remove("hidden");
+  document.querySelectorAll(".mode-btn").forEach((b) =>
+    b.addEventListener("click", () => setMode(b.dataset.mode)));
+
   if (state.labeller) {
+    $("mode-bar").classList.remove("hidden");
     showNextAbstract();
   }
   refreshLeaderboard();
@@ -573,8 +683,149 @@ function saveName() {
   state.labeller = v;
   localStorage.setItem("labeller", v);
   $("name-prompt").classList.add("hidden");
+  $("mode-bar").classList.remove("hidden");
   showNextAbstract();
   refreshLeaderboard();
+}
+
+// ─── Escape-room test-drive ─────────────────────────────────────────────────
+async function fetchReadyScenarios() {
+  // Read the escape_rooms inventory (same site origin) and keep the ones marked
+  // ready for students. Best-effort: a fetch failure just yields no rooms.
+  try {
+    const r = await fetch(CONFIG.ESCAPE_INVENTORY_URL, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const inv = await r.json();
+    const list = Array.isArray(inv && inv.scenarios) ? inv.scenarios : [];
+    return list
+      .filter((s) => s && s.status === "ready" && s.chapter && s.scenario)
+      .map((s) => ({
+        slug: s.chapter + "/" + s.scenario,
+        title: s.title || s.scenario,
+        subtitle: s.subtitle || "",
+        playUrl: CONFIG.ESCAPE_PLAY_BASE + s.chapter + "/" + s.scenario + "/play.html",
+      }));
+  } catch (err) {
+    console.warn("Escape inventory unavailable:", err.message);
+    return [];
+  }
+}
+
+// localStorage set of scenario slugs this student has opened, so freshly-
+// promoted rooms can be badged NEW.
+function escapeSeenSet() {
+  try { return new Set(JSON.parse(localStorage.getItem("escape_seen") || "[]")); }
+  catch { return new Set(); }
+}
+function markScenarioSeen(slug) {
+  const seen = escapeSeenSet();
+  if (!seen.has(slug)) {
+    seen.add(slug);
+    localStorage.setItem("escape_seen", JSON.stringify([...seen]));
+  }
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  document.querySelectorAll(".mode-btn").forEach((b) =>
+    b.classList.toggle("active", b.dataset.mode === mode));
+  const escaping = mode === "escape";
+  $("escape-card").classList.toggle("hidden", !escaping);
+  // Labelling view = the labelling card OR the all-done screen; hide both while
+  // in escape mode, and re-pick the next item when returning to labelling.
+  if (escaping) {
+    $("labelling-card").classList.add("hidden");
+    $("all-done").classList.add("hidden");
+    renderEscapeList();
+  } else {
+    $("escape-card").classList.add("hidden");
+    if (state.labeller) showNextAbstract();
+  }
+}
+
+function renderEscapeList() {
+  const wrap = $("escape-list");
+  wrap.innerHTML = "";
+  const rooms = state.readyScenarios;
+  $("escape-empty").classList.toggle("hidden", rooms.length > 0);
+  const seen = escapeSeenSet();
+  const tpl = $("escape-row-tpl");
+  for (const room of rooms) {
+    const row = tpl.content.firstElementChild.cloneNode(true);
+    row.querySelector(".escape-title").textContent = room.title;
+    row.querySelector(".escape-sub").textContent = room.subtitle;
+    row.querySelector(".escape-new").classList.toggle("hidden", seen.has(room.slug));
+    const play = row.querySelector(".escape-play");
+    play.href = room.playUrl;
+    play.addEventListener("click", () => {
+      markScenarioSeen(room.slug);
+      row.querySelector(".escape-new").classList.add("hidden");
+    });
+    const fb = row.querySelector(".escape-feedback");
+    row.querySelector(".escape-feedback-toggle").addEventListener("click", () => {
+      fb.classList.toggle("hidden");
+    });
+    row.querySelector(".escape-submit").addEventListener("click", () =>
+      submitEscapeFeedback(room, row));
+    wrap.appendChild(row);
+  }
+}
+
+async function submitEscapeFeedback(room, row) {
+  const statusEl = row.querySelector(".escape-status");
+  const comments = row.querySelector(".escape-comments").value.trim();
+  if (!comments) {
+    statusEl.textContent = "Please add a few words of feedback before submitting.";
+    statusEl.className = "status escape-status error";
+    return;
+  }
+  const submitBtn = row.querySelector(".escape-submit");
+  submitBtn.disabled = true;
+  statusEl.textContent = "Submitting…";
+  statusEl.className = "status escape-status";
+
+  const payload = {
+    k: state.k,
+    labeller: state.labeller,
+    task_type: "escape",
+    scenario: room.slug,
+    scenario_title: room.title,
+    comments,
+    submission_id: cryptoRandomId(),
+    client_timestamp: new Date().toISOString(),
+  };
+
+  if (!CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.startsWith("REPLACE_")) {
+    console.log("[dev mode] escape payload:", payload);
+    finishEscapeRow(row, statusEl, "[dev mode] feedback printed to console.");
+    return;
+  }
+  try {
+    const r = await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const result = await r.json();
+    if (result.status !== "ok") throw new Error(result.error || "unknown");
+    markScenarioSeen(room.slug);
+    finishEscapeRow(row, statusEl, "Thanks! Feedback recorded ✓");
+    refreshLeaderboard();
+  } catch (err) {
+    statusEl.textContent = "Submit failed: " + err.message;
+    statusEl.className = "status escape-status error";
+    submitBtn.disabled = false;
+  }
+}
+
+function finishEscapeRow(row, statusEl, msg) {
+  statusEl.textContent = msg;
+  statusEl.className = "status escape-status ok";
+  row.classList.add("done");
+  row.querySelector(".escape-comments").disabled = true;
+  row.querySelector(".escape-submit").disabled = true;
+  row.querySelector(".escape-feedback-toggle").disabled = true;
 }
 
 // ─── Item selection ────────────────────────────────────────────────────────

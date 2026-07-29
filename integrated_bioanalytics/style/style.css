@@ -25,8 +25,10 @@ div.rmdnote {
    ============================================================ */
 pre, div.sourceCode > pre {
   background-color: #26292e !important;
+  background-image: none !important; /* bs4_book paints a light gradient IMAGE over the bg-colour */
   border: 1px solid #3a3f46 !important;
   border-radius: 0 !important;
+  margin: 0 0 1rem 0 !important; /* drop bs4's negative side margins so blocks align with the text + cells */
 }
 pre, pre code, pre span { color: #e6e9ed !important; }
 /* inline code chips in prose — dark to match the code blocks */
