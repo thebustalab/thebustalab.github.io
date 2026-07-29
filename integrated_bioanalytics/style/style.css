@@ -46,6 +46,14 @@ pre span.dv, pre span.fl, pre span.bn, pre span.cn { color: #abdda4 !important; 
 pre span.op, pre span.sc, pre span.at, pre span.ot { color: #fdae61 !important; }
 pre span.er { color: #f46d43 !important; }
 
+/* main-content horizontal rules a touch thicker, to match the TOC dividers */
+main hr { border-top-width: 2px !important; }
+
+/* Widen the main content column on large screens (bs4_book caps it at 45rem) */
+@media (min-width: 1200px) {
+  .container-fluid main { max-width: 60rem !important; }
+}
+
 /* ============================================================
    Dark mode
    Activated by data-theme="dark" on <html> (set by the toggle
