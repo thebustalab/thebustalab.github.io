@@ -49,9 +49,12 @@ pre span.er { color: #f46d43 !important; }
 /* main-content horizontal rules a touch thicker, to match the TOC dividers */
 main hr { border-top-width: 2px !important; }
 
-/* Widen the main content column on large screens (bs4_book caps it at 45rem) */
+/* Widen the layout on large screens. bs4_book caps the outer container at 95rem
+   and the main text column at 45rem; raise both. (main width is a readability
+   trade-off — very long prose lines get hard to read.) */
 @media (min-width: 1200px) {
-  .container-fluid main { max-width: 60rem !important; }
+  .container-fluid { max-width: 120rem !important; }
+  .container-fluid main { max-width: 78rem !important; }
 }
 
 /* ============================================================
