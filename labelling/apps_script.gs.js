@@ -61,21 +61,21 @@
 // ───────────────────────────────────────────────────────────────────────────
 // CONFIG
 // ───────────────────────────────────────────────────────────────────────────
-const SHEET_ID   = "REPLACE_WITH_SHEET_ID";   // Pathogen labels sheet ID, from its URL
+const SHEET_ID   = "1rQK8i89g76qbumP5HBOkTT-vSi4wi0hEyO3gYt90Vhc";   // Pathogen labels sheet ID, from its URL
 const SHEET_NAME = "labels";          // live pathogen-labels tab name
-const ACCESS_KEY = "REPLACE_WITH_HIGH_ENTROPY_TOKEN";  // same value the client sends as ?k=…
+const ACCESS_KEY = "d04387f8070517150eb6651c1d3f4e5b";  // same value the client sends as ?k=…
 
 // Characterised-enzyme labels destination. Set in the cloud editor; keep the
 // placeholder in git. May point at the same spreadsheet as SHEET_ID (just a
 // different tab) or a separate spreadsheet — either works. Enzyme-task
 // submissions route here; pathogen submissions route to SHEET_ID/SHEET_NAME.
-const ENZYME_SHEET_ID   = "REPLACE_WITH_ENZYME_SHEET_ID";
+const ENZYME_SHEET_ID   = "1s9MITTjJxsa9d-E-bFtKyicN-Lli-WYrqw1W1mxeSqY";
 const ENZYME_SHEET_NAME = "enzyme_labels";
 
 // Newsletter form-response sheet — feeds the leaderboard's "newsletter
 // submission" tally. The Apps Script owner must have read access to this
 // sheet. Set in the cloud editor; keep this repo file with the placeholder.
-const FORM_RESPONSES_SHEET_ID = "REPLACE_WITH_FORM_RESPONSES_SHEET_ID";
+const FORM_RESPONSES_SHEET_ID = "1XfSFDNzh7pG1uxSds3LRpPxx0LPLKJkhFZDMFGhcpWc";
 const FORM_RESPONSES_SHEET_NAME = "Form Responses 1";
 
 // Escape-room test-drive feedback destination. Students play a ready escape
@@ -84,7 +84,7 @@ const FORM_RESPONSES_SHEET_NAME = "Form Responses 1";
 // person (so re-submitting the same room can't stack points). May be a tab in
 // an existing spreadsheet or its own. Set in the cloud editor; keep the
 // placeholder in git.
-const ESCAPE_SHEET_ID   = "REPLACE_WITH_ESCAPE_SHEET_ID";
+const ESCAPE_SHEET_ID   = "1rQK8i89g76qbumP5HBOkTT-vSi4wi0hEyO3gYt90Vhc";
 const ESCAPE_SHEET_NAME = "escape_feedback";
 
 // ───────────────────────────────────────────────────────────────────────────

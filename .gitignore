@@ -21,6 +21,14 @@ Thumbs.db
 # script
 members_update.py
 
+# Lab Quests (labelling) backend source — carries the real ACCESS_KEY + sheet IDs
+# when configured. It's a source reference only, NOT served (the live backend runs
+# in the Apps Script cloud), so keeping it out of this public repo is safe. The
+# served page (labelling/index.html) stays tracked. NOTE: gitignore does not
+# untrack an already-committed file — run `git rm --cached labelling/apps_script.gs.js`
+# once on the Mac, then commit.
+labelling/apps_script.gs.js
+
 # Blog research (private, not for public repo)
 blog/literature/
 blog/online-research/
