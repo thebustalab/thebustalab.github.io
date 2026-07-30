@@ -4,21 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lab Quests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@600&family=Roboto+Mono&display=swap" rel="stylesheet">
 <style>
+  /* Dark theme matching the Integrated Bioanalytics book's WebR cells:
+     charcoal panels, slate borders, Spectral accents (teal actions, amber
+     status, orange errors, green success). */
   :root {
-    --bg: #fafafa;
-    --fg: #222;
-    --muted: #777;
-    --border: #ddd;
-    --accent: #2b5d8a;
-    --accent-hover: #1e4566;
-    --warn: #b85c00;
-    --ok: #2e7d32;
-    --row-bg: #fff;
+    --bg: #1f2226;         /* page */
+    --panel: #26292e;      /* cards */
+    --input-bg: #2b2f35;   /* form controls, button surfaces */
+    --hover: #33383f;
+    --fg: #e6e9ed;
+    --muted: #9aa0a8;
+    --border: #3a3f46;
+    --accent: #66c2a5;         /* teal — actions + links */
+    --accent-hover: #7fd0b6;
+    --accent-text: #0f231b;    /* dark text on an accent fill */
+    --warn: #f46d43;           /* Spectral orange — errors / negative toggles */
+    --ok: #abdda4;             /* Spectral green — success */
+    --row-bg: #26292e;
   }
   * { box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--fg);
     margin: 0;
@@ -29,6 +39,16 @@
     max-width: 760px;
     margin: 0 auto;
   }
+  h1, h2, h3, .escape-title, .abstract-block h2 {
+    font-family: "Montserrat", "Lato", sans-serif;
+  }
+  /* Dark form controls — inputs default to black text, invisible on dark, so
+     set the fill + text explicitly here (specific rules also use --input-bg). */
+  input, select, textarea {
+    background: var(--input-bg);
+    color: var(--fg);
+  }
+  input::placeholder, textarea::placeholder { color: #6f767e; }
   h1 {
     font-size: 1.4rem;
     margin: 0 0 0.5rem 0;
@@ -80,7 +100,7 @@
     padding: 0.5rem 0.6rem;
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #fff;
+    background: var(--input-bg);
     width: 100%;
   }
   .triple-row .remove {
@@ -107,19 +127,19 @@
     padding: 0.5rem 0.9rem;
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #fff;
+    background: var(--input-bg);
     cursor: pointer;
     margin-right: 0.5rem;
   }
-  button.add-row:hover { background: #eee; }
+  button.add-row:hover { background: var(--hover); }
   button.no-rel.active {
     background: var(--warn);
-    color: #fff;
+    color: var(--accent-text);
     border-color: var(--warn);
   }
   button.submit {
     background: var(--accent);
-    color: #fff;
+    color: var(--accent-text);
     border-color: var(--accent);
   }
   button.submit:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
@@ -149,7 +169,7 @@
     padding: 0.5rem 0.6rem;
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #fff;
+    background: var(--input-bg);
     width: 100%;
     box-sizing: border-box;
     resize: vertical;
@@ -157,7 +177,7 @@
   .name-prompt {
     margin-bottom: 1.5rem;
     padding: 1rem 1.25rem;
-    background: #fff;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 6px;
   }
@@ -228,23 +248,23 @@
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #fff;
+    color: var(--accent-text);
     background: var(--accent);
     border-radius: 4px;
     padding: 0.1rem 0.45rem;
     margin-bottom: 0.6rem;
   }
-  .task-badge.enzyme { background: #6a4a8a; }
-  .task-badge.escape { background: #2f8a5b; }
+  .task-badge.enzyme { background: #fdae61; }  /* Spectral amber */
+  .task-badge.escape { background: #abdda4; }  /* Spectral green */
 
   /* Mode switch bar */
   .mode-bar { display: flex; gap: 0.5rem; margin: 0.75rem 0 1rem; }
   .mode-btn {
     font: inherit; cursor: pointer; padding: 0.35rem 0.8rem;
     border: 1px solid var(--border); border-radius: 6px;
-    background: #fff; color: var(--fg);
+    background: var(--input-bg); color: var(--fg);
   }
-  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 
   /* Escape-room list */
   .escape-intro p { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 1rem; }
@@ -257,14 +277,14 @@
   .escape-sub { color: var(--muted); font-size: 0.85rem; }
   .escape-new {
     font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
-    color: #fff; background: #2f8a5b; border-radius: 4px; padding: 0.05rem 0.35rem;
+    color: var(--accent-text); background: #fee08b; border-radius: 4px; padding: 0.05rem 0.35rem;
   }
   .escape-row-actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.6rem; }
   .escape-play {
     color: var(--accent); font-weight: 600; text-decoration: none;
     border: 1px solid var(--accent); border-radius: 6px; padding: 0.3rem 0.7rem;
   }
-  .escape-play:hover { background: var(--accent); color: #fff; }
+  .escape-play:hover { background: var(--accent); color: var(--accent-text); }
   .escape-feedback { margin-top: 0.8rem; }
   .escape-feedback textarea {
     width: 100%; box-sizing: border-box; font: inherit;
@@ -278,7 +298,7 @@
     border-radius: 6px;
     padding: 0.85rem 1rem 0.9rem;
     margin-bottom: 0.75rem;
-    background: #fff;
+    background: var(--input-bg);
     position: relative;
   }
   .enzyme-row .field { margin-bottom: 0.6rem; }
@@ -294,12 +314,12 @@
     padding: 0.5rem 0.6rem;
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #fff;
+    background: var(--input-bg);
     width: 100%;
   }
   .enzyme-row textarea.seq {
     resize: vertical;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.85rem;
     white-space: pre;
     word-break: break-all;
