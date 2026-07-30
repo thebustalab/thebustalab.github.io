@@ -503,7 +503,8 @@ const CONFIG = {
   // per person, so re-submitting the same room doesn't stack). Absolute paths
   // resolve from the GitHub Pages site root regardless of this tool's subpath.
   ESCAPE_INVENTORY_URL: "/escape_rooms/rooms/scenario_inventory.json",
-  ESCAPE_PLAY_BASE: "/escape_rooms/",   // + "<chapter>/<scenario>/play.html"
+  ESCAPE_PLAY_BASE: "/escape_rooms/",   // + inventory `path` with scenario.json → play.html
+                                        // → /escape_rooms/rooms/<chapter>/<scenario>/play.html
 
   // Extra pool files fetched alongside abstracts.json and concatenated. Each
   // item should carry its own task_type. (Phase 1: enzyme items are a static
@@ -703,7 +704,15 @@ async function fetchReadyScenarios() {
         slug: s.chapter + "/" + s.scenario,
         title: s.title || s.scenario,
         subtitle: s.subtitle || "",
-        playUrl: CONFIG.ESCAPE_PLAY_BASE + s.chapter + "/" + s.scenario + "/play.html",
+        // Derive the play URL from the inventory's own `path`
+        // (e.g. "rooms/data_vis/alaska/scenario.json") so it always matches
+        // where the scenario actually lives — including the `rooms/` segment.
+        // Fall back to reassembling from chapter/scenario if path is absent.
+        playUrl: CONFIG.ESCAPE_PLAY_BASE + (
+          s.path
+            ? s.path.replace(/scenario\.json$/, "play.html")
+            : "rooms/" + s.chapter + "/" + s.scenario + "/play.html"
+        ),
       }));
   } catch (err) {
     console.warn("Escape inventory unavailable:", err.message);
