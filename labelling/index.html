@@ -266,15 +266,13 @@
   }
   .mode-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 
-  /* Escape-room list */
-  .escape-intro p { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 1rem; }
-  .escape-row {
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.8rem 1rem; margin-bottom: 0.8rem;
-  }
+  /* Escape-room cards — each room reuses the .abstract-block card shell so it
+     matches the labelling categories; these rules cover the escape-specific
+     inner bits only. */
   .escape-row-head { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
-  .escape-title { font-weight: 600; font-size: 1.05rem; }
-  .escape-sub { color: var(--muted); font-size: 0.85rem; }
+  .escape-title { font-weight: 600; font-size: 1.1rem; }
+  .escape-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+  .escape-instructions { color: var(--muted); font-size: 0.9rem; margin: 0.55rem 0 0.9rem; }
   .escape-new {
     font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
     color: var(--accent-text); background: #fee08b; border-radius: 4px; padding: 0.05rem 0.35rem;
@@ -421,26 +419,26 @@
     ✓ Nothing left in this queue for you. Thanks for your help!
   </div>
 
-  <!-- ── Escape-room test-drive card ─────────────────────────────────────── -->
+  <!-- ── Escape-room test-drive: one self-contained card per ready room ───── -->
   <div id="escape-card" class="hidden">
-    <div class="escape-intro">
-      <div class="task-badge escape">Escape-room test-drive · 10 pts</div>
-      <p>Play a room end to end, then tell us how it went. Each room is worth
-         <strong>10 points</strong> the first time you give feedback on it.</p>
-    </div>
     <div id="escape-list"></div>
     <div id="escape-empty" class="all-done hidden">
       No escape rooms are ready to test just yet — check back soon.
     </div>
   </div>
 
-  <!-- Template for one ready-room row (cloned per scenario in JS) -->
+  <!-- Template for one ready-room card (cloned per scenario in JS) -->
   <template id="escape-row-tpl">
-    <div class="escape-row">
+    <div class="escape-row abstract-block">
+      <div class="task-badge escape"></div>
       <div class="escape-row-head">
         <span class="escape-new hidden">NEW</span>
         <span class="escape-title"></span>
-        <span class="escape-sub"></span>
+      </div>
+      <div class="escape-sub"></div>
+      <div class="escape-instructions">
+        Play this room end to end, then leave feedback below — worth 10 points
+        the first time you give feedback on it.
       </div>
       <div class="escape-row-actions">
         <a class="escape-play" target="_blank" rel="noopener">Play ↗</a>
@@ -795,8 +793,13 @@ function renderEscapeList() {
   $("escape-empty").classList.toggle("hidden", rooms.length > 0);
   const seen = escapeSeenSet();
   const tpl = $("escape-row-tpl");
+  // Point badge in the same "label · N pts" form as the labelling cards.
+  const ec = CONFIG.TASK_TYPES.escape || {};
+  const badgeText = (ec.label || "Escape-room test-drive") + " · " +
+    (ec.points || 10) + (ec.points === 1 ? " pt" : " pts");
   for (const room of rooms) {
     const row = tpl.content.firstElementChild.cloneNode(true);
+    row.querySelector(".task-badge").textContent = badgeText;
     row.querySelector(".escape-title").textContent = room.title;
     row.querySelector(".escape-sub").textContent = room.subtitle;
     row.querySelector(".escape-new").classList.toggle("hidden", seen.has(room.slug));
