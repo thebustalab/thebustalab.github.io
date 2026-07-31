@@ -1,0 +1,201 @@
+patient_number,patient_status,metabolite,concentration
+20,healthy,Choline,17.113
+20,healthy,2-Aminoisobutyric acid,11.890
+20,healthy,Creatinine,16.072
+20,healthy,Methylmalonate,13.960
+20,healthy,myoinositol,14.490
+20,healthy,Hydroxyphenylpyruvic acid,11.364
+20,healthy,1-Methyladenosine,15.005
+20,healthy,Pyruvate,14.159
+20,healthy,Indoxyl_Sulfate,10.875
+20,healthy,p_Cresyl_Sulfate,10.548
+24,healthy,Choline,16.760
+24,healthy,2-Aminoisobutyric acid,11.548
+24,healthy,Creatinine,16.114
+24,healthy,Methylmalonate,14.194
+24,healthy,myoinositol,14.238
+24,healthy,Hydroxyphenylpyruvic acid,11.221
+24,healthy,1-Methyladenosine,15.113
+24,healthy,Pyruvate,14.180
+24,healthy,Indoxyl_Sulfate,9.857
+24,healthy,p_Cresyl_Sulfate,9.845
+29,healthy,Choline,17.018
+29,healthy,2-Aminoisobutyric acid,11.826
+29,healthy,Creatinine,16.117
+29,healthy,Methylmalonate,14.556
+29,healthy,myoinositol,14.900
+29,healthy,Hydroxyphenylpyruvic acid,11.563
+29,healthy,1-Methyladenosine,15.203
+29,healthy,Pyruvate,13.921
+29,healthy,Indoxyl_Sulfate,9.758
+29,healthy,p_Cresyl_Sulfate,10.363
+52,healthy,Choline,17.052
+52,healthy,2-Aminoisobutyric acid,11.901
+52,healthy,Creatinine,15.780
+52,healthy,Methylmalonate,13.693
+52,healthy,myoinositol,14.244
+52,healthy,Hydroxyphenylpyruvic acid,10.953
+52,healthy,1-Methyladenosine,14.763
+52,healthy,Pyruvate,13.786
+52,healthy,Indoxyl_Sulfate,8.673
+52,healthy,p_Cresyl_Sulfate,10.775
+54,healthy,Choline,16.771
+54,healthy,2-Aminoisobutyric acid,11.575
+54,healthy,Creatinine,15.475
+54,healthy,Methylmalonate,13.696
+54,healthy,myoinositol,14.256
+54,healthy,Hydroxyphenylpyruvic acid,10.936
+54,healthy,1-Methyladenosine,14.419
+54,healthy,Pyruvate,13.674
+54,healthy,Indoxyl_Sulfate,9.996
+54,healthy,p_Cresyl_Sulfate,10.315
+56,healthy,Choline,16.781
+56,healthy,2-Aminoisobutyric acid,11.568
+56,healthy,Creatinine,15.543
+56,healthy,Methylmalonate,13.984
+56,healthy,myoinositol,14.158
+56,healthy,Hydroxyphenylpyruvic acid,10.907
+56,healthy,1-Methyladenosine,14.799
+56,healthy,Pyruvate,13.447
+56,healthy,Indoxyl_Sulfate,9.840
+56,healthy,p_Cresyl_Sulfate,10.037
+57,healthy,Choline,16.909
+57,healthy,2-Aminoisobutyric acid,11.625
+57,healthy,Creatinine,15.650
+57,healthy,Methylmalonate,13.960
+57,healthy,myoinositol,14.590
+57,healthy,Hydroxyphenylpyruvic acid,11.399
+57,healthy,1-Methyladenosine,14.826
+57,healthy,Pyruvate,13.617
+57,healthy,Indoxyl_Sulfate,9.732
+57,healthy,p_Cresyl_Sulfate,10.366
+58,healthy,Choline,16.795
+58,healthy,2-Aminoisobutyric acid,11.533
+58,healthy,Creatinine,15.316
+58,healthy,Methylmalonate,13.585
+58,healthy,myoinositol,14.000
+58,healthy,Hydroxyphenylpyruvic acid,10.709
+58,healthy,1-Methyladenosine,14.510
+58,healthy,Pyruvate,13.731
+58,healthy,Indoxyl_Sulfate,10.158
+58,healthy,p_Cresyl_Sulfate,9.679
+59,healthy,Choline,16.741
+59,healthy,2-Aminoisobutyric acid,11.536
+59,healthy,Creatinine,15.711
+59,healthy,Methylmalonate,13.993
+59,healthy,myoinositol,14.103
+59,healthy,Hydroxyphenylpyruvic acid,10.956
+59,healthy,1-Methyladenosine,14.940
+59,healthy,Pyruvate,14.469
+59,healthy,Indoxyl_Sulfate,10.211
+59,healthy,p_Cresyl_Sulfate,9.911
+60,healthy,Choline,16.966
+60,healthy,2-Aminoisobutyric acid,11.672
+60,healthy,Creatinine,15.860
+60,healthy,Methylmalonate,13.858
+60,healthy,myoinositol,14.160
+60,healthy,Hydroxyphenylpyruvic acid,10.955
+60,healthy,1-Methyladenosine,14.980
+60,healthy,Pyruvate,13.589
+60,healthy,Indoxyl_Sulfate,9.467
+60,healthy,p_Cresyl_Sulfate,9.713
+1,kidney_disease,Choline,17.258
+1,kidney_disease,2-Aminoisobutyric acid,12.217
+1,kidney_disease,Creatinine,16.331
+1,kidney_disease,Methylmalonate,14.531
+1,kidney_disease,myoinositol,14.948
+1,kidney_disease,Hydroxyphenylpyruvic acid,11.595
+1,kidney_disease,1-Methyladenosine,15.283
+1,kidney_disease,Pyruvate,14.093
+1,kidney_disease,Indoxyl_Sulfate,13.557
+1,kidney_disease,p_Cresyl_Sulfate,13.898
+2,kidney_disease,Choline,17.300
+2,kidney_disease,2-Aminoisobutyric acid,12.120
+2,kidney_disease,Creatinine,16.561
+2,kidney_disease,Methylmalonate,14.677
+2,kidney_disease,myoinositol,15.238
+2,kidney_disease,Hydroxyphenylpyruvic acid,12.003
+2,kidney_disease,1-Methyladenosine,15.319
+2,kidney_disease,Pyruvate,13.711
+2,kidney_disease,Indoxyl_Sulfate,13.762
+2,kidney_disease,p_Cresyl_Sulfate,13.757
+3,kidney_disease,Choline,17.212
+3,kidney_disease,2-Aminoisobutyric acid,12.079
+3,kidney_disease,Creatinine,16.416
+3,kidney_disease,Methylmalonate,14.495
+3,kidney_disease,myoinositol,14.918
+3,kidney_disease,Hydroxyphenylpyruvic acid,11.697
+3,kidney_disease,1-Methyladenosine,15.004
+3,kidney_disease,Pyruvate,13.802
+3,kidney_disease,Indoxyl_Sulfate,14.345
+3,kidney_disease,p_Cresyl_Sulfate,13.907
+4,kidney_disease,Choline,17.188
+4,kidney_disease,2-Aminoisobutyric acid,11.981
+4,kidney_disease,Creatinine,16.294
+4,kidney_disease,Methylmalonate,14.185
+4,kidney_disease,myoinositol,14.574
+4,kidney_disease,Hydroxyphenylpyruvic acid,11.300
+4,kidney_disease,1-Methyladenosine,15.278
+4,kidney_disease,Pyruvate,14.268
+4,kidney_disease,Indoxyl_Sulfate,14.281
+4,kidney_disease,p_Cresyl_Sulfate,13.810
+5,kidney_disease,Choline,17.478
+5,kidney_disease,2-Aminoisobutyric acid,12.335
+5,kidney_disease,Creatinine,16.305
+5,kidney_disease,Methylmalonate,14.654
+5,kidney_disease,myoinositol,15.410
+5,kidney_disease,Hydroxyphenylpyruvic acid,12.175
+5,kidney_disease,1-Methyladenosine,15.035
+5,kidney_disease,Pyruvate,13.848
+5,kidney_disease,Indoxyl_Sulfate,13.347
+5,kidney_disease,p_Cresyl_Sulfate,14.044
+6,kidney_disease,Choline,17.216
+6,kidney_disease,2-Aminoisobutyric acid,12.042
+6,kidney_disease,Creatinine,16.723
+6,kidney_disease,Methylmalonate,15.000
+6,kidney_disease,myoinositol,15.530
+6,kidney_disease,Hydroxyphenylpyruvic acid,12.290
+6,kidney_disease,1-Methyladenosine,15.181
+6,kidney_disease,Pyruvate,13.892
+6,kidney_disease,Indoxyl_Sulfate,13.440
+6,kidney_disease,p_Cresyl_Sulfate,14.032
+8,kidney_disease,Choline,17.219
+8,kidney_disease,2-Aminoisobutyric acid,12.066
+8,kidney_disease,Creatinine,16.127
+8,kidney_disease,Methylmalonate,14.554
+8,kidney_disease,myoinositol,14.462
+8,kidney_disease,Hydroxyphenylpyruvic acid,11.322
+8,kidney_disease,1-Methyladenosine,15.297
+8,kidney_disease,Pyruvate,13.975
+8,kidney_disease,Indoxyl_Sulfate,14.368
+8,kidney_disease,p_Cresyl_Sulfate,14.148
+10,kidney_disease,Choline,16.712
+10,kidney_disease,2-Aminoisobutyric acid,11.450
+10,kidney_disease,Creatinine,16.051
+10,kidney_disease,Methylmalonate,13.506
+10,kidney_disease,myoinositol,14.550
+10,kidney_disease,Hydroxyphenylpyruvic acid,11.294
+10,kidney_disease,1-Methyladenosine,15.275
+10,kidney_disease,Pyruvate,14.143
+10,kidney_disease,Indoxyl_Sulfate,14.787
+10,kidney_disease,p_Cresyl_Sulfate,14.701
+11,kidney_disease,Choline,17.350
+11,kidney_disease,2-Aminoisobutyric acid,12.235
+11,kidney_disease,Creatinine,16.292
+11,kidney_disease,Methylmalonate,14.947
+11,kidney_disease,myoinositol,15.011
+11,kidney_disease,Hydroxyphenylpyruvic acid,11.480
+11,kidney_disease,1-Methyladenosine,15.632
+11,kidney_disease,Pyruvate,13.810
+11,kidney_disease,Indoxyl_Sulfate,13.984
+11,kidney_disease,p_Cresyl_Sulfate,13.227
+12,kidney_disease,Choline,17.272
+12,kidney_disease,2-Aminoisobutyric acid,12.203
+12,kidney_disease,Creatinine,16.168
+12,kidney_disease,Methylmalonate,14.553
+12,kidney_disease,myoinositol,14.790
+12,kidney_disease,Hydroxyphenylpyruvic acid,11.483
+12,kidney_disease,1-Methyladenosine,15.393
+12,kidney_disease,Pyruvate,13.744
+12,kidney_disease,Indoxyl_Sulfate,13.658
+12,kidney_disease,p_Cresyl_Sulfate,14.648
