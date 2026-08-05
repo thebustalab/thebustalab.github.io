@@ -2,6 +2,11 @@
 
 In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
 
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RColorBrewer","cowplot"], datasets: [{ name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }, { name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }, { name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(ggrepel); library(RColorBrewer); library(cowplot)})" };
+</script>
+
 ## {-}
 
 ## more geoms {-}
@@ -48,6 +53,23 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_text_repel(aes(label = solvent))
 ```
 
+#### concept check {-}
+
+Stack the points on top of the smoother by filling in the blank with the geom that draws a point at each observation. Then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(solvents, aes(x = boiling_point, y = vapor_pressure)) +
+  geom_smooth() +
+  ____</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="geom_tile() draws a filled rectangle for each x/y combination, so it can carry two discrete variables plus a continuous fill &mdash; a heat map. geom_smooth() fits a trend line and geom_point() draws single points.">
+<p class="scq">Self-check: which geom makes a heat map, ideal for two discrete variables and one continuous variable?</p>
+<label><input type="radio"> geom_smooth()</label>
+<label><input type="radio"> geom_point()</label>
+<label><input type="radio"> geom_tile()</label>
+</div>
+
+<hr>
+
 ## facets {-}
 
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
@@ -78,9 +100,26 @@ Faceting is a great way to describe more variation in your plot without having t
 
 ```{r}
 ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) + 
-  geom_tile(aes(fill = abundance), color = "black") + 
+  geom_tile(aes(fill = abundance), color = "black") +
   facet_wrap(chemical_species~.)
 ```
+
+#### concept check {-}
+
+Fill in the blank so the heat map is split into one panel per `replicate`, arranged in a row. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = chemical_species)) +
+  geom_tile(aes(fill = abundance), color = "black") +
+  facet_grid(. ~ ____)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Faceting draws small multiples: it splits the data by a categorical variable and draws one panel per level, so you can compare subsets side by side.">
+<p class="scq">Self-check: what does faceting do to your plot?</p>
+<label><input type="radio"> splits it into small multiples, one panel per category</label>
+<label><input type="radio"> adds a trend line through all the points</label>
+<label><input type="radio"> changes the color palette of the fill scale</label>
+</div>
+
+<hr>
 
 ## scales {-}
 
@@ -108,8 +147,25 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ``` 
   
+#### concept check {-}
+
+The fill is mapped to a continuous variable, so its scale is a color gradient. Fill in the blank to set the high end of the gradient to the color `"black"`, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(algae_data, aes(x = algae_strain, y = chemical_species)) +
+  geom_tile(aes(fill = abundance), color = "black") +
+  scale_fill_gradient(low = "white", high = ____)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="A continuous variable mapped to fill produces a color gradient, adjusted with scale_fill_gradient(). scale_fill_brewer() is for discrete fills; scale_x_continuous() controls the x axis, not the fill.">
+<p class="scq">Self-check: which command adjusts a continuous <code>fill</code> color gradient?</p>
+<label><input type="radio"> scale_x_continuous()</label>
+<label><input type="radio"> scale_fill_gradient()</label>
+<label><input type="radio"> scale_fill_brewer()</label>
+</div>
+
+<hr>
+
 ## themes {-}
-  
+
 So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
 `ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
@@ -171,6 +227,23 @@ In some cases, the following diagram illustrates a useful way to think about the
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
 ```
 
+#### concept check {-}
+
+Complete the plot with a built-in complete theme that strips away the grey background and gridlines (its name starts with `theme_`). Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(solvents, aes(x = boiling_point, y = vapor_pressure)) +
+  geom_point() +
+  ____</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Themes control the non-data ink &mdash; axes, background, gridlines, fonts &mdash; not how the data itself is drawn. Drawing the data is the job of geoms and scales.">
+<p class="scq">Self-check: the <code>theme()</code> family controls which part of a plot?</p>
+<label><input type="radio"> which geometric shapes represent the data</label>
+<label><input type="radio"> how variables map to the axes</label>
+<label><input type="radio"> the non-data ink: background, gridlines, fonts</label>
+</div>
+
+<hr>
+
 ## subplots {-}
 
 We can make subplots using the `plot_grid()` function from the `cowplot` package, which comes with the `source()` command. Let's see:
@@ -196,6 +269,57 @@ plot3 <-  ggplot(
 
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
+
+#### concept check {-}
+
+`plot_grid()` from `cowplot` arranges finished plots into one figure. Fill in the two blanks with the plot objects `p1` and `p2` so they sit side by side, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">p1 <- ggplot(solvents, aes(x = category, y = boiling_point)) +
+  geom_boxplot() + theme_classic()
+p2 <- ggplot(solvents, aes(x = boiling_point, y = vapor_pressure)) +
+  geom_point() + theme_classic()
+
+plot_grid(____, ____)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="plot_grid() takes already-built ggplot objects as its arguments and lays them out together; it does not take a dataset or an aes() mapping.">
+<p class="scq">Self-check: what do you pass to <code>plot_grid()</code>?</p>
+<label><input type="radio"> a dataset and an aes() mapping</label>
+<label><input type="radio"> two or more finished plot objects</label>
+<label><input type="radio"> a single geom to add to a plot</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+
+## exercises {-}
+
+```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
+cat('
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/hospital/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/hospital/cover.png" alt="Vital Signs cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/hospital/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Vital Signs</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization II &middot; heatmaps, facets &amp; reading the plot</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A hospital at the end of a long shift. Read a patient&rsquo;s metabolomics with heat maps and facets to find what is wrong before time runs out.</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/cover.png" alt="The Alembic cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Alembic</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization II &middot; multiple mappings + selection</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A brass-and-canvas airship listing toward a crash, with an alien sickness under your skin. Work the solvent data through the test stations to mix a cure and escape.</div>
+</div>
+</div>
+</div>
+')
+```
+
+<hr>
+
+<!-- Legacy pdf-report version of these exercises (kept dormant; the interactive rooms above are the live version). -->
 
 <!-- ## exercises {-}
 

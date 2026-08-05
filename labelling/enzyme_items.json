@@ -214,5 +214,95 @@
     },
     "source_topic": "osc",
     "discovered": "2026-07-28"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_6d58f7a20a96",
+    "title": "Unraveling the Catalytic Promiscuity Mechanism of Triterpene Synthase AaOSC-22030 via Multiscale QM/MM Simulations and Mutagenesis",
+    "authors": "Chenxu Liu; Shun Liang; Jiaqi Jiao; Bing Li; Y H Jian; Yaman Chen; Fang Wang; Jincai Liang; Lixin Duan; Fan Zhang",
+    "journal": "The Journal of Physical Chemistry B",
+    "year": 2026,
+    "doi": "10.1021/acs.jpcb.6c01900",
+    "link": "https://doi.org/10.1021/acs.jpcb.6c01900",
+    "abstract": "exhibits remarkable catalytic promiscuity, converting 2,3-oxidosqualene into diverse triterpenoid skeletons. In this study, we employed multiscale molecular dynamics, static QM/MM calculations, and site-directed mutagenesis to elucidate the origins of this diversity. Our analysis identifies residue 728 as a pivotal determinant. We reveal that the substitution of a conserved aromatic residue with a polar serine (S728) creates a relaxed steric environment, permitting broad conformational exploration, while simultaneously serving as a general base to intercept intermediates. Strikingly, the S728Y mutation transformed the promiscuous enzyme into a specific synthase, yielding Dammarendiol II as the exclusive product. Furthermore, the E371A mutant demonstrated that the N369/E371 dyad independently controls the terminal hydration of pentacyclic products. These findings highlight that cyclization and quenching are governed by distinct active site residues, providing a rational strategy for the functional reshaping of triterpene synthases with customized product profiles.",
+    "prefill": {
+      "enzyme_name": "AaOSC-22030",
+      "product": "Dammarendiol II",
+      "doi": "doi:10.1021/acs.jpcb.6c01900"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-04"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_2ab8924ed8f5",
+    "title": "The RrHY5‐RrNAC2‐RrOSC5 Module Promotes UV‐B‐Induced Sterol Defence in <i>Rosa roxburghii</i>",
+    "authors": "Di Xin; Xue Wu; Litao Wang; Yi-Xiang Wang; Yuan Ning; Huaming An; Linan Sun; Yang Han; Yujie Fu",
+    "journal": "Plant Cell & Environment",
+    "year": 2026,
+    "doi": "10.1111/pce.70744",
+    "link": "https://doi.org/10.1111/pce.70744",
+    "abstract": "Rosa roxburghii Tratt. is a high-elevation fruit shrub with strong ultraviolet-B (UV-B) tolerance, and plant sterols are critical for its UV-B adaptation, but their regulatory mechanisms remain unknown. Here, we identified a key oxidosqualene cyclase gene, RrOSC5, which encodes a functional cycloartenol synthase and is dynamically upregulated under UV-B stress. Overexpression of RrOSC5 enhanced sterol accumulation in both native and transgenic hosts, significantly improving their UV-B resistance. We further discovered that the transcription factor RrNAC2 directly binds to a non-canonical AC-rich repeat within the RrOSC5 promoter, activating its transcription. Crucially, heterologous overexpression of RrNAC2 in tobacco conferred the enhanced UV-B tolerance, establishing its role as a core regulator in this pathway. Notably, we found that the master UV-B signalling regulator RrHY5 physically interacts with RrNAC2, thereby integrating the RrNAC2-RrOSC5 sterol module Into the canonical UV-B signalling pathway. Our findings revealed a hierarchical RrHY5-RrNAC2-RrOSC5 cascade governs UV-B-induced sterol defence, wherein RrNAC2 drives protective sterol biosynthesis via RrOSC5, and both components synergistically enhance antioxidant and osmotic adjustment defences. This work provides novel insights into sterol-mediated plant adaptation to UV-B stress for molecular breeding of fruit plants.",
+    "prefill": {
+      "enzyme_name": "RrOSC5",
+      "product": "cycloartenol",
+      "doi": "doi:10.1111/pce.70744"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-04"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_b7412adf9fc0",
+    "title": "Biosynthesis of Fluorinated Aromatic Polyketides Through Directed Evolution of Fused Type III Polyketide Synthase",
+    "authors": "Ze-Long Mei; Jia‐Xin Guo; Zhoutong Sun; Jun‐An Ma; Fa‐Guang Zhang",
+    "journal": "Angewandte Chemie International Edition",
+    "year": 2026,
+    "doi": "10.1002/anie.3691732",
+    "link": "https://doi.org/10.1002/anie.3691732",
+    "abstract": "Aromatic polyketides have gained significant attention as prominent plant-derived polyphenol molecules in recent years owing to their multi-faceted therapeutic potentials against a variety of diseases. However, the introduction of unique fluorine atoms into the core structure of aromatic polyketides has received limited exploration thus far. In this study, a series of new-to-nature fluorinated aromatic polyketides, including resveratrol, naringenin chalcone, bisnoyangonin, and benzalactone, were obtained from readily available fluoro-tyrosines in E. coli via a multi-enzyme cascade pathway. A series of combinational optimization strategies, including metabolic regulations, double protein fusion (4CL::III-PKS and MatB::III-PKS), and directed evolution of the rate-limiting enzymes, were conducted to improve the production of fluoro-aromatic polyketides, thus enhancing the titers to >200 mg/L from an initial ∼10 mg/L. When both sides of the phenolic hydroxyl group of 4-coumaroyl-CoA contain fluorine atoms, a novel catalytic pathway of STS and CHS in synthesizing methyl ketone structures is unlocked, namely the \"proximal fluorine-induced III-PKS catalytic truncation\". Further post-functionalizations by enzymatic glycosylation reaction and chemocatalytic Friedel-Crafts-type reaction provided the corresponding fluorinated derivatives of polyphenolic natural products (piceid and arahypin).",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1002/anie.3691732"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-08-04"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_c2f83153bc50",
+    "title": "Identification and Expression Profile of the Chalcone Synthase (CHS) Gene Family in Litchi",
+    "authors": "YJ Li; R K Li; Jincan Xiao; Yuhao Liu; Fan Ding; J Q Xu; Wenhui Yang; Haifeng Jia; Haiji Qiu",
+    "journal": "International Journal of Molecular Sciences",
+    "year": 2026,
+    "doi": "10.3390/ijms27146152",
+    "link": "https://doi.org/10.3390/ijms27146152",
+    "abstract": "The chalcone synthase (CHS) genes play an important role in the biosynthesis of flavonoids and anthocyanins. However, research into the genomic characteristics and evolutionary patterns of the CHS gene family in lychee remains limited. In this study, six LcCHS genes were identified from the litchi genome. Most members of the LcCHS family consist of two exons and possess eight conserved motifs; furthermore, all members exhibit highly similar three-dimensional protein structures. LcCHS genes were closely related to homologs of Sapindaceae species and experienced gene duplication events during dicotevolution. Comparative colinearity analysis revealed conserved colinearity relationships among most LcCHS genes, and all members of the LcCHS family exhibited distinct colinearity with homologues in longan. LcCHS genes exhibited significant tissue-specific expression preferentially in reproductive tissues rather than vegetative tissues. Transcription analysis of ‘Jinggang Hongnuo’ litchi fruit development divided LcCHS genes into two negatively correlated expression modules and LcCHS members interacted with numerous transcription factors (e.g., flavonoid biosynthesis, hormone signaling and developmental regulation). Spatiotemporal expression profiling of LcCHS genes in ‘Guiwei’, ‘Feizixiao’ and ‘Ziniangxi’ litchi cultivars revealed obvious tissue specificity and developmental stage preference of these genes. Gene expression of LcCHS genes in ‘Guiwei’ high correlated with the flavonoid content. Furthermore, promoter cis-element analysis identified 34 types of cis elements in LcCHS promoters that participate in plant growth and development, hormone response and stress adaptation, implying that LcCHS genes may participate in litchi growth, hormone signal transduction, and stress-response processes. Comprehensive characterization of the chalcone synthase gene family could provide insights into the genetic improvement of litchi.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3390/ijms27146152"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-08-04"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_eef3468aaebb",
+    "title": "Studies on the Role and Function of miR3630‐5p‐VqNAC92‐VqMYB14/VqRAP2.12‐VqSTSs in <i>Vitis quinquangularis</i> Plant Immunity",
+    "authors": "Linxia Wang; Jie Zhu; Yang Feng; Dong Duan",
+    "journal": "Plant Cell & Environment",
+    "year": 2026,
+    "doi": "10.1111/pce.70517",
+    "link": "https://doi.org/10.1111/pce.70517",
+    "abstract": "The key enzyme responsible for the synthesis of stilbenes, important phytoalexins, is stilbene synthase (STS), whose activity has been characterised in several plant species. However, the mechanisms through which upstream transcription factors (TFs) regulate stilbene synthesis remain unclear. In this study, the transcription factor (TF) VqNAC92 was shown to interact with VqMYB14 through yeast two-hybrid (Y2H), bimolecular fluorescence complementation (BiFC), coimmunoprecipitation (Co-IP), and pull-down assays. By suppressing MYB14 via virus-induced gene silencing (VIGS) and subsequently overexpressing VqNAC92, performing a dual-luciferase reporter assay (DLRA) and an electrophoretic mobility shift assay (EMSA), as well as overexpressing VqMYB14/VqNAC92 in Vitis quinquangularis leaves, we found that VqNAC92 indirectly regulates VqSTS48 and promotes stilbene accumulation by regulating VqMYB14 expression at the protein and transcription levels. We also reported that VqNAC92 binds to the promoter of VqRAP2.12. Silencing or overexpression of VqRAP2.12 resulted in reduced or enhanced disease resistance, respectively. When VqRAP2.12 was introduced into the European grape cultivar 'Thompson Seedless', disease resistance significantly improved, and the expression levels of genes related to stilbene synthesis markedly increased. In addition, a known miRNA, miR3630-5p, was found to negatively regulate VqNAC92 and affect stilbene accumulation. In all, miR3630-5p negatively regulates VqNAC92, and VqNAC92 indirectly regulates VqSTS48 through VqMYB14/VqRAP2.12, revealing key mechanisms governing stilbene biosynthesis.",
+    "prefill": {
+      "enzyme_name": "VqSTS48",
+      "product": "stilbenes",
+      "doi": "doi:10.1111/pce.70517"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-08-04"
   }
 ]

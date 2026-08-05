@@ -4,7 +4,7 @@
 
 ---
 
-There is a widening gap in how scientists relate to AI. On one side are researchers who have woven it into nearly every task without pausing to ask whether each use is appropriate — risking plausible text that nobody verified, analyses that run but weren't properly specified, literature summaries built on training data rather than the papers themselves. On the other side are colleagues who refuse to engage at all, forgoing genuine productivity gains on tasks where AI performs well and the risks are low.
+There is a widening spectrum on which scientists relate to AI. On one end are researchers who are eager to weave it into a wide variety of tasks and on the other end are investigators who refuse to engage at all, forgoing genuine productivity gains on tasks where AI performs well and the risks are low.
 
 <!-- MARGIN: Training data — the large body of text (books, articles, websites, code) that an AI model learned from during its development. When AI generates a response "from memory" rather than from documents you provide, it is drawing on this training data — which may be outdated, incomplete, or wrong. This post also uses the related terms "training knowledge" (what the model "knows" from its training data) and "training set" (the dataset used to build a model, with the added concern that your inputs to an AI service may become part of future training sets). These terms are used more or less synonymously. -->
 

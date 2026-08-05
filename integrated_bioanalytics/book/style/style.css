@@ -55,6 +55,8 @@ main hr { border-top-width: 2px !important; }
    the container at 95rem and main at 45rem. */
 @media (min-width: 1200px) {
   .container-fluid { max-width: 120rem !important; }
+  /* anchor the sidebars to the edges instead of floating them with even gutters */
+  .container-fluid .row { justify-content: space-between !important; }
   .container-fluid main { max-width: 82rem !important; }
   /* readable-measure elements — stay narrow, left-aligned */
   main p, main ul, main ol, main dl, main blockquote,
