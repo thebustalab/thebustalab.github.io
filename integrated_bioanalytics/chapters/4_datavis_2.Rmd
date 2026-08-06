@@ -55,7 +55,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 #### concept check {-}
 
-Stack the points on top of the smoother by filling in the blank with the geom that draws a point at each observation. Then press Run.
+Stack the points on top of the smoothed line by filling in the blank with the geom that draws a point at each observation. Then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">ggplot(solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_smooth() +
