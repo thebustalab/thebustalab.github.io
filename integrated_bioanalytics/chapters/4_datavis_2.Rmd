@@ -305,6 +305,15 @@ cat('
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A hospital at the end of a long shift. Read a patient&rsquo;s metabolomics with heat maps and facets to find what is wrong before time runs out.</div>
 </div>
 </div>
+</div>
+')
+```
+
+<!--
+Airship room "The Alembic" is still in development. Once its rooms are finished and it is marked
+ready, drop this card back inside the cat('...') above, immediately before the final </div> that
+closes the flex-column container (keep every line left-justified at column 0):
+
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/cover.png" alt="The Alembic cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
@@ -313,9 +322,7 @@ cat('
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A brass-and-canvas airship listing toward a crash, with an alien sickness under your skin. Work the solvent data through the test stations to mix a cure and escape.</div>
 </div>
 </div>
-</div>
-')
-```
+-->
 
 <hr>
 
