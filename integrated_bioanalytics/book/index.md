@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-08-05"
+date: "2026-08-06"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1084,7 +1084,7 @@ plot_grid(____, ____)</textarea></div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/cover.png" alt="The Alembic cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/data_vis2/airship/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Alembic</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization II &middot; multiple mappings + selection</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Data Visualization II &middot; multiple mappings + solvent selection</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A brass-and-canvas airship listing toward a crash, with an alien sickness under your skin. Work the solvent data through the test stations to mix a cure and escape.</div>
 </div>
 </div>
