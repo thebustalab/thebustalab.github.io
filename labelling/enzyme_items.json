@@ -304,5 +304,41 @@
     },
     "source_topic": "pks",
     "discovered": "2026-08-04"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_08be9d865e06",
+    "title": "The Rosa roxburghii genome provides insights into triterpenoid metabolism",
+    "authors": "Huayue Zhang; Yuezhu Wang; Ming-jie Li; Li-na Guo; Tingting Li; Yixiao Wu; Yongqiang Zhu; Jin Lei; Huajun Zheng",
+    "journal": "Plant Physiology and Biochemistry",
+    "year": 2026,
+    "doi": "10.1016/j.plaphy.2026.111620",
+    "link": "https://doi.org/10.1016/j.plaphy.2026.111620",
+    "abstract": "Rosa roxburghii is a horticultural crop valued for its nutritional and medicinal properties, which is largely attributed to the diverse bioactive triterpenoids in its fruits. In this study, we provided a multi-omics insight into the triterpenoid biosynthesis in R. roxburghii. We first generated a high-quality chromosome-scale genome assembly of the cultivated variety \"Guinong No.5\", with a final genome size of 512.5 Mb. Subsequent genomic analyses indicated the absence of recent whole-genome duplication events, and pointed triterpenoid metabolism as a primary pathway undergoing pronounced genomic innovation. Genome-wide identification of triterpenoid biosynthesis-related families revealed 22 squalene epoxidase (SQLE) and 14 oxidosqualene cyclase (OSC) genes. Both families possessed weak codon usage bias, yet they exhibited distinct evolutionary paths. The upstream SQLEs have undergone significant expansion, primarily via tandem duplications, whereas the downstream OSCs family remained constrained and experienced gene loss. Integrated transcriptomic and metabolomic profiling across fruit developmental stages demonstrated that the upregulation of specific RroSQLEs (e.g. RroSQLE15 and RroSQLE16) correlated with the total triterpenoid accumulation, while the downregulation of specific RroOSCs (e.g. RroOSC4 and RroOSC13) was associated with a shift in triterpenoid composition, particularly a reduction in triterpenoid saponin abundance. Collectively, our findings suggest a decoupled evolutionary strategy between upstream precursor supply and downstream diversification in triterpenoid biosynthesis in R. roxburghii, providing a valuable genomic resource and a prioritized set of candidate genes for future metabolic engineering and quality improvement of this functional fruit crop.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.plaphy.2026.111620"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-11"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_5517f49c02dd",
+    "title": "Structural Basis of Starter-Substrate Selectivity Governed by a Single Residue in Orcinol Synthase",
+    "authors": "Yu Nakashima; Saw Yu Yu Hnin; Subin Kim; Hwiyong Byeon; Sornkanok Vimolmangkang; Hiroyuki Morita",
+    "journal": "Chemical and Pharmaceutical Bulletin",
+    "year": 2026,
+    "doi": "10.1248/cpb.c26-00353",
+    "link": "https://doi.org/10.1248/cpb.c26-00353",
+    "abstract": "Orcinol synthase (RdORS) from Rhododendron dauricum is a plant type III polyketide synthase involved in the biosynthesis of orsellinic acid-derived metabolites. In contrast to the related Cannabis sativa tetraketide synthase (CsTKS), which preferentially accepts medium-chain acyl-CoAs, RdORS selectively utilizes short-chain starter substrates. Here, we investigated the structural basis underlying this substrate selectivity by combining X-ray crystallography, mutational analysis, and biochemical characterization. The crystal structure of RdORS revealed that its catalytic cavity is substantially smaller than that of CsTKS because of a bulky tryptophan (Trp) 357 residue positioned at the cavity bottom. In vitro enzymatic assays demonstrated that wild-type RdORS efficiently generated tetraketide-derived products from acetyl- and butyryl-CoAs with three malonyl-CoAs, whereas productive tetraketide formation progressively diminished as starter-substrate chain length increased. Structural analysis of the RdORS Trp357S mutant revealed marked cavity expansion without perturbation of the overall catalytic framework. Correspondingly, the Trp357S substitution enabled RdORS to utilize medium-chain acyl-CoAs up to decanoyl-CoA, thereby partially recapitulating the substrate preference of CsTKS. Thus, our results provided direct structural evidence that Trp357 is a key structural determinant underlying the distinct starter-substrate preferences of RdORS.",
+    "prefill": {
+      "enzyme_name": "RdORS",
+      "product": "orsellinic acid",
+      "doi": "doi:10.1248/cpb.c26-00353"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-08-11"
   }
 ]

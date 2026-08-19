@@ -222,6 +222,7 @@
     margin: 0 0 0.2rem 0;
     color: var(--fg);
   }
+  .leaderboard-term { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
   .leaderboard-sub {
     font-size: 0.8rem;
     color: var(--muted);
@@ -456,10 +457,17 @@
     </div>
   </template>
 
-  <!-- Leaderboard: one point per labelling triple OR newsletter submission. -->
+  <!-- Leaderboard: same scoring and same per-term window as the newsletter's
+       prize board (newsletter/newsletter.py) — the two must agree. -->
   <div id="leaderboard" class="leaderboard hidden">
-    <h3>Leaderboard</h3>
-    <div class="leaderboard-sub">One point per compound–pathogen triple, three points per characterised enzyme, ten points per escape-room test-drive, and points for each newsletter submission (photo / data update / abstract / reminder).</div>
+    <h3>Leaderboard <span class="leaderboard-term" id="leaderboard-term"></span></h3>
+    <div class="leaderboard-sub">
+      <strong>How points are earned:</strong>
+      Data update 10 &middot; Escape-room test-drive 10 &middot; Abstract 5 &middot;
+      Photo 1 &middot; Reminder 1 &middot; Compound–pathogen triple 1 (max 5 per abstract) &middot;
+      Characterised enzyme 3.<br>
+      Resets each term — the winner picks where we go to celebrate 🍽
+    </div>
     <table id="leaderboard-table"><tbody></tbody></table>
   </div>
 
@@ -1215,7 +1223,19 @@ async function refreshLeaderboard() {
     const cls = name === state.labeller ? "me" : "";
     return `<tr class="${cls}"><td>${name}</td><td class="count">${count}</td></tr>`;
   }).join("");
+  $("leaderboard-term").textContent = currentSeasonLabel();
   $("leaderboard").classList.remove("hidden");
+}
+
+// Term label for the board heading. Same Spring (Jan–Apr) / Summer (May–Aug) /
+// Fall (Sep–Dec) split as currentSeasonWindow() in apps_script.gs.js and
+// current_season() in newsletter/newsletter.py — the board is per-term because
+// the prize is.
+function currentSeasonLabel(now) {
+  const d = now || new Date();
+  const m = d.getMonth() + 1;
+  const season = m <= 4 ? "Spring" : (m <= 8 ? "Summer" : "Fall");
+  return `${season} ${d.getFullYear()}`;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
