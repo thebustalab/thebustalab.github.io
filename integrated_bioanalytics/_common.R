@@ -10,6 +10,22 @@ if (is.null(getOption("repos")) || any(getOption("repos") == "@CRAN@")) {
   options(repos = c(CRAN = "https://cloud.r-project.org"))
 }
 
+# Bootstrap phylochemistry (packages, custom functions, datasets) at the start of
+# every chapter session. This used to happen as a side effect of reading order:
+# the installation chapter's live source() chunk sat in "GETTING STARTED", ahead
+# of every data chapter. That chapter moved to the appendix (2026-08-27), so the
+# bootstrap is explicit here instead of implicit in chapter position. The guard
+# keeps it a no-op when the library is already attached.
+if (!exists("algae_data")) {
+  bustalab <- TRUE
+  try(
+    suppressMessages(
+      source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+    ),
+    silent = TRUE
+  )
+}
+
 # example chunk options set globally
 knitr::opts_chunk$set(
   comment = "#>",

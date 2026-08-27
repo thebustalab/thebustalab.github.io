@@ -340,5 +340,59 @@
     },
     "source_topic": "pks",
     "discovered": "2026-08-11"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_d8fdeab5f00b",
+    "title": "Mechanism‐Guided Synergistic Engineering of Substrate Access and Catalytic Microenvironment in Oxidosqualene Cyclase for Enhanced Amyrin Biosynthesis",
+    "authors": "Yangyang Li; Ke Jin; Jiangong Lu; Haidong Huang; Xianhao Xu; Guocheng Du; Zhendong Li; Jian Chen; Long Liu; Xueqin Lv",
+    "journal": "Biotechnology and Bioengineering",
+    "year": 2026,
+    "doi": "10.1002/bit.70363",
+    "link": "https://doi.org/10.1002/bit.70363",
+    "abstract": "Oxidosqualene cyclases (OSCs) catalyze the cyclization of 2,3-oxidosqualene into diverse triterpenoids, yet their intrinsically low catalytic efficiency restricts biosynthetic productivity. Here, we establish a mechanism-guided synergistic engineering strategy that extends beyond conventional active-site engineering by integrating distal substrate access regulation with catalytic microenvironment optimization to enhance the catalytic performance of CrAS from Catharanthus roseus. Structural modeling and mechanistic analyses revealed a conserved catalytic framework involving carbocation-mediated polycyclization and identified a surface-exposed constriction region that regulates substrate access. Guided by these insights, distal surface engineering of the constriction region was synergistically combined with active pocket optimization. The resulting combinatorial mutant, M3 (L323A/T327K/N565I), exhibited a 95.2% increase in catalytic efficiency and enhanced α-amyrin and β-amyrin by 53.2% and 49.7%, reaching 158 mg/L and 63 mg/L, respectively. Multi-scale analyses combining molecular dynamics (MD) and quantum mechanics/molecular mechanics (QM/MM) calculations revealed that the enhanced catalytic performance is attributable to increased flexibility of the substrate access pathway, reinforced electrostatic and cation-π interactions, and reduced reaction energy barriers. Notably, distal mutation T327K improved substrate ingress through dynamic modulation of the protein surface, while N565I optimized the catalytic microenvironment by enhancing hydrophobic packing and stabilizing key intermediates. Overall, our findings establish a generalizable framework for engineering complex cyclases and provide a foundation for the sustainable microbial production of high-value triterpenoids.",
+    "prefill": {
+      "enzyme_name": "CrAS",
+      "product": "α-amyrin/β-amyrin",
+      "doi": "doi:10.1002/bit.70363"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-25"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_e5356748b2ee",
+    "title": "Programmable saponin biosynthesis from gene networks to predictive biomanufacturing",
+    "authors": "Y. Wang; Jiahong Chen; Zhonghong Liao; Li Yin; Fei Shi; Genhe He; Yonghui Liao",
+    "journal": "Frontiers in Plant Science",
+    "year": 2026,
+    "doi": "10.3389/fpls.2026.1800149",
+    "link": "https://doi.org/10.3389/fpls.2026.1800149",
+    "abstract": "Saponins are a structurally diverse plant glycosides with important ecological functions and broad pharmaceutical and industrial value. Recent advances have shifted saponin research from descriptive pathway elucidation toward predictive and programmable biomanufacturing. High-quality genome assemblies, integrated multi-omics profiling, and metabolic gene cluster analyses have clarified the enzymatic logic and regulatory architecture underlying saponin biosynthesis and structural diversification, enabling quantitative modeling of pathway flux and identification of key regulatory bottlenecks. Building on these foundations, synthetic biology tools, including CRISPR-based transcriptional modulation, synthetic promoters, and transcription factor rewiring, allow precise and programmable control of biosynthetic networks. In parallel, structure-guided enzyme engineering and AI-assisted protein design accelerate the optimization of cytochrome P450s and glycosyltransferases, improving catalytic efficiency and pathway robustness. These strategies are implemented across multiple production platforms, including engineered microbes, plant suspension cells, hairy roots, and adventitious root systems, enabling iterative optimization through Design-Build-Tes-Learn-cycles. Together, this review synthesizes recent conceptual and technological advances, positioning saponins as a model system that bridges gene networks, regulatory logic, and industrial biomanufacturing, and highlighting a generalizable framework for predictive design and scalable production of complex plant natural products.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3389/fpls.2026.1800149"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-25"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_1732bf835f21",
+    "title": "From gene discovery to synthetic biology: recent advances in the biosynthesis of oleanane-type pentacyclic triterpenoids",
+    "authors": "Ismail Abdelsamad; Mohamed Abdulbagi; Jingya Wang; Zheyong Xue; Lu Xu",
+    "journal": "Natural Product Reports",
+    "year": 2026,
+    "doi": "10.1039/d6np00013d",
+    "link": "https://doi.org/10.1039/d6np00013d",
+    "abstract": "Covering: 2010 to January 2026Oleanane-type pentacyclic triterpenoids (OPTs) represent a prominent class of plant-derived natural products, widely recognized for their potent pharmacological properties, including anticancer, anti-inflammatory, and antidiabetic effects. Although they have significant therapeutic potential, their production is limited by their low natural abundance, intricate biosynthetic pathways, and complex regulatory mechanisms. Recent advances have substantially improved our understanding of the biosynthesis of OPTs, particularly focusing on the elucidation of key enzymes, such as β-amyrin synthases (β-ASs), cytochrome P450 monooxygenases (CYP450s), and UDP-glycosyltransferases (UGTs). Sophisticated transcriptional regulation of OPT biosynthesis is achieved through diverse transcription factors (TFs), which integrate signals from hormonal elicitors, environmental stimuli, and metabolic feedback. Additionally, microRNAs (miRNAs) have emerged as pivotal post-transcriptional regulators, adding another dimension to the complex regulatory networks influencing OPT production. Modern approaches integrating genomics, transcriptomics, proteomics, metabolomics, and advanced computational tools have facilitated the discovery and functional characterization of novel genes and pathways, enabling targeted metabolic engineering strategies. Moreover, recent developments in synthetic biology, including heterologous expression platforms in microbial and plant hosts and innovative genome-editing techniques, offer powerful tools to overcome the current production bottlenecks of OPTs. The integration of artificial intelligence (AI) and machine learning (ML) into OPT research promises a paradigm shift from empirical trial-and-error methods to predictive optimization, facilitating the systematic discovery of biosynthetic gene clusters, rational engineering of key enzymes, and pathway optimization to unlock sustainable and high-yield production of OPTs. This review summarizes the recent advancements in biosynthetic gene discovery, regulatory mechanisms, and synthetic biology strategies for enhancing the OPT production, highlighting future opportunities for the sustainable and scalable production of these valuable natural compounds.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1039/d6np00013d"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-08-25"
   }
 ]

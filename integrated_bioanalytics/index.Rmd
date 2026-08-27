@@ -59,27 +59,28 @@ random_image <- sample(image_files, 1)
 knitr:::include_graphics(random_image, dpi = NA)
 ```
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book, there are two ways:
+Integrated Bioanalytics documents methods for chemical, phylogenetic, genomic, and language model-based analyses in R, as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab.
+
+In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it's 10 data points or 10,000. Accordingly, this book is built to help us expand out data analysis skills. Each part of the book presents a family of techniques, and every chapter is built around code you can run as you read. This means that the book can be worked through, not just read.
+
+```{r welcome-chemometrics, fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg', dpi = NA)
+```
+
+The table of contents on the left shows what this book covers at this moment. We are often adding new content as the methods we rely on change. Even though the techniques change, the questions we bring to our data tend not to: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?". These questions define the cores of each chapter.
+
+To run the analyses described in this book, there are two ways:
 
 1. Use the live R sandboxes provided in this book. These run entirely in your browser and require no installation. The escape room exercises associated with the book will also work using this method. There are R sandboxes in each chapter, and a <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener"><b>general purpose sandbox here</b></a>.
 
-2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" in the appendix. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
+Let's get started!
 
-# (PART) GETTING STARTED 
-
-```{r child="chapters/1_overview.Rmd"}
-```
-
-```{r child="chapters/2_installation.Rmd"}
-```
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -716,6 +717,9 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 
 # (PART) APPENDIX {-}
+
+```{r child="chapters/2_installation.Rmd"}
+```
 
 # datasets {-}
 
