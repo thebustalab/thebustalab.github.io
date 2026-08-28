@@ -93,8 +93,6 @@ ________________________________________________________________________________
 ```{r child="chapters/4_datavis_2.Rmd"}
 ```
 
-```{r child="chapters/5_datavis_3.Rmd"}
-```
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -105,16 +103,19 @@ ________________________________________________________________________________
 ```{r child="chapters/6_wrangling_summaries.Rmd"}
 ```
 
-```{r child="chapters/7_hierarchical_clustering.Rmd"}
+```{r child="chapters/7_networks.Rmd"}
 ```
 
-```{r child="chapters/8_dimensional_reduction.Rmd"}
+```{r child="chapters/8_hierarchical_clustering.Rmd"}
 ```
 
-```{r child="chapters/9_flat_clustering.Rmd"}
+```{r child="chapters/9_dimensional_reduction.Rmd"}
 ```
 
-```{r child="chapters/10_comparing_means.Rmd"}
+```{r child="chapters/10_flat_clustering.Rmd"}
+```
+
+```{r child="chapters/11_comparing_means.Rmd"}
 ```
 
 ________________________________________________________________________________________________
@@ -123,13 +124,13 @@ ________________________________________________________________________________
 
 # (PART) MODELS
 
-```{r child="chapters/11_numerical_models.Rmd"}
+```{r child="chapters/12_numerical_models.Rmd"}
 ```
 
-```{r child="chapters/12_language_models.Rmd"}
+```{r child="chapters/13_language_models.Rmd"}
 ```
 
-```{r child="chapters/13_protein_language_models.Rmd"}
+```{r child="chapters/14_protein_language_models.Rmd"}
 ```
 
 ________________________________________________________________________________________________
@@ -138,16 +139,16 @@ ________________________________________________________________________________
 
 # (PART) SEQUENCE ANALYSIS {-}
 
-```{r child="chapters/15_homology.Rmd"}
+```{r child="chapters/16_homology.Rmd"}
 ```
 
-```{r child="chapters/16_alignments.Rmd"}
+```{r child="chapters/17_alignments.Rmd"}
 ```
 
-```{r child="chapters/17_phylogenies.Rmd"}
+```{r child="chapters/18_phylogenies.Rmd"}
 ```
 
-```{r child="chapters/18_phylogenetic_analysis.Rmd"}
+```{r child="chapters/19_phylogenetic_analysis.Rmd"}
 ```
 
 ________________________________________________________________________________________________
@@ -719,6 +720,9 @@ ________________________________________________________________________________
 # (PART) APPENDIX {-}
 
 ```{r child="chapters/2_installation.Rmd"}
+```
+
+```{r child="chapters/z_specialized_plots.Rmd"}
 ```
 
 # datasets {-}

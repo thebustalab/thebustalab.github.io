@@ -54,7 +54,7 @@ and `### subsection {-}` for subsections.
 <!-- ## exercises {-}
 
 Exercises live here, commented out, until they are assigned. Uncomment to make
-them live (chapter 8 has a worked live example).
+them live (chapter 9 has a worked live example).
 
 -->
 

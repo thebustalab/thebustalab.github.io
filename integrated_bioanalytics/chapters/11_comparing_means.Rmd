@@ -48,6 +48,57 @@ library(multcompView)
 
 Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
+## looking at the distribution first {-}
+
+Before comparing two means, look at the two distributions. This is not a formality. Every test in this
+chapter makes assumptions about the *shape* of the data — whether it is roughly normal, whether the
+groups have comparable spread — and a mean on its own tells you nothing about either. Two groups can
+have identical means and completely different distributions, and a bar chart of the means will hide
+that from you perfectly.
+
+So it is worth knowing how to draw a distribution in full rather than summarizing it away.
+
+### distributions in full {-}
+
+Combining geoms lets you show the summary, the density and the raw observations at once. The half-eye
+gives you the density, the boxplot the quartiles, and the dots every actual measurement — so you can
+see the shape, the spread and the sample size in one picture:
+
+```{r}
+mpg %>% filter(cyl %in% c(4,6,8)) %>%
+  ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
+  ggdist::stat_halfeye(
+    adjust = 0.5, justification = -0.2, .width = 0, point_colour = NA
+  ) +
+  geom_boxplot(width = 0.12, outlier.color = NA, alpha = 0.5) +
+  ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
+```
+
+Look at what this shows that a bar chart would not: how many observations there actually are, whether
+the distribution is skewed, and whether any group is bimodal. All three change which test you should
+reach for in the next section.
+
+### distributions alongside a scatter plot {-}
+
+When you are looking at two variables at once, you can attach the distribution of each to the margins
+of the plot, so the relationship and the two individual distributions are visible together:
+
+```{r}
+i2 <- iris %>%
+  mutate(Species2 = rep(c("A","B"), 75))
+p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
+  geom_point()
+
+p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
+  theme_bw() + 
+  facet_grid(Species~Species2, space = "free", scales = "free") +
+  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
+  ggside(collapse = "all") +
+  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
+  scale_yfill_manual(values = c("black","gold"))
+```
+
 ## test selection {-}
 
 There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):

@@ -6,6 +6,11 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.
 
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
+</script>
+
 ## {-}
 
 ## data import {-}
@@ -51,6 +56,21 @@ head(select(alaska_lake_data, park, water_temp))
 
 ```
 
+#### concept check {-}
+
+Fill in the blank with the verb that pulls out columns by name, so you get just `lake` and `pH`. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">head(____(alaska_lake_data, lake, pH))</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="select() picks columns; filter() picks rows. The two are easy to mix up because both narrow the data, but they work along different dimensions of the table.">
+<p class="scq">Self-check: which verb chooses <em>columns</em>?</p>
+<label><input type="radio"> filter()</label>
+<label><input type="radio"> select()</label>
+<label><input type="radio"> arrange()</label>
+</div>
+
+<hr>
+
 ## wide and long data {-}
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
@@ -66,6 +86,26 @@ pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values
 ```
 
 Brilliant! Now we have a long-style table that can be used with ggplot.
+
+#### concept check {-}
+
+`fadb_sample` is wide: one column per plant species. Fill in the blank to name the new column that will hold those species names. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">pivot_longer(
+  data = fadb_sample,
+  cols = 2:11,
+  names_to = ____,
+  values_to = "relative_abundance"
+)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Pivoting to long form turns the old column headers into the values of a new variable, and the numbers in the matrix into the values of another. Nothing is thrown away &mdash; the same information is just reshaped into the tidy form ggplot expects.">
+<p class="scq">Self-check: when you pivot a table longer, what happens to the old column names?</p>
+<label><input type="radio"> they become the values of a new variable</label>
+<label><input type="radio"> they are deleted</label>
+<label><input type="radio"> they become the row names</label>
+</div>
+
+<hr>
 
 ## the pipe (%>%) {-}
 
@@ -90,6 +130,23 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 ```
 
 The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
+
+#### concept check {-}
+
+Fill in the blank with the pipe, so the data flows from one line to the next. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">alaska_lake_data ____
+  filter(park == "BELA") %>%
+  ggplot(aes(x = pH, y = lake)) + geom_col()</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The pipe hands whatever is on its left to the function on its right as that function&rsquo;s first argument. That is why the data set only has to be named once, at the top, instead of being nested inside every call.">
+<p class="scq">Self-check: what does <code>x %>% f()</code> do?</p>
+<label><input type="radio"> passes x to f() as its first argument</label>
+<label><input type="radio"> assigns the result of f() into x</label>
+<label><input type="radio"> runs f() before x</label>
+</div>
+
+<hr>
 
 ## summary statistics {-}
 
@@ -216,6 +273,23 @@ ggplot() +
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
+#### concept check {-}
+
+Fill in the blank so the mean pH is worked out separately for each park, rather than once across the whole data set. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">alaska_lake_data %>%
+  ____(park) %>%
+  summarize(mean_pH = mean(pH))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="group_by() splits the data into piles; summarize() then collapses each pile down to a single row. Without the group_by(), summarize() sees one big pile and returns one row for the whole data set.">
+<p class="scq">Self-check: what does <code>summarize()</code> do to the number of rows?</p>
+<label><input type="radio"> returns one row per group</label>
+<label><input type="radio"> leaves the number of rows unchanged</label>
+<label><input type="radio"> adds a row for every observation</label>
+</div>
+
+<hr>
+
 ## ordering {-}
 
 We can also sort or order a data frame based on a specific column with the command `arrange()`. Let's have a quick look. Suppose we wanted to know which lake was the coldest:
@@ -241,6 +315,21 @@ alaska_lake_data %>%
 
 It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild Lake, and Desperation Lake!
 
+#### concept check {-}
+
+Fill in the blank so the lakes come out warmest first. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">arrange(alaska_lake_data, ____(water_temp))</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="arrange() sorts ascending by default, so the smallest value lands on top. Wrapping the column in desc() flips it, which is how you ask for the largest instead.">
+<p class="scq">Self-check: on its own, <code>arrange()</code> sorts in which order?</p>
+<label><input type="radio"> descending</label>
+<label><input type="radio"> ascending</label>
+<label><input type="radio"> the order the rows were already in</label>
+</div>
+
+<hr>
+
 ## mutate {-}
 
 One last thing before our exercises... there is another command called `mutate()`. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn't make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside `mutate()`. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park's total dissolved sulfur does each lake have?
@@ -254,6 +343,66 @@ alaska_lake_data %>%
 ```
 
 The percent columns for each park add to 100%, so, for example, Devil Mountain Lake has 32.3% of BELA's dissolved sulfur.
+
+#### concept check {-}
+
+Fill in the blank with the verb that adds a new column without collapsing the rows. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">alaska_lake_data %>%
+  filter(element == "S") %>%
+  group_by(park) %>%
+  select(lake, park, element, mg_per_L) %>%
+  ____(percent_S = mg_per_L/sum(mg_per_L)*100)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Both verbs can do the same arithmetic on grouped data; the difference is what comes back. summarize() collapses each group to one row, while mutate() keeps every observation and glues the answer on as a new column &mdash; which is what you want for a within-group percentage.">
+<p class="scq">Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?</p>
+<label><input type="radio"> mutate() keeps one row per observation; summarize() returns one row per group</label>
+<label><input type="radio"> mutate() returns one row per group; summarize() keeps every row</label>
+<label><input type="radio"> they are the same; mutate() is just the newer name</label>
+</div>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+
+<!--
+ESCAPE-ROOM CARDS - PARKED, NOT YET LIVE.
+
+Both wrangling rooms (trees "The Collector's Vault", egypt "The Manifest") are still
+status: in_development in their own scenario.json, so neither is linked yet. Egypt also
+has no play.html.
+
+TO RESTORE when a room flips to status: ready (check the room's OWN scenario.json, not
+rooms/scenario_inventory.json, which drifts stale): add the "## exercises {-}" heading and a
+results='asis' chunk exactly as in 4_datavis_2.Rmd, and paste that room's card inside the
+cat('...') before the flex-column's closing </div>. Every emitted line must sit at column 0
+(an indent of 4+ spaces makes pandoc eat the closing </div>s and kills the render). Keep the
+text apostrophe-free inside the single-quoted cat(). Re-check div balance: opens == closes.
+
+Wrapper the cards go back inside:
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+...cards...
+</div>
+
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/wrangling/trees/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/wrangling/trees/cover.png" alt="The Collector&rsquo;s Vault cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/wrangling/trees/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Collector&rsquo;s Vault</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Wrangling &amp; Summaries &middot; group_by + summarize</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A forest ecologist on an alien world, and a hoarder of curiosities. Each monorail car is sorted by a different variable &mdash; group and summarize the census to work out which one opens the vault.</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/wrangling/egypt/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/wrangling/egypt/cover.png" alt="The Manifest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/wrangling/egypt/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Manifest</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Wrangling &amp; Summaries &middot; group_by + summarize</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">You come into Alexandria on a wine ship, and the harbour will not release it until the manifest is reconciled. Group and tally the cargo, dock to market to library, before the tide turns.</div>
+</div>
+</div>
+-->
+
+<hr>
+
+<!-- Legacy pdf-report version of these exercises (kept dormant; the interactive rooms above are the live version). -->
 
 <!-- ## exercises {-}
 

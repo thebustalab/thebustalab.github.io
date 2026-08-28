@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>networks | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="A network is one of the few pictures that can show you a relationship rather than a value. Nodes are things; edges are connections between them. That is the whole data structure, and it is...">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
+<meta property="og:title" content="networks | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="A network is one of the few pictures that can show you a relationship rather than a value. Nodes are things; edges are connections between them. That is the whole data structure, and it is...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="networks | Integrated Bioanalytics">
+<meta name="twitter:description" content="A network is one of the few pictures that can show you a relationship rather than a value. Nodes are things; edges are connections between them. That is the whole data structure, and it is...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="active" href="networks.html">networks</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="specialized-plots-and-maps.html">specialized plots and maps</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="networks" class="section level1 unnumbered">
+<h1>networks<a class="anchor" aria-label="anchor" href="#networks"><i class="fas fa-link"></i></a>
+</h1>
+<div id="section-6" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
+<!-- TODO (chapter art): this chapter has no header image yet. Every other chapter opens with
+     `images/<name>.png` via an absolute thebustalab.github.io URL (see 3_datavis_1.Rmd for the
+     pattern). Add `images/networks.png` and restore the include_graphics block here.
+     NB: `images/datavis3.png` is now unreferenced (data vis III was dissolved 2026-08-27) and is
+     available for reuse or deletion. -->
+<p>A network is one of the few pictures that can show you a <em>relationship</em> rather than a <em>value</em>. Nodes are things; edges are connections between them. That is the whole data structure, and it is deceptively simple, because everything that matters about a network depends on a question the picture never answers for you: <strong>what does an edge mean?</strong></p>
+<p>There are two quite different ways to end up with a network, and the difference runs through this entire chapter.</p>
+<p>Sometimes you <strong>build</strong> the network. You start with a data matrix — samples measured on many variables — compute how similar every sample is to every other, and draw an edge wherever two samples are similar enough. Here an edge means <em>“these two resemble each other”</em>, and you decided how much resemblance counts.</p>
+<p>Sometimes you are <strong>given</strong> the network. Somebody hands you a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, posts that can see one another. Here an edge means <em>“this actually happened”</em>, and you did not choose anything.</p>
+<p>The organising idea of this chapter, and the thing worth carrying away from it:</p>
+<blockquote>
+<p><strong>What a hub <em>means</em> depends entirely on what an edge means.</strong>
+In a similarity network an edge means “these two are alike”, so a hub — a node connected to everything — is a <em>mixture</em>, something intermediate that belongs to no group in particular. In a transit or interaction network an edge means “these two are connected”, so a hub is the busiest, most central place in the system. Same topology, opposite significance. Reading a network without knowing what its edges mean is how people get networks wrong.</p>
+</blockquote>
+<p>Part 1 covers networks you build. Part 2 covers networks you are given. Part 3 is about reading either one honestly.</p>
+</div>
+<div id="part-1-networks-you-build" class="section level2 unnumbered">
+<h2>part 1 — networks you build<a class="anchor" aria-label="anchor" href="#part-1-networks-you-build"><i class="fas fa-link"></i></a>
+</h2>
+<div id="from-a-data-matrix-to-a-distance-matrix" class="section level3 unnumbered">
+<h3>from a data matrix to a distance matrix<a class="anchor" aria-label="anchor" href="#from-a-data-matrix-to-a-distance-matrix"><i class="fas fa-link"></i></a>
+</h3>
+<p>The starting point is an ordinary data matrix: samples in rows, measurements in columns. To ask how similar two samples are, we need a <strong>distance</strong> between them, and <code>runMatrixAnalysis()</code> will compute one for us with <code>analysis = "dist"</code>.</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wood_dist</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">wood_smoke</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"compound"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"abundance_mg_g"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="st">"species"</span>,</span>
+<span>  na_replacement <span class="op">=</span> <span class="st">"zero"</span>,</span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.</span></span></code></pre></div>
+<p>Note <code>scale_variance = TRUE</code>. Distances are computed across all the compounds at once, so a compound measured in large numbers would otherwise dominate the distance purely because of its units. Scaling puts every variable on comparable footing first. This is the same concern that comes back in clustering and in PCA.</p>
+</div>
+<div id="melting-a-distance-matrix-into-an-edge-list" class="section level3 unnumbered">
+<h3>melting a distance matrix into an edge list<a class="anchor" aria-label="anchor" href="#melting-a-distance-matrix-into-an-edge-list"><i class="fas fa-link"></i></a>
+</h3>
+<p>A network is drawn from an <strong>edge list</strong> — a table with one row per connection. So we need to turn the distances into rows of <code>from</code>, <code>to</code>, <code>weight</code>.</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wood_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">as.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">wood_dist</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wood_edges</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wood_1"</span>, <span class="st">"wood_2"</span>, <span class="st">"distance"</span><span class="op">)</span></span>
+<span><span class="va">wood_edges</span> <span class="op">&lt;-</span> <span class="va">wood_edges</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">distance</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>edgeweight <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">distance</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<p>Two things just happened, and the second is the one students get backwards.</p>
+<p>First, a distance matrix is <strong>symmetric</strong> — it contains both A-to-B and B-to-A, plus a diagonal of zeroes where every sample is compared with itself. The <code>filter(distance &gt; 0)</code> drops the diagonal, and the block below drops the duplicated direction, so each pair appears once.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Build an order-invariant pair ID so A-B and B-A map to the same key.</span></span>
+<span><span class="va">key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span><span class="op">(</span><span class="va">wood_edges</span><span class="op">$</span><span class="va">wood_1</span>, <span class="va">wood_edges</span><span class="op">$</span><span class="va">wood_2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="va">wood_edges</span><span class="op">$</span><span class="va">wood_1</span>, <span class="va">wood_edges</span><span class="op">$</span><span class="va">wood_2</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">" | "</span><span class="op">)</span></span>
+<span><span class="co"># Mark only rows that appear in mirrored pairs (both directions present).</span></span>
+<span><span class="va">dup_rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">key</span><span class="op">)</span> <span class="op">|</span> <span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">key</span>, fromLast <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># Keep the mirrored-pair rows and drop one-direction-only links.</span></span>
+<span><span class="va">wood_edges</span> <span class="op">&lt;-</span> <span class="va">wood_edges</span><span class="op">[</span><span class="va">dup_rows</span>, <span class="op">]</span></span></code></pre></div>
+<p>Second, and more importantly: <strong>distance and similarity run in opposite directions.</strong> A <em>small</em> distance means two samples are <em>alike</em>. But an edge weight is drawn thick when it is <em>large</em>. If you feed raw distance in as the edge weight, your plot will draw the most <strong>dissimilar</strong> pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what <code>edgeweight = 1 / (1 + distance) * 100</code> is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.</p>
+</div>
+<div id="the-threshold-is-the-analysis" class="section level3 unnumbered">
+<h3>the threshold is the analysis<a class="anchor" aria-label="anchor" href="#the-threshold-is-the-analysis"><i class="fas fa-link"></i></a>
+</h3>
+<p>A distance matrix connects <em>everything to everything</em> — every pair of samples has some distance, so the complete network has an edge for every possible pair. That picture is useless. To get a network worth looking at, you keep only edges above some similarity cutoff:</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
+<span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wood_edges</span>, <span class="va">edgeweight</span> <span class="op">&gt;</span> <span class="fl">4.3</span><span class="op">)</span>,</span>
+<span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">wood_smoke</span>, <span class="va">species</span>, <span class="va">wood_type</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For <code>buildNetwork()</code>, the <code>edgelist</code> should have node names in columns 1 and 2 (<code>wood_1</code>, <code>wood_2</code> here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. <code>node_attributes</code> is joined onto the nodes so you can colour them by something you know about the samples.</p>
+<p>Now — where did <code>4.3</code> come from? This is the part of the procedure that is easiest to skip past and hardest to defend. <strong>The threshold is not a formatting choice; it is the analysis.</strong> Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and <em>which</em> structure appears depends on where you put the line.</p>
+<p>So look at what the choice is doing:</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">thresholds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">4.3</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  threshold <span class="op">=</span> <span class="va">thresholds</span>,</span>
+<span>  edges_kept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">thresholds</span>, <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wood_edges</span>, <span class="va">edgeweight</span> <span class="op">&gt;</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##   threshold edges_kept</span></span>
+<span><span class="co">## 1       2.0         30</span></span>
+<span><span class="co">## 2       3.0         30</span></span>
+<span><span class="co">## 3       4.0         22</span></span>
+<span><span class="co">## 4       4.3         18</span></span>
+<span><span class="co">## 5       5.0          2</span></span>
+<span><span class="co">## 6       6.0          0</span></span></code></pre></div>
+<p>The honest way to report a network is to say what cutoff you used and to have looked at what happens either side of it. If the grouping a reader sees only exists at one very specific threshold, it is an artefact of the cutoff, not a finding about the samples.</p>
+</div>
+<div id="plotting-the-network" class="section level3 unnumbered">
+<h3>plotting the network<a class="anchor" aria-label="anchor" href="#plotting-the-network"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>buildNetwork()</code> returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment()</a></code>, nodes with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, xend <span class="op">=</span> <span class="va">xend</span>, yend <span class="op">=</span> <span class="va">yend</span>,</span>
+<span>      linewidth <span class="op">=</span> <span class="va">edgeweight</span>,</span>
+<span>      alpha <span class="op">=</span> <span class="va">edgeweight</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"grey40"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">wood_type</span><span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3.2</span>, color <span class="op">=</span> <span class="st">"black"</span>, stroke <span class="op">=</span> <span class="fl">0.2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># ggrepel::geom_text_repel(</span></span>
+<span>  <span class="co">#   data = net$nodes,</span></span>
+<span>  <span class="co">#   aes(x = x, y = y, label = species),</span></span>
+<span>  <span class="co">#   size = 2.5,</span></span>
+<span>  <span class="co">#   max.overlaps = 40</span></span>
+<span>  <span class="co"># ) +</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hardwood"</span> <span class="op">=</span> <span class="st">"#1f78b4"</span>, <span class="st">"softwood"</span> <span class="op">=</span> <span class="st">"#33a02c"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_linewidth.html">scale_linewidth_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">1.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_alpha.html">scale_alpha_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-240-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Remember what an edge means here. Two woods are joined because their smoke chemistry resembles one another’s. A wood sitting in the middle, touching everything, is not the most important wood — it is the most <em>average</em> one, the sample whose chemistry is intermediate enough to look a bit like everybody. That is the opposite of what a hub will mean in Part 2.</p>
+<!-- =====================================================================================
+     PART 2 — AUTHORING STUB (2026-08-27).
+     Outline, teaching points and verified worked-example numbers are below in prose so the
+     chapter reads coherently, but the CODE for this part is NOT yet written, because the
+     dataset it needs has no published home. See the TODO block below. Do not present this
+     part as finished material to students until that is resolved.
+     ===================================================================================== -->
+</div>
+</div>
+<div id="part-2-networks-you-are-given" class="section level2 unnumbered">
+<h2>part 2 — networks you are given<a class="anchor" aria-label="anchor" href="#part-2-networks-you-are-given"><i class="fas fa-link"></i></a>
+</h2>
+<div id="edges-as-observed-facts" class="section level3 unnumbered">
+<h3>edges as observed facts<a class="anchor" aria-label="anchor" href="#edges-as-observed-facts"><i class="fas fa-link"></i></a>
+</h3>
+<p>Everything in Part 1 was <strong>derived</strong>: we computed the edges ourselves out of a data matrix, and we chose the rule that put them there. Now consider a network nobody computed. An origin-and-destination table of journeys. A ledger of dispatches sent between garrisons. A record of which proteins were observed to bind which. Here the edge list <em>is</em> the raw data. You did not pick a distance measure and you did not pick a threshold, because there was nothing to pick — the edges are observations.</p>
+<p><code>buildNetwork()</code> already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for this half of the chapter.</p>
+<p>Three things become available that were not available in Part 1:</p>
+<p><strong>Direction.</strong> An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A distance is always symmetric, so a derived network can never be directed. And in a directed network, <em>the asymmetry is often the finding</em> — a node that sends far more than it receives is doing something structurally different from one that is balanced.</p>
+<p><strong>Weight as a count.</strong> An edge can carry how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.</p>
+<p><strong>Structure.</strong> Because the edges are facts rather than similarities, questions about the shape of the graph become meaningful: how many separate components are there, which nodes hold them together, and what breaks if a node is removed.</p>
+</div>
+<div id="node-summaries-degree-and-volume" class="section level3 unnumbered">
+<h3>node summaries: degree and volume<a class="anchor" aria-label="anchor" href="#node-summaries-degree-and-volume"><i class="fas fa-link"></i></a>
+</h3>
+<p>The simplest node-level summary is <strong>degree</strong> — how many other nodes a node connects to. In base R that is one line over both ends of the edge list:</p>
+<pre><code>table(c(edges$from, edges$to))</code></pre>
+<p>If the edges carry counts, you can also ask for <strong>strength</strong>, or total volume: group by node and sum the traffic over both ends. That is <code>group_by()</code> and <code>summarise()</code> from the wrangling chapter, applied to a network.</p>
+</div>
+<div id="volume-is-not-importance" class="section level3 unnumbered">
+<h3>volume is not importance<a class="anchor" aria-label="anchor" href="#volume-is-not-importance"><i class="fas fa-link"></i></a>
+</h3>
+<p>Here is the lesson this half of the chapter exists for, and it is one you cannot demonstrate on a derived network at all.</p>
+<p><strong>The busiest node in a system can be structurally irrelevant, and a very quiet node can be holding the whole thing together.</strong></p>
+<p>On a verified passenger-movement network of twenty stations:</p>
+<ul>
+<li>The <strong>busiest</strong> station carries around 40,000 journeys — 301% more than the runner-up. Delete it, and the network is completely unchanged: two components before, two components after.</li>
+<li>The <strong>critical</strong> station ranks <strong>nineteenth of twenty</strong> by volume — nearly the quietest in the system. Delete it and the network splits: two components become three. It is the sole articulation point, with betweenness eight times the next station’s.</li>
+</ul>
+<p>Ranking your nodes by how much traffic they carry would put the station that actually matters second from last. This is the same lesson that co-expression analysis exists to teach in biology — you cannot find regulators by ranking expression level — and it has a sharp mathematical reason for living in Part 2 rather than Part 1. In a correlation network, a gene cannot correlate above 1/√2 ≈ 0.707 with two unrelated programmes at once, so genuine connector nodes, and therefore articulation points, are effectively impossible to observe. Only a relational network can show you this.</p>
+</div>
+<div id="components-and-critical-nodes" class="section level3 unnumbered">
+<h3>components and critical nodes<a class="anchor" aria-label="anchor" href="#components-and-critical-nodes"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<strong>Components</strong>: which sets of nodes can reach each other at all. Counting components before and after removing a node is the cheapest possible test of whether that node is load-bearing, and it needs nothing beyond base R.</li>
+<li>
+<strong>Articulation points and betweenness</strong>: the formal version of the same question — which node’s removal disconnects the graph, and which nodes sit on the most paths between other nodes.</li>
+</ul>
+<!-- =====================================================================================
+     TODO — PART 2 IS BLOCKED ON DATA PUBLICATION. Raised 2026-08-27.
+
+     The verified worked example above is `passenger_flows.csv` (20 stations, origin /
+     destination / journeys), currently at:
+         ../escape_rooms/rooms/networks/subway/_scratch/superseded/passenger_flows.csv
+     built by `build_passenger_flows.py` in the same folder.
+
+     That path CANNOT be referenced from the book. `escape_rooms/.gitignore` contains
+     `**/_scratch/`, so the file is local-only and is not published to the site. Students
+     would have no way to obtain it, and a cold render on any other machine would fail.
+
+     Before Part 2 can have working code chunks, the dataset needs a published home. The
+     right one is almost certainly `phylochemistry/sample_data/`, which is how every other
+     dataset in this book reaches students (they arrive as objects via the phylochemistry
+     source(), e.g. `wood_smoke` and `alaska_lake_data` above). Moving it there also makes
+     it loadable in the WebR cells.
+
+     Second candidate example if a chemistry framing is preferred for Part 1:
+     `_scratch/superseded/tunnel_dust.csv` (24 stations x 11 analytes) — same publication
+     problem.
+
+     Decide the home, publish the file, then write the Part 2 code chunks against it and
+     re-verify every number quoted above in R before this stub note is removed.
+     ===================================================================================== -->
+</div>
+</div>
+<div id="part-3-reading-networks-honestly" class="section level2 unnumbered">
+<h2>part 3 — reading networks honestly<a class="anchor" aria-label="anchor" href="#part-3-reading-networks-honestly"><i class="fas fa-link"></i></a>
+</h2>
+<p>Three cautions, all of which apply whichever kind of network you have.</p>
+<p><strong>Layout is arbitrary.</strong> The positions of the nodes carry no information. A force-directed layout is a physics simulation run until it settles, and it settles somewhere different every time unless you fix the seed. Two plots of the <em>same</em> graph can look nothing alike, and neither is more correct. Never read distance-on-the-page as distance-in-the-data; the only real content is which nodes are joined.</p>
+<p><strong>What an edge means determines what a hub means.</strong> This is where the chapter began and it is worth ending on. A central node in a similarity network is the least distinctive sample you have. A central node in an interaction network may be the most important thing in the system. The topology cannot tell you which situation you are in — only knowing where the edges came from can.</p>
+<p><strong>Sometimes a network is a hairball hiding a table.</strong> A network is the right picture when the <em>connections</em> are the finding. If what you actually want to say is “these five samples have high values and these five have low values”, a network will say it far worse than a bar chart. Before drawing one, ask what a reader is supposed to learn from an edge. If you cannot answer, you want a different plot.</p>
+</div>
+<div id="section-7" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-3" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://kateto.net/netscix2016.html">Network Analysis and Visualization with R and igraph</a>. Katherine Ognyanova’s widely used workshop notes, covering edge lists, layouts, degree, centrality and community detection, with worked R code throughout.</p></li>
+<li><p><a href="https://doi.org/10.1016/0378-8733(83)90028-X">Network structure and minimum degree</a>. Seidman’s paper introducing k-cores, a durable and easily computed way of describing how densely connected the interior of a network is.</p></li>
+<li><p><a href="https://ggraph.data-imaginist.com/">ggraph and tidygraph</a>. Thomas Lin Pedersen’s grammar-of-graphics approach to networks, useful once you want more control over layout and edge drawing than a helper function gives you.</p></li>
+</ul>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="wrangling-and-summaries.html">wrangling and summaries</a></div>
+<div class="next"><a href="hierarchical-clustering.html">hierarchical clustering</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#networks">networks</a></li>
+<li><a class="nav-link" href="#section-6"></a></li>
+<li>
+<a class="nav-link" href="#part-1-networks-you-build">part 1 — networks you build</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#from-a-data-matrix-to-a-distance-matrix">from a data matrix to a distance matrix</a></li>
+<li><a class="nav-link" href="#melting-a-distance-matrix-into-an-edge-list">melting a distance matrix into an edge list</a></li>
+<li><a class="nav-link" href="#the-threshold-is-the-analysis">the threshold is the analysis</a></li>
+<li><a class="nav-link" href="#plotting-the-network">plotting the network</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#part-2-networks-you-are-given">part 2 — networks you are given</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#edges-as-observed-facts">edges as observed facts</a></li>
+<li><a class="nav-link" href="#node-summaries-degree-and-volume">node summaries: degree and volume</a></li>
+<li><a class="nav-link" href="#volume-is-not-importance">volume is not importance</a></li>
+<li><a class="nav-link" href="#components-and-critical-nodes">components and critical nodes</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#part-3-reading-networks-honestly">part 3 — reading networks honestly</a></li>
+<li><a class="nav-link" href="#section-7"></a></li>
+<li><a class="nav-link" href="#further-reading-3">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-08-28.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
+</body>
+</html>

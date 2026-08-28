@@ -1,14 +1,17 @@
-# data visualization III {-}
+# specialized plots and maps {-}
 
 ## {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png', dpi = NA)
-```
+This appendix collects plot types that are useful but specialized. None of them is part of the main
+sequence of the book — each is a self-contained recipe you can come back to when your data happens to
+have the shape it fits. Three of them (3D scatter, Venn, ternary) are unusual chart forms; the fourth,
+mapping, is a larger topic in its own right.
 
-By now you can build and polish a wide range of standard plots. This chapter is a tour of the less common ones. Some data have a shape that the usual scatter and bar plots do not capture well: three components that sum to a whole, the similarities among many samples at once, or a distribution you want to show in full rather than summarize. Here we work through a set of more specialized plots for these situations, including 3D scatter plots, similarity networks, marginal summaries, ternary diagrams, and Venn diagrams. We will also look at mapping geographic data, from drawing coastlines and boundaries to layering your own measurements on top of a map.
+*These sections were the tail of the former "data visualization III" chapter, which was dissolved on
+2026-08-27: its network material became chapter 7, its distribution material moved into the
+comparing-means chapter, and what remained is here.*
 
-## advanced plots {-}
+## specialized plots {-}
 
 ### 3D scatter plots {-}
 
@@ -64,103 +67,6 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-### network plots {-}
-
-You can use `runMatrixAnalysis()` to compute distances among samples, then plot a sample-similarity network with `buildNetwork()`.
-
-For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`from`, `to` in this example). If a third column is present, it is treated as edge weight, and any additional columns are carried through as edge attributes.
-
-```{r}
-wood_dist <- runMatrixAnalysis(
-  data = wood_smoke,
-  analysis = "dist",
-  column_w_names_of_multiple_analytes = "compound",
-  column_w_values_for_multiple_analytes = "abundance_mg_g",
-  columns_w_sample_ID_info = "species",
-  na_replacement = "zero",
-  scale_variance = TRUE
-)
-
-wood_edges <- as.data.frame(as.table(as.matrix(wood_dist)))
-colnames(wood_edges) <- c("wood_1", "wood_2", "distance")
-wood_edges <- wood_edges %>% filter(distance > 0) %>% mutate(edgeweight = 1 / (1 + distance) * 100)
-
-# Build an order-invariant pair ID so A-B and B-A map to the same key.
-key <- paste(pmin(wood_edges$wood_1, wood_edges$wood_2), pmax(wood_edges$wood_1, wood_edges$wood_2), sep = " | ")
-# Mark only rows that appear in mirrored pairs (both directions present).
-dup_rows <- duplicated(key) | duplicated(key, fromLast = TRUE)
-# Keep the mirrored-pair rows and drop one-direction-only links.
-wood_edges <- wood_edges[dup_rows, ]
-
-node_attributes <- wood_smoke %>%
-  select(species, wood_type)
-
-net <- buildNetwork(
-  edgelist = filter(wood_edges, edgeweight > 4.3),
-  node_attributes = node_attributes
-)
-
-ggplot() +
-  geom_segment(
-    data = net$edges,
-    aes(
-      x = x, y = y, xend = xend, yend = yend,
-      linewidth = edgeweight,
-      alpha = edgeweight
-    ),
-    color = "grey40"
-  ) +
-  geom_point(
-    data = net$nodes,
-    aes(x = x, y = y, fill = wood_type),
-    shape = 21, size = 3.2, color = "black", stroke = 0.2
-  ) +
-  # ggrepel::geom_text_repel(
-  #   data = net$nodes,
-  #   aes(x = x, y = y, label = species),
-  #   size = 2.5,
-  #   max.overlaps = 40
-  # ) +
-  scale_fill_manual(values = c("hardwood" = "#1f78b4", "softwood" = "#33a02c")) +
-  scale_linewidth_continuous(range = c(0.2, 1.4)) +
-  scale_alpha_continuous(range = c(0.15, 0.8)) +
-  guides(alpha = "none") +
-  theme_void() +
-  theme(legend.position = "bottom")
-```
-
-### marginal summaries {-}
-
-```{r}
-i2 <- iris %>%
-  mutate(Species2 = rep(c("A","B"), 75))
-p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
-  geom_point()
-
-p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
-  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
-  theme_bw() + 
-  facet_grid(Species~Species2, space = "free", scales = "free") +
-  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
-  ggside(collapse = "all") +
-  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
-  scale_yfill_manual(values = c("black","gold"))
-```
-
-### representing distributions {-}
-
-You can also combine geoms to create more detailed representations of distributions:
-
-```{r}
-mpg %>% filter(cyl %in% c(4,6,8)) %>%
-  ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
-  ggdist::stat_halfeye(
-    adjust = 0.5, justification = -0.2, .width = 0, point_colour = NA
-  ) +
-  geom_boxplot(width = 0.12, outlier.color = NA, alpha = 0.5) +
-  ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
-```
-
 ### venn diagrams {-}
 
 ```{r}
@@ -200,7 +106,14 @@ alaska_lake_data %>%
 ```
 
 
+
 ## map data {-}
+
+Geographic data is really its own subject, and what follows is an introduction rather than a treatment
+of it. The point to take away is that a map is a plot like any other — the coordinates happen to be
+longitude and latitude, and the one genuinely new idea is the **projection**, which is the decision
+about how to flatten a curved surface onto a page. Every projection distorts something; choosing one is
+a decision with consequences, not a default.
 
 ### plotting boundaries {-}
 
@@ -373,6 +286,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
     
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
+
 
 ## {-}
 

@@ -4,12 +4,34 @@ authority: intent
 
 # New chapter — networks
 
-**Status:** intent / planning. Decided 2026-08-11 (Lucas): networks becomes a **standalone
-chapter** teaching **both** halves — network *visualisation* (derived similarity networks)
-and network *data* (relational, observed edges). The `networks/subway` escape-room scenario
-is its exercise set.
+**Status: EXTRACTION + RENUMBERING EXECUTED 2026-08-27.** Decided 2026-08-11 (Lucas): networks becomes
+a **standalone chapter** teaching **both** halves — network *visualisation* (derived similarity networks)
+and network *data* (relational, observed edges). The `networks/subway` and `networks/beacons` escape-room
+scenarios are its exercise sets.
 
-Nothing has been written or renumbered yet. This document is the plan.
+**What was done 2026-08-27:**
+- `chapters/7_networks.Rmd` **created**. Part 1 authored (the ch.5 network section lifted, plus the two
+  improvements this plan asked for: the distance→similarity **inversion** warning and the
+  **threshold-is-the-analysis** section with a cutoff sweep). Part 3 authored (layout is arbitrary; edge
+  meaning determines hub meaning; when a network is a hairball hiding a table). **Part 2 is an authoring
+  stub** — prose and verified numbers are in place, code chunks are not, and the reason is a hard blocker;
+  see *Part 2 data blocker* below.
+- `chapters/5_datavis_3.Rmd` — `### network plots {-}` **removed** (65 lines) and the chapter intro
+  paragraph rewritten so it no longer promises similarity networks.
+- **Renumbered** old 7–18 → 8–19 (12 files), `index.Rmd` child chunks updated and the new
+  `7_networks.Rmd` chunk inserted after wrangling in `# (PART) STATISTICAL METHODS`.
+- `AGENTS.md` chapter table + tree entry updated; in-prose `ch.N` cross-references swept in both this repo
+  and `../escape_rooms/` (25 targeted replacements — **not** a blanket regex, which corrupts strings like
+  "bir**ch 7**.42" in `spa/notes.md`).
+- **`_template.Rmd`** "chapter 8 has a worked live example" → chapter 9.
+
+**Not done / still open:** Part 2 code (blocked, below); a header image for the chapter
+(`images/networks.png` — every other chapter has one); a **full book render has NOT been run**, so the new
+chapter is unverified end-to-end.
+
+**Unrelated defect noticed while doing this:** `15_generative_language_models.Rmd` (old 14) has **no
+`child=` chunk in `index.Rmd`** and therefore is not in the rendered book. Pre-existing, not caused by the
+renumbering. Recorded in the `AGENTS.md` chapter table.
 
 ## Why a standalone chapter
 
@@ -33,10 +55,10 @@ The organising idea for the new chapter, and the thing worth teaching:
 > opposite significance. Reading a network without knowing what its edges mean is how people
 > get networks wrong.
 
-## Placement — chapter 7, CONFIRMED (Lucas, 2026-08-11)
+## Placement — chapter 7, CONFIRMED (Lucas, 2026-08-11) — **DONE 2026-08-27**
 
 Insert **between wrangling (6) and hierarchical clustering (7)**, renumbering current
-7–18 → 8–19. Agreed; the renumbering work is not yet done.
+7–18 → 8–19. Agreed; **executed 2026-08-27**.
 
 Rationale, and it is a genuine dependency chain rather than a preference:
 - The relational half **needs `group_by`/`summarise`** (aggregating journeys to stations), so
@@ -172,21 +194,61 @@ No blocker. Checked against the wasm repo for R 4.4 and 4.5: `igraph`, `network`
 `ggtree`), nothing here needs swapping out. `buildNetwork()` uses igraph only for the
 force-directed layout and falls back to `kamadakawai` without it.
 
-## Migration out of ch.5
+## Migration out of ch.5 — DONE, and ch.5 was dissolved entirely (2026-08-27)
 
-When this chapter lands, `5_datavis_3.Rmd` loses its `### network plots {-}` section. The
-remaining six plot types (3D scatter, marginal summaries, distributions, Venn, ternary, maps)
-stay. Worth asking at that point whether what is left still justifies a chapter or should be
-folded into ch.4.
+The plan said: *"Worth asking at that point whether what is left still justifies a chapter."* It was
+asked, and the answer was no. `5_datavis_3.Rmd` is **retired** —
+`z_archive/retired_chapters/5_datavis_3.Rmd.retired_2026-08-27`, with a README recording the mapping.
+Its seven sections were **distributed, not deleted**:
+
+| former ch.5 section | new home |
+|---|---|
+| `### network plots {-}` | `chapters/7_networks.Rmd` — Part 1 |
+| `### marginal summaries {-}` | `chapters/11_comparing_means.Rmd` — new `## looking at the distribution first {-}` |
+| `### representing distributions {-}` | same section as above |
+| `### 3D scatter plots {-}` | `chapters/z_specialized_plots.Rmd` (appendix) |
+| `### venn diagrams {-}` | appendix |
+| `### ternary plots {-}` | appendix |
+| `## map data {-}` | appendix |
+| `## further reading {-}` | appendix (all three links were map/ternary links) |
+
+**Why the distribution material went to comparing means, not the appendix.** Showing a distribution in
+full before you test it is the habit that chapter is already trying to build — it makes students check
+normality and homogeneity of variance a section later. The raincloud plot belongs next to the t-test.
+
+**Maps were considered for a chapter of their own** and parked as an appendix section instead (Lucas,
+2026-08-27). The argument for promoting them later still stands and is worth recording: projections
+genuinely distort, choosing one is an analytical decision, and the existing shoreline code already
+computes **haversine distances** on a sphere. That is real analysis, unlike the other appendix plots.
+If it is ever promoted, the blocking dependency is `pfas_data_private.csv` (a Mac-only absolute path
+that already breaks cold renders) — it would need a redacted public version or a substitute dataset.
+
+**Consequences worth knowing:**
+- **There is now no chapter 5.** The numbering runs 3, 4, 6, 7 … 19. Closing the gap would mean a second
+  renumbering sweep immediately after the first, which would invalidate every `ch.N` reference just
+  updated across both repos — so it was left open **pending Lucas's call**.
+- `images/datavis3.png` is now **unreferenced**.
+- The **ggtern leak hazard** and the **private-PFAS cold-render failure**, both previously attributed to
+  `5_datavis_3.Rmd` in `AGENTS.md`, now live in `z_specialized_plots.Rmd`. Both notes were updated.
+- Data vis III had **no escape-room scenario** and now never needs one — one fewer chapter to pair.
 
 ## Open items
 
-1. **Confirm placement + renumbering** (chapter 7, current 7–18 → 8–19). Lucas's call.
-2. **Possible bug in the existing ch.5 network example.** `runMatrixAnalysis(analysis = "dist")`
-   returns a **long data frame** (`sample_1`, `sample_2`, `distance`), but
-   `5_datavis_3.Rmd:84` calls `as.data.frame(as.table(as.matrix(wood_dist)))` as though it
-   were a dist object. Verify before lifting that code into the new chapter — it determines
-   what students are handed. Unverified; do not assume either way.
+1. ~~**Confirm placement + renumbering**~~ **DONE 2026-08-27** — chapter 7, old 7–18 → 8–19, executed.
+2. ~~**Possible bug in the existing ch.5 network example.**~~ **RESOLVED 2026-08-27 — NOT a bug, but a
+   real trap worth knowing about.** `phylochemistry.R` defines **two similarly-named functions**, and they
+   return **different types** for the same `analysis = "dist"`:
+   - **`runMatrixAnalysis`** (singular, definition ~L14479) — the one the book calls — hits
+     `return(dist_matrix)` at ~L14922 and returns a genuine **`dist` object**. So
+     `as.data.frame(as.table(as.matrix(wood_dist)))` is **correct**, and the rendered book confirms it
+     (the chunk produces a figure).
+   - **`runMatrixAnalyses`** (PLURAL, definition ~L13907) returns a **long data frame** at ~L14139
+     (`sample_1`, `sample_2`, `distance`, right-joined with sample metadata, diagonal pre-filtered).
+     Feeding *that* into `as.matrix()` would produce a character matrix and silent nonsense.
+   The original worry came from reading the plural function's branch. The code was lifted into
+   `7_networks.Rmd` **unchanged**. **Caveat on method:** this was settled by reading the source and by
+   the rendered figure, **not** by executing the chunk — an attempt to run it here timed out sourcing
+   `phylochemistry.R`. If a live re-check is ever wanted, do it on the Mac.
 3. **Ch.5's exercises block is wrong regardless** — `5_datavis_3.Rmd:387–397` is commented out
    and its text is about normality tests and t-tests, copy-pasted from comparing means.
 4. **How far to take Part 2.** Degree and components are clearly in scope. Betweenness and
@@ -194,3 +256,23 @@ folded into ch.4.
    or introduced by demonstration only.
 5. **Does the chapter need a helper function** for degree/components, or is base R plus
    `igraph` enough? (`table(c(edges$from, edges$to))` gives degree in one line.)
+
+## Part 2 data blocker (raised 2026-08-27) — the one thing standing between the stub and a finished chapter
+
+Part 2's verified worked example is `passenger_flows.csv` (20 stations, origin / destination / journeys),
+which currently lives at
+`../escape_rooms/rooms/networks/subway/_scratch/superseded/passenger_flows.csv`.
+
+**That path cannot be referenced from the book.** `escape_rooms/.gitignore` contains `**/_scratch/`, so the
+file is local-only and never reaches the published site. Students could not obtain it, and a cold render on
+any other machine would fail on it — the same class of failure as the ch.5 `pfas_data_private.csv` path
+already documented in `AGENTS.md`.
+
+**Fix before writing Part 2's code:** give the dataset a published home. The right one is almost certainly
+`../phylochemistry/sample_data/`, which is how every other dataset in this book reaches students — they
+arrive as objects via the phylochemistry `source()` (`wood_smoke`, `alaska_lake_data`, `hawaii_aquifers`),
+and that route also makes the data loadable in the WebR cells. Then write the chunks against it and
+**re-verify in R every number quoted in the stub** (busiest station ~40,000 journeys / +301%; removal
+leaves 2 components; critical station 19th of 20; removal 2→3 components; betweenness 8×) before deleting
+the stub warning. The same blocker applies to `tunnel_dust.csv` if the chemistry framing is ever wanted for
+Part 1.
