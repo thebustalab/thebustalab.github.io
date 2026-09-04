@@ -128,6 +128,7 @@
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/genomescope.R")
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/analyzeGCMSdata4.R")
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/analyzeGCMSdata5.R")
+                source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/analyzeGCMSdata6.R")
                 source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
             }
         }

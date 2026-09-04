@@ -4,32 +4,43 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
 ```
 
-Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.
+Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting your *own* data into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script>
 
 ## {-}
 
-## data import {-}
+## viewing data {-}
 
-To analyze data that is stored on your own computer you can indeed import it into RStudio.
+Before you can wrangle a data set, it helps to be able to *see* it. `head()` shows you the first six rows, which is enough to remind yourself what the columns are called, but not enough to get a feel for what is actually in the table. For that, use `view()`:
 
-The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
+<div class="webr-cell"><textarea class="webr-code">view(alaska_lake_data)</textarea></div>
 
-Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
+That opens the whole table as a scrollable grid. Each column shows its name with its **type** underneath — `chr` for text, `dbl` for numbers with decimals, `int` for whole numbers, `lgl` for TRUE/FALSE, `fct` for a factor. Knowing a column's type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as `chr` is one of the most common reasons a calculation can fail.
 
-* On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
-* On PC: `C:\\My Computer\\Documents\\sample_data_set.csv` (note double backward slashes!)
+If you are using these commands in this books webR sandbox, know that very large tables are capped at the first 1000 rows so your browser stays responsive. When that happens the caption says so, and you can ask for more with `view(alaska_lake_data, n = 5000)`. In addition, `view()` is not limited to data sets that were loaded for you — it will show you anything, including a table you just built:
 
-You can quickly find paths to files via the following:
+<div class="webr-cell"><textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea></div>
 
-* On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
-* On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
+That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what you meant is to look at the result rather than guess at it. Finally, please note that `view()` is provided by the sandboxes in this book (and by the escape rooms). If you move to R and RStudio on your own machine, the equivalent is `View()`, with a capital V.
 
-With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
+#### concept check {-}
+
+Fill in the blank with the command that opens the whole table, rather than just the top of it. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">____(alaska_lake_data)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="head() shows only the first six rows. view() opens the entire table in a scrollable grid, with each column&rsquo;s type shown under its name.">
+<p class="scq">Self-check: you have run <code>head(alaska_lake_data)</code> and want to see the rest of it. What does <code>view(alaska_lake_data)</code> give you that <code>head()</code> does not?</p>
+<label><input type="radio"> Every row, in a scrollable table</label>
+<label><input type="radio"> The mean of each column</label>
+<label><input type="radio"> A plot of the data</label>
+</div>
+
+<hr>
 
 ## subsetting {-}
 
@@ -361,7 +372,7 @@ Fill in the blank with the verb that adds a new column without collapsing the ro
 <label><input type="radio"> they are the same; mutate() is just the newer name</label>
 </div>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script>
 
 <!--
 ESCAPE-ROOM CARDS - PARKED, NOT YET LIVE.

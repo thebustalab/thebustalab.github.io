@@ -6,6 +6,12 @@
  * instance and ONE R session (boot once, lazily on the first Run) — so a variable made in one cell is
  * available in the next, exactly like a notebook. R runs entirely in the browser; nothing is installed.
  *
+ * The WebR half is NOT implemented here. It is `WebRConsole`, shared with the escape rooms and the
+ * sandbox (see the import below). This file used to carry a copy-pasted second implementation of boot +
+ * run; the two drifted (the escape-room copy handled a failed boot, this one did not), so they were
+ * consolidated on 2026-09-04. Keep this file to CELL UI only — anything about running R belongs in
+ * `escape_rooms/shared/webr-console.js` so all three surfaces get it at once.
+ *
  * Page config (packages/datasets/setup) comes from a global set before this script loads:
  *   <script>window.WEBR_CELL_CONFIG = { packages:[...], datasets:[{name,url}], setup:"..." };</script>
  *
@@ -16,55 +22,30 @@
  *     <label><input type="radio"> geom_point()</label>
  *     <label><input type="radio"> geom_col()</label>
  *   </div>
+ *
+ * Students get `view(x)` for free in every cell — the RStudio-style table viewer, defined by the shared
+ * console. It works on derived data too: view(algae_data %>% filter(...)).
+ *
+ * CROSS-REPO IMPORT: the shared console lives in the escape_rooms repo and is fetched by its public
+ * URL, exactly as sandbox.html already does. Its `?v=` token must be bumped by hand in lockstep with
+ * escape_rooms/shared/ — nothing validates it from this side. See this dir's AGENTS.md.
  */
-import { WebR } from "https://webr.r-wasm.org/latest/webr.mjs";
+import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=88";
 
-let webR = null, ready = false, booting = null;
-const statusEls = new Set();                       // every cell's status line — the boot message shows on all
-const setBootStatus = m => statusEls.forEach(s => { s.textContent = m; });
-
-async function boot() {
-  if (ready) return;
-  if (booting) return booting;
-  booting = (async () => {
+let rconsole = null;
+function session() {
+  if (!rconsole) {
     const cfg = window.WEBR_CELL_CONFIG || {};
-    setBootStatus("Starting R in your browser… (first time ~20–40s)");
-    webR = new WebR({ interactive: false });
-    await webR.init();
-    const pkgs = cfg.packages || [];
-    if (pkgs.length) { setBootStatus("Installing R packages: " + pkgs.join(", ") + " …"); await webR.installPackages(pkgs, { quiet: true }); }
-    for (const ds of (cfg.datasets || [])) {
-      setBootStatus("Loading data: " + ds.name + " …");
-      const resp = await fetch(ds.url);
-      if (!resp.ok) throw new Error("could not fetch " + ds.url);
-      const bytes = new Uint8Array(await resp.arrayBuffer());
-      const p = "/home/web_user/" + ds.name + ".csv";
-      await webR.FS.writeFile(p, bytes);
-      await webR.evalRVoid(`${ds.name} <- readr::read_csv("${p}", show_col_types = FALSE)`);
-    }
-    if (cfg.setup) { setBootStatus("Preparing session…"); await webR.evalRVoid(cfg.setup); }
-    ready = true; setBootStatus("");
-  })();
-  return booting;
-}
-
-async function runCode(code, outEl) {
-  outEl.innerHTML = "";
-  if (!ready) await boot();
-  if (!ready) return;
-  const shelter = await new webR.Shelter();
-  try {
-    const result = await shelter.captureR(code, { withAutoprint: true, captureStreams: true, captureGraphics: { width: 720, height: 460 } });
-    const text = result.output.filter(o => o.type === "stdout" || o.type === "stderr").map(o => o.data).join("\n");
-    if (text.trim().length) { const pre = document.createElement("pre"); pre.className = "webr-out"; pre.textContent = text; outEl.appendChild(pre); }
-    for (const img of (result.images || [])) {
-      const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; c.className = "webr-plot";
-      c.getContext("2d").drawImage(img, 0, 0); outEl.appendChild(c);
-    }
-    if (!text.trim().length && !(result.images || []).length) { const pre = document.createElement("pre"); pre.className = "webr-out muted"; pre.textContent = "(no output)"; outEl.appendChild(pre); }
-  } catch (err) {
-    const pre = document.createElement("pre"); pre.className = "webr-out err"; pre.textContent = "Error: " + (err && err.message ? err.message : err); outEl.appendChild(pre);
-  } finally { shelter.purge(); }
+    rconsole = new WebRConsole(
+      { packages: cfg.packages, datasets: cfg.datasets, setup: cfg.setup },
+      {}                                   // no single output/status: each cell supplies its own
+    );
+    // The shared console's "R is ready" chatter belongs in a standalone console, not under every cell
+    // in a chapter — swap it for a blank line once the boot succeeds.
+    const origSet = rconsole.setStatus.bind(rconsole);
+    rconsole.setStatus = m => origSet(rconsole.ready ? "" : m);
+  }
+  return rconsole;
 }
 
 function initCells() {
@@ -75,10 +56,12 @@ function initCells() {
     let btn = bar.querySelector("button.webr-run"); if (!btn) { btn = document.createElement("button"); btn.className = "webr-run"; btn.textContent = "▶ Run"; bar.appendChild(btn); }
     let stat = bar.querySelector(".webr-status"); if (!stat) { stat = document.createElement("span"); stat.className = "webr-status"; bar.appendChild(stat); }
     let out = cell.querySelector(".webr-output"); if (!out) { out = document.createElement("div"); out.className = "webr-output"; cell.appendChild(out); }
-    statusEls.add(stat);
+    // One session, many cells: register this cell's status line so the boot message shows wherever
+    // the student actually clicked.
+    session().addStatusEl(stat);
     const run = async () => {
       btn.disabled = true; const t = btn.textContent; btn.textContent = "running…";
-      try { await runCode(ta.value, out); } finally { btn.disabled = false; btn.textContent = t; if (ready) stat.textContent = ""; }
+      try { await session().runFrom(ta, out); } finally { btn.disabled = false; btn.textContent = t; if (session().ready) stat.textContent = ""; }
     };
     btn.onclick = run;
     ta.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
@@ -104,4 +87,5 @@ function initSelfChecks() {
 
 function init() { initCells(); initSelfChecks(); }
 if (document.readyState !== "loading") init(); else document.addEventListener("DOMContentLoaded", init);
-window.WebRCell = { init, run: runCode };   // re-callable if a page injects cells later
+// re-callable if a page injects cells later; `session` exposed for console debugging in class
+window.WebRCell = { init, session };

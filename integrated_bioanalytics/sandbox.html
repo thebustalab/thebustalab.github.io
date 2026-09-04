@@ -43,21 +43,25 @@
     <div class="card">
       <div class="dslabel">Datasets loaded</div>
       <div class="chips" id="chips"></div>
-      <div class="hint" style="margin-top:8px">Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Packages ready: dplyr, ggplot2, tidyr, readr.</div>
+      <div class="hint" style="margin-top:8px"><code>view(name)</code> opens a dataset as a scrollable table &mdash; it works on anything, including a result you just built: <code>view(filter(solvents, category == "alcohol"))</code>. Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Packages ready: dplyr, ggplot2, tidyr, readr.</div>
     </div>
 
     <div class="card">
       <textarea id="code" spellcheck="false"></textarea>
       <div class="row">
         <button class="run" id="run" disabled>▶ Run</button>
-        <span class="hint">or press Ctrl/⌘ + Enter</span>
+        <span class="hint">or press Ctrl/⌘ + Enter &mdash; <b>highlight part of your code to run just that part</b></span>
       </div>
       <div id="output"></div>
     </div>
   </main>
 
   <script type="module">
-    import { WebRConsole } from "/escape_rooms/shared/webr-console.js";
+    // ?v= must track the token pano-player.js imports webr-console.js with (escape_rooms/shared/).
+    // This page is a THIRD consumer of that shared module, in a different repo, so the escape rooms'
+    // validate_assets.py VBUMP check cannot see it — bump here by hand whenever that token moves,
+    // or a console edit silently serves stale to the sandbox while the rooms pick it up.
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=88";
 
     // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
     const DATASETS = [
@@ -76,7 +80,7 @@
 
     const codeEl = document.getElementById("code");
     const runBtn = document.getElementById("run");
-    codeEl.value = `# R in your browser. Try it:\nhead(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
+    codeEl.value = `# R in your browser. Try it:\nview(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
 
     // dataset chips — static labels of what's loaded (no click-to-insert; it clobbered the editor)
     const chips = document.getElementById("chips");
@@ -86,7 +90,7 @@
       chips.appendChild(b);
     });
 
-    const run = () => { if (!runBtn.disabled) console_.run(codeEl.value); };
+    const run = () => { if (!runBtn.disabled) console_.runFrom(codeEl); };
     runBtn.onclick = run;
     codeEl.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
 

@@ -106,30 +106,43 @@
 <h1>wrangling and summaries<a class="anchor" aria-label="anchor" href="#wrangling-and-summaries"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting your <em>own</em> data into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script><div id="section-4" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-4"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="data-import" class="section level2 unnumbered">
-<h2>data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
+<div id="viewing-data" class="section level2 unnumbered">
+<h2>viewing data<a class="anchor" aria-label="anchor" href="#viewing-data"><i class="fas fa-link"></i></a>
 </h2>
-<p>To analyze data that is stored on your own computer you can indeed import it into RStudio.</p>
-<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
-<p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
-<ul>
-<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
-<li>On PC: <code>C:\\My Computer\\Documents\\sample_data_set.csv</code> (note double backward slashes!)</li>
-</ul>
-<p>You can quickly find paths to files via the following:</p>
-<ul>
-<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</file>
-</li>
-<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
-</ul>
-<p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
+<p>Before you can wrangle a data set, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows you the first six rows, which is enough to remind yourself what the columns are called, but not enough to get a feel for what is actually in the table. For that, use <code>view()</code>:</p>
+<div class="webr-cell">
+<textarea class="webr-code">view(alaska_lake_data)</textarea>
+</div>
+<p>That opens the whole table as a scrollable grid. Each column shows its name with its <strong>type</strong> underneath — <code>chr</code> for text, <code>dbl</code> for numbers with decimals, <code>int</code> for whole numbers, <code>lgl</code> for TRUE/FALSE, <code>fct</code> for a factor. Knowing a column’s type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as <code>chr</code> is one of the most common reasons a calculation can fail.</p>
+<p>If you are using these commands in this books webR sandbox, know that very large tables are capped at the first 1000 rows so your browser stays responsive. When that happens the caption says so, and you can ask for more with <code>view(alaska_lake_data, n = 5000)</code>. In addition, <code>view()</code> is not limited to data sets that were loaded for you — it will show you anything, including a table you just built:</p>
+<div class="webr-cell">
+<textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea>
+</div>
+<p>That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what you meant is to look at the result rather than guess at it. Finally, please note that <code>view()</code> is provided by the sandboxes in this book (and by the escape rooms). If you move to R and RStudio on your own machine, the equivalent is <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code>, with a capital V.</p>
+<div id="concept-check-9" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-9"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the command that opens the whole table, rather than just the top of it. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">____(alaska_lake_data)</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="head() shows only the first six rows. view() opens the entire table in a scrollable grid, with each column’s type shown under its name.">
+<p class="scq">
+Self-check: you have run <code>head(alaska_lake_data)</code> and want to see the rest of it. What does <code>view(alaska_lake_data)</code> give you that <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> does not?
+</p>
+<p><label><input type="radio"> Every row, in a scrollable table</label>
+<label><input type="radio"> The mean of each column</label>
+<label><input type="radio"> A plot of the data</label></p>
+</div>
+<hr>
+</div>
 </div>
 <div id="subsetting" class="section level2 unnumbered">
 <h2>subsetting<a class="anchor" aria-label="anchor" href="#subsetting"><i class="fas fa-link"></i></a>
@@ -192,8 +205,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span><span class="co">## 4 BELA        6.46</span></span>
 <span><span class="co">## 5 BELA        6.46</span></span>
 <span><span class="co">## 6 BELA        6.46</span></span></code></pre></div>
-<div id="concept-check-9" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-9"><i class="fas fa-link"></i></a>
+<div id="concept-check-10" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-10"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the verb that pulls out columns by name, so you get just <code>lake</code> and <code>pH</code>. Press Run.</p>
 <div class="webr-cell">
@@ -248,8 +261,8 @@ Self-check: which verb chooses <em>columns</em>?
 <span><span class="co">## 10 Hexadecanoic acid Nuytsia_floribunda                  3.8</span></span>
 <span><span class="co">## # ℹ 60 more rows</span></span></code></pre></div>
 <p>Brilliant! Now we have a long-style table that can be used with ggplot.</p>
-<div id="concept-check-10" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-10"><i class="fas fa-link"></i></a>
+<div id="concept-check-11" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-11"><i class="fas fa-link"></i></a>
 </h4>
 <p><code>fadb_sample</code> is wide: one column per plant species. Fill in the blank to name the new column that will hold those species names. Press Run.</p>
 <div class="webr-cell">
@@ -287,8 +300,8 @@ Self-check: when you pivot a table longer, what happens to the old column names?
 <p>Neat! Another way to think about the pipe:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
-<div id="concept-check-11" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-11"><i class="fas fa-link"></i></a>
+<div id="concept-check-12" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-12"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the pipe, so the data flows from one line to the next. Press Run.</p>
 <div class="webr-cell">
@@ -488,8 +501,8 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-195-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
-<div id="concept-check-12" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-12"><i class="fas fa-link"></i></a>
+<div id="concept-check-13" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-13"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank so the mean pH is worked out separately for each park, rather than once across the whole data set. Press Run.</p>
 <div class="webr-cell">
@@ -561,8 +574,8 @@ Self-check: what does <code>summarize()</code> do to the number of rows?
 <span><span class="co">## 2 Wild… GAAR        5.5   6.98 C            6.5 bound       </span></span>
 <span><span class="co">## 3 Desp… NOAT        2.95  6.34 C            2.1 bound</span></span></code></pre></div>
 <p>It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild Lake, and Desperation Lake!</p>
-<div id="concept-check-13" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-13"><i class="fas fa-link"></i></a>
+<div id="concept-check-14" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-14"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank so the lakes come out warmest first. Press Run.</p>
 <div class="webr-cell">
@@ -614,8 +627,8 @@ Self-check: on its own, <code>arrange()</code> sorts in which order?
 <span><span class="co">## 19 Lake_Narvakrak      NOAT  S           1.38     13.0 </span></span>
 <span><span class="co">## 20 Okoklik_Lake        NOAT  S           1.01      9.53</span></span></code></pre></div>
 <p>The percent columns for each park add to 100%, so, for example, Devil Mountain Lake has 32.3% of BELA’s dissolved sulfur.</p>
-<div id="concept-check-14" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-14"><i class="fas fa-link"></i></a>
+<div id="concept-check-15" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-15"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the verb that adds a new column without collapsing the rows. Press Run.</p>
 <div class="webr-cell">
@@ -633,7 +646,7 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 <label><input type="radio"> mutate() returns one row per group; summarize() keeps every row</label>
 <label><input type="radio"> they are the same; mutate() is just the newer name</label></p>
 </div>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script><!--
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script><!--
 ESCAPE-ROOM CARDS - PARKED, NOT YET LIVE.
 
 Both wrangling rooms (trees "The Collector's Vault", egypt "The Manifest") are still
@@ -733,7 +746,7 @@ Some pointers:
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#wrangling-and-summaries">wrangling and summaries</a></li>
 <li><a class="nav-link" href="#section-4"></a></li>
-<li><a class="nav-link" href="#data-import">data import</a></li>
+<li><a class="nav-link" href="#viewing-data">viewing data</a></li>
 <li><a class="nav-link" href="#subsetting">subsetting</a></li>
 <li><a class="nav-link" href="#wide-and-long-data">wide and long data</a></li>
 <li><a class="nav-link" href="#the-pipe">the pipe (%&gt;%)</a></li>
@@ -759,7 +772,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-08-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

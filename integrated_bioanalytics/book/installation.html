@@ -198,6 +198,24 @@ If the library load correctly - then you are set to go! If not, try updating you
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?” You should say “yes”.</p>
 <!-- end -->
 </div>
+<div id="data-import" class="section level2 unnumbered">
+<h2>data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
+</h2>
+<p>Once R, RStudio, and phylochemistry are installed, the last piece is getting your own data into R. The sandboxes in this book load their datasets for you, but data sitting on your own hard drive has to be imported, and there are two ways to do it.</p>
+<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
+<p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
+<ul>
+<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
+<li>On PC: <code>C:\\My Computer\\Documents\\sample_data_set.csv</code> (note double backward slashes!)</li>
+</ul>
+<p>You can quickly find paths to files via the following:</p>
+<ul>
+<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</file>
+</li>
+<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
+</ul>
+<p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
+</div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="question-driven-report.html">question-driven report</a></div>
@@ -211,6 +229,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <li><a class="nav-link" href="#verification">verification</a></li>
 <li><a class="nav-link" href="#tex">TeX</a></li>
 <li><a class="nav-link" href="#phylochemistry">phylochemistry</a></li>
+<li><a class="nav-link" href="#data-import">data import</a></li>
 </ul>
 
       <div class="book-extra">
@@ -228,7 +247,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-08-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

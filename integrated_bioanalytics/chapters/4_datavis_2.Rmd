@@ -2,7 +2,7 @@
 
 In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RColorBrewer","cowplot"], datasets: [{ name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }, { name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }, { name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(ggrepel); library(RColorBrewer); library(cowplot)})" };
 </script>
@@ -290,7 +290,7 @@ plot_grid(____, ____)</textarea></div>
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script>
 
 ## exercises {-}
 

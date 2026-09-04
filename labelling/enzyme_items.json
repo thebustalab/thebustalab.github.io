@@ -394,5 +394,59 @@
     },
     "source_topic": "osc",
     "discovered": "2026-08-25"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_94da5af1d2ca",
+    "title": "Genome-Wide Identification and Expression Profiling of the Oxidosqualene Cyclase Gene Family in Akebia trifoliata Across Fruit Development and Disease-Susceptibility Groups",
+    "authors": "Hefei Rao; Hao Liu; Jie Li; Xiaoxiao Yi; Yunfeng Deng; Chen Chen; Feiquan Tan; Peigao Luo",
+    "journal": "Current Issues in Molecular Biology",
+    "year": 2026,
+    "doi": "10.3390/cimb48080795",
+    "link": "https://doi.org/10.3390/cimb48080795",
+    "abstract": "Akebia trifoliata is an important Chinese traditional medicinal plant, and its abundant triterpenoids are the primary active medicinal components. However, the oxidosqualene cyclase (OSC) gene family responsible for constructing their triterpenoid skeletons has not yet been systematically characterized. In this study, nine AktOSC genes were identified genome-wide in A. trifoliata. Phylogenetic analysis revealed that most AktOSC members formed independent evolutionary subclades. Synteny and selective pressure analyses indicated that multiple duplication modes collectively contributed to the expansion of the AktOSC family, and all members were subjected to strong purifying selection. Sequence alignment showed that all members possess the characteristic motifs of the OSC family, whereas amino acid substitutions at critical active-site residues hinted at potential catalytic product diversity. Cis-acting element prediction revealed an abundance of environmental and phytohormone responsiveness elements within the AktOSC promoter regions. Expression profiling revealed that AktOSC genes exhibited distinct expression patterns across tissues, developmental stages, and disease-susceptibility groups. Finally, AktOSC8, which was specifically and highly expressed in the pericarp, was identified as a highest-priority candidate gene. Collectively, these findings provide essential foundational insights for further elucidating the mechanisms underlying triterpenoid biosynthesis and accumulation in A. trifoliata.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3390/cimb48080795"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-01"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_239cfdbe9b8e",
+    "title": "A case study of evolutionary variability and determinism among type III polyketide synthases",
+    "authors": "Yahui Chen; Yijun Yan; Tian Tian; Qin Tian; Jing Yang; Yin Chen; Yongjiang Wang; Rhianah Sandean; Gabriela Šrámková; Мarcus A. Koch; Levi Yant; Lingping Zhu; Shilin Chen; Jianping Huang; Sheng‐Xiong Huang",
+    "journal": "Nature Communications",
+    "year": 2026,
+    "doi": "10.1038/s41467-026-76993-4",
+    "link": "https://doi.org/10.1038/s41467-026-76993-4",
+    "abstract": "Repeated evolution of the same enzymatic activity represents a powerful model of determinism across diverse lineages, yet its underlying evolutionary trajectories remain poorly understood. Here we identified three 3-oxo-glutaric acid (OGA)-forming type III polyketide synthases (PKSs) from Brassicaceae plants through in vitro enzyme assays. Structure–function analysis combined with comparative genomics indicates a strong correlation between OGA- and triacetic acid lactone (TAL)-forming activities during the evolution of these PKSs. An evolutionary change in a key active-site residue enables a functional switch from TAL-forming activity to OGA-forming activity. Intriguingly, further chalcone synthase activity assays and expanded exploration of PKSs from additional plant lineages suggest that OGA-forming PKSs may have evolved repeatedly from the intrinsic TAL-forming activity of chalcone synthases in a lineage-specific manner. This evolutionary feature may help explain the recurrent emergence of OGA-forming PKSs in vascular plants and provide insight into the trajectories underlying the independent evolution of homologous isoenzymes in plants. This study suggests that 3-oxo-glutaric acid-forming polyketide synthases evolved repeatedly from the intrinsic triacetic acid lactone-forming activity of chalcone synthases through independent, lineage-specific evolutionary events.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1038/s41467-026-76993-4"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-01"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_e1d4a05ca373",
+    "title": "Functional characterization of key enzymes involved in the biosynthesis of distinctive flavonoids and stilbenoids in Morus notabilis",
+    "authors": "Mengwen Hu; Jie Fu; Ying Lu; Xinyan Liu; Jiao‐Zhen Zhang; Jiangnan Li; Dandan Xu; Yatong Li; Pei-Xi Hao; Mingxin Cui; Lin-Lin Zhi; Hong‐Xiang Lou; Ai‐Xia Cheng",
+    "journal": "Horticulture Research",
+    "year": 2025,
+    "doi": "10.1093/hr/uhaf171",
+    "link": "https://doi.org/10.1093/hr/uhaf171",
+    "abstract": "Abstract The mulberry (Morus notabilis) is a medicinal and edible plant and contains diverse flavonoids and stilbenoids with significant medicinal benefits. The biosynthesis of these compounds has only been partially elucidated. In the present investigation, we identified and characterized two 4-coumarate: coenzyme A ligases (Mn4CL1 and Mn4CL2), two polyketide synthases (MnCHS and MnSTS), three chalcone reductases (MnCHR1–3), and two 2-oxoglutarate-dependent dioxygenases (MnFLS and MnF3H) involved in flavonoids and stilbenoid biosynthesis. MnCHS converts p-coumaroyl-CoA into naringenin and facilitates the novel conversion of 2,4-dihydroxycinnamoyl-CoA to steppogenin, which features hydroxyl groups at the 4′ and 6′ positions on the B ring. MnSTS could convert p-coumaroyl-CoA and 2,4-dihydroxycinnamoyl-CoA into resveratrol and oxyresveratrol, respectively. Furthermore, MnCHR1 was first identified in mulberry and collaborated with MnCHS to produce isoliquiritigenin and 2,4,2′,4′-tetrahydroxychalcone. A co-expression system of Mn4CL1, MnCHS, and MnCHR1 enabled the fermentation production of steppogenin and 2,4,2′,4′-tetrahydroxychalcone in engineered Escherichia coli. The in vitro enzymatic assays confirmed that MnFLS showed both FLS and F3H activities, whereas transgenic experiments revealed its predominant FLS function in vivo; MnF3H was confirmed as a bona fide F3H. These findings provide new insights into the flavonoids and stilbenoids biosynthesis pathway in mulberry and suggest a potential parallel pathway for 4′,6′-dihydroxylated flavonoids biosynthesis.",
+    "prefill": {
+      "enzyme_name": "MnCHS",
+      "product": "naringenin",
+      "doi": "doi:10.1093/hr/uhaf171"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-01"
   }
 ]
