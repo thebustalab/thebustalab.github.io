@@ -90,7 +90,16 @@
       chips.appendChild(b);
     });
 
-    const run = () => { if (!runBtn.disabled) console_.runFrom(codeEl); };
+    // runFrom() (run-the-selection) lives in the escape_rooms repo, which is pushed SEPARATELY from this
+    // one — so there is always a window where this page is new and the shared console is still old. Fall
+    // back to run() rather than throwing: a Run button that works without selection-support beats a dead
+    // one. (2026-09-04: this exact partial deploy took the live sandbox down.) Safe to simplify only once
+    // you never need to survive a stale console.
+    const run = () => {
+      if (runBtn.disabled) return;
+      if (typeof console_.runFrom === "function") console_.runFrom(codeEl);
+      else console_.run(codeEl.value);
+    };
     runBtn.onclick = run;
     codeEl.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
 

@@ -14,12 +14,35 @@ AGENTS.md
 *_files/
 index_cache/
 
+# ...BUT the rendered book is SITE CONTENT, not an R build artefact (2026-09-04).
+# `*_files/` matches at ANY depth, so it also swallowed `integrated_bioanalytics/book/index_files/` —
+# the 553 figure PNGs the published book links to 199 times — and `*.rds` swallowed
+# `integrated_bioanalytics/data/protein_embeddings_example.rds`, which chapter 14 fetches.
+# This lay dormant for as long as those files were already TRACKED (gitignore never untracks). It only
+# detonated when the tracked set was rebuilt from scratch (`git rm -r --cached .` + re-stage): the
+# re-stage skipped every ignored path, and the resulting commit DELETED the book's figures.
+# Negations must follow the rule they undo, and a file cannot be re-included while its parent directory
+# is excluded — hence the directory line as well as the `/**` line.
+!integrated_bioanalytics/book/index_files/
+!integrated_bioanalytics/book/index_files/**
+!integrated_bioanalytics/data/*.rds
+# Deliberately still ignored: `_bookdown_files/` (render cache), `z_archive/**` (already ignored above),
+# and the top-level `Integrated Bioanalytical Chemistry.rds` (a bookdown intermediate — verified
+# unreferenced by any chapter or rendered page).
+
 # OS files
 .DS_Store
 Thumbs.db
 
 # script
 members_update.py
+
+# Deploy driver (maintenance script, not site content). Same posture as members_update.py: it lives in
+# the tree and reaches the Mac via Syncthing, but does not belong in a PUBLIC repo — untracked it would
+# otherwise be served at https://thebustalab.github.io/deploy.sh. No secrets in it; this is tidiness plus
+# not advertising the publish workflow. NOTE: gitignore does not untrack an already-committed file — if it
+# ever got committed, run `git rm --cached deploy.sh` once on the Mac, then commit.
+deploy.sh
 
 # Lab Quests (labelling) backend source — carries the real ACCESS_KEY + sheet IDs
 # when configured. It's a source reference only, NOT served (the live backend runs
