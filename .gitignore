@@ -16,8 +16,12 @@ index_cache/
 
 # ...BUT the rendered book is SITE CONTENT, not an R build artefact (2026-09-04).
 # `*_files/` matches at ANY depth, so it also swallowed `integrated_bioanalytics/book/index_files/` —
-# the 553 figure PNGs the published book links to 199 times — and `*.rds` swallowed
-# `integrated_bioanalytics/data/protein_embeddings_example.rds`, which chapter 14 fetches.
+# the 553 figure PNGs the published book links to 199 times. THAT is the load-bearing one.
+# `*.rds` also matched `integrated_bioanalytics/data/protein_embeddings_example.rds`; that file is a
+# RENDER-TIME input only (chapter 14 reads it via a local `../data/...` path in an `echo=FALSE` chunk —
+# no reader ever fetches it, and it was already 404 on the live site with no ill effect). It is negated
+# below because a fresh clone would otherwise have to regenerate it from a keyed embedding API to render
+# chapter 14 — convenience, not a live breakage.
 # This lay dormant for as long as those files were already TRACKED (gitignore never untracks). It only
 # detonated when the tracked set was rebuilt from scratch (`git rm -r --cached .` + re-stage): the
 # re-stage skipped every ignored path, and the resulting commit DELETED the book's figures.
