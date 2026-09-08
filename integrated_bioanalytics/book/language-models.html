@@ -115,12 +115,31 @@
 <span><span class="co">## Loading language model module...</span></span>
 <span><span class="co">## Done with language model loading!</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>Please create an account at and obtain an API key from <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a> (Login &gt; Account Settings &gt; API Key Management)</li>
-<li>Please create an account at and obtain an API key from <a href="https://huggingface.co" class="uri">https://huggingface.co</a> (Login &gt; Settings &gt; Access Tokens, then configure your access token/key to “Make calls to the serverless Inference API” and “Make calls to Inference Endpoints”)</li>
+<li>Please create an account at and obtain an API key from <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a> (Login &gt; Account Settings &gt; API Key Management), then store it as described just below.</li>
+<li>Please set up your class tokens for the course language model endpoints, following the <em>setting up your class tokens</em> section below.</li>
 </ol>
-<p>Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.</p>
+<p>Your PubMed API key and your class tokens are long sequences of numbers and letters, like passwords. Keep them handy, and keep them private.</p>
 <p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data — such as written text — into the numerical domain, enabling that data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
 <p>A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.</p>
+<div id="setting-up-your-class-tokens" class="section level2 unnumbered">
+<h2>setting up your class tokens<a class="anchor" aria-label="anchor" href="#setting-up-your-class-tokens"><i class="fas fa-link"></i></a>
+</h2>
+<p>The embedding and text generation models used in this chapter are served by the course’s own endpoints, so you do <strong>not</strong> need a Hugging Face account or any commercial API key of your own. What you do need is a token for each endpoint. <strong>Both tokens are posted on the course Canvas page.</strong> Treat them exactly like passwords: do not type them into your scripts, do not share them outside the class, and never commit them to GitHub. Your own PubMed key from step 2 above gets stored in the same place, and deserves the same care.</p>
+<p>Rather than putting any of these in your code, you will store them in a file that R reads automatically when it starts up, called <code>.Renviron</code>, which lives in your home directory. Open it by running:</p>
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/file.edit.html">file.edit</a></span><span class="op">(</span><span class="st">"~/.Renviron"</span><span class="op">)</span></span></code></pre></div>
+<p>That will open an editor (the file may well be empty, or may not exist yet — that is fine). Add the following five lines, replacing each <code>paste_..._here</code> with the matching value — the two class tokens from Canvas, and your own PubMed key — then save the file:</p>
+<pre><code>EMBED_SERVER_URL=https://embed.lbusta.org
+EMBED_SERVER_TOKEN=paste_the_embedding_token_here
+GENERATE_SERVER_URL=https://generate.lbusta.org
+GENERATE_SERVER_TOKEN=paste_the_generation_token_here
+PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
+<p>Now <strong>restart R</strong>, because <code>.Renviron</code> is only read when R starts (in RStudio: Session &gt; Restart R). Once R has restarted, check that it can see your settings:</p>
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"EMBED_SERVER_URL"</span><span class="op">)</span></span></code></pre></div>
+<p>If that prints the address of the embedding endpoint, you are ready to go. If it prints an empty string <code>""</code>, then R is not seeing the file — make sure you saved <code>.Renviron</code>, that it is in your home directory, and that you restarted R afterwards.</p>
+<p>With those variables set, <code>embedText()</code> and <code>generateText()</code> will send their requests to the course endpoints automatically, and <code>searchPubMed()</code> will pick up your key with <code>Sys.getenv("PUBMED_TOKEN")</code>. You will notice that no actual key or token appears anywhere in the code in this chapter, which is exactly the point: secrets belong in your environment, not in your analysis scripts.</p>
+</div>
 <div id="pre-reading" class="section level2 unnumbered">
 <h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading"><i class="fas fa-link"></i></a>
 </h2>
@@ -134,11 +153,11 @@
 <h2>text embeddings<a class="anchor" aria-label="anchor" href="#text-embeddings"><i class="fas fa-link"></i></a>
 </h2>
 <p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
-<p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. You can obtain one by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Here, rather than typing the key into the code, we read it out of the environment with <code>Sys.getenv("PUBMED_TOKEN")</code> — the same <code>.Renviron</code> file you set up at the start of this chapter. Pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
 <span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
-<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"PUBMED_TOKEN"</span><span class="op">)</span>,</span>
 <span>  retmax_per_term <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  sort <span class="op">=</span> <span class="st">"relevance"</span></span>
 <span><span class="op">)</span></span>
@@ -169,80 +188,79 @@
 <p>GloVe (Global Vectors) embeddings represent words as fixed numeric vectors based on how often words co-occur across a large text corpus. In practice, GloVe learns a vector for each word so that words that appear in similar contexts end up with similar vectors. This means each word has a single embedding that does not change across sentences.</p>
 <p>At the word level, each token is replaced by its corresponding vector from the GloVe table. At the sentence level, these word vectors are combined into a single vector that represents the whole sentence. A simple approach is to average the word vectors across the sentence (other approaches include weighted averages or more complex pooling).</p>
 <p>Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from <a href="https://nlp.stanford.edu/projects/glove/" class="uri">https://nlp.stanford.edu/projects/glove/</a> and update the path to the file on your machine.</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="language-models.html#cb139-1" tabindex="-1"></a>search_results_glove <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
-<span id="cb139-2"><a href="language-models.html#cb139-2" tabindex="-1"></a>  search_results,</span>
-<span id="cb139-3"><a href="language-models.html#cb139-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span>,</span>
-<span id="cb139-4"><a href="language-models.html#cb139-4" tabindex="-1"></a>  <span class="at">path_to_glove_file =</span> <span class="st">"/Users/bust0037/Documents/Websites/glove.6B.50d.txt"</span></span>
-<span id="cb139-5"><a href="language-models.html#cb139-5" tabindex="-1"></a>)</span>
-<span id="cb139-6"><a href="language-models.html#cb139-6" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb139-7"><a href="language-models.html#cb139-7" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-8"><a href="language-models.html#cb139-8" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb139-9"><a href="language-models.html#cb139-9" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-10"><a href="language-models.html#cb139-10" tabindex="-1"></a>  <span class="er">|====</span>                                              <span class="er">|</span>   <span class="dv">8</span>%</span>
-<span id="cb139-11"><a href="language-models.html#cb139-11" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-12"><a href="language-models.html#cb139-12" tabindex="-1"></a>  <span class="er">|========</span>                                          <span class="er">|</span>  <span class="dv">17</span>%</span>
-<span id="cb139-13"><a href="language-models.html#cb139-13" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-14"><a href="language-models.html#cb139-14" tabindex="-1"></a>  <span class="er">|============</span>                                      <span class="er">|</span>  <span class="dv">25</span>%</span>
-<span id="cb139-15"><a href="language-models.html#cb139-15" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-16"><a href="language-models.html#cb139-16" tabindex="-1"></a>  <span class="er">|=================</span>                                 <span class="er">|</span>  <span class="dv">33</span>%</span>
-<span id="cb139-17"><a href="language-models.html#cb139-17" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-18"><a href="language-models.html#cb139-18" tabindex="-1"></a>  <span class="er">|=====================</span>                             <span class="er">|</span>  <span class="dv">42</span>%</span>
-<span id="cb139-19"><a href="language-models.html#cb139-19" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-20"><a href="language-models.html#cb139-20" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
-<span id="cb139-21"><a href="language-models.html#cb139-21" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-22"><a href="language-models.html#cb139-22" tabindex="-1"></a>  <span class="er">|=============================</span>                     <span class="er">|</span>  <span class="dv">58</span>%</span>
-<span id="cb139-23"><a href="language-models.html#cb139-23" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-24"><a href="language-models.html#cb139-24" tabindex="-1"></a>  <span class="er">|=================================</span>                 <span class="er">|</span>  <span class="dv">67</span>%</span>
-<span id="cb139-25"><a href="language-models.html#cb139-25" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-26"><a href="language-models.html#cb139-26" tabindex="-1"></a>  <span class="er">|======================================</span>            <span class="er">|</span>  <span class="dv">75</span>%</span>
-<span id="cb139-27"><a href="language-models.html#cb139-27" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-28"><a href="language-models.html#cb139-28" tabindex="-1"></a>  <span class="er">|==========================================</span>        <span class="er">|</span>  <span class="dv">83</span>%</span>
-<span id="cb139-29"><a href="language-models.html#cb139-29" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-30"><a href="language-models.html#cb139-30" tabindex="-1"></a>  <span class="er">|==============================================</span>    <span class="er">|</span>  <span class="dv">92</span>%</span>
-<span id="cb139-31"><a href="language-models.html#cb139-31" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb139-32"><a href="language-models.html#cb139-32" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb139-33"><a href="language-models.html#cb139-33" tabindex="-1"></a></span>
-<span id="cb139-34"><a href="language-models.html#cb139-34" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb139-35"><a href="language-models.html#cb139-35" tabindex="-1"></a>  <span class="at">data =</span> search_results_glove,</span>
-<span id="cb139-36"><a href="language-models.html#cb139-36" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
-<span id="cb139-37"><a href="language-models.html#cb139-37" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(search_results_glove)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(search_results_glove))],</span>
-<span id="cb139-38"><a href="language-models.html#cb139-38" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"title"</span>, <span class="st">"term"</span>)</span>
-<span id="cb139-39"><a href="language-models.html#cb139-39" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb139-40"><a href="language-models.html#cb139-40" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb139-41"><a href="language-models.html#cb139-41" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> term), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb139-42"><a href="language-models.html#cb139-42" tabindex="-1"></a>    <span class="fu">geom_mark_ellipse</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> term), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb139-43"><a href="language-models.html#cb139-43" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb139-44"><a href="language-models.html#cb139-44" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"maroon"</span>, <span class="st">"gold"</span>, <span class="st">"steelblue"</span>, <span class="st">"darkgreen"</span>))</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-457-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="language-models.html#cb142-1" tabindex="-1"></a>search_results_glove <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
+<span id="cb142-2"><a href="language-models.html#cb142-2" tabindex="-1"></a>  search_results,</span>
+<span id="cb142-3"><a href="language-models.html#cb142-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span>,</span>
+<span id="cb142-4"><a href="language-models.html#cb142-4" tabindex="-1"></a>  <span class="at">path_to_glove_file =</span> <span class="st">"/Users/bust0037/Documents/Websites/glove.6B.50d.txt"</span></span>
+<span id="cb142-5"><a href="language-models.html#cb142-5" tabindex="-1"></a>)</span>
+<span id="cb142-6"><a href="language-models.html#cb142-6" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb142-7"><a href="language-models.html#cb142-7" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-8"><a href="language-models.html#cb142-8" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb142-9"><a href="language-models.html#cb142-9" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-10"><a href="language-models.html#cb142-10" tabindex="-1"></a>  <span class="er">|====</span>                                              <span class="er">|</span>   <span class="dv">8</span>%</span>
+<span id="cb142-11"><a href="language-models.html#cb142-11" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-12"><a href="language-models.html#cb142-12" tabindex="-1"></a>  <span class="er">|========</span>                                          <span class="er">|</span>  <span class="dv">17</span>%</span>
+<span id="cb142-13"><a href="language-models.html#cb142-13" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-14"><a href="language-models.html#cb142-14" tabindex="-1"></a>  <span class="er">|============</span>                                      <span class="er">|</span>  <span class="dv">25</span>%</span>
+<span id="cb142-15"><a href="language-models.html#cb142-15" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-16"><a href="language-models.html#cb142-16" tabindex="-1"></a>  <span class="er">|=================</span>                                 <span class="er">|</span>  <span class="dv">33</span>%</span>
+<span id="cb142-17"><a href="language-models.html#cb142-17" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-18"><a href="language-models.html#cb142-18" tabindex="-1"></a>  <span class="er">|=====================</span>                             <span class="er">|</span>  <span class="dv">42</span>%</span>
+<span id="cb142-19"><a href="language-models.html#cb142-19" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-20"><a href="language-models.html#cb142-20" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
+<span id="cb142-21"><a href="language-models.html#cb142-21" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-22"><a href="language-models.html#cb142-22" tabindex="-1"></a>  <span class="er">|=============================</span>                     <span class="er">|</span>  <span class="dv">58</span>%</span>
+<span id="cb142-23"><a href="language-models.html#cb142-23" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-24"><a href="language-models.html#cb142-24" tabindex="-1"></a>  <span class="er">|=================================</span>                 <span class="er">|</span>  <span class="dv">67</span>%</span>
+<span id="cb142-25"><a href="language-models.html#cb142-25" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-26"><a href="language-models.html#cb142-26" tabindex="-1"></a>  <span class="er">|======================================</span>            <span class="er">|</span>  <span class="dv">75</span>%</span>
+<span id="cb142-27"><a href="language-models.html#cb142-27" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-28"><a href="language-models.html#cb142-28" tabindex="-1"></a>  <span class="er">|==========================================</span>        <span class="er">|</span>  <span class="dv">83</span>%</span>
+<span id="cb142-29"><a href="language-models.html#cb142-29" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-30"><a href="language-models.html#cb142-30" tabindex="-1"></a>  <span class="er">|==============================================</span>    <span class="er">|</span>  <span class="dv">92</span>%</span>
+<span id="cb142-31"><a href="language-models.html#cb142-31" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb142-32"><a href="language-models.html#cb142-32" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb142-33"><a href="language-models.html#cb142-33" tabindex="-1"></a></span>
+<span id="cb142-34"><a href="language-models.html#cb142-34" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb142-35"><a href="language-models.html#cb142-35" tabindex="-1"></a>  <span class="at">data =</span> search_results_glove,</span>
+<span id="cb142-36"><a href="language-models.html#cb142-36" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
+<span id="cb142-37"><a href="language-models.html#cb142-37" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(search_results_glove)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(search_results_glove))],</span>
+<span id="cb142-38"><a href="language-models.html#cb142-38" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"title"</span>, <span class="st">"term"</span>)</span>
+<span id="cb142-39"><a href="language-models.html#cb142-39" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb142-40"><a href="language-models.html#cb142-40" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb142-41"><a href="language-models.html#cb142-41" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> term), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb142-42"><a href="language-models.html#cb142-42" tabindex="-1"></a>    <span class="fu">geom_mark_ellipse</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> term), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb142-43"><a href="language-models.html#cb142-43" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb142-44"><a href="language-models.html#cb142-44" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"maroon"</span>, <span class="st">"gold"</span>, <span class="st">"steelblue"</span>, <span class="st">"darkgreen"</span>))</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="transformer-embeddings" class="section level3 unnumbered">
 <h3>transformer embeddings<a class="anchor" aria-label="anchor" href="#transformer-embeddings"><i class="fas fa-link"></i></a>
 </h3>
 <p>Transformer embeddings start with a vector for each word, then update those vectors by looking at how each word relates to the other words in the sentence. In very simple terms, the model lets each word “pay attention” to the others and adjusts its vector based on that context. This creates contextual embeddings, where the same word can end up with different vectors depending on the sentence it appears in.</p>
-<p>Below, we generate transformer-based embeddings using the Hugging Face API. This example uses the existing PubMed results and embeds the titles with a pretrained transformer model.
-Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
-<p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
-<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="language-models.html#cb140-1" tabindex="-1"></a>search_results_embedded <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
-<span id="cb140-2"><a href="language-models.html#cb140-2" tabindex="-1"></a>  <span class="at">df =</span> search_results,</span>
-<span id="cb140-3"><a href="language-models.html#cb140-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span>,</span>
-<span id="cb140-4"><a href="language-models.html#cb140-4" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
-<span id="cb140-5"><a href="language-models.html#cb140-5" tabindex="-1"></a>)</span>
-<span id="cb140-6"><a href="language-models.html#cb140-6" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb140-7"><a href="language-models.html#cb140-7" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb140-8"><a href="language-models.html#cb140-8" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb140-9"><a href="language-models.html#cb140-9" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb140-10"><a href="language-models.html#cb140-10" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb140-11"><a href="language-models.html#cb140-11" tabindex="-1"></a>search_results_embedded[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb140-12"><a href="language-models.html#cb140-12" tabindex="-1"></a><span class="do">## # A tibble: 3 × 10</span></span>
-<span id="cb140-13"><a href="language-models.html#cb140-13" tabindex="-1"></a><span class="do">##   entry_number term  date       journal title doi   abstract</span></span>
-<span id="cb140-14"><a href="language-models.html#cb140-14" tabindex="-1"></a><span class="do">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
-<span id="cb140-15"><a href="language-models.html#cb140-15" tabindex="-1"></a><span class="do">## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
-<span id="cb140-16"><a href="language-models.html#cb140-16" tabindex="-1"></a><span class="do">## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
-<span id="cb140-17"><a href="language-models.html#cb140-17" tabindex="-1"></a><span class="do">## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…</span></span>
-<span id="cb140-18"><a href="language-models.html#cb140-18" tabindex="-1"></a><span class="do">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
-<span id="cb140-19"><a href="language-models.html#cb140-19" tabindex="-1"></a><span class="do">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
+<p>Below, we generate transformer-based embeddings using the course embedding endpoint. This example uses the existing PubMed results and embeds the titles with a pretrained transformer model.</p>
+<p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Unlike PubMed, this does not need an API key of your own: the request is authenticated with the class token you put in your <code>.Renviron</code> above, and <code>embedText()</code> picks that up on its own.</p>
+<p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above) and the column with the text (title). That is all it needs. The embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, which runs on the course server. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can read its documentation at <a href="https://huggingface.co/BAAI/bge-small-en-v1.5" class="uri">https://huggingface.co/BAAI/bge-small-en-v1.5</a>.</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="language-models.html#cb143-1" tabindex="-1"></a>search_results_embedded <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
+<span id="cb143-2"><a href="language-models.html#cb143-2" tabindex="-1"></a>  <span class="at">df =</span> search_results,</span>
+<span id="cb143-3"><a href="language-models.html#cb143-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span></span>
+<span id="cb143-4"><a href="language-models.html#cb143-4" tabindex="-1"></a>)</span>
+<span id="cb143-5"><a href="language-models.html#cb143-5" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb143-6"><a href="language-models.html#cb143-6" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb143-7"><a href="language-models.html#cb143-7" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb143-8"><a href="language-models.html#cb143-8" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb143-9"><a href="language-models.html#cb143-9" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb143-10"><a href="language-models.html#cb143-10" tabindex="-1"></a>search_results_embedded[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb143-11"><a href="language-models.html#cb143-11" tabindex="-1"></a><span class="do">## # A tibble: 3 × 10</span></span>
+<span id="cb143-12"><a href="language-models.html#cb143-12" tabindex="-1"></a><span class="do">##   entry_number term  date       journal title doi   abstract</span></span>
+<span id="cb143-13"><a href="language-models.html#cb143-13" tabindex="-1"></a><span class="do">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span id="cb143-14"><a href="language-models.html#cb143-14" tabindex="-1"></a><span class="do">## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
+<span id="cb143-15"><a href="language-models.html#cb143-15" tabindex="-1"></a><span class="do">## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span id="cb143-16"><a href="language-models.html#cb143-16" tabindex="-1"></a><span class="do">## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…</span></span>
+<span id="cb143-17"><a href="language-models.html#cb143-17" tabindex="-1"></a><span class="do">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
+<span id="cb143-18"><a href="language-models.html#cb143-18" tabindex="-1"></a><span class="do">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span></span>
 <span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results_embedded</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -257,9 +275,9 @@ Next, we use the embedText function to create embeddings for the titles of the e
 <span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -276,72 +294,88 @@ Next, we use the embedText function to create embeddings for the titles of the e
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-462-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="language-models.html#cb143-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
-<span id="cb143-2"><a href="language-models.html#cb143-2" tabindex="-1"></a></span>
-<span id="cb143-3"><a href="language-models.html#cb143-3" tabindex="-1"></a>odor <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb143-4"><a href="language-models.html#cb143-4" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">seq</span>(<span class="dv">1</span>,n,<span class="dv">1</span>),</span>
-<span id="cb143-5"><a href="language-models.html#cb143-5" tabindex="-1"></a>  <span class="at">odor =</span> <span class="fu">dropNA</span>(<span class="fu">unique</span>(beer_components<span class="sc">$</span>analyte_odor))[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>, n)]</span>
-<span id="cb143-6"><a href="language-models.html#cb143-6" tabindex="-1"></a>)</span>
-<span id="cb143-7"><a href="language-models.html#cb143-7" tabindex="-1"></a></span>
-<span id="cb143-8"><a href="language-models.html#cb143-8" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
-<span id="cb143-9"><a href="language-models.html#cb143-9" tabindex="-1"></a>  odor, <span class="at">column_name =</span> <span class="st">"odor"</span>,</span>
-<span id="cb143-10"><a href="language-models.html#cb143-10" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
-<span id="cb143-11"><a href="language-models.html#cb143-11" tabindex="-1"></a>)</span>
-<span id="cb143-12"><a href="language-models.html#cb143-12" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb143-13"><a href="language-models.html#cb143-13" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb143-14"><a href="language-models.html#cb143-14" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb143-15"><a href="language-models.html#cb143-15" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb143-16"><a href="language-models.html#cb143-16" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
-<span id="cb143-17"><a href="language-models.html#cb143-17" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb143-18"><a href="language-models.html#cb143-18" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb143-19"><a href="language-models.html#cb143-19" tabindex="-1"></a></span>
-<span id="cb143-20"><a href="language-models.html#cb143-20" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb143-21"><a href="language-models.html#cb143-21" tabindex="-1"></a>  <span class="at">data =</span> out,</span>
-<span id="cb143-22"><a href="language-models.html#cb143-22" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
-<span id="cb143-23"><a href="language-models.html#cb143-23" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(out)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(out))],</span>
-<span id="cb143-24"><a href="language-models.html#cb143-24" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"odor"</span>)</span>
-<span id="cb143-25"><a href="language-models.html#cb143-25" tabindex="-1"></a>) <span class="ot">-&gt;</span> pca_out</span>
-<span id="cb143-26"><a href="language-models.html#cb143-26" tabindex="-1"></a></span>
-<span id="cb143-27"><a href="language-models.html#cb143-27" tabindex="-1"></a>pca_out<span class="sc">$</span>color <span class="ot">&lt;-</span> <span class="fu">rgb</span>(</span>
-<span id="cb143-28"><a href="language-models.html#cb143-28" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.1</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb143-29"><a href="language-models.html#cb143-29" tabindex="-1"></a>  <span class="dv">0</span>,</span>
-<span id="cb143-30"><a href="language-models.html#cb143-30" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.2</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb143-31"><a href="language-models.html#cb143-31" tabindex="-1"></a>)</span>
-<span id="cb143-32"><a href="language-models.html#cb143-32" tabindex="-1"></a></span>
-<span id="cb143-33"><a href="language-models.html#cb143-33" tabindex="-1"></a><span class="fu">ggplot</span>(pca_out) <span class="sc">+</span></span>
-<span id="cb143-34"><a href="language-models.html#cb143-34" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
-<span id="cb143-35"><a href="language-models.html#cb143-35" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> <span class="fu">str_wrap</span>(odor, <span class="at">width =</span> <span class="dv">35</span>)),</span>
-<span id="cb143-36"><a href="language-models.html#cb143-36" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">2</span>, <span class="at">min.segment.length =</span> <span class="fl">0.5</span>, <span class="at">force =</span> <span class="dv">25</span></span>
-<span id="cb143-37"><a href="language-models.html#cb143-37" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb143-38"><a href="language-models.html#cb143-38" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>), <span class="at">fill =</span> pca_out<span class="sc">$</span>color, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb143-39"><a href="language-models.html#cb143-39" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="language-models.html#cb146-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
+<span id="cb146-2"><a href="language-models.html#cb146-2" tabindex="-1"></a></span>
+<span id="cb146-3"><a href="language-models.html#cb146-3" tabindex="-1"></a>odor <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb146-4"><a href="language-models.html#cb146-4" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">seq</span>(<span class="dv">1</span>,n,<span class="dv">1</span>),</span>
+<span id="cb146-5"><a href="language-models.html#cb146-5" tabindex="-1"></a>  <span class="at">odor =</span> <span class="fu">dropNA</span>(<span class="fu">unique</span>(beer_components<span class="sc">$</span>analyte_odor))[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>, n)]</span>
+<span id="cb146-6"><a href="language-models.html#cb146-6" tabindex="-1"></a>)</span>
+<span id="cb146-7"><a href="language-models.html#cb146-7" tabindex="-1"></a></span>
+<span id="cb146-8"><a href="language-models.html#cb146-8" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
+<span id="cb146-9"><a href="language-models.html#cb146-9" tabindex="-1"></a>  odor, <span class="at">column_name =</span> <span class="st">"odor"</span></span>
+<span id="cb146-10"><a href="language-models.html#cb146-10" tabindex="-1"></a>)</span>
+<span id="cb146-11"><a href="language-models.html#cb146-11" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb146-12"><a href="language-models.html#cb146-12" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb146-13"><a href="language-models.html#cb146-13" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb146-14"><a href="language-models.html#cb146-14" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb146-15"><a href="language-models.html#cb146-15" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
+<span id="cb146-16"><a href="language-models.html#cb146-16" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb146-17"><a href="language-models.html#cb146-17" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb146-18"><a href="language-models.html#cb146-18" tabindex="-1"></a></span>
+<span id="cb146-19"><a href="language-models.html#cb146-19" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb146-20"><a href="language-models.html#cb146-20" tabindex="-1"></a>  <span class="at">data =</span> out,</span>
+<span id="cb146-21"><a href="language-models.html#cb146-21" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
+<span id="cb146-22"><a href="language-models.html#cb146-22" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(out)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(out))],</span>
+<span id="cb146-23"><a href="language-models.html#cb146-23" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"odor"</span>)</span>
+<span id="cb146-24"><a href="language-models.html#cb146-24" tabindex="-1"></a>) <span class="ot">-&gt;</span> pca_out</span>
+<span id="cb146-25"><a href="language-models.html#cb146-25" tabindex="-1"></a></span>
+<span id="cb146-26"><a href="language-models.html#cb146-26" tabindex="-1"></a>pca_out<span class="sc">$</span>color <span class="ot">&lt;-</span> <span class="fu">rgb</span>(</span>
+<span id="cb146-27"><a href="language-models.html#cb146-27" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.1</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb146-28"><a href="language-models.html#cb146-28" tabindex="-1"></a>  <span class="dv">0</span>,</span>
+<span id="cb146-29"><a href="language-models.html#cb146-29" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.2</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb146-30"><a href="language-models.html#cb146-30" tabindex="-1"></a>)</span>
+<span id="cb146-31"><a href="language-models.html#cb146-31" tabindex="-1"></a></span>
+<span id="cb146-32"><a href="language-models.html#cb146-32" tabindex="-1"></a><span class="fu">ggplot</span>(pca_out) <span class="sc">+</span></span>
+<span id="cb146-33"><a href="language-models.html#cb146-33" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb146-34"><a href="language-models.html#cb146-34" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> <span class="fu">str_wrap</span>(odor, <span class="at">width =</span> <span class="dv">35</span>)),</span>
+<span id="cb146-35"><a href="language-models.html#cb146-35" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">2</span>, <span class="at">min.segment.length =</span> <span class="fl">0.5</span>, <span class="at">force =</span> <span class="dv">25</span></span>
+<span id="cb146-36"><a href="language-models.html#cb146-36" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb146-37"><a href="language-models.html#cb146-37" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>), <span class="at">fill =</span> pca_out<span class="sc">$</span>color, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb146-38"><a href="language-models.html#cb146-38" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
 <div id="generative-models" class="section level2 unnumbered">
 <h2>generative models<a class="anchor" aria-label="anchor" href="#generative-models"><i class="fas fa-link"></i></a>
 </h2>
-<p>Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The <code>generateText()</code> function provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the <code>prompt_column</code>, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (<code>system_column</code>, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.</p>
-<p>In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call <code>generateText()</code>, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.</p>
-<!-- NOTE (2026-07-21): eval=FALSE is a reversible stopgap. The Hugging Face
-     generate endpoint this chunk calls returns HTTP 402 (credits depleted), which
-     kills the render. The course embed proxy (embed.lbusta.org) is embed-only by
-     design, so generateText has no student-reachable backend yet. Pending a
-     decision on permanent treatment (cache a real output / replace the example /
-     leave disabled). See root todo.md "book LLM API calls break the render". -->
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results</span><span class="op">$</span><span class="va">system</span> <span class="op">&lt;-</span> <span class="st">"You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."</span></span>
+<p>Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The <code>generateText()</code> function provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. You supply a column with prompts (the <code>prompt_column</code>, which contains the text you want processed) and, optionally, a column with system messages that steer the model’s behavior (<code>system_column</code>, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.</p>
+<p>In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model’s role. We then call <code>generateText()</code>, passing the abstract column as the prompt. As with <code>embedText()</code>, there is no key in the code — the class token from your <code>.Renviron</code> authenticates the request. Finally, we select the title and the generated tags to see the results.</p>
+<p>Note that generation is much slower and much more expensive than embedding: each row is a separate request to a large model. Keep the number of rows small while you are experimenting.</p>
+<!-- NOTE (2026-09-08): re-enabled after the course generation endpoint
+     (generate.lbusta.org) went live; `cache = TRUE` so a rebuild does not re-spend
+     the class budget on every render. It replaces the eval=FALSE stopgap from
+     2026-07-21, when Hugging Face generation was dead (HTTP 402) and there was no
+     student-reachable backend. See root todo.md "book LLM API calls break the render". -->
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results</span><span class="op">$</span><span class="va">system</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span></span>
+<span>  <span class="st">"You are a scientific literature classification expert."</span>,</span>
+<span>  <span class="st">"Your job is to generate three comma-separated tags for abstracts that you are given."</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">generateText</span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
 <span>  prompt_column <span class="op">=</span> <span class="st">"abstract"</span>,</span>
-<span>  system_column <span class="op">=</span> <span class="st">"system"</span>,</span>
-<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span>  system_column <span class="op">=</span> <span class="st">"system"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">title</span>, <span class="va">generation</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">title</span>, <span class="va">generation</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 12 × 2</span></span>
+<span><span class="co">##    title                                          generation</span></span>
+<span><span class="co">##    &lt;chr&gt;                                          &lt;chr&gt;     </span></span>
+<span><span class="co">##  1 Ginsenosides in Panax genus and their biosynt… "Ginsenos…</span></span>
+<span><span class="co">##  2 β-Amyrin synthase from Conyza blinii expresse… "# Classi…</span></span>
+<span><span class="co">##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Classi…</span></span>
+<span><span class="co">##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Classi…</span></span>
+<span><span class="co">##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…</span></span>
+<span><span class="co">##  6 Genome Mining and Gene Expression Reveal Mayt… "# Classi…</span></span>
+<span><span class="co">##  7 Current status and prospects of herbicide-res… "# Tags\n…</span></span>
+<span><span class="co">##  8 Potential food applications of sorghum (Sorgh… "# Tags\n…</span></span>
+<span><span class="co">##  9 Sorghum (Sorghum bicolor).                     "Plant ge…</span></span>
+<span><span class="co">## 10 Cuticular wax in wheat: biosynthesis, genetic… "# Tags\n…</span></span>
+<span><span class="co">## 11 Regulatory mechanisms underlying cuticular wa… "plant cu…</span></span>
+<span><span class="co">## 12 Update on Cuticular Wax Biosynthesis and Its … "# Classi…</span></span></code></pre></div>
 </div>
 <div id="section-16" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
@@ -361,14 +395,13 @@ Next, we use the embedText function to create embeddings for the titles of the e
 ``` r
 search_results_ex <- searchPubMed(
   search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
-  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  pubmed_api_key = Sys.getenv("PUBMED_TOKEN"),
   retmax_per_term = 50,
   sort = "date"
 )
 
 search_results_ex_embed <- embedText(
-  search_results_ex, column_name = "abstract",
-  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+  search_results_ex, column_name = "abstract"
 )
 
 runMatrixAnalysis(
@@ -402,6 +435,7 @@ search_results_ex_embed_pca %>%
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#language-models">language models</a></li>
+<li><a class="nav-link" href="#setting-up-your-class-tokens">setting up your class tokens</a></li>
 <li><a class="nav-link" href="#pre-reading">pre-reading</a></li>
 <li>
 <a class="nav-link" href="#text-embeddings">text embeddings</a><ul class="nav navbar-nav">

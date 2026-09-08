@@ -4411,14 +4411,46 @@ source("https://thebustalab.github.io/phylochemistry/modules/language_model_anal
 ## Loading language model module...
 ## Done with language model loading!
 ```
-2. Please create an account at and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
-3. Please create an account at and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
+2. Please create an account at and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management), then store it as described just below.
+3. Please set up your class tokens for the course language model endpoints, following the *setting up your class tokens* section below.
 
-Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
+Your PubMed API key and your class tokens are long sequences of numbers and letters, like passwords. Keep them handy, and keep them private.
 
 In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data — such as written text — into the numerical domain, enabling that data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+
+## setting up your class tokens {-}
+
+The embedding and text generation models used in this chapter are served by the course's own endpoints, so you do **not** need a Hugging Face account or any commercial API key of your own. What you do need is a token for each endpoint. **Both tokens are posted on the course Canvas page.** Treat them exactly like passwords: do not type them into your scripts, do not share them outside the class, and never commit them to GitHub. Your own PubMed key from step 2 above gets stored in the same place, and deserves the same care.
+
+Rather than putting any of these in your code, you will store them in a file that R reads automatically when it starts up, called `.Renviron`, which lives in your home directory. Open it by running:
+
+
+``` r
+file.edit("~/.Renviron")
+```
+
+That will open an editor (the file may well be empty, or may not exist yet — that is fine). Add the following five lines, replacing each `paste_..._here` with the matching value — the two class tokens from Canvas, and your own PubMed key — then save the file:
+
+```
+EMBED_SERVER_URL=https://embed.lbusta.org
+EMBED_SERVER_TOKEN=paste_the_embedding_token_here
+GENERATE_SERVER_URL=https://generate.lbusta.org
+GENERATE_SERVER_TOKEN=paste_the_generation_token_here
+PUBMED_TOKEN=paste_your_own_pubmed_key_here
+```
+
+Now **restart R**, because `.Renviron` is only read when R starts (in RStudio: Session > Restart R). Once R has restarted, check that it can see your settings:
+
+
+``` r
+Sys.getenv("EMBED_SERVER_URL")
+```
+
+If that prints the address of the embedding endpoint, you are ready to go. If it prints an empty string `""`, then R is not seeing the file — make sure you saved `.Renviron`, that it is in your home directory, and that you restarted R afterwards.
+
+With those variables set, `embedText()` and `generateText()` will send their requests to the course endpoints automatically, and `searchPubMed()` will pick up your key with `Sys.getenv("PUBMED_TOKEN")`. You will notice that no actual key or token appears anywhere in the code in this chapter, which is exactly the point: secrets belong in your environment, not in your analysis scripts.
 
 ## pre-reading {-}
 
@@ -4430,13 +4462,13 @@ Please read over the following:
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
-First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
+First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. You can obtain one by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Here, rather than typing the key into the code, we read it out of the environment with `Sys.getenv("PUBMED_TOKEN")` — the same `.Renviron` file you set up at the start of this chapter. Pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
 
 ``` r
 search_results <- searchPubMed(
   search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
-  pubmed_api_key = readLines("/Users/bust0037/Documents/Websites/pubmed_api_key.txt"),
+  pubmed_api_key = Sys.getenv("PUBMED_TOKEN"),
   retmax_per_term = 3,
   sort = "relevance"
 )
@@ -4494,23 +4526,23 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-457-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
 Transformer embeddings start with a vector for each word, then update those vectors by looking at how each word relates to the other words in the sentence. In very simple terms, the model lets each word "pay attention" to the others and adjusts its vector based on that context. This creates contextual embeddings, where the same word can end up with different vectors depending on the sentence it appears in.
 
-Below, we generate transformer-based embeddings using the Hugging Face API. This example uses the existing PubMed results and embeds the titles with a pretrained transformer model.
-Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at https://huggingface.co and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.
+Below, we generate transformer-based embeddings using the course embedding endpoint. This example uses the existing PubMed results and embeds the titles with a pretrained transformer model.
 
-To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
+Next, we use the embedText function to create embeddings for the titles of the extracted publications. Unlike PubMed, this does not need an API key of your own: the request is authenticated with the class token you put in your `.Renviron` above, and `embedText()` picks that up on its own.
+
+To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above) and the column with the text (title). That is all it needs. The embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', which runs on the course server. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can read its documentation at https://huggingface.co/BAAI/bge-small-en-v1.5.
 
 
 ``` r
 search_results_embedded <- embedText(
   df = search_results,
-  column_name = "title",
-  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
+  column_name = "title"
 )
 ##   |                                                          |                                                  |   0%  |                                                          |==================================================| 100%
 search_results_embedded[1:3,1:10]
@@ -4544,7 +4576,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4568,7 +4600,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-462-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4582,8 +4614,7 @@ odor <- data.frame(
 )
 
 out <- embedText(
-  odor, column_name = "odor",
-  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
+  odor, column_name = "odor"
 )
 ##   |                                                          |                                                  |   0%  |                                                          |=========================                         |  50%  |                                                          |==================================================| 100%
 
@@ -4609,32 +4640,50 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
-Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command provides acces to Hugging Face generate models and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
 
-In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. The Hugging Face API key is read from a local file (update the path to your own key). Finally, we select the title and the generated tags to see the results.
+In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. As with `embedText()`, there is no key in the code — the class token from your `.Renviron` authenticates the request. Finally, we select the title and the generated tags to see the results.
 
-<!-- NOTE (2026-07-21): eval=FALSE is a reversible stopgap. The Hugging Face
-     generate endpoint this chunk calls returns HTTP 402 (credits depleted), which
-     kills the render. The course embed proxy (embed.lbusta.org) is embed-only by
-     design, so generateText has no student-reachable backend yet. Pending a
-     decision on permanent treatment (cache a real output / replace the example /
-     leave disabled). See root todo.md "book LLM API calls break the render". -->
+Note that generation is much slower and much more expensive than embedding: each row is a separate request to a large model. Keep the number of rows small while you are experimenting.
+
+<!-- NOTE (2026-09-08): re-enabled after the course generation endpoint
+     (generate.lbusta.org) went live; `cache = TRUE` so a rebuild does not re-spend
+     the class budget on every render. It replaces the eval=FALSE stopgap from
+     2026-07-21, when Hugging Face generation was dead (HTTP 402) and there was no
+     student-reachable backend. See root todo.md "book LLM API calls break the render". -->
 
 ``` r
-search_results$system <- "You are a scientific literature classification expert. Your job is to generate three comma-separated tags for abstracts that you are given."
+search_results$system <- paste(
+  "You are a scientific literature classification expert.",
+  "Your job is to generate three comma-separated tags for abstracts that you are given."
+)
 
 search_results <- generateText(
   df = search_results,
   prompt_column = "abstract",
-  system_column = "system",
-  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
+  system_column = "system"
 )
 
 select(search_results, title, generation)
+## # A tibble: 12 × 2
+##    title                                          generation
+##    <chr>                                          <chr>     
+##  1 Ginsenosides in Panax genus and their biosynt… "Ginsenos…
+##  2 β-Amyrin synthase from Conyza blinii expresse… "# Classi…
+##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Classi…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Classi…
+##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…
+##  6 Genome Mining and Gene Expression Reveal Mayt… "# Classi…
+##  7 Current status and prospects of herbicide-res… "# Tags\n…
+##  8 Potential food applications of sorghum (Sorgh… "# Tags\n…
+##  9 Sorghum (Sorghum bicolor).                     "Plant ge…
+## 10 Cuticular wax in wheat: biosynthesis, genetic… "# Tags\n…
+## 11 Regulatory mechanisms underlying cuticular wa… "plant cu…
+## 12 Update on Cuticular Wax Biosynthesis and Its … "# Classi…
 ```
 
 ## {-}
@@ -4653,14 +4702,13 @@ select(search_results, title, generation)
 ``` r
 search_results_ex <- searchPubMed(
   search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
-  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  pubmed_api_key = Sys.getenv("PUBMED_TOKEN"),
   retmax_per_term = 50,
   sort = "date"
 )
 
 search_results_ex_embed <- embedText(
-  search_results_ex, column_name = "abstract",
-  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+  search_results_ex, column_name = "abstract"
 )
 
 runMatrixAnalysis(
@@ -4775,7 +4823,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-483-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-487-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -5019,7 +5067,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-511-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-515-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5047,7 +5095,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-512-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-516-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5092,7 +5140,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-514-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-518-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5108,7 +5156,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-515-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-519-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5117,7 +5165,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-516-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-520-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5188,7 +5236,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-518-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-522-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5208,7 +5256,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-519-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5286,7 +5334,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-524-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-528-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5321,7 +5369,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-525-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-529-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -5543,7 +5591,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-547-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-551-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -6193,7 +6241,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-572-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-576-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -6383,7 +6431,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-592-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-596-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -6406,7 +6454,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-593-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-597-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -6427,7 +6475,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-594-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -6500,7 +6548,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-599-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-603-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -6512,7 +6560,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-604-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -6528,7 +6576,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-601-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-605-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -6543,7 +6591,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-602-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-606-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -6572,7 +6620,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-603-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-607-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -6597,7 +6645,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-604-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-608-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -6644,7 +6692,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-605-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-609-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -6665,7 +6713,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-606-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-610-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## {-}

@@ -82,6 +82,33 @@
                 }
             }
 
+            ## 3. Shared machines: a writable library whose PACKAGES belong to
+            ##    someone else. On the lab JupyterHub, /usr/local/lib/R/site-library
+            ##    is world-writable but its package folders are owned by root and by
+            ##    other users, so install.packages() can add a NEW package yet cannot
+            ##    UPGRADE an existing one. That surfaces as the baffling
+            ##    "installation of package 'ggplot2' had non-zero exit status" while
+            ##    the folder looks perfectly writable. Fix: put the user's own library
+            ##    FIRST, so upgrades land in $HOME and shadow the shared copy.
+            first <- .libPaths()[1]
+            if (file.access(first, mode = 2) == 0) {
+                foreign <- tryCatch({
+                    pkgs <- list.dirs(first, recursive = FALSE)
+                    length(pkgs) > 0 && any(file.access(pkgs, mode = 2) != 0)
+                }, error = function(e) FALSE)
+                userlib <- path.expand(Sys.getenv("R_LIBS_USER"))
+                if (foreign && nzchar(userlib) &&
+                    !identical(path.expand(first), userlib)) {
+                    if (!dir.exists(userlib))
+                        try(dir.create(userlib, recursive = TRUE, showWarnings = FALSE), silent = TRUE)
+                    if (dir.exists(userlib) && file.access(userlib, mode = 2) == 0) {
+                        .libPaths(c(userlib, .libPaths()))
+                        message("[phylochemistry] ", first, " holds packages owned by other users, ",
+                                "which R cannot upgrade.\n  Installing to your personal library instead:\n  ", userlib)
+                    }
+                }
+            }
+
             invisible(TRUE)
         }
 
@@ -283,6 +310,12 @@
 
         source("https://thebustalab.github.io/phylochemistry/modules/datasets.R")
         source("https://thebustalab.github.io/phylochemistry/modules/pca_visualizer.R")
+        ## dgx client (dgxGenerate / runModelGrid / dgxHealth) for research students on
+        ## JupyterHub. Sourced for EVERYONE and at every scope: it needs only core-scope
+        ## packages, and until 2026-09-08 it lived in language_model_analysis.R, which is
+        ## sourced only on the lab build — so students hit `could not find function
+        ## "dgxHealth"` on the first cell of dgx_example_R.ipynb.
+        source("https://thebustalab.github.io/phylochemistry/modules/dgx.R")
 
     ## Set up prioriy functions
 
