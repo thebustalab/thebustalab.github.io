@@ -245,7 +245,12 @@ Self-check: which verb chooses <em>columns</em>?
 <span><span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
 <p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pivot_longer</span><span class="op">(</span>data <span class="op">=</span> <span class="va">fadb_sample</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, names_to <span class="op">=</span> <span class="st">"plant_species"</span>, values_to <span class="op">=</span> <span class="st">"relative_abundance"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">pivot_longer</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">fadb_sample</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
+<span>  names_to <span class="op">=</span> <span class="st">"plant_species"</span>,</span>
+<span>  values_to <span class="op">=</span> <span class="st">"relative_abundance"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 70 × 3</span></span>
 <span><span class="co">##    fatty_acid        plant_species        relative_abundance</span></span>
 <span><span class="co">##    &lt;chr&gt;             &lt;chr&gt;                             &lt;dbl&gt;</span></span>
@@ -489,7 +494,13 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
 <span>    y <span class="op">=</span> <span class="st">"Borough"</span>, </span>
 <span>    x <span class="op">=</span> <span class="st">"Trunk diameter"</span></span>
-<span>    <span class="co"># caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)</span></span>
+<span>    <span class="co"># caption = str_wrap(</span></span>
+<span>    <span class="co">#   "Figure 1: Diameters of trees in New York City. Points correspond to</span></span>
+<span>    <span class="co">#   average diameters of each tree species in each borough. Horizontal lines</span></span>
+<span>    <span class="co">#   indicate the standard deviation of tree diameters. Points are colored</span></span>
+<span>    <span class="co">#   according to tree species.",</span></span>
+<span>    <span class="co">#   width = 80</span></span>
+<span>    <span class="co"># )</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -769,7 +780,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-06"
+date: "2026-09-08"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1168,7 +1168,12 @@ While this format is very nice for filling in my hand (such as in a lab notebook
 
 
 ``` r
-pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
+pivot_longer(
+  data = fadb_sample,
+  cols = 2:11,
+  names_to = "plant_species",
+  values_to = "relative_abundance"
+)
 ## # A tibble: 70 × 3
 ##    fatty_acid        plant_species        relative_abundance
 ##    <chr>             <chr>                             <dbl>
@@ -1457,7 +1462,13 @@ ggplot() +
   labs(
     y = "Borough", 
     x = "Trunk diameter"
-    # caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+    # caption = str_wrap(
+    #   "Figure 1: Diameters of trees in New York City. Points correspond to
+    #   average diameters of each tree species in each borough. Horizontal lines
+    #   indicate the standard deviation of tree diameters. Points are colored
+    #   according to tree species.",
+    #   width = 80
+    # )
   ) +
   facet_grid(spc_latin~.) +
   guides(fill = "none") +

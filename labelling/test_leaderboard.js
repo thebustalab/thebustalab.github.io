@@ -10,6 +10,27 @@
  * short-changed. The two implementations must now agree row for row — see
  * AGENTS.md → Leaderboard, and newsletter/AGENTS.md → Leaderboard Scoring.
  *
+ * ALSO pinned here — two HIGH security findings fixed 2026-09-08:
+ *
+ *  1. STORED XSS in the leaderboard (index.html). The board rendered labeller
+ *     names into `tbody.innerHTML` via a template literal. Names are not
+ *     trusted input: the ?k= link is shared lab-wide and anyone can POST the
+ *     Apps Script endpoint directly, bypassing the roster dropdown entirely —
+ *     so a `labeller` of `<img src=x onerror=…>` was stored in the Sheet and
+ *     then executed in every labeller's browser on every board refresh. Fixed
+ *     by rendering each cell with textContent (renderLeaderboardRows), with a
+ *     single escapeHtml() for the one remaining HTML-string interpolation.
+ *
+ *  2. FORMULA INJECTION in apps_script.gs.js. Free-text submission fields were
+ *     written straight into cells, so a value starting with = + - @ tab or CR
+ *     was stored as a LIVE spreadsheet formula (=IMPORTRANGE/=HYPERLINK can
+ *     exfiltrate the sheet). Fixed by sheetSafe(), applied to every cell at the
+ *     appendRows() choke point so no handler can forget it.
+ *
+ * The XSS cases below load the two functions out of index.html by name and run
+ * them against a minimal DOM stub whose innerHTML setter THROWS — so a future
+ * edit that goes back to string-built markup fails here rather than shipping.
+ *
  * Run: node test_leaderboard.js
  */
 const fs = require("fs");
@@ -57,6 +78,8 @@ const SHEETS = {
   ],
 };
 
+const WRITES = [];   // every appendRows() write, captured by the stub below
+
 global.SpreadsheetApp = {
   openById() {
     return {
@@ -74,11 +97,18 @@ global.SpreadsheetApp = {
           getLastColumn: () => width,
           getRange: (r, c, nr, nc) => ({
             getValues: () => grid.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
+            // Records what a handler would write, for the sanitisation cases.
+            setValues: (vals) => { WRITES.push({ tab: name, rows: vals }); },
           }),
         };
       },
     };
   },
+};
+
+global.ContentService = {
+  MimeType: { JSON: "application/json" },
+  createTextOutput: (text) => ({ getContent: () => text, setMimeType() { return this; } }),
 };
 
 // Load the Apps Script source into this scope (it has no module system).
@@ -124,4 +154,119 @@ assert.ok(!inWindow("2026-04-30T00:00:00.000Z", win), "previous term excluded");
 assert.ok(!inWindow("", win), "undated row excluded");
 assert.ok(!inWindow("not a date", win), "unparseable row excluded");
 
-console.log(`ok — ${board.length} people scored; all leaderboard assertions passed`);
+// ───────────────────────────────────────────────────────────────────────────
+// Fix 1 (2026-09-08) — STORED XSS: labeller names must render inert.
+// The two client-side renderers are lifted out of index.html by name and run
+// against a DOM stub that THROWS if innerHTML is touched.
+// ───────────────────────────────────────────────────────────────────────────
+const indexSrc = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+
+function extractFunction(src, name) {
+  const start = src.indexOf("function " + name + "(");
+  assert.ok(start !== -1, name + "() not found in index.html");
+  let depth = 0;
+  for (let j = src.indexOf("{", start); j < src.length; j++) {
+    if (src[j] === "{") depth++;
+    else if (src[j] === "}" && --depth === 0) return src.slice(start, j + 1);
+  }
+  throw new Error("unbalanced braces reading " + name + "() from index.html");
+}
+
+function stubEl(tag) {
+  return {
+    tagName: tag,
+    className: "",
+    value: "",
+    children: [],
+    _text: "",
+    get textContent() { return this._text; },
+    set textContent(v) { this._text = String(v); this.children.length = 0; },
+    appendChild(child) { this.children.push(child); return child; },
+    set innerHTML(v) {
+      throw new Error("innerHTML used to render untrusted values in <" + tag + ">");
+    },
+  };
+}
+
+const documentStub = { createElement: (t) => stubEl(t) };
+const loadFn = (name) =>
+  new Function("document", extractFunction(indexSrc, name) + "; return " + name + ";")(documentStub);
+
+const renderLeaderboardRows = loadFn("renderLeaderboardRows");
+const escapeHtml = loadFn("escapeHtml");
+const optionEl = loadFn("optionEl");
+
+// The renderer itself must contain no innerHTML at all.
+assert.ok(
+  !extractFunction(indexSrc, "renderLeaderboardRows").includes("innerHTML"),
+  "renderLeaderboardRows must not use innerHTML"
+);
+
+// A labeller name straight off an unauthenticated POST, carrying a payload.
+const XSS_NAME = '<img src=x onerror="alert(1)"><script>alert(2)</script>';
+const tbody = stubEl("tbody");
+renderLeaderboardRows(tbody, [[XSS_NAME, 5], ["Ada", 6]], "Ada");
+assert.strictEqual(tbody.children.length, 2, "one row per scorer");
+const nameCell = tbody.children[0].children[0];
+assert.strictEqual(nameCell.textContent, XSS_NAME, "name stored verbatim as TEXT");
+assert.strictEqual(nameCell.children.length, 0, "markup in a name is never parsed into nodes");
+assert.strictEqual(tbody.children[0].children[1].textContent, "5", "count rendered as text");
+assert.strictEqual(tbody.children[1].className, "me", "current labeller row still highlighted");
+
+// The one remaining HTML-string interpolation (the article link) is escaped.
+assert.strictEqual(escapeHtml("<script>alert(1)</script>"),
+  "&lt;script&gt;alert(1)&lt;/script&gt;", "escapeHtml neutralises tags");
+assert.strictEqual(escapeHtml('" onmouseover="alert(1)'),
+  "&quot; onmouseover=&quot;alert(1)", "escapeHtml closes attribute breakout");
+assert.ok(indexSrc.includes("href=\"${escapeHtml(url)}\""), "article link href is escaped");
+
+// Product names come back from the enzyme sheet; they become option VALUES.
+const opt = optionEl("<script>alert(1)</script>", "");
+assert.strictEqual(opt.tagName, "option");
+assert.strictEqual(opt.value, "<script>alert(1)</script>", "product set as a value, not markup");
+
+// ───────────────────────────────────────────────────────────────────────────
+// Fix 2 (2026-09-08) — FORMULA INJECTION: no submitted string may land in a
+// cell as a live formula.
+// ───────────────────────────────────────────────────────────────────────────
+assert.strictEqual(sheetSafe("=SUM(A1:A9)"), "'=SUM(A1:A9)", "= is neutralised");
+assert.strictEqual(sheetSafe("+1+1"), "'+1+1", "+ is neutralised");
+assert.strictEqual(sheetSafe("-1+1"), "'-1+1", "- is neutralised");
+assert.strictEqual(sheetSafe("@A1"), "'@A1", "@ is neutralised");
+assert.strictEqual(sheetSafe("\t=1"), "'\t=1", "leading tab is neutralised");
+assert.strictEqual(sheetSafe("\r=1"), "'\r=1", "leading CR is neutralised");
+assert.strictEqual(sheetSafe("Ada Lovelace"), "Ada Lovelace", "ordinary text untouched");
+assert.strictEqual(sheetSafe("a = b"), "a = b", "an = mid-string is not a formula");
+assert.strictEqual(sheetSafe(true), true, "booleans pass through as booleans");
+assert.strictEqual(sheetSafe(42), 42, "numbers pass through as numbers");
+assert.strictEqual(sheetSafe(undefined), "", "undefined becomes an empty cell");
+
+// End-to-end through a real handler: every string cell must be inert.
+WRITES.length = 0;
+handlePathogenPost({
+  labeller: '=IMPORTRANGE("1AbC","A1")',
+  abstract_id: "absX",
+  abstract_title: "=1+1",
+  abstract_text: "plain text",
+  submission_id: "subX",
+  notes: "-payload",
+  client_timestamp: "2026-09-08T10:00:00.000Z",
+  triples: [{ compound: '=HYPERLINK("https://evil.example","click")',
+              pathogen: "@evil", direction: "inhibits" }],
+});
+assert.strictEqual(WRITES.length, 1, "one batched append");
+const written = WRITES[0].rows[0];
+for (const cell of written) {
+  if (typeof cell === "string") {
+    assert.ok(!/^[=+\-@\t\r]/.test(cell),
+      "cell would be a live formula: " + JSON.stringify(cell));
+  }
+}
+assert.strictEqual(written[1], '\'=IMPORTRANGE("1AbC","A1")', "labeller sanitised");
+assert.strictEqual(written[3], "'=1+1", "title sanitised");
+assert.strictEqual(written[5], '\'=HYPERLINK("https://evil.example","click")', "compound sanitised");
+assert.strictEqual(written[6], "'@evil", "pathogen sanitised");
+assert.strictEqual(written[8], false, "boolean flag column unchanged");
+assert.strictEqual(written[12], "'-payload", "notes sanitised");
+
+console.log(`ok — ${board.length} people scored; leaderboard + XSS + formula-injection assertions passed`);

@@ -71,6 +71,22 @@ main hr { border-top-width: 2px !important; }
   }
 }
 
+/* ------------------------------------------------------------
+   Keep ONE long code line from stretching the whole page.
+   <main> is a bootstrap flex item, so its default min-width:auto
+   means it cannot shrink below its min-content width — a single
+   unbreakable line inside a <pre> (e.g. a long commented-out
+   caption) pushes main from its 7/12 basis all the way out to the
+   82rem cap above. Everything sized at 100% (all the figures) then
+   inflates with it and is upscaled past its native resolution, and
+   the page only looks right zoomed out. min-width:0 lets the code
+   block scroll horizontally on its own, as it already does on
+   narrow screens, instead of dragging the layout with it.
+   ------------------------------------------------------------ */
+main { min-width: 0; }
+main pre, main div.sourceCode { min-width: 0; }
+
+
 /* ============================================================
    Dark mode
    Activated by data-theme="dark" on <html> (set by the toggle

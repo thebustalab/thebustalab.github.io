@@ -647,8 +647,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 function populateNameDropdown() {
   const select = $("name-select");
   if (!select) return;
-  select.innerHTML = '<option value="">— select your name —</option>' +
-    CONFIG.ROSTER.map(n => `<option value="${n}">${n}</option>`).join("");
+  // Built via the DOM (never an HTML string) so a name can only ever be text.
+  select.textContent = "";
+  select.appendChild(optionEl("", "— select your name —"));
+  for (const n of CONFIG.ROSTER) select.appendChild(optionEl(n, n));
 }
 
 async function fetchAbstracts() {
@@ -692,7 +694,12 @@ async function fetchProducts() {
     if (Array.isArray(list)) {
       state.products = list.filter((s) => typeof s === "string" && s.trim());
       const dl = $("product-suggestions");
-      if (dl) dl.innerHTML = state.products.map((p) => `<option value="${p.replace(/"/g, "&quot;")}">`).join("");
+      if (dl) {
+        // Products are free text out of the enzyme sheet, so set them as option
+        // values through the DOM rather than interpolating them into markup.
+        dl.textContent = "";
+        for (const p of state.products) dl.appendChild(optionEl(p, ""));
+      }
     }
   } catch { /* typeahead is best-effort */ }
 }
@@ -953,7 +960,7 @@ function renderLink(a) {
   const url = a.link || a.url ||
     (a.doi ? "https://doi.org/" + String(a.doi).replace(/^doi:/i, "") : "");
   if (url) {
-    el.innerHTML = `<a href="${url}" target="_blank" rel="noopener">Open article ↗</a>`;
+    el.innerHTML = `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">Open article ↗</a>`;
   } else {
     el.textContent = "";
   }
@@ -1218,11 +1225,7 @@ async function refreshLeaderboard() {
     }
   }
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-  const tbody = document.querySelector("#leaderboard-table tbody");
-  tbody.innerHTML = sorted.map(([name, count]) => {
-    const cls = name === state.labeller ? "me" : "";
-    return `<tr class="${cls}"><td>${name}</td><td class="count">${count}</td></tr>`;
-  }).join("");
+  renderLeaderboardRows(document.querySelector("#leaderboard-table tbody"), sorted, state.labeller);
   $("leaderboard-term").textContent = currentSeasonLabel();
   $("leaderboard").classList.remove("hidden");
 }
@@ -1238,7 +1241,52 @@ function currentSeasonLabel(now) {
   return `${season} ${d.getFullYear()}`;
 }
 
+// Render the board body from [name, count] pairs. Labeller names are NOT
+// trusted input: anything with the shared ?k= link can POST an arbitrary
+// `labeller` string straight to the Apps Script endpoint, so a name reaches
+// this table having never passed the roster dropdown. Every cell is therefore
+// written with textContent — never innerHTML, never a template literal — so a
+// name like `<img src=x onerror=…>` renders as inert text. Split out of
+// refreshLeaderboard so test_leaderboard.js can exercise it with a DOM stub.
+function renderLeaderboardRows(tbody, sorted, me) {
+  if (!tbody) return;
+  tbody.textContent = "";
+  for (const pair of sorted) {
+    const tr = document.createElement("tr");
+    if (pair[0] === me) tr.className = "me";
+    const nameCell = document.createElement("td");
+    nameCell.textContent = pair[0];
+    const countCell = document.createElement("td");
+    countCell.className = "count";
+    countCell.textContent = String(pair[1]);
+    tr.appendChild(nameCell);
+    tr.appendChild(countCell);
+    tbody.appendChild(tr);
+  }
+}
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
+
+// Single escaping helper for the few places a value must be interpolated into
+// an HTML string (attribute or text). Prefer textContent / createElement where
+// the value is plain text — this is the fallback, not the default.
+function escapeHtml(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// <option> built through the DOM, so value/label are always plain text.
+function optionEl(value, label) {
+  const o = document.createElement("option");
+  o.value = value;
+  if (label) o.textContent = label;
+  return o;
+}
+
 function setStatus(msg, cls) {
   const el = $("status");
   el.textContent = msg;
