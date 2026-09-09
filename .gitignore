@@ -5,6 +5,19 @@ AGENTS.md
 .syncthing.*
 *.tmp
 
+# Editor/agent backup copies (2026-09-08). These are local churn, but this tree IS the Mac's
+# publish worktree and deploy.sh stages it in bulk, so a stray backup goes straight to a public
+# URL. Three had: 13_language_models.Rmd.bak_20260908 (published the same hour it was written),
+# 6_wrangling_summaries.Rmd.bak_20260906, and — the one that mattered —
+# phylochemistry/modules/language_model_analysis.R.bak_20260830_pre_dgx, a stale copy of a MODULE
+# students source by URL, live and fetchable with pre-dgx behaviour. All three deleted 2026-09-08;
+# they leave the live site at the next deploy (bulk staging picks up the deletions).
+# Pattern checked against the tree: it matches only `*.bak*` backups and NOT
+# `phylochemistry/bustalabfunctions/analyzeGCMSdata4_bak.R` (underscore, no dot), which stays
+# tracked. NOTE: gitignore does not untrack an already-committed file — deleting it is what removes
+# it from the site; this rule only stops the next one being published.
+*.bak*
+
 # R project files
 .Rproj.user/
 .Rhistory

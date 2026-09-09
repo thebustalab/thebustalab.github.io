@@ -315,7 +315,10 @@
         ## packages, and until 2026-09-08 it lived in language_model_analysis.R, which is
         ## sourced only on the lab build — so students hit `could not find function
         ## "dgxHealth"` on the first cell of dgx_example_R.ipynb.
-        source("https://thebustalab.github.io/phylochemistry/modules/dgx.R")
+        ## Wrapped in try(): dgx.R and this file publish separately, and a 404 here
+        ## must not abort the load for a whole class over three research functions.
+        try(suppressWarnings(source("https://thebustalab.github.io/phylochemistry/modules/dgx.R")),
+            silent = TRUE)
 
     ## Set up prioriy functions
 

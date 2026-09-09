@@ -7039,7 +7039,7 @@ This page explains how to load a simple application for integrating and analyzin
 
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/gcms.R")
+source("https://thebustalab.github.io/phylochemistry/modules/gcms.R")
 ```
 
 If the command was run successfully you should see something like:

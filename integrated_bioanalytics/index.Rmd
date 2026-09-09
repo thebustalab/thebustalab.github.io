@@ -953,7 +953,7 @@ This page explains how to load a simple application for integrating and analyzin
 2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work. The first time you run this command, a bunch of tools required for the analysis will be installed. It might take a while! Later runs of the command will not have this install portion - the app will just open straight away.
 
 ```{r, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/gcms.R")
+source("https://thebustalab.github.io/phylochemistry/modules/gcms.R")
 ```
 
 If the command was run successfully you should see something like:
