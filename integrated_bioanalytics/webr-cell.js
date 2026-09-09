@@ -30,7 +30,7 @@
  * URL, exactly as sandbox.html already does. Its `?v=` token must be bumped by hand in lockstep with
  * escape_rooms/shared/ — nothing validates it from this side. See this dir's AGENTS.md.
  */
-import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=88";
+import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=89";
 
 let rconsole = null;
 function session() {

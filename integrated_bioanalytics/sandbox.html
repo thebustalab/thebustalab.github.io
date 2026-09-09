@@ -19,7 +19,9 @@
             border:1px solid var(--line); background:#0a1620; color:var(--amber); }
     textarea { width:100%; min-height:150px; resize:vertical; background:#0a1620; color:var(--ink); border:1px solid var(--line);
                border-radius:8px; padding:12px 14px; font:13px/1.5 ui-monospace, Menlo, Consolas, monospace; }
-    .row { display:flex; align-items:center; gap:12px; margin-top:10px; }
+    /* wraps because the plot size/shape strip (injected by the shared console) shares this row with
+       Run and the hint — on a narrow window the hint drops to its own line rather than squashing */
+    .row { display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap; }
     button.run { background:var(--amber); color:#10202a; border:0; border-radius:8px; padding:9px 18px; font:600 14px system-ui; cursor:pointer; }
     button.run:disabled { opacity:.45; cursor:default; }
     .hint { font-size:12px; opacity:.6; }
@@ -61,7 +63,7 @@
     // This page is a THIRD consumer of that shared module, in a different repo, so the escape rooms'
     // validate_assets.py VBUMP check cannot see it — bump here by hand whenever that token moves,
     // or a console edit silently serves stale to the sandbox while the rooms pick it up.
-    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=88";
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=89";
 
     // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
     const DATASETS = [
@@ -101,6 +103,14 @@
       else console_.run(codeEl.value);
     };
     runBtn.onclick = run;
+
+    // Plot size + shape, next to Run. plotControls() lives in the shared console (escape_rooms repo),
+    // which is pushed SEPARATELY from this one — so guard it the same way runFrom() above is guarded:
+    // during a partial deploy this page is new and the console is still old, and a missing control beats
+    // a TypeError that takes the whole module down and leaves the sandbox dead.
+    if (typeof console_.plotControls === "function") {
+      runBtn.insertAdjacentElement("afterend", console_.plotControls());
+    }
     codeEl.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
 
     console_.init()
