@@ -105,7 +105,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-visualization-i" class="section level1 unnumbered">
 <h1>data visualization I<a class="anchor" aria-label="anchor" href="#data-visualization-i"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google “data visualization” and see what happens). Data visualization is also rife with “trendy” visuals, misleading visuals, and visuals that look cool but don’t actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let’s get started!</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
 <script>
@@ -260,14 +260,14 @@ Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()<
 <p>We do this using the ggplot function’s data argument. When we run that line, it just shows a grey plot space. Why is this? It’s because all we’ve done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-61-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-62-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Define how your variables map onto the axes.</strong></li>
 </ol>
 <p>This is called aesthetic mapping and is done with the <code>aes()</code> function. <code>aes()</code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-62-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-63-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Use geometric shapes to represent other variables in your data.</strong></li>
 </ol>
@@ -275,12 +275,12 @@ Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()<
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-63-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-64-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p>In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use <code>aes()</code> to map your variables onto the geometric features of the shapes:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-64-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-65-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <div id="concept-check-2" class="section level4 unnumbered">
 <h4>Concept check<a class="anchor" aria-label="anchor" href="#concept-check-2"><i class="fas fa-link"></i></a>
 </h4>
@@ -306,29 +306,29 @@ Self-check: in the plot above, what does the point <b>color</b> represent?
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-65-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-66-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-66-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-67-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p><strong>Important note:</strong> Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
 <p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-67-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p>As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">algae_strain</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span>, size <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-70-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 </div>
 <div id="concept-check-3" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-3"><i class="fas fa-link"></i></a>
@@ -432,7 +432,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-77-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-78-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -518,7 +518,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-94-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-95-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -574,7 +574,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-11.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

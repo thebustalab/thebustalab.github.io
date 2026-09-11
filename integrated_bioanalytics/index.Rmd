@@ -488,6 +488,16 @@ To help you manage the suggestions above, please consider using the `buildCaptio
 buildCaption()
 ```
 
+The same command works in the <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener">general purpose sandbox</a>, where the checklist opens below the editor and the figure it refers to is simply the plot you just drew. A good way to work is to build the caption into the figure itself as you go:
+
+```{r, eval = FALSE}
+ggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +
+  geom_point() +
+  labs(caption = str_wrap("Figure 1: Water temperature in Alaskan lakes. ...", width = 110))
+```
+
+Note the `str_wrap()`: `ggplot` draws a caption as a single line and clips it at the edge of the plot, so a caption of any real length needs to be broken across lines before it will fit. Adjust `width` to taste.
+
 ## {-}
 
 ## further reading {-}

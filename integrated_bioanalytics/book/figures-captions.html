@@ -358,6 +358,12 @@ Figure 3.1: Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A b
 <p>To help you manage the suggestions above, please consider using the <code>buildCaption()</code> tool, which you can open using the command below. That command should open an interactive window with a checklist to help you quickly build quality captions.</p>
 <div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildCaption</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The same command works in the <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener">general purpose sandbox</a>, where the checklist opens below the editor and the figure it refers to is simply the plot you just drew. A good way to work is to build the caption into the figure itself as you go:</p>
+<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">water_temp</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="st">"Figure 1: Water temperature in Alaskan lakes. ..."</span>, width <span class="op">=</span> <span class="fl">110</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Note the <code>str_wrap()</code>: <code>ggplot</code> draws a caption as a single line and clips it at the edge of the plot, so a caption of any real length needs to be broken across lines before it will fit. Adjust <code>width</code> to taste.</p>
 </div>
 </div>
 <div id="section-19" class="section level2 unnumbered">
@@ -417,7 +423,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-11.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

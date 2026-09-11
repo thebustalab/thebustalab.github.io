@@ -30,6 +30,35 @@
                         font:12.5px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space:pre-wrap; overflow:auto; }
     #output .webr-out.err { color:#ff9a9a; } #output .webr-out.muted { opacity:.6; }
     #output canvas.webr-plot { max-width:100%; border-radius:8px; margin:8px 0; display:block; background:#fff; }
+    /* Environment pane — what is in the R session right now. Replaced the old "Datasets loaded" chip
+       card (2026-09-11): that listed only the CSVs loaded at boot, whereas this also shows what the
+       student has just made, which is the thing they actually need to look at. Read-only by design. */
+    .envbody { margin-top:10px; }
+    #environment.collapsed .envbody { display:none; }
+    .envgroup + .envgroup { margin-top:12px; }
+    .envgroup h3 { font-size:11px; letter-spacing:.06em; color:var(--amber); opacity:.8; margin:0 0 2px; }
+    .envrow { display:grid; grid-template-columns:minmax(130px,1.2fr) 92px 1.6fr; gap:10px; padding:4px 0;
+              border-top:1px solid var(--line); font:12.5px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+    .envrow .nm { color:var(--amber); overflow-wrap:anywhere; }
+    .envrow .cl { opacity:.55; }
+    .envrow .sz { opacity:.8; overflow-wrap:anywhere; }
+    .envempty { font-size:12px; opacity:.6; }
+    /* Caption checklist (buildCaption). Deliberately its OWN card and not the output pane: #output is
+       cleared on every Run, and the whole point of the tool is to tick items off WHILE iterating on
+       labs(caption = ...) — a checklist that wiped itself on each Run would be worse than no checklist. */
+    #caption { display:none; }
+    #caption.open { display:block; }
+    .caphead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+    button.link { background:none; border:0; color:var(--amber); font:12px system-ui; cursor:pointer;
+                  padding:0; text-decoration:underline; }
+    .capsec { margin-top:16px; }
+    .capsec h3 { font-size:12px; letter-spacing:.06em; color:var(--amber); opacity:.85; margin:0 0 4px; }
+    .capitem { border-top:1px solid var(--line); padding:9px 0; }
+    .capitem .lab { font-size:13px; }
+    .capchoices { display:flex; gap:18px; margin-top:6px; font-size:13px; }
+    .capchoices label { display:flex; align-items:center; gap:5px; cursor:pointer; opacity:.85; }
+    button.capreset { margin-top:10px; background:#0a1620; color:var(--ink); border:1px solid var(--line);
+                      border-radius:6px; padding:5px 12px; font:12px system-ui; cursor:pointer; }
     code { background:#0a1620; padding:1px 5px; border-radius:4px; }
     a { color:var(--amber); }
   </style>
@@ -43,18 +72,36 @@
     </div>
 
     <div class="card">
-      <div class="dslabel">Datasets loaded</div>
-      <div class="chips" id="chips"></div>
-      <div class="hint" style="margin-top:8px"><code>view(name)</code> opens a dataset as a scrollable table &mdash; it works on anything, including a result you just built: <code>view(filter(solvents, category == "alcohol"))</code>. Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Packages ready: dplyr, ggplot2, tidyr, readr.</div>
-    </div>
-
-    <div class="card">
       <textarea id="code" spellcheck="false"></textarea>
       <div class="row">
-        <button class="run" id="run" disabled>▶ Run</button>
-        <span class="hint">or press Ctrl/⌘ + Enter &mdash; <b>highlight part of your code to run just that part</b></span>
+        <button class="run" id="run" disabled>&#9654; Run</button>
+        <span class="hint">or press Ctrl/&#8984; + Enter &mdash; <b>highlight part of your code to run just that part</b></span>
       </div>
+      <div class="hint" style="margin-top:10px"><code>view(name)</code> opens a table &mdash; it works on anything, including a result you just built: <code>view(filter(solvents, category == "alcohol"))</code>. Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Writing a figure caption? <code>buildCaption()</code> opens the caption checklist. Packages ready: dplyr, ggplot2, tidyr, readr, stringr.</div>
       <div id="output"></div>
+    </div>
+
+    <div class="card" id="environment">
+      <div class="caphead">
+        <div class="dslabel" style="margin:0">Environment</div>
+        <button class="link" id="envtoggle">hide</button>
+      </div>
+      <div class="envbody" id="envbody"></div>
+    </div>
+
+    <div class="card" id="caption">
+      <div class="caphead">
+        <div class="dslabel" style="margin:0">Caption element checklist</div>
+        <button class="link" id="caphide">hide</button>
+      </div>
+      <div class="hint" style="margin-top:8px">
+        Write the caption into the figure as you go:
+        <code>labs(caption = str_wrap("Figure 1: &hellip;", width = 100))</code>.
+        ggplot draws a caption as a <b>single line</b> and clips it at the edge of the plot, so a real
+        paragraph-length caption needs <code>str_wrap()</code> (from stringr, loaded here) to break it
+        across lines. Mark each item below once your caption covers it; it disappears when you do.
+      </div>
+      <div id="capsections"></div>
     </div>
   </main>
 
@@ -71,11 +118,75 @@
       "wine_quality", "chemical_blooms", "tequila_chemistry", "algae_data",
     ].map(name => ({ name, url: `/phylochemistry/sample_data/${name}.csv` }));
 
+    /*
+     * buildCaption() — the phylochemistry caption checklist, rebuilt for the browser.
+     *
+     * The original (phylochemistry.R) is a Shiny app: shiny + shinyjs + shinythemes + base64enc, an
+     * httpuv port, and a text box where you type an absolute path to your figure file. None of that
+     * exists in WebR — there is no Shiny server in the tab and no local filesystem to read the figure
+     * from — and sourcing phylochemistry.R into WebR is ruled out anyway (it drags in a Bioconductor
+     * stack). So the checklist is plain DOM on this page, and the R side does exactly one thing: raise
+     * a flag that the page drains after each run. Nothing to install, nothing to serve.
+     *
+     * The one thing the browser version does BETTER than the Shiny one: no image path. The figure is
+     * already on screen in the output pane, because the student just ran the code that drew it.
+     */
+    const CAPTION_R = `
+.__caption_env <- new.env()
+.__caption_env$open <- FALSE
+buildCaption <- function() {
+  .__caption_env$open <- TRUE
+  cat("Caption element checklist opened below the editor.\\n")
+  invisible(NULL)
+}
+.__caption_take <- function() {
+  o <- isTRUE(.__caption_env$open)
+  .__caption_env$open <- FALSE
+  o
+}
+`;
+
+    /*
+     * The Environment pane's R half. Returns one tab-separated line per object rather than a nested list
+     * purely so the JS side needs no list-flattener: a character vector arrives from toJs() as a flat
+     * values array, and split("\t") is the whole parser.
+     *
+     * ls() already hides the dot-prefixed internals (.__view_env, .__caption_env, ...), so the only
+     * injected names to drop by hand are the two callable ones. A function the STUDENT defines is kept
+     * and shown — RStudio lists those too, and losing your own function from the pane is confusing.
+     */
+    const ENV_R = `
+.__env_take <- function() {
+  nms <- setdiff(ls(envir = globalenv()), c("view", "buildCaption"))
+  if (!length(nms)) return(character(0))
+  vapply(nms, function(n) {
+    info <- tryCatch({
+      v <- get(n, envir = globalenv())
+      if (is.function(v)) {
+        c("function", "function", "")
+      } else if (is.data.frame(v)) {
+        c("data", if (inherits(v, "tbl_df")) "tibble" else "data.frame",
+          paste0(nrow(v), " x ", ncol(v)))
+      } else if (is.matrix(v)) {
+        c("data", "matrix", paste0(nrow(v), " x ", ncol(v)))
+      } else if (is.atomic(v) && length(v) == 1) {
+        s <- paste(format(v), collapse = " ")
+        if (nchar(s) > 40) s <- paste0(substr(s, 1, 37), "...")
+        c("value", class(v)[1], s)
+      } else {
+        c("value", class(v)[1], paste0("length ", length(v)))
+      }
+    }, error = function(e) c("value", "?", "unreadable"))
+    paste(c(n, info), collapse = "\t")
+  }, character(1), USE.NAMES = FALSE)
+}
+`;
+
     const console_ = new WebRConsole(
       {
-        packages: ["dplyr", "ggplot2", "tidyr", "readr"],
+        packages: ["dplyr", "ggplot2", "tidyr", "readr", "stringr"],
         datasets: DATASETS,
-        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr)})",
+        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R,
       },
       { status: document.getElementById("status"), output: document.getElementById("output") }
     );
@@ -84,23 +195,172 @@
     const runBtn = document.getElementById("run");
     codeEl.value = `# R in your browser. Try it:\nview(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
 
-    // dataset chips — static labels of what's loaded (no click-to-insert; it clobbered the editor)
-    const chips = document.getElementById("chips");
-    DATASETS.forEach(ds => {
-      const b = document.createElement("span");
-      b.className = "chip"; b.textContent = ds.name;
-      chips.appendChild(b);
+    /*
+     * Environment pane. Read-only on purpose: it shows WHAT EXISTS, and the student still types view(),
+     * colnames() or glimpse() to look inside. Same reasoning that kept the old dataset chips
+     * non-interactive (AGENTS.md) — a pane you can click to inspect teaches nothing transferable.
+     */
+    const envCard = document.getElementById("environment");
+    const envBody = document.getElementById("envbody");
+    const ENV_GROUPS = [["data", "Data"], ["value", "Values"], ["function", "Functions"]];
+
+    function renderEnvironment(rows) {
+      envBody.innerHTML = "";
+      const parsed = rows.map(r => {
+        const [name, kind, cls, size] = String(r).split("\t");
+        return { name, kind, cls, size };
+      }).filter(o => o.name);
+      if (!parsed.length) {
+        const p = document.createElement("div");
+        p.className = "envempty";
+        p.textContent = "Nothing in the session yet.";
+        envBody.appendChild(p);
+        return;
+      }
+      ENV_GROUPS.forEach(([kind, title]) => {
+        const items = parsed.filter(o => o.kind === kind);
+        if (!items.length) return;
+        const g = document.createElement("div");
+        g.className = "envgroup";
+        const h = document.createElement("h3");
+        h.textContent = title;
+        g.appendChild(h);
+        items.forEach(o => {
+          const row = document.createElement("div");
+          row.className = "envrow";
+          [["nm", o.name], ["cl", o.cls], ["sz", o.size]].forEach(([cls, text]) => {
+            const c = document.createElement("span");
+            c.className = cls; c.textContent = text || "";
+            row.appendChild(c);
+          });
+          g.appendChild(row);
+        });
+        envBody.appendChild(g);
+      });
+    }
+
+    // Collapse, don't hide: the header stays so there is always a way back. (The caption card hides
+    // outright because buildCaption() reopens it; the environment has no such command.)
+    const envToggle = document.getElementById("envtoggle");
+    envToggle.onclick = () => {
+      const collapsed = envCard.classList.toggle("collapsed");
+      envToggle.textContent = collapsed ? "show" : "hide";
+    };
+
+    /*
+     * The checklist itself. Item text is copied VERBATIM from buildCaption() in phylochemistry.R so the
+     * browser and RStudio versions ask for the same things — if you reword one, reword both. Behaviour
+     * is faithful to the original too: an item hides once answered (either answer), and each section's
+     * reset button clears its answers and brings its items back.
+     */
+    const CAPTION_SECTIONS = [
+      { title: "TITLE SECTION", reset: "Reset title section", items: [
+        { id: "figure_title", label: "FIGURE TITLE: Provide a concise, descriptive title that summarizes the overall message or purpose of the figure, including the main topic, experimental system, or hypothesis." },
+        { id: "panel_id", label: "PANEL IDENTIFICATION: Label each panel (e.g., A, B, C) and refer to these labels consistently." },
+      ] },
+      { title: "SUBPANEL SECTION", reset: "Reset subpanel section", items: [
+        { id: "graph_layout", label: "GRAPH TYPE AND LAYOUT: State the type of plot (e.g., line plot, bar chart, scatter plot, histogram, etc.) and describe any special features such as insets, overlays, or embedded plots." },
+        { id: "axes_variables", label: "AXES AND VARIABLE MAPPINGS: Clearly define what is on each axis (including units) and describe any additional dimensions (e.g., color coding, marker sizes, or symbols) used in the figure." },
+        { id: "data_representation", label: "DATA REPRESENTATIONS: Describe what the individual data points, bars, or error bars represent (e.g., individual measurements, means, medians, etc.), including any error metrics (such as standard error, standard deviation, or 95% confidence intervals) and details on any trend or regression lines." },
+        { id: "sample_size", label: "SAMPLE SIZE: Indicate the number of independent samples or experimental replicates underlying each element of the graph." },
+        { id: "stat_analysis", label: "STATISTICAL ANALYSES AND COMPARISONS: Describe any control experiments or baseline comparisons, specify the statistical tests used (e.g., t-test, ANOVA, regression analysis) and significance levels, and detail any data normalization, transformation, or curve fitting applied." },
+      ] },
+      { title: "FINAL CHECKS SECTION", reset: "Reset final checks section", items: [
+        { id: "caption_text", label: "AVOID OR DEFINE ABBREVIATIONS: Avoid using unexplained abbreviations or jargon; if abbreviations are necessary, provide definitions at first use." },
+        { id: "data_methodology", label: "DATA METHODOLOGY: Outline the methods used to generate the data, including experimental conditions (e.g., treatment concentrations, temperature), computational parameters if applicable, and any image processing adjustments critical for interpreting the figure." },
+        { id: "data_source", label: "DATA SOURCE: Indicate the origin of the data (e.g., experimental assays, clinical samples, simulations, databases, publications) and include relevant references if applicable." },
+      ] },
+    ];
+
+    const captionCard = document.getElementById("caption");
+    // Built once at page load, not on first buildCaption() call: the student's ticks have to survive
+    // every later buildCaption(), and rebuilding the DOM would silently throw them away.
+    CAPTION_SECTIONS.forEach(sec => {
+      const wrap = document.createElement("div");
+      wrap.className = "capsec";
+      const h = document.createElement("h3");
+      h.textContent = sec.title;
+      wrap.appendChild(h);
+
+      const itemEls = [];
+      sec.items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "capitem";
+        const lab = document.createElement("div");
+        lab.className = "lab";
+        lab.textContent = item.label;
+        row.appendChild(lab);
+
+        const choices = document.createElement("div");
+        choices.className = "capchoices";
+        [["na", "Doesn't Apply"], ["complete", "Complete"]].forEach(([value, text]) => {
+          const l = document.createElement("label");
+          const r = document.createElement("input");
+          r.type = "radio"; r.name = "cap_" + item.id; r.value = value;
+          // Either answer retires the item — "doesn't apply" is a decision about the figure just as
+          // much as "complete" is, and leaving it on screen would imply it still needs thought.
+          r.addEventListener("change", () => { row.style.display = "none"; });
+          l.appendChild(r);
+          l.appendChild(document.createTextNode(text));
+          choices.appendChild(l);
+        });
+        row.appendChild(choices);
+        wrap.appendChild(row);
+        itemEls.push(row);
+      });
+
+      const reset = document.createElement("button");
+      reset.className = "capreset";
+      reset.textContent = sec.reset;
+      reset.addEventListener("click", () => {
+        itemEls.forEach(row => {
+          row.style.display = "";
+          row.querySelectorAll("input[type=radio]").forEach(r => { r.checked = false; });
+        });
+      });
+      wrap.appendChild(reset);
+      document.getElementById("capsections").appendChild(wrap);
     });
+
+    // Hiding only collapses the card; the ticks stay. buildCaption() brings it back exactly as it was.
+    document.getElementById("caphide").onclick = () => captionCard.classList.remove("open");
+
+    /*
+     * One post-run trip into R, for both panes: the caption flag and the environment listing. Wrapped so
+     * a failure here can never take down the run that just produced the student's plot — a stale pane is
+     * a nuisance; a Run button that throws is the 2026-09-04 outage again.
+     */
+    async function afterRun() {
+      const webR = console_.webR;
+      if (!webR) return;
+      let shelter = null;
+      try {
+        shelter = await new webR.Shelter();
+        const cap = await (await shelter.evalR('if (exists(".__caption_take")) .__caption_take() else FALSE')).toJs();
+        // R has no scalars: a length-1 logical arrives as {type:"logical", values:[true]}.
+        if (Array.isArray(cap.values) && cap.values[0] === true) {
+          captionCard.classList.add("open");
+          captionCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        const env = await (await shelter.evalR('if (exists(".__env_take")) .__env_take() else character(0)')).toJs();
+        renderEnvironment(Array.isArray(env.values) ? env.values : []);
+      } catch (e) {
+        /* the panes never break a run */
+      } finally {
+        if (shelter) shelter.purge();
+      }
+    }
 
     // runFrom() (run-the-selection) lives in the escape_rooms repo, which is pushed SEPARATELY from this
     // one — so there is always a window where this page is new and the shared console is still old. Fall
     // back to run() rather than throwing: a Run button that works without selection-support beats a dead
     // one. (2026-09-04: this exact partial deploy took the live sandbox down.) Safe to simplify only once
     // you never need to survive a stale console.
-    const run = () => {
+    const run = async () => {
       if (runBtn.disabled) return;
-      if (typeof console_.runFrom === "function") console_.runFrom(codeEl);
-      else console_.run(codeEl.value);
+      if (typeof console_.runFrom === "function") await console_.runFrom(codeEl);
+      else await console_.run(codeEl.value);
+      await afterRun();
     };
     runBtn.onclick = run;
 
@@ -113,8 +373,10 @@
     }
     codeEl.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });
 
+    // afterRun() on boot fills the Environment pane with the datasets that were just loaded — the job the
+    // old chip card did, minus the hand-maintained list. The caption flag is FALSE here, so nothing opens.
     console_.init()
-      .then(() => { runBtn.disabled = false; })
+      .then(() => { runBtn.disabled = false; return afterRun(); })
       .catch(e => { document.getElementById("status").textContent = "R failed to start: " + (e.message || e); });
   </script>
 </body>
