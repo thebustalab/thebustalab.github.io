@@ -270,6 +270,7 @@
                     cat(paste0("Brush has no plot mapping. Fields present: ",
                                paste(names(brush), collapse = ", "), "\n"))
                 }
+                xv_mapped <- if (!is.null(xv) && xv %in% names(df)) xv else NULL
                 if (is.null(xv) || !(xv %in% names(df))) xv <- "rt_rt_offset"
                 if (!(xv %in% names(df))) return(empty)
 
@@ -285,21 +286,48 @@
                     return(empty)
                 }
                 rng <- range(df[[xv]], na.rm = TRUE)
-                if (brush$xmax < rng[1] || brush$xmin > rng[2]) {
-                    cat(paste0("Brush x range (", signif(brush$xmin, 6), " to ", signif(brush$xmax, 6),
+                bxmin <- brush$xmin; bxmax <- brush$xmax
+
+                ## Field evidence (host1, 2026-09-14): when Shiny's ggplot coordmap
+                ## extraction fails it still sends a brush, but with an EMPTY
+                ## mapping and xmin/xmax expressed as FRACTIONS OF THE PANEL
+                ## (0..1) against a degenerate 0..1 domain. Two successive drags
+                ## came back 0.259-0.411 and 0.347-0.498: identical widths, the
+                ## second shifted right, exactly as two equal drags at different
+                ## positions would look.
+                ##
+                ## Those are recoverable. The panel spans the current x-axis
+                ## window, so a fraction maps straight onto it. Guarded on the
+                ## data's own x range sitting clear of 0..1 -- true for retention
+                ## times in seconds, and the check means real data coordinates are
+                ## never reinterpreted by mistake.
+                if (is.null(xv_mapped) && bxmin >= 0 && bxmax <= 1 && rng[1] > 1) {
+                    win_lo <- if (exists("x_axis_start") && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
+                    win_hi <- if (exists("x_axis_end")   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
+                    if (win_hi > win_lo) {
+                        bxmin <- win_lo + brush$xmin * (win_hi - win_lo)
+                        bxmax <- win_lo + brush$xmax * (win_hi - win_lo)
+                        cat(paste0("Brush came back as panel fractions (", signif(brush$xmin, 4), "-",
+                                   signif(brush$xmax, 4), "); reading them against the current window as ",
+                                   signif(bxmin, 8), " to ", signif(bxmax, 8), ".\n"))
+                    }
+                }
+
+                if (bxmax < rng[1] || bxmin > rng[2]) {
+                    cat(paste0("Brush x range (", signif(bxmin, 6), " to ", signif(bxmax, 6),
                                ") lies outside the data (", signif(rng[1], 6), " to ", signif(rng[2], 6),
-                               "). It is probably in pixel units from a plot with no coordinate map. Ignoring it.\n"))
+                               "). Ignoring it.\n"))
                     return(empty)
                 }
 
-                keep <- !is.na(df[[xv]]) & df[[xv]] >= brush$xmin & df[[xv]] <= brush$xmax
+                keep <- !is.na(df[[xv]]) & df[[xv]] >= bxmin & df[[xv]] <= bxmax
                 pv <- if (!is.null(brush$mapping)) brush$mapping$panelvar1 else NULL
                 if (!is.null(pv) && pv %in% names(df) && !is.null(brush$panelvar1)) {
                     keep <- keep & as.character(df[[pv]]) == as.character(brush$panelvar1)
                 }
                 out <- df[which(keep), , drop = FALSE]
                 if (nrow(out) == 0) {
-                    cat(paste0("Brush (", xv, " ", signif(brush$xmin, 6), " to ", signif(brush$xmax, 6),
+                    cat(paste0("Brush (", xv, " ", signif(bxmin, 6), " to ", signif(bxmax, 6),
                                if (!is.null(brush$panelvar1)) paste0(", panel ", brush$panelvar1) else "",
                                ") matched no rows.\n"))
                 } else {
@@ -637,6 +665,14 @@
                             tags$li("Shift + 4 => Library search"),
                             tags$li("Shift + 5 => Save current MS")
                         ),
+
+                        tags$hr(),
+                        strong("Zoom (retention range)"),
+                        fluidRow(
+                            column(6, numericInput("x_range_lo", "from", value = NA)),
+                            column(6, numericInput("x_range_hi", "to",   value = NA))
+                        ),
+                        helpText("Type a range and press Shift+Q. Overrides the brush. Clear both boxes to go back to brushing."),
 
                         tags$hr(),
                         strong("Chromatogram display"),
@@ -1328,6 +1364,37 @@
                                         }
                                     }
                                 
+                                ## Typed x-range override. Brushing has proved unreliable in
+                                ## the field -- the brush arrives without its coordinate mapping,
+                                ## and on 2026-09-14 stopped registering at all -- so there is a
+                                ## route to the same place that does not depend on it. Set after
+                                ## the brush blocks so it wins. Clear both boxes to go back to
+                                ## brush/default behaviour.
+
+                                    manual_lo <- suppressWarnings(as.numeric(input$x_range_lo))
+                                    manual_hi <- suppressWarnings(as.numeric(input$x_range_hi))
+                                    manual_ok <- length(manual_lo) == 1 && length(manual_hi) == 1 &&
+                                        !is.na(manual_lo) && !is.na(manual_hi) && manual_hi > manual_lo
+
+                                    if (manual_ok) {
+                                        x_axis_start <<- manual_lo
+                                        x_axis_end   <<- manual_hi
+                                        y_axis_start <<- 0
+                                        y_axis_end   <<- max(chromatograms$abundance)
+                                    }
+
+                                ## One line that distinguishes every way the zoom can fail: no
+                                ## brush registered at all, a brush that produced no selection,
+                                ## or limits that were set correctly and then ignored downstream.
+
+                                    cat(paste0(
+                                        "Shift+Q: brush ",
+                                        if (is.null(input$chromatogram_brush)) "ABSENT" else "present",
+                                        if (manual_ok) ", typed range USED" else "",
+                                        "; x-axis now ", signif(x_axis_start, 8), " to ", signif(x_axis_end, 8),
+                                        " (data spans ", signif(min(chromatograms$rt), 8),
+                                        " to ", signif(max(chromatograms$rt), 8), ")\n"))
+
                                 ## Filter chromatogram
                                     
                                     chromatograms_updated_filtered <- dplyr::filter(
@@ -1653,7 +1720,22 @@
 
                             redraw_trigger()
                             b <- page_bounds()
-                            if (is.null(b)) return(NULL)
+
+                            ## Returning NULL here draws a plot with NO coordinate map, and the
+                            ## browser then holds a degenerate 0..1 map for this output until the
+                            ## next successful render -- one route to the fraction-coordinate
+                            ## brushes seen on host1. Hand back a real ggplot with a real x
+                            ## mapping instead, so the output always has a usable coordmap.
+                            if (is.null(b)) {
+                                return(
+                                    ggplot(data.frame(rt_rt_offset = range(chromatograms$rt), abundance = c(0, 0)),
+                                           aes(x = rt_rt_offset, y = abundance)) +
+                                        geom_blank() +
+                                        annotate("text", x = mean(range(chromatograms$rt)), y = 0, size = 5,
+                                                 label = "Press Shift+Q to load chromatograms") +
+                                        theme_classic()
+                                )
+                            }
                             page_samples <- b$page_samples
 
                             ## Axis limits set by Shift+Q (globals); guard against unset

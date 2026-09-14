@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-11"
+date: "2026-09-14"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -78,7 +78,7 @@ ________________________________________________________________________________
 
 Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google "data visualization" and see what happens). Data visualization is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
 </script>
@@ -369,7 +369,7 @@ Fill in the blank with the geom that draws points, so each measurement shows up 
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 <!--
 ## markdown {-}
@@ -578,7 +578,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RColorBrewer","cowplot"], datasets: [{ name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }, { name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }, { name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(ggrepel); library(RColorBrewer); library(cowplot)})" };
 </script>
@@ -928,7 +928,7 @@ plot_grid(____, ____)</textarea></div>
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 ## exercises {-}
 
@@ -1026,7 +1026,7 @@ ________________________________________________________________________________
 
 Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting your *own* data into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=3">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script>
@@ -1637,7 +1637,7 @@ Fill in the blank with the verb that adds a new column without collapsing the ro
 <label><input type="radio"> they are the same; mutate() is just the newer name</label>
 </div>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=3"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 ## exercises {-}
 

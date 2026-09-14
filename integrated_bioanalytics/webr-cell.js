@@ -32,9 +32,15 @@
  * URL, exactly as sandbox.html already does. Its `?v=` token must be bumped by hand in lockstep with
  * escape_rooms/shared/ — nothing validates it from this side. See this dir's AGENTS.md.
  */
-import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=89";
+import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=90";
 
 let rconsole = null;
+// Every cell's reset button, so they can all be revealed together the moment a session exists.
+const resetBtns = [];
+function revealResets() {
+  if (!rconsole || !rconsole.ready) return;
+  resetBtns.forEach(b => { b.style.display = ""; });
+}
 function session() {
   if (!rconsole) {
     const cfg = window.WEBR_CELL_CONFIG || {};
@@ -61,9 +67,35 @@ function initCells() {
     // One session, many cells: register this cell's status line so the boot message shows wherever
     // the student actually clicked.
     session().addStatusEl(stat);
+    /*
+     * "reset session", one per cell — the student who has just overwritten `algae_data` in cell 3 is
+     * looking at cell 4, not at the top of the chapter, so the way back has to be where they are.
+     *
+     * A DELIBERATE divergence from the plot-size strip, which the cells omit precisely to avoid
+     * per-cell clutter: that is a slider plus a dropdown on every cell, this is one small button, and
+     * the need it serves is a student who is stuck rather than a preference they are tuning.
+     *
+     * HIDDEN UNTIL A SESSION EXISTS. Before the first Run there is nothing to reset, and a chapter
+     * being read rather than run should not carry a button per cell. They all appear together on the
+     * first successful boot, which also reads as "there is a live session now".
+     *
+     * Feature-detected: the console lives in the escape_rooms repo and is deployed separately, so a
+     * page can meet a cached console that predates resetControl(). No control beats a TypeError at
+     * module scope, which would take every cell on the page down with it.
+     */
+    if (typeof session().resetControl === "function") {
+      const rb = session().resetControl({ output: out, onDone: () => { stat.textContent = ""; } });
+      rb.style.display = "none";
+      rb.classList.add("webr-cell-reset");
+      bar.appendChild(rb);
+      resetBtns.push(rb);
+      if (session().ready) rb.style.display = "";
+    }
+
     const run = async () => {
       btn.disabled = true; const t = btn.textContent; btn.textContent = "running…";
-      try { await session().runFrom(ta, out); } finally { btn.disabled = false; btn.textContent = t; if (session().ready) stat.textContent = ""; }
+      try { await session().runFrom(ta, out); }
+      finally { btn.disabled = false; btn.textContent = t; if (session().ready) stat.textContent = ""; revealResets(); }
     };
     btn.onclick = run;
     ta.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); } });

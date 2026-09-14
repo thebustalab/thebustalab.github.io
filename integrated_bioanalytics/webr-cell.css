@@ -13,6 +13,13 @@
   font: 600 13px system-ui, sans-serif; cursor: pointer; }
 .webr-cell .webr-run:disabled { opacity: .5; cursor: default; }
 .webr-cell .webr-status { font-size: 12px; color: #fee08b; }
+/* "reset session" (the shared console builds the button; this only places and re-colours it). Its own
+   stylesheet inherits currentColor, which in a cell bar would be the book's dark body ink on this dark
+   panel — so set an explicit colour here. Pushed right so it never sits beside Run and gets misclicked
+   for it; the shared control's two-step confirm is the real guard. */
+.webr-cell .webr-bar .webr-cell-reset { margin-left: auto; color: #fee08b; background: transparent;
+  border-color: #3a3f46; border-radius: 0; }
+.webr-cell .webr-bar .webr-cell-reset:hover:not(:disabled) { border-color: #fee08b; }
 .webr-cell .webr-output { padding: 0 12px 12px; }
 .webr-cell .webr-output .webr-out { background: #26292e; color: #e6e9ed; border: 1px solid #3a3f46; border-radius: 0; padding: 10px 12px; margin: 8px 0;
   white-space: pre-wrap; overflow: auto; font: 87.5%/1.5 "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
