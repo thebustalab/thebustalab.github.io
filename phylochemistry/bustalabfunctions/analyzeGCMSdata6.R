@@ -374,11 +374,22 @@
                 ## Clamping is the right reading -- the user meant "everything
                 ## vertically" -- where rejecting outright silently dropped every
                 ## other y-zoom in the field (2026-09-14).
-                fr <- pmin(pmax((c(brush$ymin, brush$ymax) - pf$y[1]) / (pf$y[2] - pf$y[1]), 0), 1)
+                ##
+                ## The y fractions are measured from the BOTTOM of the image, not
+                ## the top -- the opposite of the x convention and of what the
+                ## pixel direction suggests. panel_fraction() reports the panel
+                ## from the top, so flip it to match. Established from the field
+                ## on 2026-09-14: selecting 600-400 zoomed to 200-0 and selecting
+                ## 200-0 zoomed to 600-400, a clean reflection about the axis
+                ## midpoint. A selection near the middle looked almost right under
+                ## either reading, which is why it first appeared to "mostly" work.
+                panel_lo <- 1 - pf$y[2]        # panel bottom, from the image bottom
+                panel_hi <- 1 - pf$y[1]        # panel top
+                fr <- pmin(pmax((c(brush$ymin, brush$ymax) - panel_lo) / (panel_hi - panel_lo), 0), 1)
                 lo <- last_brush_yrange[1]; hi <- last_brush_yrange[2]
-                vals <- sort(lo + (1 - fr) * (hi - lo))    # flip: top of image = high value
+                vals <- sort(lo + fr * (hi - lo))
                 cat(paste0("  y-zoom: raw ", signif(brush$ymin, 4), "-", signif(brush$ymax, 4),
-                           " of panel ", signif(pf$y[1], 4), "-", signif(pf$y[2], 4),
+                           " of panel ", signif(panel_lo, 4), "-", signif(panel_hi, 4), " (from bottom)",
                            ", against drawn y ", signif(lo, 6), "-", signif(hi, 6),
                            " -> ", signif(vals[1], 6), " to ", signif(vals[2], 6), "\n"))
                 if (!all(is.finite(vals)) || vals[2] <= vals[1]) return(NULL)
