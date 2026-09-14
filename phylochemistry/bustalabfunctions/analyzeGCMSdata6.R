@@ -249,6 +249,53 @@
             ## those modes is in sqrt / normalised / m-z units and means nothing
             ## against raw counts, so ignoring it is not a degradation -- it is
             ## the only correct reading.
+            ## Where the plot PANEL sits inside the rendered image, as fractions
+            ## of image width.
+            ##
+            ## Needed because Shiny's fallback coordmap (see brushed_chromatogram
+            ## below) reports the brush as a fraction of the whole IMAGE, while
+            ## the data only occupies the panel -- the y-axis labels, facet strip
+            ## and colour bar all sit outside it. Verified on host1: at 960 px the
+            ## panel runs 0.041..0.914, at 1400 px 0.028..0.941, i.e. constant
+            ## 39 px and 83 px margins. Ignoring that is a left shift plus a
+            ## stretch, which is exactly the "not quite the right region" symptom.
+            ##
+            ## Absolute gtable widths convert straight to inches; the panel is the
+            ## "null" column that soaks up whatever is left. Cached per image size
+            ## because building a second grob is not free on a million-row plot.
+            .panel_cache <- new.env(parent = emptyenv())
+
+            panel_x_fraction <- function(p, px_w, px_h, res = 72) {
+                key <- paste0(px_w, "x", px_h)
+                if (!is.null(.panel_cache[[key]])) return(.panel_cache[[key]])
+                tf <- tempfile(fileext = ".png")
+                grDevices::png(tf, width = px_w, height = px_h, res = res)
+                out <- tryCatch({
+                    gt <- ggplot2::ggplotGrob(p)
+                    grid::grid.draw(gt)
+                    ws <- gt$widths
+                    n <- length(ws)
+                    isnull <- grid::unitType(ws) == "null"
+                    abs_in <- numeric(n)
+                    if (any(!isnull)) abs_in[!isnull] <- grid::convertWidth(ws[!isnull], "in", valueOnly = TRUE)
+                    total_in <- px_w / res
+                    nv <- numeric(n)
+                    if (any(isnull)) nv[isnull] <- as.numeric(ws[isnull])
+                    rem <- max(total_in - sum(abs_in), 0)
+                    win <- abs_in + if (sum(nv) > 0) rem * nv / sum(nv) else 0
+                    cum <- cumsum(win)
+                    ip <- grepl("^panel", gt$layout$name)
+                    lcol <- min(gt$layout$l[ip]); rcol <- max(gt$layout$r[ip])
+                    c(if (lcol > 1) cum[lcol - 1] else 0, cum[rcol]) / total_in
+                }, error = function(e) NULL)
+                grDevices::dev.off(); unlink(tf)
+                if (!is.null(out) && length(out) == 2 && all(is.finite(out)) && out[2] > out[1]) {
+                    assign(key, out, envir = .panel_cache)
+                    return(out)
+                }
+                NULL
+            }
+
             brushed_chromatogram <- function(df, brush) {
                 empty <- df[0, , drop = FALSE]
                 if (is.null(brush)) return(empty)
@@ -305,11 +352,30 @@
                     win_lo <- if (exists("x_axis_start") && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
                     win_hi <- if (exists("x_axis_end")   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
                     if (win_hi > win_lo) {
-                        bxmin <- win_lo + brush$xmin * (win_hi - win_lo)
-                        bxmax <- win_lo + brush$xmax * (win_hi - win_lo)
-                        cat(paste0("Brush came back as panel fractions (", signif(brush$xmin, 4), "-",
-                                   signif(brush$xmax, 4), "); reading them against the current window as ",
-                                   signif(bxmin, 8), " to ", signif(bxmax, 8), ".\n"))
+                        fr <- c(brush$xmin, brush$xmax)
+
+                        ## Re-express image fractions as PANEL fractions. Skipped
+                        ## (with a warning) if the last plot or its rendered size
+                        ## is unknown, in which case the old uncorrected reading
+                        ## is used -- offset, but better than nothing.
+                        pf <- NULL
+                        if (exists("last_brush_plot") && !is.null(last_brush_plot) &&
+                            exists("last_brush_size") && length(last_brush_size) == 2 &&
+                            all(is.finite(last_brush_size)) && all(last_brush_size > 0)) {
+                            pf <- panel_x_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
+                        }
+                        if (!is.null(pf)) {
+                            fr <- pmin(pmax((fr - pf[1]) / (pf[2] - pf[1]), 0), 1)
+                        } else {
+                            cat("  (panel bounds unknown - using the uncorrected image fraction, expect an offset)\n")
+                        }
+
+                        bxmin <- win_lo + fr[1] * (win_hi - win_lo)
+                        bxmax <- win_lo + fr[2] * (win_hi - win_lo)
+                        cat(paste0("Brush came back as image fractions (", signif(brush$xmin, 4), "-",
+                                   signif(brush$xmax, 4), ")",
+                                   if (!is.null(pf)) paste0(", panel spans ", signif(pf[1], 4), "-", signif(pf[2], 4)) else "",
+                                   "; reading as ", signif(bxmin, 8), " to ", signif(bxmax, 8), ".\n"))
                     }
                 }
 
@@ -1936,6 +2002,14 @@
                                             alpha = 0.8
                                         )
                                 }
+
+                            ## Kept so a mapping-less brush can be re-expressed against the
+                            ## panel's real bounds. clientData carries the size the browser
+                            ## actually rendered at, which is what the fractions refer to.
+                                last_brush_plot <<- chromatogram_plot
+                                last_brush_size <<- suppressWarnings(as.numeric(c(
+                                    session$clientData$output_chromatograms_width,
+                                    session$clientData$output_chromatograms_height)))
 
                             chromatogram_plot
                         })
