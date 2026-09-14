@@ -265,7 +265,7 @@
             ## because building a second grob is not free on a million-row plot.
             .panel_cache <- new.env(parent = emptyenv())
 
-            panel_x_fraction <- function(p, px_w, px_h, res = 72) {
+            panel_fraction <- function(p, px_w, px_h, res = 72) {
                 key <- paste0(px_w, "x", px_h)
                 if (!is.null(.panel_cache[[key]])) return(.panel_cache[[key]])
                 tf <- tempfile(fileext = ".png")
@@ -286,14 +286,78 @@
                     cum <- cumsum(win)
                     ip <- grepl("^panel", gt$layout$name)
                     lcol <- min(gt$layout$l[ip]); rcol <- max(gt$layout$r[ip])
-                    c(if (lcol > 1) cum[lcol - 1] else 0, cum[rcol]) / total_in
+                    xf <- c(if (lcol > 1) cum[lcol - 1] else 0, cum[rcol]) / total_in
+
+                    ## Same again down the heights. Reported as fractions from the
+                    ## TOP of the image, because that is the direction image
+                    ## pixels run -- and the y brush has to be flipped through it.
+                    hs <- gt$heights
+                    nh <- length(hs)
+                    hnull <- grid::unitType(hs) == "null"
+                    habs <- numeric(nh)
+                    if (any(!hnull)) habs[!hnull] <- grid::convertHeight(hs[!hnull], "in", valueOnly = TRUE)
+                    total_h_in <- px_h / res
+                    hv <- numeric(nh)
+                    if (any(hnull)) hv[hnull] <- as.numeric(hs[hnull])
+                    hrem <- max(total_h_in - sum(habs), 0)
+                    hin <- habs + if (sum(hv) > 0) hrem * hv / sum(hv) else 0
+                    hcum <- cumsum(hin)
+                    trow <- min(gt$layout$t[ip]); brow <- max(gt$layout$b[ip])
+                    yf <- c(if (trow > 1) hcum[trow - 1] else 0, hcum[brow]) / total_h_in
+
+                    list(x = xf, y = yf)
                 }, error = function(e) NULL)
                 grDevices::dev.off(); unlink(tf)
-                if (!is.null(out) && length(out) == 2 && all(is.finite(out)) && out[2] > out[1]) {
+                ok <- function(v) length(v) == 2 && all(is.finite(v)) && v[2] > v[1]
+                if (!is.null(out) && ok(out$x) && ok(out$y)) {
                     assign(key, out, envir = .panel_cache)
                     return(out)
                 }
                 NULL
+            }
+
+            ## Honour a stored y-zoom only in the view it was taken in; otherwise
+            ## fall back to the range the data itself occupies.
+            y_limits_for <- function(key, fallback) {
+                if (exists("y_zoom") && !is.null(y_zoom) && length(y_zoom) == 2 &&
+                    exists("y_zoom_key") && !is.null(y_zoom_key) && identical(y_zoom_key, key)) {
+                    return(y_zoom)
+                }
+                fallback
+            }
+
+            ## The brushed y range, in the data units of whatever was last drawn.
+            ##
+            ## When the coordmap survives, brush$ymin/ymax are already data values.
+            ## When it does not they are fractions of the image measured from the
+            ## TOP (the same fallback that makes x an image fraction), so they need
+            ## flipping through the panel as well as rescaling: the SMALLER
+            ## fraction is nearer the top of the picture and therefore the LARGER
+            ## data value.
+            ##
+            ## Returns NULL when there is nothing dependable to convert, in which
+            ## case the y axis is simply left alone.
+            brush_y_range <- function(brush) {
+                if (is.null(brush) || is.null(brush$ymin) || is.null(brush$ymax)) return(NULL)
+                if (!is.finite(brush$ymin) || !is.finite(brush$ymax)) return(NULL)
+
+                yv <- if (!is.null(brush$mapping)) brush$mapping$y else NULL
+                if (!is.null(yv)) return(sort(c(brush$ymin, brush$ymax)))   # already data units
+
+                if (!exists("last_brush_yrange") || length(last_brush_yrange) != 2 ||
+                    !all(is.finite(last_brush_yrange)) || last_brush_yrange[2] <= last_brush_yrange[1]) return(NULL)
+                if (!exists("last_brush_plot") || is.null(last_brush_plot)) return(NULL)
+                if (!exists("last_brush_size") || length(last_brush_size) != 2 ||
+                    !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) return(NULL)
+                if (brush$ymin < 0 || brush$ymax > 1) return(NULL)
+
+                pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
+                if (is.null(pf)) return(NULL)
+
+                fr <- pmin(pmax((c(brush$ymin, brush$ymax) - pf$y[1]) / (pf$y[2] - pf$y[1]), 0), 1)
+                lo <- last_brush_yrange[1]; hi <- last_brush_yrange[2]
+                vals <- lo + (1 - fr) * (hi - lo)          # flip: top of image = high value
+                sort(vals)
             }
 
             brushed_chromatogram <- function(df, brush) {
@@ -362,7 +426,8 @@
                         if (exists("last_brush_plot") && !is.null(last_brush_plot) &&
                             exists("last_brush_size") && length(last_brush_size) == 2 &&
                             all(is.finite(last_brush_size)) && all(last_brush_size > 0)) {
-                            pf <- panel_x_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
+                            pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
+                            if (!is.null(pf)) pf <- pf$x
                         }
                         if (!is.null(pf)) {
                             fr <- pmin(pmax((fr - pf[1]) / (pf[2] - pf[1]), 0), 1)
@@ -666,6 +731,16 @@
                 
                 peak_data <- NULL
                 peak_points <- NULL
+
+                ## y-zoom state. y_zoom holds the brushed y range and y_zoom_key
+                ## names the view it was taken in, so it is only ever re-applied
+                ## to the axis it actually refers to.
+                y_zoom <- NULL
+                y_zoom_key <- NULL
+                last_brush_plot <- NULL
+                last_brush_size <- c(NA_real_, NA_real_)
+                last_brush_key <- NULL
+                last_brush_yrange <- c(NA_real_, NA_real_)
                 ## Bounded: never draw more than one page of facets at once, so the
                 ## render can't blow up the graphics device on large sample sets.
                 plot_height <- 200 + 100*min(samples_per_page, length(unique(chromatograms$path_to_cdf_csv)))
@@ -699,6 +774,61 @@
 
                 theme = shinythemes::shinytheme("yeti"),
 
+                ## Draggable sidebar. sidebarLayout() emits a fixed Bootstrap
+                ## col-sm-4 / col-sm-8 pair, so the split cannot be changed from
+                ## R. Convert that row to flexbox and put a grab handle between
+                ## the two columns. On release we fire a window resize, which is
+                ## what makes Shiny re-measure the plot outputs -- that also
+                ## refreshes last_brush_size, which the brush maths depends on.
+                tags$head(
+                    tags$style(HTML("
+                        .gcms-flex-row { display: flex !important; align-items: stretch; }
+                        .gcms-sidebar  { flex: 0 0 auto !important; float: none !important;
+                                         max-width: none !important; }
+                        .gcms-main     { flex: 1 1 auto !important; float: none !important;
+                                         width: auto !important; min-width: 0; }
+                        .gcms-drag     { flex: 0 0 6px; cursor: col-resize; background: #dcdcdc;
+                                         border-radius: 3px; margin: 0 6px; }
+                        .gcms-drag:hover { background: #9e9e9e; }
+                        body.gcms-dragging { cursor: col-resize; user-select: none; }
+                    ")),
+                    tags$script(HTML("
+                        $(function() {
+                            var well = $('.well').first();
+                            if (!well.length) return;
+                            var side = well.parent();
+                            var row  = side.parent();
+                            var main = side.next();
+                            row.addClass('gcms-flex-row');
+                            side.addClass('gcms-sidebar').css('width', '340px');
+                            main.addClass('gcms-main');
+                            var handle = $('<div></div>').addClass('gcms-drag')
+                                          .attr('title', 'Drag to resize the sidebar');
+                            side.after(handle);
+                            var dragging = false;
+                            handle.on('mousedown', function(e) {
+                                dragging = true;
+                                $('body').addClass('gcms-dragging');
+                                e.preventDefault();
+                            });
+                            $(document).on('mousemove', function(e) {
+                                if (!dragging) return;
+                                var w = e.pageX - side.offset().left;
+                                var maxw = $(window).width() - 300;
+                                if (w < 160) w = 160;
+                                if (w > maxw) w = maxw;
+                                side.css('width', w + 'px');
+                            });
+                            $(document).on('mouseup', function() {
+                                if (!dragging) return;
+                                dragging = false;
+                                $('body').removeClass('gcms-dragging');
+                                $(window).trigger('resize');
+                            });
+                        });
+                    "))
+                ),
+
                 sidebarLayout(
 
                     sidebarPanel(
@@ -731,14 +861,6 @@
                             tags$li("Shift + 4 => Library search"),
                             tags$li("Shift + 5 => Save current MS")
                         ),
-
-                        tags$hr(),
-                        strong("Zoom (retention range)"),
-                        fluidRow(
-                            column(6, numericInput("x_range_lo", "from", value = NA)),
-                            column(6, numericInput("x_range_hi", "to",   value = NA))
-                        ),
-                        helpText("Type a range and press Shift+Q. Overrides the brush. Clear both boxes to go back to brushing."),
 
                         tags$hr(),
                         strong("Chromatogram display"),
@@ -1396,6 +1518,10 @@
                                         x_axis_end <<- x_axis_end_default
                                         y_axis_start <<- 0
                                         y_axis_end <<- max(chromatograms$abundance)
+                                        ## No brush means "reset", and that has to include y --
+                                        ## otherwise a stale y window silently clips the full view.
+                                        y_zoom <<- NULL
+                                        y_zoom_key <<- NULL
                                     }
 
                                 ## If brush is not null, assign brush values to start and end
@@ -1417,8 +1543,26 @@
                                         if (brush_ok) {
                                             x_axis_start <<- min(peak_points$rt)
                                             x_axis_end <<- max(peak_points$rt)
-                                            y_axis_start <<- min(peak_points$abundance)
-                                            y_axis_end <<- max(peak_points$abundance)
+
+                                            ## y follows the brush box itself, not the x-slice's
+                                            ## full extent. Stored with a key naming the view it
+                                            ## was taken in (display mode + y scaling), because
+                                            ## the same number means different things in raw
+                                            ## counts, square root, log and per-ion-normalised
+                                            ## space -- applying it to the wrong one would clip
+                                            ## the trace to nothing.
+                                            ysel <- brush_y_range(input$chromatogram_brush)
+                                            if (!is.null(ysel) && ysel[2] > ysel[1]) {
+                                                y_zoom <<- ysel
+                                                y_zoom_key <<- if (exists("last_brush_key")) last_brush_key else NULL
+                                                y_axis_start <<- ysel[1]
+                                                y_axis_end   <<- ysel[2]
+                                            } else {
+                                                y_zoom <<- NULL
+                                                y_zoom_key <<- NULL
+                                                y_axis_start <<- min(peak_points$abundance)
+                                                y_axis_end <<- max(peak_points$abundance)
+                                            }
                                         } else {
                                             cat("Brush selected no chromatogram points - keeping the current view.\n")
                                             cat("  Re-brush on a drawn trace and press Shift+Q again, or press Shift+Q with no brush to reset.\n")
@@ -1430,25 +1574,6 @@
                                         }
                                     }
                                 
-                                ## Typed x-range override. Brushing has proved unreliable in
-                                ## the field -- the brush arrives without its coordinate mapping,
-                                ## and on 2026-09-14 stopped registering at all -- so there is a
-                                ## route to the same place that does not depend on it. Set after
-                                ## the brush blocks so it wins. Clear both boxes to go back to
-                                ## brush/default behaviour.
-
-                                    manual_lo <- suppressWarnings(as.numeric(input$x_range_lo))
-                                    manual_hi <- suppressWarnings(as.numeric(input$x_range_hi))
-                                    manual_ok <- length(manual_lo) == 1 && length(manual_hi) == 1 &&
-                                        !is.na(manual_lo) && !is.na(manual_hi) && manual_hi > manual_lo
-
-                                    if (manual_ok) {
-                                        x_axis_start <<- manual_lo
-                                        x_axis_end   <<- manual_hi
-                                        y_axis_start <<- 0
-                                        y_axis_end   <<- max(chromatograms$abundance)
-                                    }
-
                                 ## One line that distinguishes every way the zoom can fail: no
                                 ## brush registered at all, a brush that produced no selection,
                                 ## or limits that were set correctly and then ignored downstream.
@@ -1456,10 +1581,10 @@
                                     cat(paste0(
                                         "Shift+Q: brush ",
                                         if (is.null(input$chromatogram_brush)) "ABSENT" else "present",
-                                        if (manual_ok) ", typed range USED" else "",
                                         "; x-axis now ", signif(x_axis_start, 8), " to ", signif(x_axis_end, 8),
-                                        " (data spans ", signif(min(chromatograms$rt), 8),
-                                        " to ", signif(max(chromatograms$rt), 8), ")\n"))
+                                        "; y-axis ",
+                                        if (is.null(y_zoom)) "auto" else paste0(signif(y_zoom[1], 6), " to ", signif(y_zoom[2], 6)),
+                                        "\n"))
 
                                 ## Filter chromatogram
                                     
@@ -1872,6 +1997,20 @@
                                     )
                                 }
 
+                            ## A y-zoom only means something in the view it was taken in --
+                            ## raw counts, square root, log, per-ion-normalised and m/z are five
+                            ## different axes. Tag it with the view, and ignore it elsewhere.
+                            ## drawn_yrange is what the panel spans when no zoom applies, and is
+                            ## also what a later brush's y fractions get measured against.
+                                view_key <- paste(mode_display, mode_scale, sep = "/")
+                                drawn_yrange <- if (mode_display == "ion_map" && !is.null(allion)) {
+                                    range(allion$mz, na.rm = TRUE)
+                                } else if (mode_display == "all_ions" && !is.null(allion)) {
+                                    range(allion$y, na.rm = TRUE)
+                                } else {
+                                    c(ys, ye)
+                                }
+
                             ## Base plot, per display mode
                                 if (mode_display == "all_ions") {
 
@@ -1889,7 +2028,9 @@
                                         ## two-thirds of the scale on a handful of heavy ions.
                                         scale_colour_viridis_c(name = "m/z", trans = "log10") +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
-                                        scale_y_continuous(name = allion_y_label(mode_scale), oob = scales::squish) +
+                                        scale_y_continuous(name = allion_y_label(mode_scale),
+                                                           limits = y_limits_for(view_key, drawn_yrange),
+                                                           oob = scales::squish) +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
                                         guides(fill = "none")
@@ -1908,7 +2049,11 @@
                                         scale_fill_viridis_c(name = allion_y_label(mode_scale)) +
                                         ## coord_cartesian, not scale limits: a tile straddling
                                         ## the window edge should be clipped, not dropped.
-                                        coord_cartesian(xlim = c(xs, xe)) +
+                                        ## Both limits go through coord_cartesian, not the scales:
+                                        ## tiles have width and height, so a tile straddling either
+                                        ## edge should be clipped, not dropped.
+                                        coord_cartesian(xlim = c(xs, xe),
+                                                        ylim = y_limits_for(view_key, drawn_yrange)) +
                                         scale_x_continuous(name = "Retention (Scan number)") +
                                         scale_y_continuous(name = "m/z") +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
@@ -1922,7 +2067,8 @@
                                             mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
                                         ) +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
-                                        scale_y_continuous(limits = c(ys, ye), name = "Abundance (counts)", oob = scales::squish) +
+                                        scale_y_continuous(limits = y_limits_for(view_key, c(ys, ye)),
+                                                           name = "Abundance (counts)", oob = scales::squish) +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
                                         guides(fill = "none") +
@@ -2006,10 +2152,12 @@
                             ## Kept so a mapping-less brush can be re-expressed against the
                             ## panel's real bounds. clientData carries the size the browser
                             ## actually rendered at, which is what the fractions refer to.
-                                last_brush_plot <<- chromatogram_plot
-                                last_brush_size <<- suppressWarnings(as.numeric(c(
+                                last_brush_plot   <<- chromatogram_plot
+                                last_brush_size   <<- suppressWarnings(as.numeric(c(
                                     session$clientData$output_chromatograms_width,
                                     session$clientData$output_chromatograms_height)))
+                                last_brush_key    <<- view_key
+                                last_brush_yrange <<- y_limits_for(view_key, drawn_yrange)
 
                             chromatogram_plot
                         })
