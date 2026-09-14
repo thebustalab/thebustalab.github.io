@@ -87,3 +87,18 @@ escape_rooms/**/_scratch/
 # leftovers) — never needed by the published book, kept off the public repo.
 integrated_bioanalytics/z_archive/
 escape_rooms/
+
+# Agent-facing internals that must not reach a public URL (2026-09-13). This tree is the Mac's publish
+# worktree and deploy.sh stages it in BULK, so anything here is one deploy away from being fetchable —
+# the same mechanism that published three .bak files in 2026-09-08. None of these are live today
+# (verified: all 404); these lines are what keeps it that way. They still reach the Mac via Syncthing,
+# exactly like AGENTS.md does.
+integrated_bioanalytics/tests/
+integrated_bioanalytics/notes/
+# Agent reference docs split out of AGENTS.md 2026-09-13 (canon_slim). Same privacy as the AGENTS.md
+# they came from, and load-bearing: build_harness.md names on-box paths, the private dataset and the
+# API-key filenames. Caught by the canon_slim loss-critic, not by a human eye — the split created
+# files the bare `AGENTS.md` pattern no longer matched.
+integrated_bioanalytics/_agent_reference/
+# Co-located canon history (canon_slim). AGENTS.md-derived, so it inherits AGENTS.md's privacy.
+z_history/

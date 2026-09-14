@@ -1,6 +1,8 @@
 /*
  * webr-cell.js — drop-in runnable R cells + self-checks for the Integrated Bioanalytics book.
  *
+ * Editing this file? Read integrated_bioanalytics/_agent_reference/webr_surfaces.md first — the design decisions, the failure histories and the anti-"improvement" guards live there.
+ *
  * Turns every <div class="webr-cell"> on a page into a live R cell (edit + Run + output), and every
  * <div class="selfcheck"> into a checked multiple-choice question. All cells on a page share ONE WebR
  * instance and ONE R session (boot once, lazily on the first Run) — so a variable made in one cell is

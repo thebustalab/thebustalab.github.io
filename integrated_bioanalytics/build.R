@@ -1,5 +1,8 @@
 # Build entry point for the Integrated Bioanalytics bookdown.
 #
+# Running the from-scratch Linux harness or the core-scope validation? Read
+# _agent_reference/build_harness.md first — method, conda env, and the traps that misreport success.
+#
 # WHY THIS EXISTS: _common.R monkeypatches bookdown's tweak_part_screwup() to
 # guard against a missing "class" attribute. That patch must be in scope in the
 # MAIN render_book() process (that is where the bs4_book HTML-tweak phase runs),
