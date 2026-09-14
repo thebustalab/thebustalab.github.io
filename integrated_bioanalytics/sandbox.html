@@ -80,6 +80,8 @@
     .caphead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
     button.link { background:none; border:0; color:var(--amber); font:12px system-ui; cursor:pointer;
                   padding:0; text-decoration:underline; }
+    button.link:disabled { opacity:.4; cursor:default; text-decoration:none; }
+    .capheadbtns { display:flex; gap:14px; align-items:baseline; }
     .capsec { margin-top:16px; }
     .capsec h3 { font-size:12px; letter-spacing:.06em; color:var(--amber); opacity:.85; margin:0 0 4px; }
     .capitem { border-top:1px solid var(--line); padding:9px 0; }
@@ -125,7 +127,11 @@
     <div class="card" id="environment">
       <div class="caphead">
         <div class="dslabel" style="margin:0">Environment</div>
-        <button class="link" id="envtoggle">hide</button>
+        <div class="capheadbtns">
+          <button class="link" id="envreset" disabled
+                  title="Put the session back exactly as it loaded: the course datasets restored, everything you have made since removed. Your code in the editor is untouched.">reset session</button>
+          <button class="link" id="envtoggle">hide</button>
+        </div>
       </div>
       <div class="envbody" id="envbody"></div>
     </div>
@@ -239,11 +245,54 @@ buildCaption <- function() {
 View <- function(x, ...) view(x, ...)
 `;
 
+    /*
+     * reset session — RStudio's "Restart R and Clear Output", minus the restart.
+     *
+     * The case it exists for: a student (or Lucas mid-demo) does `alaska_lake_data <- alaska_lake_data
+     * %>% filter(...)` and has now lost the dataset the next exercise needs. Reloading the page would
+     * fix it, but that is a 20-40s WebR boot in front of a class, and it throws away the editor.
+     *
+     * HOW: at the END of boot — after the console has loaded the datasets and its own view() shim, and
+     * after everything above this — we take a snapshot of the whole global environment with mget(). A
+     * reset then empties globalenv and pours the snapshot back. R is copy-on-modify, so the snapshot
+     * costs references, not copies, and a restore is instant: no network, no re-parse, no re-install.
+     *
+     * Snapshotting rather than replaying the boot is what keeps this page self-contained. The console
+     * lives in the OTHER repo (escape_rooms) and defines view() from a shim this page never sees;
+     * re-running a boot sequence from here would mean importing or duplicating that, and a duplicated
+     * copy is exactly how the two implementations drifted before the 2026-09-04 consolidation. A
+     * snapshot restores whatever the shim defined without knowing anything about it.
+     *
+     * Two ordering details that look odd and are load-bearing:
+     *  - `.__reset` is added to the snapshot AFTER it is defined, so the restore puts the reset function
+     *    itself back and the button works a second time.
+     *  - inside .__reset, snap is read into a LOCAL before the rm(). The rm deletes `.__reset_env` from
+     *    globalenv, so a lookup after it would fail; the running function survives because R holds the
+     *    closure while it executes.
+     *
+     * Dot-prefixed, so ls() keeps both names out of the Environment pane with no exclusion-list entry.
+     */
+    const RESET_R = `
+.__reset_env <- new.env()
+.__reset_env$snap <- mget(ls(globalenv(), all.names = TRUE), envir = globalenv())
+.__reset <- function() {
+  g <- globalenv()
+  snap <- .__reset_env$snap
+  rm(list = ls(g, all.names = TRUE), envir = g)
+  list2env(snap, envir = g)
+  invisible(NULL)
+}
+.__reset_env$snap$.__reset_env <- .__reset_env
+.__reset_env$snap$.__reset <- .__reset
+`;
+
     const console_ = new WebRConsole(
       {
         packages: ["dplyr", "ggplot2", "tidyr", "readr", "stringr"],
         datasets: DATASETS,
-        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R + VIEW_ALIAS_R,
+        // RESET_R must stay LAST: it snapshots the global environment, so anything defined after it
+        // would be missing from the state a reset restores.
+        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R + VIEW_ALIAS_R + RESET_R,
       },
       { status: document.getElementById("status"), output: document.getElementById("output") }
     );
@@ -306,6 +355,51 @@ View <- function(x, ...) view(x, ...)
     envToggle.onclick = () => {
       const collapsed = envCard.classList.toggle("collapsed");
       envToggle.textContent = collapsed ? "show" : "hide";
+    };
+
+    /*
+     * "reset session" — see RESET_R above for the R half and why it snapshots rather than re-boots.
+     *
+     * Deliberately the ONLY reset control. A second "full restart" button would behave the same way
+     * from the student's seat for every case except a wedged WebR runtime, and a page reload already
+     * covers that — so the failure message says so instead of a button existing for it.
+     *
+     * The editor is never touched. The whole point is to get the datasets back and keep the code that
+     * needs them.
+     */
+    const resetBtn = document.getElementById("envreset");
+    const statusEl = document.getElementById("status");
+    resetBtn.onclick = async () => {
+      if (resetBtn.disabled || !console_.webR) return;
+      resetBtn.disabled = true;
+      runBtn.disabled = true;
+      statusEl.textContent = "Resetting the R session…";
+      let done = false;
+      let shelter = null;
+      try {
+        shelter = await new console_.webR.Shelter();
+        // exists() guard: a session booted before this shim existed (a cached page mid-deploy) has no
+        // .__reset, and a bare call would throw an R error the student cannot act on.
+        const r = await (await shelter.evalR('if (exists(".__reset")) { .__reset(); TRUE } else FALSE')).toJs();
+        done = Array.isArray(r.values) && r.values[0] === true;
+      } catch (e) {
+        done = false;
+      } finally {
+        if (shelter) shelter.purge();
+      }
+      if (done) {
+        // lastRun is cleared too, or changing the plot size afterwards would re-run code against
+        // objects the reset has just removed.
+        console_.clearOutput();
+        console_.lastRun = null;
+        console_.appendText("Session reset. The course datasets are back as they loaded and everything made since is gone. Your code above is untouched.", "muted");
+        statusEl.textContent = "R is ready. Type code below and press Run.";
+      } else {
+        statusEl.textContent = "Could not reset the session — reload the page for a full restart.";
+      }
+      runBtn.disabled = false;
+      resetBtn.disabled = false;
+      await afterRun();
     };
 
     /*
@@ -538,7 +632,7 @@ View <- function(x, ...) view(x, ...)
     // afterRun() on boot fills the Environment pane with the datasets that were just loaded — the job the
     // old chip card did, minus the hand-maintained list. The caption flag is FALSE here, so nothing opens.
     console_.init()
-      .then(() => { runBtn.disabled = false; return afterRun(); })
+      .then(() => { runBtn.disabled = false; resetBtn.disabled = false; return afterRun(); })
       .catch(e => { document.getElementById("status").textContent = "R failed to start: " + (e.message || e); });
   </script>
 </body>

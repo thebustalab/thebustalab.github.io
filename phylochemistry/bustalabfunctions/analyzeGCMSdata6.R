@@ -252,19 +252,48 @@
             brushed_chromatogram <- function(df, brush) {
                 empty <- df[0, , drop = FALSE]
                 if (is.null(brush)) return(empty)
-                if (is.null(brush$mapping) || is.null(brush$mapping$x)) {
-                    cat("Brush carries no plot mapping - it predates the current plot. Ignoring it.\n")
-                    return(empty)
-                }
-                xv <- brush$mapping$x
-                yv <- brush$mapping$y
-                if (!is.null(yv) && yv %in% names(df) && xv %in% names(df)) {
+
+                xv <- if (!is.null(brush$mapping)) brush$mapping$x else NULL
+                yv <- if (!is.null(brush$mapping)) brush$mapping$y else NULL
+
+                ## Best case: the mapping names real columns, so brushedPoints()
+                ## can do its own job (log scales, discrete axes, panels).
+                if (!is.null(xv) && !is.null(yv) && xv %in% names(df) && yv %in% names(df)) {
                     return(shiny::brushedPoints(df, brush))
                 }
-                if (!(xv %in% names(df))) xv <- "rt_rt_offset"
+
+                ## Otherwise fall back to x alone. Two reasons to land here:
+                ## the y mapping names a column that does not exist in
+                ## chromatograms_updated (the v6 views map y to the transformed
+                ## `y`, or to `mz`), or the mapping is missing altogether.
+                if (is.null(brush$mapping) || is.null(xv)) {
+                    cat(paste0("Brush has no plot mapping. Fields present: ",
+                               paste(names(brush), collapse = ", "), "\n"))
+                }
+                if (is.null(xv) || !(xv %in% names(df))) xv <- "rt_rt_offset"
                 if (!(xv %in% names(df))) return(empty)
+
+                ## xmin/xmax are already in DATA space when Shiny had a coordinate
+                ## map to convert with, so they stay usable even when the mapping
+                ## itself did not survive. Sanity-check them against the data's own
+                ## x range before trusting them: if the plot had no coordinate map
+                ## they are pixels, and pixels would silently select the wrong
+                ## slice of the run rather than failing loudly.
+                if (is.null(brush$xmin) || is.null(brush$xmax) ||
+                    !is.finite(brush$xmin) || !is.finite(brush$xmax)) {
+                    cat("Brush carries no usable x range - ignoring it.\n")
+                    return(empty)
+                }
+                rng <- range(df[[xv]], na.rm = TRUE)
+                if (brush$xmax < rng[1] || brush$xmin > rng[2]) {
+                    cat(paste0("Brush x range (", signif(brush$xmin, 6), " to ", signif(brush$xmax, 6),
+                               ") lies outside the data (", signif(rng[1], 6), " to ", signif(rng[2], 6),
+                               "). It is probably in pixel units from a plot with no coordinate map. Ignoring it.\n"))
+                    return(empty)
+                }
+
                 keep <- !is.na(df[[xv]]) & df[[xv]] >= brush$xmin & df[[xv]] <= brush$xmax
-                pv <- brush$mapping$panelvar1
+                pv <- if (!is.null(brush$mapping)) brush$mapping$panelvar1 else NULL
                 if (!is.null(pv) && pv %in% names(df) && !is.null(brush$panelvar1)) {
                     keep <- keep & as.character(df[[pv]]) == as.character(brush$panelvar1)
                 }
@@ -273,6 +302,9 @@
                     cat(paste0("Brush (", xv, " ", signif(brush$xmin, 6), " to ", signif(brush$xmax, 6),
                                if (!is.null(brush$panelvar1)) paste0(", panel ", brush$panelvar1) else "",
                                ") matched no rows.\n"))
+                } else {
+                    cat(paste0("Brush selected ", nrow(out), " points, ", xv, " ",
+                               signif(min(out[[xv]]), 6), " to ", signif(max(out[[xv]]), 6), ".\n"))
                 }
                 out
             }
