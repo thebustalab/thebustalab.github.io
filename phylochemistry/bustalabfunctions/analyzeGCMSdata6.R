@@ -234,6 +234,39 @@
                 norm = "Abundance, each ion scaled to its own max",
                 "Abundance")
 
+            ## Shiny infers the brush's x/y variable names from the FIRST LAYER's
+            ## aes, then brushedPoints() looks those names up as columns of the
+            ## data frame it is handed -- always chromatograms_updated here.
+            ## That holds in the TIC view (x = rt_rt_offset, y = abundance, both
+            ## real columns) and breaks in the v6 views, where the first layer
+            ## maps y to the transformed `y` (all ions) or to `mz` (ion map).
+            ## Neither is a column of chromatograms_updated, so every one of the
+            ## ~18 brush-driven actions -- Shift+Q's zoom, Shift+A/G peak add,
+            ## Shift+1 MS extraction -- would error the moment the view changed.
+            ##
+            ## So: delegate to brushedPoints() when the mapping is usable, and
+            ## otherwise select on x and the facet alone. The brush's y range in
+            ## those modes is in sqrt / normalised / m-z units and means nothing
+            ## against raw counts, so ignoring it is not a degradation -- it is
+            ## the only correct reading.
+            brushed_chromatogram <- function(df, brush) {
+                empty <- df[0, , drop = FALSE]
+                if (is.null(brush) || is.null(brush$mapping) || is.null(brush$mapping$x)) return(empty)
+                xv <- brush$mapping$x
+                yv <- brush$mapping$y
+                if (!is.null(yv) && yv %in% names(df) && xv %in% names(df)) {
+                    return(shiny::brushedPoints(df, brush))
+                }
+                if (!(xv %in% names(df))) xv <- "rt_rt_offset"
+                if (!(xv %in% names(df))) return(empty)
+                keep <- !is.na(df[[xv]]) & df[[xv]] >= brush$xmin & df[[xv]] <= brush$xmax
+                pv <- brush$mapping$panelvar1
+                if (!is.null(pv) && pv %in% names(df) && !is.null(brush$panelvar1)) {
+                    keep <- keep & as.character(df[[pv]]) == as.character(brush$panelvar1)
+                }
+                df[which(keep), , drop = FALSE]
+            }
+
             ## Area over the ions a peak actually generates. v5 integrates the
             ## TIC, which charges the peak for whatever co-elutes beneath it.
             ## Restricting the sum to ions that rise across the peak window
@@ -1224,7 +1257,7 @@
                                 ## If brush is not null, assign brush values to start and end
 
                                     if ( !is.null(input$chromatogram_brush) ) {
-                                        peak_points <<- isolate(brushedPoints(chromatograms_updated, input$chromatogram_brush))
+                                        peak_points <<- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
                                         x_axis_start <<- min(peak_points$rt)
                                         x_axis_end <<- max(peak_points$rt)
                                         y_axis_start <<- min(peak_points$abundance)
@@ -1751,7 +1784,7 @@
                     output$selected_peak <- DT::renderDataTable(DT::datatable({
 
                         if ( !is.null(input$chromatogram_brush )) {
-                            peak_points <- brushedPoints(chromatograms_updated, input$chromatogram_brush)
+                            peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                             peak_data <-  data.frame(
                                 peak_start = min(peak_points$rt),
                                 peak_end = max(peak_points$rt),
@@ -1773,7 +1806,7 @@
                           cat("Excising single peak...\n")
                           if ( !is.null(input$chromatogram_brush )) {
 
-                            peak_points <- brushedPoints(chromatograms_updated, input$chromatogram_brush)
+                            peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                             selection_start = min(peak_points$rt)
                             selection_end   = max(peak_points$rt)
                             path_to_cdf_csv = peak_points$path_to_cdf_csv[1]
@@ -1812,7 +1845,7 @@
                           cat("Removing selected peaks GLOBALLY...\n")
                           if ( !is.null(input$chromatogram_brush )) {
 
-                            peak_points <- brushedPoints(chromatograms_updated, input$chromatogram_brush)
+                            peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                             selection_start = min(peak_points$rt)
                             selection_end   = max(peak_points$rt)
 
@@ -1856,11 +1889,11 @@
                             
                                 write.table(
                                     x = data.frame(
-                                            peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                            peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                                            peak_start = min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
+                                            peak_end = max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
                                             peak_ID = "unknown",
-                                            path_to_cdf_csv = brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1],
-                                            area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                            path_to_cdf_csv = brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1],
+                                            area = sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$baseline)
                                         ),
                                     file = "peaks_monolist.csv",
                                     append = TRUE,
@@ -1890,11 +1923,11 @@
                             if( input$keypress == 71 ) {
                             
                                 x_peaks <-  data.frame(
-                                                peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
-                                                peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
+                                                peak_start = min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
+                                                peak_end = max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
                                                 peak_ID = "unknown",
                                                 path_to_cdf_csv = unique(chromatograms_updated$path_to_cdf_csv),
-                                                area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                                area = sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$baseline)
                                             )
 
                                 x_peaks$peak_start <- x_peaks$peak_start - chromatograms_updated$rt_offset[match(x_peaks$path_to_cdf_csv, chromatograms_updated$path_to_cdf_csv)]
@@ -1925,9 +1958,9 @@
                             
                             if( input$keypress == 33 ) {
 
-                                ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+                                ret_start_MS <- min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
+                                ret_end_MS <- max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
+                                sample_name_MS <- as.character(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
 
                                 chromatogram_updated_MS <- filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
 
@@ -1976,13 +2009,13 @@
                                 
                                     framedDataFile_to_subtract <- isolate(as.data.frame(
                                                         data.table::fread(as.character(
-                                                            brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                                                            brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
                                                         ))
                                     ))
                                     framedDataFile_to_subtract <- isolate(dplyr::filter(
                                                             framedDataFile_to_subtract, 
-                                                            rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                            rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                                            rt > min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
+                                                            rt < max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
                                                         ))
                                     framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
                                     framedDataFile_to_subtract <- framedDataFile_to_subtract %>% group_by(mz) %>% summarize(intensity = sum(intensity))
