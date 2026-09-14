@@ -344,20 +344,45 @@
                 yv <- if (!is.null(brush$mapping)) brush$mapping$y else NULL
                 if (!is.null(yv)) return(sort(c(brush$ymin, brush$ymax)))   # already data units
 
+                why <- NULL
                 if (!exists("last_brush_yrange") || length(last_brush_yrange) != 2 ||
-                    !all(is.finite(last_brush_yrange)) || last_brush_yrange[2] <= last_brush_yrange[1]) return(NULL)
-                if (!exists("last_brush_plot") || is.null(last_brush_plot)) return(NULL)
-                if (!exists("last_brush_size") || length(last_brush_size) != 2 ||
-                    !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) return(NULL)
-                if (brush$ymin < 0 || brush$ymax > 1) return(NULL)
+                    !all(is.finite(last_brush_yrange)) || last_brush_yrange[2] <= last_brush_yrange[1]) {
+                    why <- "the y range of the last render is not known"
+                } else if (!exists("last_brush_plot") || is.null(last_brush_plot)) {
+                    why <- "no plot recorded from the last render"
+                } else if (!exists("last_brush_size") || length(last_brush_size) != 2 ||
+                           !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) {
+                    why <- "the rendered plot size is not known"
+                } else if (!is.finite(brush$ymin) || !is.finite(brush$ymax) ||
+                           brush$ymin < -0.5 || brush$ymax > 1.5) {
+                    why <- "the y coordinates are not usable fractions"
+                }
+                if (!is.null(why)) {
+                    cat(paste0("  y-zoom skipped (", why, "); raw y ",
+                               signif(brush$ymin, 4), " to ", signif(brush$ymax, 4), ".\n"))
+                    return(NULL)
+                }
 
                 pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
-                if (is.null(pf)) return(NULL)
+                if (is.null(pf)) {
+                    cat("  y-zoom skipped (panel bounds unknown).\n")
+                    return(NULL)
+                }
 
+                ## Dragging a box around a peak naturally overshoots the panel top
+                ## and bottom, and those coordinates come back outside 0..1.
+                ## Clamping is the right reading -- the user meant "everything
+                ## vertically" -- where rejecting outright silently dropped every
+                ## other y-zoom in the field (2026-09-14).
                 fr <- pmin(pmax((c(brush$ymin, brush$ymax) - pf$y[1]) / (pf$y[2] - pf$y[1]), 0), 1)
                 lo <- last_brush_yrange[1]; hi <- last_brush_yrange[2]
-                vals <- lo + (1 - fr) * (hi - lo)          # flip: top of image = high value
-                sort(vals)
+                vals <- sort(lo + (1 - fr) * (hi - lo))    # flip: top of image = high value
+                cat(paste0("  y-zoom: raw ", signif(brush$ymin, 4), "-", signif(brush$ymax, 4),
+                           " of panel ", signif(pf$y[1], 4), "-", signif(pf$y[2], 4),
+                           ", against drawn y ", signif(lo, 6), "-", signif(hi, 6),
+                           " -> ", signif(vals[1], 6), " to ", signif(vals[2], 6), "\n"))
+                if (!all(is.finite(vals)) || vals[2] <= vals[1]) return(NULL)
+                vals
             }
 
             brushed_chromatogram <- function(df, brush) {
