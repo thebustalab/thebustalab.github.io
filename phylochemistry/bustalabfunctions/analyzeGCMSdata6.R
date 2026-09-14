@@ -251,7 +251,11 @@
             ## the only correct reading.
             brushed_chromatogram <- function(df, brush) {
                 empty <- df[0, , drop = FALSE]
-                if (is.null(brush) || is.null(brush$mapping) || is.null(brush$mapping$x)) return(empty)
+                if (is.null(brush)) return(empty)
+                if (is.null(brush$mapping) || is.null(brush$mapping$x)) {
+                    cat("Brush carries no plot mapping - it predates the current plot. Ignoring it.\n")
+                    return(empty)
+                }
                 xv <- brush$mapping$x
                 yv <- brush$mapping$y
                 if (!is.null(yv) && yv %in% names(df) && xv %in% names(df)) {
@@ -264,7 +268,13 @@
                 if (!is.null(pv) && pv %in% names(df) && !is.null(brush$panelvar1)) {
                     keep <- keep & as.character(df[[pv]]) == as.character(brush$panelvar1)
                 }
-                df[which(keep), , drop = FALSE]
+                out <- df[which(keep), , drop = FALSE]
+                if (nrow(out) == 0) {
+                    cat(paste0("Brush (", xv, " ", signif(brush$xmin, 6), " to ", signif(brush$xmax, 6),
+                               if (!is.null(brush$panelvar1)) paste0(", panel ", brush$panelvar1) else "",
+                               ") matched no rows.\n"))
+                }
+                out
             }
 
             ## Area over the ions a peak actually generates. v5 integrates the
@@ -1258,11 +1268,32 @@
 
                                     if ( !is.null(input$chromatogram_brush) ) {
                                         peak_points <<- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
-                                        x_axis_start <<- min(peak_points$rt)
-                                        x_axis_end <<- max(peak_points$rt)
-                                        y_axis_start <<- min(peak_points$abundance)
-                                        y_axis_end <<- max(peak_points$abundance)
-                                        # x_axis_end <<- max(peak_points$rt)
+
+                                        ## An empty selection used to propagate straight through:
+                                        ## min()/max() of nothing return Inf/-Inf, the axis limits
+                                        ## become Inf..-Inf, the next render filters every row away,
+                                        ## and ggplot dies with "Faceting variables must have at
+                                        ## least one value". Because the limits are globals the app
+                                        ## then stays wedged until it is restarted -- there is no
+                                        ## brush you can draw to recover. Keep a usable view instead
+                                        ## and say what happened.
+                                        brush_ok <- nrow(peak_points) > 0 &&
+                                            is.finite(min(peak_points$rt)) && is.finite(max(peak_points$rt))
+
+                                        if (brush_ok) {
+                                            x_axis_start <<- min(peak_points$rt)
+                                            x_axis_end <<- max(peak_points$rt)
+                                            y_axis_start <<- min(peak_points$abundance)
+                                            y_axis_end <<- max(peak_points$abundance)
+                                        } else {
+                                            cat("Brush selected no chromatogram points - keeping the current view.\n")
+                                            cat("  Re-brush on a drawn trace and press Shift+Q again, or press Shift+Q with no brush to reset.\n")
+                                            logMessage("Brush selected no points; view left unchanged.")
+                                            if (!exists("x_axis_start") || length(x_axis_start) == 0 || !is.finite(x_axis_start)) x_axis_start <<- x_axis_start_default
+                                            if (!exists("x_axis_end")   || length(x_axis_end)   == 0 || !is.finite(x_axis_end))   x_axis_end   <<- x_axis_end_default
+                                            if (!exists("y_axis_start") || length(y_axis_start) == 0 || !is.finite(y_axis_start)) y_axis_start <<- 0
+                                            if (!exists("y_axis_end")   || length(y_axis_end)   == 0 || !is.finite(y_axis_end))   y_axis_end   <<- max(chromatograms$abundance)
+                                        }
                                     }
                                 
                                 ## Filter chromatogram
@@ -1644,6 +1675,22 @@
                                 ## Nothing to draw in the requested mode -> fall back to the TIC
                                 ## rather than showing an empty panel.
                                 if (mode_display %in% c("all_ions", "ion_map") && is.null(allion)) mode_display <- "tic"
+
+                                ## Nothing in range at all -- e.g. axis limits left over from a
+                                ## failed brush. facet_grid() errors on an empty frame ("Faceting
+                                ## variables must have at least one value"), which in a renderPlot
+                                ## leaves a broken panel and no way back, so say what happened.
+                                if (nrow(cuf) == 0 && is.null(allion)) {
+                                    return(
+                                        ggplot() +
+                                            annotate("text", x = 0, y = 0, size = 5, lineheight = 1.2,
+                                                     label = paste0(
+                                                         "No chromatogram points between x = ",
+                                                         signif(xs, 6), " and ", signif(xe, 6), ".\n",
+                                                         "Press Shift+Q with no brush to reset the view.")) +
+                                            theme_void()
+                                    )
+                                }
 
                             ## Base plot, per display mode
                                 if (mode_display == "all_ions") {
