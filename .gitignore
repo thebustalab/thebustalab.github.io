@@ -54,6 +54,16 @@ Thumbs.db
 # script
 members_update.py
 
+# Maintenance scripts + their tests (2026-09-15). Same posture as members_update.py
+# and deploy.sh: they live in this tree and reach the Mac via Syncthing, but they are
+# not site content, and deploy.sh stages in BULK — untracked they would otherwise be
+# served at e.g. https://thebustalab.github.io/labelling/sync_roster.py. They read the
+# lab roster workbook, so publishing them would also advertise internal paths. No
+# secrets in any of them.
+test_members_update.py
+labelling/sync_roster.py
+labelling/test_sync_roster.py
+
 # Deploy driver (maintenance script, not site content). Same posture as members_update.py: it lives in
 # the tree and reaches the Mac via Syncthing, but does not belong in a PUBLIC repo — untracked it would
 # otherwise be served at https://thebustalab.github.io/deploy.sh. No secrets in it; this is tidiness plus

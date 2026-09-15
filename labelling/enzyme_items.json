@@ -448,5 +448,59 @@
     },
     "source_topic": "pks",
     "discovered": "2026-09-01"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_a892b40432ee",
+    "title": "Identification of type III polyketide synthases from Ginger for dehydrogingerdione and curcumin biosynthesis by engineered Escherichia coli",
+    "authors": "Eliana L. Peña; Sunyoung Kang; François Gaascht; Claudia Schmidt‐Dannert",
+    "journal": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "year": 2026,
+    "doi": "10.64898/2026.07.16.739013",
+    "link": "https://doi.org/10.64898/2026.07.16.739013",
+    "abstract": "ABSTRACT Many valuable plant metabolites are synthesized by type III polyketide synthases (PKS) that have become targets for the engineering of microbial production systems of these compounds. The rhizomes of turmeric ( Curcuma longa ) and ginger ( Zingiber officinalis ) are highly regarded for medicinal and culinary purposes and are the sources of bioactive curcuminoid and gingeroid polyketides. Fast growing demand for these compounds has sparked effort to identify their biosynthetic pathways to facilitate their heterologous production. In turmeric, a collaborative diketide synthase (DCS) and PKS (CURS) pair synthesizes curcumin from feruloyl- and malonyl-CoA. Yet, bona fide genes for the biosynthesis of gingeroids in Ginger are not known. Here we report the identification of two DCS/PKS pairs in Ginger that have different activity profiles in E. coli engineered to provide feruloyl- and hexanoyl-CoA as substrates. We show that one PKS (ZoPKS2) makes 6-dehydrogingerdione (6-DHG) as its major product while the other PKS (ZoPKS1) is a curcumin synthase. We found that Zo PKS2 becomes an efficient curcumin synthase when hexanoyl-CoA is not available, making it a dual-function enzyme that can be used to easily switch heterologous productions towards either of these two valuable products. Precursor feeding studies show that the substrate promiscuity of the collaborative DCS/PKSs may be exploited to access different dehydrogingerdione derivatives, while structural models of the Ginger PKSs offer insights for future engineering of product profiles. We believe that this work will add to the type III PKS toolbox and enable the development of efficient production platforms for gingeroids.",
+    "prefill": {
+      "enzyme_name": "ZoPKS2",
+      "product": "6-dehydrogingerdione",
+      "doi": "doi:10.64898/2026.07.16.739013"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-15"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_9b38ea89c174",
+    "title": "Pioneering the Formation of 2-Carboxylic Anthraquinone: CRISPR/Cas9-Mediated Functional Validation of Octaketide Synthase and Polyketide Reductase Genes in Aloe vera",
+    "authors": "Alka Jangra; Siddharth Tiwari; Vinod Chhokar",
+    "journal": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "year": 2026,
+    "doi": "10.64898/2026.01.12.698956",
+    "link": "https://doi.org/10.64898/2026.01.12.698956",
+    "abstract": "Abstract Aloe vera is an authentic medical plant abundant in aromatic polyketides, including the crucial hexaketides aloenin, aloesin, and barbaloin used in pharmaceuticals yet the enzymatic basis of their biosynthesis remained incompletely understood. While it has been suggested that octaketide synthases (OKS) initiates anthraquinones biosynthesis, heterologous expression of OKS alone consistently produces shunt polyketide products, and the mechanism underlying this derailment was uncertain. To comprehend the mechanism of anthraquinone biosynthesis, we combined biochemical constitution, structural characterization and CRISPR/Cas9-mediated editing of key genes in Aloe vera . It was for the first time demonstrated that the inclusion of a PKR (polyketide reductase) redirected the reactive intermediate toward formation of 2-carboxy anthraquinone (C 16 H 12 0 5 ). The identity of reaction product was confirmed by spectroscopic analysis which additionally rendered it clear from compounds previously misannotated in the literature. Alongside, CRISPR/Cas9-based genome editing of OKS and PKR genes resulted in significant reduction (upto 2.54 fold) in aloin content in edited lines compared to the non-edited control aloe line. Together these findings endorsed the presence of tailoring enzyme ketoreductase for the efficient and appropriate formation of anthraquinones and establish a mechanistic framework for polyketide biosynthesis in aloe plants that sustain as an indigenous herb for mankind. Highlights This study provides direct biochemical and genetic evidence that a tailoring enzyme is required to prevent derailment of polyketide intermediates and enable correct anthraquinone formation in plants.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "2-carboxy anthraquinone",
+      "doi": "doi:10.64898/2026.01.12.698956"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-15"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_cf1373e7f495",
+    "title": "Polyketide synthase–like functionality acquired by plant fatty acid elongase",
+    "authors": "Hyojin Kim; Kiyoul Park; Hao Jia; Fan Huang; Xinyu Tang; Ting Zhong; Wenlin Yu; Jean-Jack M. Riethoven; Rebecca E. Cahoon; Chunyu Zhang; Edgar B. Cahoon",
+    "journal": "Science Advances",
+    "year": 2026,
+    "doi": "10.1126/sciadv.aed2892",
+    "link": "https://doi.org/10.1126/sciadv.aed2892",
+    "abstract": "Abstract Fatty acid elongation (FAE) typically proceeds through a four-step cycle of condensation, reduction, dehydration, and reduction to yield very long-chain fatty acids. Here, we describe a variation of this pathway in Orychophragmus limprichtianus , whose seed oil was found to contains previously unknown C24-C28 keto-hydroxy fatty acids that account for ∼25% of total fatty acids. Our studies revealed that these compounds are produced through an endoplasmic reticulum-localized discontinuous elongation process in which a 3-keto hydroxy intermediate bypasses full reduction and is extended through a polyketide synthase-like mechanism. Transcriptomic and functional assays identified two divergent enzymes, OlFAE1-2 and the low-activity ketoreductase OlKCR1-1, as central to this process. Protein modeling and mutant analysis suggest that specific amino acid substitutions underlie the altered activity of OlKCR1-1, enabling accumulation of keto intermediates. A portion of these unusual fatty acids accumulated in estolides, complex triacylglycerols that expand the chemical repertoire of seed oils. Together, our findings reveal unexpected flexibility in plant fatty acid elongation and provide new tools for engineering plants and microbes to produce renewable oils with tailored industrial functions.",
+    "prefill": {
+      "enzyme_name": "OlKCR1-1",
+      "product": "keto-hydroxy fatty acids",
+      "doi": "doi:10.1126/sciadv.aed2892"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-15"
   }
 ]
