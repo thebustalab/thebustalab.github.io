@@ -8,65 +8,61 @@
      NB: `images/datavis3.png` is now unreferenced (data vis III was dissolved 2026-08-27) and is
      available for reuse or deletion. -->
 
-A network is one of the few pictures that can show you a *relationship* rather than a *value*. Nodes are things; edges are connections between them. That is the whole data structure, and it is deceptively simple, because everything that matters about a network depends on a question the picture never answers for you: **what does an edge mean?**
+A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the notes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
-There are two quite different ways to end up with a network, and the difference runs through this entire chapter.
+- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough. Here an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using a threshold.
 
-Sometimes you **build** the network. You start with a data matrix — samples measured on many variables — compute how similar every sample is to every other, and draw an edge wherever two samples are similar enough. Here an edge means *"these two resemble each other"*, and you decided how much resemblance counts.
+- Alternatively, we are sometimes **given** the network. This could be a list of connections that were actually observed in the world: journeys taken, messages sent, proteins that bind, and so forth. Networks derived from these data typically indicate "this thing interacted with this other thing".
 
-Sometimes you are **given** the network. Somebody hands you a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, posts that can see one another. Here an edge means *"this actually happened"*, and you did not choose anything.
+## distances {-}
 
-The organising idea of this chapter, and the thing worth carrying away from it:
+To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:
 
-> **What a hub *means* depends entirely on what an edge means.**
-> In a similarity network an edge means "these two are alike", so a hub — a node connected to everything — is a *mixture*, something intermediate that belongs to no group in particular. In a transit or interaction network an edge means "these two are connected", so a hub is the busiest, most central place in the system. Same topology, opposite significance. Reading a network without knowing what its edges mean is how people get networks wrong.
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
 
-Part 1 covers networks you build. Part 2 covers networks you are given. Part 3 is about reading either one honestly.
-
-## part 1 — networks you build {-}
-
-### from a data matrix to a distance matrix {-}
-
-The starting point is an ordinary data matrix: samples in rows, measurements in columns. To ask how similar two samples are, we need a **distance** between them, and `runMatrixAnalysis()` will compute one for us with `analysis = "dist"`.
+First, we need our dataset in wide format:
 
 ```{r}
-wood_dist <- runMatrixAnalysis(
-  data = wood_smoke,
-  analysis = "dist",
-  column_w_names_of_multiple_analytes = "compound",
-  column_w_values_for_multiple_analytes = "abundance_mg_g",
-  columns_w_sample_ID_info = "species",
-  na_replacement = "zero",
-  scale_variance = TRUE
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+alaska_lake_data_wide
+```
+
+Now, we need a distance matrix. Here is the traditional way:
+
+```{r}
+dist(alaska_lake_data_wide[,3:15])
+```
+
+We can also get long-style distance matrices directly from a wrapper function we have called `runMatrixAnalyses` by specifying `analysis = "dist"`, as below. Note `scale_variance = TRUE`. Distances are computed across all the analytes at once, so a analyte measured in large numbers would otherwise dominate the distance purely because of its units. Scaling puts every variable on comparable footing first. We'll talk more about this concern later.
+
+```{r}
+alaska_dist_long <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
 )
+
+alaska_dist_long
+filter(alaska_dist_long, distance < 3.672035, distance > 3.672033)
 ```
 
-Note `scale_variance = TRUE`. Distances are computed across all the compounds at once, so a compound measured in large numbers would otherwise dominate the distance purely because of its units. Scaling puts every variable on comparable footing first. This is the same concern that comes back in clustering and in PCA.
+## building networks from data {-}
 
-### melting a distance matrix into an edge list {-}
-
-A network is drawn from an **edge list** — a table with one row per connection. So we need to turn the distances into rows of `from`, `to`, `weight`.
+We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.
 
 ```{r}
-wood_edges <- as.data.frame(as.table(as.matrix(wood_dist)))
-colnames(wood_edges) <- c("wood_1", "wood_2", "distance")
-wood_edges <- wood_edges %>% filter(distance > 0) %>% mutate(edgeweight = 1 / (1 + distance) * 100)
+alaska_edges <- alaska_dist_long %>% 
+  filter(distance > 0) %>%
+  mutate(similarity = 1 / (1 + distance) * 100) %>%
+  select(lake_sample_1, lake_sample_2, similarity)
+alaska_edges
 ```
 
-Two things just happened, and the second is the one students get backwards.
-
-First, a distance matrix is **symmetric** — it contains both A-to-B and B-to-A, plus a diagonal of zeroes where every sample is compared with itself. The `filter(distance > 0)` drops the diagonal, and the block below drops the duplicated direction, so each pair appears once.
-
-```{r}
-# Build an order-invariant pair ID so A-B and B-A map to the same key.
-key <- paste(pmin(wood_edges$wood_1, wood_edges$wood_2), pmax(wood_edges$wood_1, wood_edges$wood_2), sep = " | ")
-# Mark only rows that appear in mirrored pairs (both directions present).
-dup_rows <- duplicated(key) | duplicated(key, fromLast = TRUE)
-# Keep the mirrored-pair rows and drop one-direction-only links.
-wood_edges <- wood_edges[dup_rows, ]
-```
-
-Second, and more importantly: **distance and similarity run in opposite directions.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what `edgeweight = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.
 
 ### the threshold is the analysis {-}
 
@@ -74,30 +70,17 @@ A distance matrix connects *everything to everything* — every pair of samples 
 
 ```{r}
 net <- buildNetwork(
-  edgelist = filter(wood_edges, edgeweight > 4.3),
-  node_attributes = select(wood_smoke, species, wood_type)
+  edgelist = filter(alaska_edges),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
 )
+net$nodes
 ```
-
-For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples.
-
-Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
-
-So look at what the choice is doing:
 
 ```{r}
-thresholds <- c(2, 3, 4, 4.3, 5, 6)
-data.frame(
-  threshold = thresholds,
-  edges_kept = sapply(thresholds, function(t) nrow(filter(wood_edges, edgeweight > t)))
-)
+net$edges
 ```
 
-The honest way to report a network is to say what cutoff you used and to have looked at what happens either side of it. If the grouping a reader sees only exists at one very specific threshold, it is an artefact of the cutoff, not a finding about the samples.
-
-### plotting the network {-}
-
-`buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`.
+These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`.
 
 ```{r}
 ggplot() +
@@ -105,23 +88,16 @@ ggplot() +
     data = net$edges,
     aes(
       x = x, y = y, xend = xend, yend = yend,
-      linewidth = edgeweight,
-      alpha = edgeweight
+      linewidth = similarity,
+      alpha = similarity
     ),
     color = "grey40"
   ) +
   geom_point(
     data = net$nodes,
-    aes(x = x, y = y, fill = wood_type),
+    aes(x = x, y = y, fill = park),
     shape = 21, size = 3.2, color = "black", stroke = 0.2
   ) +
-  # ggrepel::geom_text_repel(
-  #   data = net$nodes,
-  #   aes(x = x, y = y, label = species),
-  #   size = 2.5,
-  #   max.overlaps = 40
-  # ) +
-  scale_fill_manual(values = c("hardwood" = "#1f78b4", "softwood" = "#33a02c")) +
   scale_linewidth_continuous(range = c(0.2, 1.4)) +
   scale_alpha_continuous(range = c(0.15, 0.8)) +
   guides(alpha = "none") +
@@ -129,19 +105,69 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-Remember what an edge means here. Two woods are joined because their smoke chemistry resembles one another's. A wood sitting in the middle, touching everything, is not the most important wood — it is the most *average* one, the sample whose chemistry is intermediate enough to look a bit like everybody. That is the opposite of what a hub will mean in Part 2.
+## thresholds
 
-<!-- =====================================================================================
-     PART 2 — AUTHORING STUB (2026-08-27).
-     Outline, teaching points and verified worked-example numbers are below in prose so the
-     chapter reads coherently, but the CODE for this part is NOT yet written, because the
-     dataset it needs has no published home. See the TODO block below. Do not present this
-     part as finished material to students until that is resolved.
-     ===================================================================================== -->
+For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples.
 
-## part 2 — networks you are given {-}
+Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
 
-### edges as observed facts {-}
+```{r}
+net_10 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 10),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_20 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 20),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_25 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 25),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_30 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 30),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+
+net_10$nodes$threshold <- 10
+net_10$edges$threshold <- 10
+net_20$nodes$threshold <- 20
+net_20$edges$threshold <- 20
+net_25$nodes$threshold <- 25
+net_25$edges$threshold <- 25
+net_30$nodes$threshold <- 30
+net_30$edges$threshold <- 30
+
+net$nodes <- rbind(net_10$nodes, net_20$nodes, net_25$nodes, net_30$nodes)
+net$edges <- rbind(net_10$edges, net_20$edges, net_25$edges, net_30$edges)
+```
+
+```{r}
+ggplot() +
+  geom_segment(
+    data = net$edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = similarity,
+      alpha = similarity
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = net$nodes,
+    aes(x = x, y = y, fill = park),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  facet_grid(.~threshold) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+
+## data themselves as networks {-}
 
 Everything in Part 1 was **derived**: we computed the edges ourselves out of a data matrix, and we chose the rule that put them there. Now consider a network nobody computed. An origin-and-destination table of journeys. A ledger of dispatches sent between garrisons. A record of which proteins were observed to bind which. Here the edge list *is* the raw data. You did not pick a distance measure and you did not pick a threshold, because there was nothing to pick — the edges are observations.
 
@@ -209,7 +235,7 @@ Ranking your nodes by how much traffic they carry would put the station that act
      re-verify every number quoted above in R before this stub note is removed.
      ===================================================================================== -->
 
-## part 3 — reading networks honestly {-}
+## interpreting networks {-}
 
 Three cautions, all of which apply whichever kind of network you have.
 

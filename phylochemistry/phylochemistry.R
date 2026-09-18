@@ -11616,7 +11616,7 @@
 
             #' Build a network from an edgelist
             #'
-            #' @param edgelist A data frame with origin nodes in the first column, destination nodes in the second column, and optional edge attributes in columns 3+ (first is treated as edge weight when present).
+            #' @param edgelist A data frame with origin nodes in the first column, destination nodes in the second column, and optional edge attributes in columns 3+, which are carried through to the returned edges frame as-is. No `weight` column is invented: for the force-directed layout, a column named `edgeweight` or `weight` is used if present, otherwise column 3.
             #' @param node_attributes A dataframe of attributes associated with the nodes. First column must contain node names.
             #' @param facet_variable Currently unused; retained for API compatibility.
             #' @import
@@ -11648,11 +11648,6 @@
                             attr_name <- paste0("edge_attr_", i - 2)
                         }
                         network::set.edge.attribute(network_object, attr_name, edgelist[[i]])
-                    }
-
-                    # Preserve a canonical "weight" attribute for downstream tooling.
-                    if (!("weight" %in% colnames(edgelist))) {
-                        network::set.edge.attribute(network_object, "weight", edgelist[[3]])
                     }
                 }
 
@@ -11731,9 +11726,6 @@
                 )
                 if (!is.null(edge_attributes)) {
                     edges <- cbind(edges, edge_attributes)
-                    if (!("weight" %in% colnames(edges))) {
-                        edges$weight <- edgelist[[3]]
-                    }
                 }
 
                 start_idx <- match(edges$start_node, node_lookup$node_name)

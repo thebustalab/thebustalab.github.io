@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-14"
+date: "2026-09-17"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1730,69 +1730,210 @@ Some pointers:
      NB: `images/datavis3.png` is now unreferenced (data vis III was dissolved 2026-08-27) and is
      available for reuse or deletion. -->
 
-A network is one of the few pictures that can show you a *relationship* rather than a *value*. Nodes are things; edges are connections between them. That is the whole data structure, and it is deceptively simple, because everything that matters about a network depends on a question the picture never answers for you: **what does an edge mean?**
+A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the notes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
-There are two quite different ways to end up with a network, and the difference runs through this entire chapter.
+- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough. Here an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using a threshold.
 
-Sometimes you **build** the network. You start with a data matrix — samples measured on many variables — compute how similar every sample is to every other, and draw an edge wherever two samples are similar enough. Here an edge means *"these two resemble each other"*, and you decided how much resemblance counts.
+- Alternatively, we are sometimes **given** the network. This could be a list of connections that were actually observed in the world: journeys taken, messages sent, proteins that bind, and so forth. Networks derived from these data typically indicate "this thing interacted with this other thing".
 
-Sometimes you are **given** the network. Somebody hands you a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, posts that can see one another. Here an edge means *"this actually happened"*, and you did not choose anything.
+## distances {-}
 
-The organising idea of this chapter, and the thing worth carrying away from it:
+To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:
 
-> **What a hub *means* depends entirely on what an edge means.**
-> In a similarity network an edge means "these two are alike", so a hub — a node connected to everything — is a *mixture*, something intermediate that belongs to no group in particular. In a transit or interaction network an edge means "these two are connected", so a hub is the busiest, most central place in the system. Same topology, opposite significance. Reading a network without knowing what its edges mean is how people get networks wrong.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;" />
 
-Part 1 covers networks you build. Part 2 covers networks you are given. Part 3 is about reading either one honestly.
-
-## part 1 — networks you build {-}
-
-### from a data matrix to a distance matrix {-}
-
-The starting point is an ordinary data matrix: samples in rows, measurements in columns. To ask how similar two samples are, we need a **distance** between them, and `runMatrixAnalysis()` will compute one for us with `analysis = "dist"`.
+First, we need our dataset in wide format:
 
 
 ``` r
-wood_dist <- runMatrixAnalysis(
-  data = wood_smoke,
-  analysis = "dist",
-  column_w_names_of_multiple_analytes = "compound",
-  column_w_values_for_multiple_analytes = "abundance_mg_g",
-  columns_w_sample_ID_info = "species",
-  na_replacement = "zero",
-  scale_variance = TRUE
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+alaska_lake_data_wide
+## # A tibble: 20 × 15
+##    lake      park  water_temp    pH     C     N     P     Cl
+##    <chr>     <chr>      <dbl> <dbl> <dbl> <dbl> <dbl>  <dbl>
+##  1 Devil_Mo… BELA        6.46  7.69   3.4 0.028 0      10.4 
+##  2 Imuruk_L… BELA       17.4   6.44   4.7 0.013 0       1.18
+##  3 Kuzitrin… BELA        8.06  7.45   2   0     0       0.67
+##  4 Lava_Lake BELA       20.2   7.42   8.3 0.017 0.001   2.53
+##  5 North_Ki… BELA       11.3   8.04   4.3 0.037 0.001 337.  
+##  6 White_Fi… BELA       12.0   7.82  12.3 0.034 0.006 105.  
+##  7 Iniakuk_… GAAR        9.1   7.01   3.3 0.141 0       0.22
+##  8 Kurupa_L… GAAR        9.3   7.03   2.1 0.043 0       0.13
+##  9 Lake_Mat… GAAR       10.2   6.95   5.1 0     0       1.25
+## 10 Lake_Sel… GAAR       15.1   7.15   4.2 0.107 0       0.11
+## 11 Nutavukt… GAAR       17.6   6.88   4.5 0     0.001   0.18
+## 12 Summit_L… GAAR       11.9   6.45   2.4 0     0.001   0.08
+## 13 Takahula… GAAR        9.9   6.88   2.7 0.014 0       0.23
+## 14 Walker_L… GAAR       15.3   7.22   1.3 0.19  0.001   0.19
+## 15 Wild_Lake GAAR        5.5   6.98   6.5 0.13  0.001   0.31
+## 16 Desperat… NOAT        2.95  6.34   2.1 0.005 0       0.2 
+## 17 Feniak_L… NOAT        4.51  7.24   1.8 0     0       0.21
+## 18 Lake_Kan… NOAT        5.36  6.56   8.5 0.005 0       0.55
+## 19 Lake_Nar… NOAT       18.3   7.31   5.8 0     0       0.76
+## 20 Okoklik_… NOAT        6.46  6.87   7.8 0     0       0.76
+## # ℹ 7 more variables: S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
+## #   K <dbl>, Ca <dbl>, Mg <dbl>
+```
+
+Now, we need a distance matrix. Here is the traditional way:
+
+
+``` r
+dist(alaska_lake_data_wide[,3:15])
+##             1          2          3          4          5
+## 2   17.249885                                            
+## 3   13.914769   9.825572                                 
+## 4   18.650639  12.114748  17.376585                      
+## 5  363.367406 375.484304 376.096169 372.814170           
+## 6  107.196874 119.469450 120.216457 116.204115 257.046356
+## 7   39.939919  43.719116  42.365857  34.754470 375.000861
+## 8   19.404912  21.984690  20.063580  18.697259 373.762458
+## 9   35.533288  39.789532  38.784007  30.645412 372.279208
+## 10  18.962699  14.634495  15.666485  10.483673 375.971844
+## 11  18.453129  11.246167  14.445096   6.035171 375.825483
+## 12  15.859597   8.463470   6.549584  14.247034 408.973609
+## 13  53.990906  57.852872  56.692667  47.946077 375.976344
+## 14  27.647239  27.763703  27.745856  19.099653 375.370523
+## 15  53.952032  58.544454  57.044065  50.265090 375.483212
+## 16  13.653806  15.851229   7.656391  19.617519 375.983281
+## 17  14.509806  16.700167  10.740051  19.120889 375.673721
+## 18  13.153727  13.931840   8.987793  15.893494 375.157921
+## 19  18.520826  10.826147  14.818691   4.351309 375.348981
+## 20  13.122339  13.918487   9.649135  14.221515 374.915449
+##             6          7          8          9         10
+## 2                                                        
+## 3                                                        
+## 4                                                        
+## 5                                                        
+## 6                                                        
+## 7  121.114036                                            
+## 8  117.766213  26.564153                                 
+## 9  117.707763   7.201256  22.418984                      
+## 10 119.608791  30.092744  10.637359  26.116748           
+## 11 119.365204  33.019096  15.336409  29.255482   5.952777
+## 12 130.491702  41.856664  17.229544  37.778483  11.140371
+## 13 125.047466  18.551858  43.715031  22.853050  45.370561
+## 14 119.711970  17.822205  17.140450  15.116676  15.261002
+## 15 124.815436  19.456110  38.576517  21.589961  44.248959
+## 16 120.008119  37.645002  16.021790  34.347377  15.155177
+## 17 119.635012  35.256225  12.522921  32.181857  13.699739
+## 18 118.629445  37.805337  17.533849  34.070348  14.570844
+## 19 118.831349  33.976175  16.986590  30.206181   7.697126
+## 20 118.308513  35.461496  15.850232  31.733081  12.479645
+##            11         12         13         14         15
+## 2                                                        
+## 3                                                        
+## 4                                                        
+## 5                                                        
+## 6                                                        
+## 7                                                        
+## 8                                                        
+## 9                                                        
+## 10                                                       
+## 11                                                       
+## 12  10.180989                                            
+## 13  46.940423  57.993866                                 
+## 14  16.757819  25.552154  30.739429                      
+## 15  48.524147  57.622278  27.204181  35.158036           
+## 16  16.018137   9.916751  52.513357  25.306954  51.656812
+## 17  15.475985  10.697363  51.133725  23.902339  48.735302
+## 18  14.167245  10.455806  52.153491  25.115004  52.172107
+## 19   2.178394  11.082962  47.508028  17.698579  49.659940
+## 20  12.209922   9.846948  49.759392  22.485011  50.153277
+##            16         17         18         19
+## 2                                             
+## 3                                             
+## 4                                             
+## 5                                             
+## 6                                             
+## 7                                             
+## 8                                             
+## 9                                             
+## 10                                            
+## 11                                            
+## 12                                            
+## 13                                            
+## 14                                            
+## 15                                            
+## 16                                            
+## 17   5.535921                                 
+## 18   7.313364   9.643066                      
+## 19  16.910716  16.591947  14.272415           
+## 20   7.593005   9.322022   2.664249  12.413960
+```
+
+We can also get long-style distance matrices directly from a wrapper function we have called `runMatrixAnalyses` by specifying `analysis = "dist"`, as below. Note `scale_variance = TRUE`. Distances are computed across all the analytes at once, so a analyte measured in large numbers would otherwise dominate the distance purely because of its units. Scaling puts every variable on comparable footing first. We'll talk more about this concern later.
+
+
+``` r
+alaska_dist_long <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
 )
-## Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.
+## Replacing NAs in your data with mean
+
+alaska_dist_long
+## # A tibble: 380 × 7
+##    sample_unique_ID_sample_1 sample_unique_ID_sam…¹ distance
+##    <chr>                     <chr>                     <dbl>
+##  1 Devil_Mountain_Lake_BELA  Imuruk_Lake_BELA           3.67
+##  2 Devil_Mountain_Lake_BELA  Kuzitrin_Lake_BELA         1.66
+##  3 Devil_Mountain_Lake_BELA  Lava_Lake_BELA             3.40
+##  4 Devil_Mountain_Lake_BELA  North_Killeak_Lake_BE…     9.70
+##  5 Devil_Mountain_Lake_BELA  White_Fish_Lake_BELA       6.29
+##  6 Devil_Mountain_Lake_BELA  Iniakuk_Lake_GAAR          4.12
+##  7 Devil_Mountain_Lake_BELA  Kurupa_Lake_GAAR           2.94
+##  8 Devil_Mountain_Lake_BELA  Lake_Matcharak_GAAR        3.64
+##  9 Devil_Mountain_Lake_BELA  Lake_Selby_GAAR            3.22
+## 10 Devil_Mountain_Lake_BELA  Nutavukti_Lake_GAAR        3.44
+## # ℹ 370 more rows
+## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2
+## # ℹ 4 more variables: lake_sample_1 <chr>,
+## #   park_sample_1 <chr>, lake_sample_2 <chr>,
+## #   park_sample_2 <chr>
+filter(alaska_dist_long, distance < 3.672035, distance > 3.672033)
+## # A tibble: 2 × 7
+##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance
+##   <chr>                     <chr>                      <dbl>
+## 1 Devil_Mountain_Lake_BELA  Imuruk_Lake_BELA            3.67
+## 2 Imuruk_Lake_BELA          Devil_Mountain_Lake_BE…     3.67
+## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2
+## # ℹ 4 more variables: lake_sample_1 <chr>,
+## #   park_sample_1 <chr>, lake_sample_2 <chr>,
+## #   park_sample_2 <chr>
 ```
 
-Note `scale_variance = TRUE`. Distances are computed across all the compounds at once, so a compound measured in large numbers would otherwise dominate the distance purely because of its units. Scaling puts every variable on comparable footing first. This is the same concern that comes back in clustering and in PCA.
+## building networks from data {-}
 
-### melting a distance matrix into an edge list {-}
-
-A network is drawn from an **edge list** — a table with one row per connection. So we need to turn the distances into rows of `from`, `to`, `weight`.
+We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.
 
 
 ``` r
-wood_edges <- as.data.frame(as.table(as.matrix(wood_dist)))
-colnames(wood_edges) <- c("wood_1", "wood_2", "distance")
-wood_edges <- wood_edges %>% filter(distance > 0) %>% mutate(edgeweight = 1 / (1 + distance) * 100)
+alaska_edges <- alaska_dist_long %>% 
+  filter(distance > 0) %>%
+  mutate(similarity = 1 / (1 + distance) * 100) %>%
+  select(lake_sample_1, lake_sample_2, similarity)
+alaska_edges
+## # A tibble: 380 × 3
+##    lake_sample_1       lake_sample_2      similarity
+##    <chr>               <chr>                   <dbl>
+##  1 Devil_Mountain_Lake Imuruk_Lake             21.4 
+##  2 Devil_Mountain_Lake Kuzitrin_Lake           37.5 
+##  3 Devil_Mountain_Lake Lava_Lake               22.7 
+##  4 Devil_Mountain_Lake North_Killeak_Lake       9.34
+##  5 Devil_Mountain_Lake White_Fish_Lake         13.7 
+##  6 Devil_Mountain_Lake Iniakuk_Lake            19.5 
+##  7 Devil_Mountain_Lake Kurupa_Lake             25.4 
+##  8 Devil_Mountain_Lake Lake_Matcharak          21.5 
+##  9 Devil_Mountain_Lake Lake_Selby              23.7 
+## 10 Devil_Mountain_Lake Nutavukti_Lake          22.5 
+## # ℹ 370 more rows
 ```
 
-Two things just happened, and the second is the one students get backwards.
-
-First, a distance matrix is **symmetric** — it contains both A-to-B and B-to-A, plus a diagonal of zeroes where every sample is compared with itself. The `filter(distance > 0)` drops the diagonal, and the block below drops the duplicated direction, so each pair appears once.
-
-
-``` r
-# Build an order-invariant pair ID so A-B and B-A map to the same key.
-key <- paste(pmin(wood_edges$wood_1, wood_edges$wood_2), pmax(wood_edges$wood_1, wood_edges$wood_2), sep = " | ")
-# Mark only rows that appear in mirrored pairs (both directions present).
-dup_rows <- duplicated(key) | duplicated(key, fromLast = TRUE)
-# Keep the mirrored-pair rows and drop one-direction-only links.
-wood_edges <- wood_edges[dup_rows, ]
-```
-
-Second, and more importantly: **distance and similarity run in opposite directions.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what `edgeweight = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.
 
 ### the threshold is the analysis {-}
 
@@ -1801,38 +1942,822 @@ A distance matrix connects *everything to everything* — every pair of samples 
 
 ``` r
 net <- buildNetwork(
-  edgelist = filter(wood_edges, edgeweight > 4.3),
-  node_attributes = select(wood_smoke, species, wood_type)
+  edgelist = filter(alaska_edges),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
 )
+net$nodes
+##                             x          y
+## Devil_Mountain_Lake 0.6611326 0.07151575
+## Imuruk_Lake         0.1894513 0.33562773
+## Kuzitrin_Lake       0.6382812 0.44152998
+## Lava_Lake           0.4478987 0.00000000
+## North_Killeak_Lake  0.2207037 1.00000000
+## White_Fish_Lake     0.0000000 0.50810627
+## Iniakuk_Lake        0.8400324 0.69488130
+## Kurupa_Lake         0.5455799 0.61020011
+## Lake_Matcharak      0.6763771 0.72816493
+## Lake_Selby          0.8157626 0.42658857
+## Nutavukti_Lake      0.5213427 0.27884718
+## Summit_Lake         0.2542410 0.17982528
+## Takahula_Lake       0.5418022 0.84100800
+## Walker_Lake         0.9130956 0.22275977
+## Wild_Lake           1.0000000 0.55627300
+## Desperation_Lake    0.3830203 0.45828409
+## Feniak_Lake         0.7188903 0.23911946
+## Lake_Kangilipak     0.3307605 0.70216300
+## Lake_Narvakrak      0.4081289 0.16134329
+## Okoklik_Lake        0.2399907 0.54479234
+##                               node_name park
+## Devil_Mountain_Lake Devil_Mountain_Lake BELA
+## Imuruk_Lake                 Imuruk_Lake BELA
+## Kuzitrin_Lake             Kuzitrin_Lake BELA
+## Lava_Lake                     Lava_Lake BELA
+## North_Killeak_Lake   North_Killeak_Lake BELA
+## White_Fish_Lake         White_Fish_Lake BELA
+## Iniakuk_Lake               Iniakuk_Lake GAAR
+## Kurupa_Lake                 Kurupa_Lake GAAR
+## Lake_Matcharak           Lake_Matcharak GAAR
+## Lake_Selby                   Lake_Selby GAAR
+## Nutavukti_Lake           Nutavukti_Lake GAAR
+## Summit_Lake                 Summit_Lake GAAR
+## Takahula_Lake             Takahula_Lake GAAR
+## Walker_Lake                 Walker_Lake GAAR
+## Wild_Lake                     Wild_Lake GAAR
+## Desperation_Lake       Desperation_Lake NOAT
+## Feniak_Lake                 Feniak_Lake NOAT
+## Lake_Kangilipak         Lake_Kangilipak NOAT
+## Lake_Narvakrak           Lake_Narvakrak NOAT
+## Okoklik_Lake               Okoklik_Lake NOAT
 ```
-
-For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples.
-
-Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
-
-So look at what the choice is doing:
 
 
 ``` r
-thresholds <- c(2, 3, 4, 4.3, 5, 6)
-data.frame(
-  threshold = thresholds,
-  edges_kept = sapply(thresholds, function(t) nrow(filter(wood_edges, edgeweight > t)))
-)
-##   threshold edges_kept
-## 1       2.0         30
-## 2       3.0         30
-## 3       4.0         22
-## 4       4.3         18
-## 5       5.0          2
-## 6       6.0          0
+net$edges
+##             x          y          start_node      xend
+## 1   0.6611326 0.07151575 Devil_Mountain_Lake 0.1894513
+## 2   0.6611326 0.07151575 Devil_Mountain_Lake 0.6382812
+## 3   0.6611326 0.07151575 Devil_Mountain_Lake 0.4478987
+## 4   0.6611326 0.07151575 Devil_Mountain_Lake 0.2207037
+## 5   0.6611326 0.07151575 Devil_Mountain_Lake 0.0000000
+## 6   0.6611326 0.07151575 Devil_Mountain_Lake 0.8400324
+## 7   0.6611326 0.07151575 Devil_Mountain_Lake 0.5455799
+## 8   0.6611326 0.07151575 Devil_Mountain_Lake 0.6763771
+## 9   0.6611326 0.07151575 Devil_Mountain_Lake 0.8157626
+## 10  0.6611326 0.07151575 Devil_Mountain_Lake 0.5213427
+## 11  0.6611326 0.07151575 Devil_Mountain_Lake 0.2542410
+## 12  0.6611326 0.07151575 Devil_Mountain_Lake 0.5418022
+## 13  0.6611326 0.07151575 Devil_Mountain_Lake 0.9130956
+## 14  0.6611326 0.07151575 Devil_Mountain_Lake 1.0000000
+## 15  0.6611326 0.07151575 Devil_Mountain_Lake 0.3830203
+## 16  0.6611326 0.07151575 Devil_Mountain_Lake 0.7188903
+## 17  0.6611326 0.07151575 Devil_Mountain_Lake 0.3307605
+## 18  0.6611326 0.07151575 Devil_Mountain_Lake 0.4081289
+## 19  0.6611326 0.07151575 Devil_Mountain_Lake 0.2399907
+## 20  0.1894513 0.33562773         Imuruk_Lake 0.6611326
+## 21  0.1894513 0.33562773         Imuruk_Lake 0.6382812
+## 22  0.1894513 0.33562773         Imuruk_Lake 0.4478987
+## 23  0.1894513 0.33562773         Imuruk_Lake 0.2207037
+## 24  0.1894513 0.33562773         Imuruk_Lake 0.0000000
+## 25  0.1894513 0.33562773         Imuruk_Lake 0.8400324
+## 26  0.1894513 0.33562773         Imuruk_Lake 0.5455799
+## 27  0.1894513 0.33562773         Imuruk_Lake 0.6763771
+## 28  0.1894513 0.33562773         Imuruk_Lake 0.8157626
+## 29  0.1894513 0.33562773         Imuruk_Lake 0.5213427
+## 30  0.1894513 0.33562773         Imuruk_Lake 0.2542410
+## 31  0.1894513 0.33562773         Imuruk_Lake 0.5418022
+## 32  0.1894513 0.33562773         Imuruk_Lake 0.9130956
+## 33  0.1894513 0.33562773         Imuruk_Lake 1.0000000
+## 34  0.1894513 0.33562773         Imuruk_Lake 0.3830203
+## 35  0.1894513 0.33562773         Imuruk_Lake 0.7188903
+## 36  0.1894513 0.33562773         Imuruk_Lake 0.3307605
+## 37  0.1894513 0.33562773         Imuruk_Lake 0.4081289
+## 38  0.1894513 0.33562773         Imuruk_Lake 0.2399907
+## 39  0.6382812 0.44152998       Kuzitrin_Lake 0.6611326
+## 40  0.6382812 0.44152998       Kuzitrin_Lake 0.1894513
+## 41  0.6382812 0.44152998       Kuzitrin_Lake 0.4478987
+## 42  0.6382812 0.44152998       Kuzitrin_Lake 0.2207037
+## 43  0.6382812 0.44152998       Kuzitrin_Lake 0.0000000
+## 44  0.6382812 0.44152998       Kuzitrin_Lake 0.8400324
+## 45  0.6382812 0.44152998       Kuzitrin_Lake 0.5455799
+## 46  0.6382812 0.44152998       Kuzitrin_Lake 0.6763771
+## 47  0.6382812 0.44152998       Kuzitrin_Lake 0.8157626
+## 48  0.6382812 0.44152998       Kuzitrin_Lake 0.5213427
+## 49  0.6382812 0.44152998       Kuzitrin_Lake 0.2542410
+## 50  0.6382812 0.44152998       Kuzitrin_Lake 0.5418022
+## 51  0.6382812 0.44152998       Kuzitrin_Lake 0.9130956
+## 52  0.6382812 0.44152998       Kuzitrin_Lake 1.0000000
+## 53  0.6382812 0.44152998       Kuzitrin_Lake 0.3830203
+## 54  0.6382812 0.44152998       Kuzitrin_Lake 0.7188903
+## 55  0.6382812 0.44152998       Kuzitrin_Lake 0.3307605
+## 56  0.6382812 0.44152998       Kuzitrin_Lake 0.4081289
+## 57  0.6382812 0.44152998       Kuzitrin_Lake 0.2399907
+## 58  0.4478987 0.00000000           Lava_Lake 0.6611326
+## 59  0.4478987 0.00000000           Lava_Lake 0.1894513
+## 60  0.4478987 0.00000000           Lava_Lake 0.6382812
+## 61  0.4478987 0.00000000           Lava_Lake 0.2207037
+## 62  0.4478987 0.00000000           Lava_Lake 0.0000000
+## 63  0.4478987 0.00000000           Lava_Lake 0.8400324
+## 64  0.4478987 0.00000000           Lava_Lake 0.5455799
+## 65  0.4478987 0.00000000           Lava_Lake 0.6763771
+## 66  0.4478987 0.00000000           Lava_Lake 0.8157626
+## 67  0.4478987 0.00000000           Lava_Lake 0.5213427
+## 68  0.4478987 0.00000000           Lava_Lake 0.2542410
+## 69  0.4478987 0.00000000           Lava_Lake 0.5418022
+## 70  0.4478987 0.00000000           Lava_Lake 0.9130956
+## 71  0.4478987 0.00000000           Lava_Lake 1.0000000
+## 72  0.4478987 0.00000000           Lava_Lake 0.3830203
+## 73  0.4478987 0.00000000           Lava_Lake 0.7188903
+## 74  0.4478987 0.00000000           Lava_Lake 0.3307605
+## 75  0.4478987 0.00000000           Lava_Lake 0.4081289
+## 76  0.4478987 0.00000000           Lava_Lake 0.2399907
+## 77  0.2207037 1.00000000  North_Killeak_Lake 0.6611326
+## 78  0.2207037 1.00000000  North_Killeak_Lake 0.1894513
+## 79  0.2207037 1.00000000  North_Killeak_Lake 0.6382812
+## 80  0.2207037 1.00000000  North_Killeak_Lake 0.4478987
+## 81  0.2207037 1.00000000  North_Killeak_Lake 0.0000000
+## 82  0.2207037 1.00000000  North_Killeak_Lake 0.8400324
+## 83  0.2207037 1.00000000  North_Killeak_Lake 0.5455799
+## 84  0.2207037 1.00000000  North_Killeak_Lake 0.6763771
+## 85  0.2207037 1.00000000  North_Killeak_Lake 0.8157626
+## 86  0.2207037 1.00000000  North_Killeak_Lake 0.5213427
+## 87  0.2207037 1.00000000  North_Killeak_Lake 0.2542410
+## 88  0.2207037 1.00000000  North_Killeak_Lake 0.5418022
+## 89  0.2207037 1.00000000  North_Killeak_Lake 0.9130956
+## 90  0.2207037 1.00000000  North_Killeak_Lake 1.0000000
+## 91  0.2207037 1.00000000  North_Killeak_Lake 0.3830203
+## 92  0.2207037 1.00000000  North_Killeak_Lake 0.7188903
+## 93  0.2207037 1.00000000  North_Killeak_Lake 0.3307605
+## 94  0.2207037 1.00000000  North_Killeak_Lake 0.4081289
+## 95  0.2207037 1.00000000  North_Killeak_Lake 0.2399907
+## 96  0.0000000 0.50810627     White_Fish_Lake 0.6611326
+## 97  0.0000000 0.50810627     White_Fish_Lake 0.1894513
+## 98  0.0000000 0.50810627     White_Fish_Lake 0.6382812
+## 99  0.0000000 0.50810627     White_Fish_Lake 0.4478987
+## 100 0.0000000 0.50810627     White_Fish_Lake 0.2207037
+## 101 0.0000000 0.50810627     White_Fish_Lake 0.8400324
+## 102 0.0000000 0.50810627     White_Fish_Lake 0.5455799
+## 103 0.0000000 0.50810627     White_Fish_Lake 0.6763771
+## 104 0.0000000 0.50810627     White_Fish_Lake 0.8157626
+## 105 0.0000000 0.50810627     White_Fish_Lake 0.5213427
+## 106 0.0000000 0.50810627     White_Fish_Lake 0.2542410
+## 107 0.0000000 0.50810627     White_Fish_Lake 0.5418022
+## 108 0.0000000 0.50810627     White_Fish_Lake 0.9130956
+## 109 0.0000000 0.50810627     White_Fish_Lake 1.0000000
+## 110 0.0000000 0.50810627     White_Fish_Lake 0.3830203
+## 111 0.0000000 0.50810627     White_Fish_Lake 0.7188903
+## 112 0.0000000 0.50810627     White_Fish_Lake 0.3307605
+## 113 0.0000000 0.50810627     White_Fish_Lake 0.4081289
+## 114 0.0000000 0.50810627     White_Fish_Lake 0.2399907
+## 115 0.8400324 0.69488130        Iniakuk_Lake 0.6611326
+## 116 0.8400324 0.69488130        Iniakuk_Lake 0.1894513
+## 117 0.8400324 0.69488130        Iniakuk_Lake 0.6382812
+## 118 0.8400324 0.69488130        Iniakuk_Lake 0.4478987
+## 119 0.8400324 0.69488130        Iniakuk_Lake 0.2207037
+## 120 0.8400324 0.69488130        Iniakuk_Lake 0.0000000
+## 121 0.8400324 0.69488130        Iniakuk_Lake 0.5455799
+## 122 0.8400324 0.69488130        Iniakuk_Lake 0.6763771
+## 123 0.8400324 0.69488130        Iniakuk_Lake 0.8157626
+## 124 0.8400324 0.69488130        Iniakuk_Lake 0.5213427
+## 125 0.8400324 0.69488130        Iniakuk_Lake 0.2542410
+## 126 0.8400324 0.69488130        Iniakuk_Lake 0.5418022
+## 127 0.8400324 0.69488130        Iniakuk_Lake 0.9130956
+## 128 0.8400324 0.69488130        Iniakuk_Lake 1.0000000
+## 129 0.8400324 0.69488130        Iniakuk_Lake 0.3830203
+## 130 0.8400324 0.69488130        Iniakuk_Lake 0.7188903
+## 131 0.8400324 0.69488130        Iniakuk_Lake 0.3307605
+## 132 0.8400324 0.69488130        Iniakuk_Lake 0.4081289
+## 133 0.8400324 0.69488130        Iniakuk_Lake 0.2399907
+## 134 0.5455799 0.61020011         Kurupa_Lake 0.6611326
+## 135 0.5455799 0.61020011         Kurupa_Lake 0.1894513
+## 136 0.5455799 0.61020011         Kurupa_Lake 0.6382812
+## 137 0.5455799 0.61020011         Kurupa_Lake 0.4478987
+## 138 0.5455799 0.61020011         Kurupa_Lake 0.2207037
+## 139 0.5455799 0.61020011         Kurupa_Lake 0.0000000
+## 140 0.5455799 0.61020011         Kurupa_Lake 0.8400324
+## 141 0.5455799 0.61020011         Kurupa_Lake 0.6763771
+## 142 0.5455799 0.61020011         Kurupa_Lake 0.8157626
+## 143 0.5455799 0.61020011         Kurupa_Lake 0.5213427
+## 144 0.5455799 0.61020011         Kurupa_Lake 0.2542410
+## 145 0.5455799 0.61020011         Kurupa_Lake 0.5418022
+## 146 0.5455799 0.61020011         Kurupa_Lake 0.9130956
+## 147 0.5455799 0.61020011         Kurupa_Lake 1.0000000
+## 148 0.5455799 0.61020011         Kurupa_Lake 0.3830203
+## 149 0.5455799 0.61020011         Kurupa_Lake 0.7188903
+## 150 0.5455799 0.61020011         Kurupa_Lake 0.3307605
+## 151 0.5455799 0.61020011         Kurupa_Lake 0.4081289
+## 152 0.5455799 0.61020011         Kurupa_Lake 0.2399907
+## 153 0.6763771 0.72816493      Lake_Matcharak 0.6611326
+## 154 0.6763771 0.72816493      Lake_Matcharak 0.1894513
+## 155 0.6763771 0.72816493      Lake_Matcharak 0.6382812
+## 156 0.6763771 0.72816493      Lake_Matcharak 0.4478987
+## 157 0.6763771 0.72816493      Lake_Matcharak 0.2207037
+## 158 0.6763771 0.72816493      Lake_Matcharak 0.0000000
+## 159 0.6763771 0.72816493      Lake_Matcharak 0.8400324
+## 160 0.6763771 0.72816493      Lake_Matcharak 0.5455799
+## 161 0.6763771 0.72816493      Lake_Matcharak 0.8157626
+## 162 0.6763771 0.72816493      Lake_Matcharak 0.5213427
+## 163 0.6763771 0.72816493      Lake_Matcharak 0.2542410
+## 164 0.6763771 0.72816493      Lake_Matcharak 0.5418022
+## 165 0.6763771 0.72816493      Lake_Matcharak 0.9130956
+## 166 0.6763771 0.72816493      Lake_Matcharak 1.0000000
+## 167 0.6763771 0.72816493      Lake_Matcharak 0.3830203
+## 168 0.6763771 0.72816493      Lake_Matcharak 0.7188903
+## 169 0.6763771 0.72816493      Lake_Matcharak 0.3307605
+## 170 0.6763771 0.72816493      Lake_Matcharak 0.4081289
+## 171 0.6763771 0.72816493      Lake_Matcharak 0.2399907
+## 172 0.8157626 0.42658857          Lake_Selby 0.6611326
+## 173 0.8157626 0.42658857          Lake_Selby 0.1894513
+## 174 0.8157626 0.42658857          Lake_Selby 0.6382812
+## 175 0.8157626 0.42658857          Lake_Selby 0.4478987
+## 176 0.8157626 0.42658857          Lake_Selby 0.2207037
+## 177 0.8157626 0.42658857          Lake_Selby 0.0000000
+## 178 0.8157626 0.42658857          Lake_Selby 0.8400324
+## 179 0.8157626 0.42658857          Lake_Selby 0.5455799
+## 180 0.8157626 0.42658857          Lake_Selby 0.6763771
+## 181 0.8157626 0.42658857          Lake_Selby 0.5213427
+## 182 0.8157626 0.42658857          Lake_Selby 0.2542410
+## 183 0.8157626 0.42658857          Lake_Selby 0.5418022
+## 184 0.8157626 0.42658857          Lake_Selby 0.9130956
+## 185 0.8157626 0.42658857          Lake_Selby 1.0000000
+## 186 0.8157626 0.42658857          Lake_Selby 0.3830203
+## 187 0.8157626 0.42658857          Lake_Selby 0.7188903
+## 188 0.8157626 0.42658857          Lake_Selby 0.3307605
+## 189 0.8157626 0.42658857          Lake_Selby 0.4081289
+## 190 0.8157626 0.42658857          Lake_Selby 0.2399907
+## 191 0.5213427 0.27884718      Nutavukti_Lake 0.6611326
+## 192 0.5213427 0.27884718      Nutavukti_Lake 0.1894513
+## 193 0.5213427 0.27884718      Nutavukti_Lake 0.6382812
+## 194 0.5213427 0.27884718      Nutavukti_Lake 0.4478987
+## 195 0.5213427 0.27884718      Nutavukti_Lake 0.2207037
+## 196 0.5213427 0.27884718      Nutavukti_Lake 0.0000000
+## 197 0.5213427 0.27884718      Nutavukti_Lake 0.8400324
+## 198 0.5213427 0.27884718      Nutavukti_Lake 0.5455799
+## 199 0.5213427 0.27884718      Nutavukti_Lake 0.6763771
+## 200 0.5213427 0.27884718      Nutavukti_Lake 0.8157626
+## 201 0.5213427 0.27884718      Nutavukti_Lake 0.2542410
+## 202 0.5213427 0.27884718      Nutavukti_Lake 0.5418022
+## 203 0.5213427 0.27884718      Nutavukti_Lake 0.9130956
+## 204 0.5213427 0.27884718      Nutavukti_Lake 1.0000000
+## 205 0.5213427 0.27884718      Nutavukti_Lake 0.3830203
+## 206 0.5213427 0.27884718      Nutavukti_Lake 0.7188903
+## 207 0.5213427 0.27884718      Nutavukti_Lake 0.3307605
+## 208 0.5213427 0.27884718      Nutavukti_Lake 0.4081289
+## 209 0.5213427 0.27884718      Nutavukti_Lake 0.2399907
+## 210 0.2542410 0.17982528         Summit_Lake 0.6611326
+## 211 0.2542410 0.17982528         Summit_Lake 0.1894513
+## 212 0.2542410 0.17982528         Summit_Lake 0.6382812
+## 213 0.2542410 0.17982528         Summit_Lake 0.4478987
+## 214 0.2542410 0.17982528         Summit_Lake 0.2207037
+## 215 0.2542410 0.17982528         Summit_Lake 0.0000000
+## 216 0.2542410 0.17982528         Summit_Lake 0.8400324
+## 217 0.2542410 0.17982528         Summit_Lake 0.5455799
+## 218 0.2542410 0.17982528         Summit_Lake 0.6763771
+## 219 0.2542410 0.17982528         Summit_Lake 0.8157626
+## 220 0.2542410 0.17982528         Summit_Lake 0.5213427
+## 221 0.2542410 0.17982528         Summit_Lake 0.5418022
+## 222 0.2542410 0.17982528         Summit_Lake 0.9130956
+## 223 0.2542410 0.17982528         Summit_Lake 1.0000000
+## 224 0.2542410 0.17982528         Summit_Lake 0.3830203
+## 225 0.2542410 0.17982528         Summit_Lake 0.7188903
+## 226 0.2542410 0.17982528         Summit_Lake 0.3307605
+## 227 0.2542410 0.17982528         Summit_Lake 0.4081289
+## 228 0.2542410 0.17982528         Summit_Lake 0.2399907
+## 229 0.5418022 0.84100800       Takahula_Lake 0.6611326
+## 230 0.5418022 0.84100800       Takahula_Lake 0.1894513
+## 231 0.5418022 0.84100800       Takahula_Lake 0.6382812
+## 232 0.5418022 0.84100800       Takahula_Lake 0.4478987
+## 233 0.5418022 0.84100800       Takahula_Lake 0.2207037
+## 234 0.5418022 0.84100800       Takahula_Lake 0.0000000
+## 235 0.5418022 0.84100800       Takahula_Lake 0.8400324
+## 236 0.5418022 0.84100800       Takahula_Lake 0.5455799
+## 237 0.5418022 0.84100800       Takahula_Lake 0.6763771
+## 238 0.5418022 0.84100800       Takahula_Lake 0.8157626
+## 239 0.5418022 0.84100800       Takahula_Lake 0.5213427
+## 240 0.5418022 0.84100800       Takahula_Lake 0.2542410
+## 241 0.5418022 0.84100800       Takahula_Lake 0.9130956
+## 242 0.5418022 0.84100800       Takahula_Lake 1.0000000
+## 243 0.5418022 0.84100800       Takahula_Lake 0.3830203
+## 244 0.5418022 0.84100800       Takahula_Lake 0.7188903
+## 245 0.5418022 0.84100800       Takahula_Lake 0.3307605
+## 246 0.5418022 0.84100800       Takahula_Lake 0.4081289
+## 247 0.5418022 0.84100800       Takahula_Lake 0.2399907
+## 248 0.9130956 0.22275977         Walker_Lake 0.6611326
+## 249 0.9130956 0.22275977         Walker_Lake 0.1894513
+## 250 0.9130956 0.22275977         Walker_Lake 0.6382812
+## 251 0.9130956 0.22275977         Walker_Lake 0.4478987
+## 252 0.9130956 0.22275977         Walker_Lake 0.2207037
+## 253 0.9130956 0.22275977         Walker_Lake 0.0000000
+## 254 0.9130956 0.22275977         Walker_Lake 0.8400324
+## 255 0.9130956 0.22275977         Walker_Lake 0.5455799
+## 256 0.9130956 0.22275977         Walker_Lake 0.6763771
+## 257 0.9130956 0.22275977         Walker_Lake 0.8157626
+## 258 0.9130956 0.22275977         Walker_Lake 0.5213427
+## 259 0.9130956 0.22275977         Walker_Lake 0.2542410
+## 260 0.9130956 0.22275977         Walker_Lake 0.5418022
+## 261 0.9130956 0.22275977         Walker_Lake 1.0000000
+## 262 0.9130956 0.22275977         Walker_Lake 0.3830203
+## 263 0.9130956 0.22275977         Walker_Lake 0.7188903
+## 264 0.9130956 0.22275977         Walker_Lake 0.3307605
+## 265 0.9130956 0.22275977         Walker_Lake 0.4081289
+## 266 0.9130956 0.22275977         Walker_Lake 0.2399907
+## 267 1.0000000 0.55627300           Wild_Lake 0.6611326
+## 268 1.0000000 0.55627300           Wild_Lake 0.1894513
+## 269 1.0000000 0.55627300           Wild_Lake 0.6382812
+## 270 1.0000000 0.55627300           Wild_Lake 0.4478987
+## 271 1.0000000 0.55627300           Wild_Lake 0.2207037
+## 272 1.0000000 0.55627300           Wild_Lake 0.0000000
+## 273 1.0000000 0.55627300           Wild_Lake 0.8400324
+## 274 1.0000000 0.55627300           Wild_Lake 0.5455799
+## 275 1.0000000 0.55627300           Wild_Lake 0.6763771
+## 276 1.0000000 0.55627300           Wild_Lake 0.8157626
+## 277 1.0000000 0.55627300           Wild_Lake 0.5213427
+## 278 1.0000000 0.55627300           Wild_Lake 0.2542410
+## 279 1.0000000 0.55627300           Wild_Lake 0.5418022
+## 280 1.0000000 0.55627300           Wild_Lake 0.9130956
+## 281 1.0000000 0.55627300           Wild_Lake 0.3830203
+## 282 1.0000000 0.55627300           Wild_Lake 0.7188903
+## 283 1.0000000 0.55627300           Wild_Lake 0.3307605
+## 284 1.0000000 0.55627300           Wild_Lake 0.4081289
+## 285 1.0000000 0.55627300           Wild_Lake 0.2399907
+## 286 0.3830203 0.45828409    Desperation_Lake 0.6611326
+## 287 0.3830203 0.45828409    Desperation_Lake 0.1894513
+## 288 0.3830203 0.45828409    Desperation_Lake 0.6382812
+## 289 0.3830203 0.45828409    Desperation_Lake 0.4478987
+## 290 0.3830203 0.45828409    Desperation_Lake 0.2207037
+## 291 0.3830203 0.45828409    Desperation_Lake 0.0000000
+## 292 0.3830203 0.45828409    Desperation_Lake 0.8400324
+## 293 0.3830203 0.45828409    Desperation_Lake 0.5455799
+## 294 0.3830203 0.45828409    Desperation_Lake 0.6763771
+## 295 0.3830203 0.45828409    Desperation_Lake 0.8157626
+## 296 0.3830203 0.45828409    Desperation_Lake 0.5213427
+## 297 0.3830203 0.45828409    Desperation_Lake 0.2542410
+## 298 0.3830203 0.45828409    Desperation_Lake 0.5418022
+## 299 0.3830203 0.45828409    Desperation_Lake 0.9130956
+## 300 0.3830203 0.45828409    Desperation_Lake 1.0000000
+## 301 0.3830203 0.45828409    Desperation_Lake 0.7188903
+## 302 0.3830203 0.45828409    Desperation_Lake 0.3307605
+## 303 0.3830203 0.45828409    Desperation_Lake 0.4081289
+## 304 0.3830203 0.45828409    Desperation_Lake 0.2399907
+## 305 0.7188903 0.23911946         Feniak_Lake 0.6611326
+## 306 0.7188903 0.23911946         Feniak_Lake 0.1894513
+## 307 0.7188903 0.23911946         Feniak_Lake 0.6382812
+## 308 0.7188903 0.23911946         Feniak_Lake 0.4478987
+## 309 0.7188903 0.23911946         Feniak_Lake 0.2207037
+## 310 0.7188903 0.23911946         Feniak_Lake 0.0000000
+## 311 0.7188903 0.23911946         Feniak_Lake 0.8400324
+## 312 0.7188903 0.23911946         Feniak_Lake 0.5455799
+## 313 0.7188903 0.23911946         Feniak_Lake 0.6763771
+## 314 0.7188903 0.23911946         Feniak_Lake 0.8157626
+## 315 0.7188903 0.23911946         Feniak_Lake 0.5213427
+## 316 0.7188903 0.23911946         Feniak_Lake 0.2542410
+## 317 0.7188903 0.23911946         Feniak_Lake 0.5418022
+## 318 0.7188903 0.23911946         Feniak_Lake 0.9130956
+## 319 0.7188903 0.23911946         Feniak_Lake 1.0000000
+## 320 0.7188903 0.23911946         Feniak_Lake 0.3830203
+## 321 0.7188903 0.23911946         Feniak_Lake 0.3307605
+## 322 0.7188903 0.23911946         Feniak_Lake 0.4081289
+## 323 0.7188903 0.23911946         Feniak_Lake 0.2399907
+## 324 0.3307605 0.70216300     Lake_Kangilipak 0.6611326
+## 325 0.3307605 0.70216300     Lake_Kangilipak 0.1894513
+## 326 0.3307605 0.70216300     Lake_Kangilipak 0.6382812
+## 327 0.3307605 0.70216300     Lake_Kangilipak 0.4478987
+## 328 0.3307605 0.70216300     Lake_Kangilipak 0.2207037
+## 329 0.3307605 0.70216300     Lake_Kangilipak 0.0000000
+## 330 0.3307605 0.70216300     Lake_Kangilipak 0.8400324
+## 331 0.3307605 0.70216300     Lake_Kangilipak 0.5455799
+## 332 0.3307605 0.70216300     Lake_Kangilipak 0.6763771
+## 333 0.3307605 0.70216300     Lake_Kangilipak 0.8157626
+## 334 0.3307605 0.70216300     Lake_Kangilipak 0.5213427
+## 335 0.3307605 0.70216300     Lake_Kangilipak 0.2542410
+## 336 0.3307605 0.70216300     Lake_Kangilipak 0.5418022
+## 337 0.3307605 0.70216300     Lake_Kangilipak 0.9130956
+## 338 0.3307605 0.70216300     Lake_Kangilipak 1.0000000
+## 339 0.3307605 0.70216300     Lake_Kangilipak 0.3830203
+## 340 0.3307605 0.70216300     Lake_Kangilipak 0.7188903
+## 341 0.3307605 0.70216300     Lake_Kangilipak 0.4081289
+## 342 0.3307605 0.70216300     Lake_Kangilipak 0.2399907
+## 343 0.4081289 0.16134329      Lake_Narvakrak 0.6611326
+## 344 0.4081289 0.16134329      Lake_Narvakrak 0.1894513
+## 345 0.4081289 0.16134329      Lake_Narvakrak 0.6382812
+## 346 0.4081289 0.16134329      Lake_Narvakrak 0.4478987
+## 347 0.4081289 0.16134329      Lake_Narvakrak 0.2207037
+## 348 0.4081289 0.16134329      Lake_Narvakrak 0.0000000
+## 349 0.4081289 0.16134329      Lake_Narvakrak 0.8400324
+## 350 0.4081289 0.16134329      Lake_Narvakrak 0.5455799
+## 351 0.4081289 0.16134329      Lake_Narvakrak 0.6763771
+## 352 0.4081289 0.16134329      Lake_Narvakrak 0.8157626
+## 353 0.4081289 0.16134329      Lake_Narvakrak 0.5213427
+## 354 0.4081289 0.16134329      Lake_Narvakrak 0.2542410
+## 355 0.4081289 0.16134329      Lake_Narvakrak 0.5418022
+## 356 0.4081289 0.16134329      Lake_Narvakrak 0.9130956
+## 357 0.4081289 0.16134329      Lake_Narvakrak 1.0000000
+## 358 0.4081289 0.16134329      Lake_Narvakrak 0.3830203
+## 359 0.4081289 0.16134329      Lake_Narvakrak 0.7188903
+## 360 0.4081289 0.16134329      Lake_Narvakrak 0.3307605
+## 361 0.4081289 0.16134329      Lake_Narvakrak 0.2399907
+## 362 0.2399907 0.54479234        Okoklik_Lake 0.6611326
+## 363 0.2399907 0.54479234        Okoklik_Lake 0.1894513
+## 364 0.2399907 0.54479234        Okoklik_Lake 0.6382812
+## 365 0.2399907 0.54479234        Okoklik_Lake 0.4478987
+## 366 0.2399907 0.54479234        Okoklik_Lake 0.2207037
+## 367 0.2399907 0.54479234        Okoklik_Lake 0.0000000
+## 368 0.2399907 0.54479234        Okoklik_Lake 0.8400324
+## 369 0.2399907 0.54479234        Okoklik_Lake 0.5455799
+## 370 0.2399907 0.54479234        Okoklik_Lake 0.6763771
+## 371 0.2399907 0.54479234        Okoklik_Lake 0.8157626
+## 372 0.2399907 0.54479234        Okoklik_Lake 0.5213427
+## 373 0.2399907 0.54479234        Okoklik_Lake 0.2542410
+## 374 0.2399907 0.54479234        Okoklik_Lake 0.5418022
+## 375 0.2399907 0.54479234        Okoklik_Lake 0.9130956
+## 376 0.2399907 0.54479234        Okoklik_Lake 1.0000000
+## 377 0.2399907 0.54479234        Okoklik_Lake 0.3830203
+## 378 0.2399907 0.54479234        Okoklik_Lake 0.7188903
+## 379 0.2399907 0.54479234        Okoklik_Lake 0.3307605
+## 380 0.2399907 0.54479234        Okoklik_Lake 0.4081289
+##           yend            end_node similarity    weight
+## 1   0.33562773         Imuruk_Lake  21.403954 21.403954
+## 2   0.44152998       Kuzitrin_Lake  37.549555 37.549555
+## 3   0.00000000           Lava_Lake  22.717833 22.717833
+## 4   1.00000000  North_Killeak_Lake   9.342952  9.342952
+## 5   0.50810627     White_Fish_Lake  13.719374 13.719374
+## 6   0.69488130        Iniakuk_Lake  19.539621 19.539621
+## 7   0.61020011         Kurupa_Lake  25.370183 25.370183
+## 8   0.72816493      Lake_Matcharak  21.538172 21.538172
+## 9   0.42658857          Lake_Selby  23.721105 23.721105
+## 10  0.27884718      Nutavukti_Lake  22.512750 22.512750
+## 11  0.17982528         Summit_Lake  23.412220 23.412220
+## 12  0.84100800       Takahula_Lake  19.630960 19.630960
+## 13  0.22275977         Walker_Lake  19.042422 19.042422
+## 14  0.55627300           Wild_Lake  14.518555 14.518555
+## 15  0.45828409    Desperation_Lake  22.905093 22.905093
+## 16  0.23911946         Feniak_Lake  33.618599 33.618599
+## 17  0.70216300     Lake_Kangilipak  23.675680 23.675680
+## 18  0.16134329      Lake_Narvakrak  26.013284 26.013284
+## 19  0.54479234        Okoklik_Lake  27.881988 27.881988
+## 20  0.07151575 Devil_Mountain_Lake  21.403954 21.403954
+## 21  0.44152998       Kuzitrin_Lake  24.616105 24.616105
+## 22  0.00000000           Lava_Lake  25.966475 25.966475
+## 23  1.00000000  North_Killeak_Lake   8.298271  8.298271
+## 24  0.50810627     White_Fish_Lake  12.262039 12.262039
+## 25  0.69488130        Iniakuk_Lake  18.121249 18.121249
+## 26  0.61020011         Kurupa_Lake  23.600890 23.600890
+## 27  0.72816493      Lake_Matcharak  21.702973 21.702973
+## 28  0.42658857          Lake_Selby  26.402339 26.402339
+## 29  0.27884718      Nutavukti_Lake  37.874105 37.874105
+## 30  0.17982528         Summit_Lake  37.481999 37.481999
+## 31  0.84100800       Takahula_Lake  19.344113 19.344113
+## 32  0.22275977         Walker_Lake  18.673897 18.673897
+## 33  0.55627300           Wild_Lake  13.555264 13.555264
+## 34  0.45828409    Desperation_Lake  24.515837 24.515837
+## 35  0.23911946         Feniak_Lake  22.415371 22.415371
+## 36  0.70216300     Lake_Kangilipak  26.509160 26.509160
+## 37  0.16134329      Lake_Narvakrak  32.479310 32.479310
+## 38  0.54479234        Okoklik_Lake  27.323758 27.323758
+## 39  0.07151575 Devil_Mountain_Lake  37.549555 37.549555
+## 40  0.33562773         Imuruk_Lake  24.616105 24.616105
+## 41  0.00000000           Lava_Lake  21.650083 21.650083
+## 42  1.00000000  North_Killeak_Lake   8.517722  8.517722
+## 43  0.50810627     White_Fish_Lake  12.398270 12.398270
+## 44  0.69488130        Iniakuk_Lake  19.202292 19.202292
+## 45  0.61020011         Kurupa_Lake  28.626037 28.626037
+## 46  0.72816493      Lake_Matcharak  22.590304 22.590304
+## 47  0.42658857          Lake_Selby  25.638511 25.638511
+## 48  0.27884718      Nutavukti_Lake  27.267321 27.267321
+## 49  0.17982528         Summit_Lake  28.401913 28.401913
+## 50  0.84100800       Takahula_Lake  20.529208 20.529208
+## 51  0.22275977         Walker_Lake  19.147405 19.147405
+## 52  0.55627300           Wild_Lake  14.013562 14.013562
+## 53  0.45828409    Desperation_Lake  27.146227 27.146227
+## 54  0.23911946         Feniak_Lake  41.548173 41.548173
+## 55  0.70216300     Lake_Kangilipak  24.381247 24.381247
+## 56  0.16134329      Lake_Narvakrak  28.050380 28.050380
+## 57  0.54479234        Okoklik_Lake  28.480051 28.480051
+## 58  0.07151575 Devil_Mountain_Lake  22.717833 22.717833
+## 59  0.33562773         Imuruk_Lake  25.966475 25.966475
+## 60  0.44152998       Kuzitrin_Lake  21.650083 21.650083
+## 61  1.00000000  North_Killeak_Lake   8.913524  8.913524
+## 62  0.50810627     White_Fish_Lake  15.537420 15.537420
+## 63  0.69488130        Iniakuk_Lake  17.206002 17.206002
+## 64  0.61020011         Kurupa_Lake  19.736320 19.736320
+## 65  0.72816493      Lake_Matcharak  20.405295 20.405295
+## 66  0.42658857          Lake_Selby  24.058436 24.058436
+## 67  0.27884718      Nutavukti_Lake  29.050296 29.050296
+## 68  0.17982528         Summit_Lake  21.913953 21.913953
+## 69  0.84100800       Takahula_Lake  17.948024 17.948024
+## 70  0.22275977         Walker_Lake  18.125063 18.125063
+## 71  0.55627300           Wild_Lake  13.734136 13.734136
+## 72  0.45828409    Desperation_Lake  16.924791 16.924791
+## 73  0.23911946         Feniak_Lake  19.178672 19.178672
+## 74  0.70216300     Lake_Kangilipak  21.450853 21.450853
+## 75  0.16134329      Lake_Narvakrak  40.221132 40.221132
+## 76  0.54479234        Okoklik_Lake  23.945969 23.945969
+## 77  0.07151575 Devil_Mountain_Lake   9.342952  9.342952
+## 78  0.33562773         Imuruk_Lake   8.298271  8.298271
+## 79  0.44152998       Kuzitrin_Lake   8.517722  8.517722
+## 80  0.00000000           Lava_Lake   8.913524  8.913524
+## 81  0.50810627     White_Fish_Lake  10.893057 10.893057
+## 82  0.69488130        Iniakuk_Lake   8.569390  8.569390
+## 83  0.61020011         Kurupa_Lake   8.599117  8.599117
+## 84  0.72816493      Lake_Matcharak   8.657287  8.657287
+## 85  0.42658857          Lake_Selby   8.411417  8.411417
+## 86  0.27884718      Nutavukti_Lake   8.375960  8.375960
+## 87  0.17982528         Summit_Lake   8.434401  8.434401
+## 88  0.84100800       Takahula_Lake   8.597140  8.597140
+## 89  0.22275977         Walker_Lake   8.451009  8.451009
+## 90  0.55627300           Wild_Lake   8.185825  8.185825
+## 91  0.45828409    Desperation_Lake   8.166182  8.166182
+## 92  0.23911946         Feniak_Lake   8.659553  8.659553
+## 93  0.70216300     Lake_Kangilipak   8.378354  8.378354
+## 94  0.16134329      Lake_Narvakrak   8.714042  8.714042
+## 95  0.54479234        Okoklik_Lake   8.583288  8.583288
+## 96  0.07151575 Devil_Mountain_Lake  13.719374 13.719374
+## 97  0.33562773         Imuruk_Lake  12.262039 12.262039
+## 98  0.44152998       Kuzitrin_Lake  12.398270 12.398270
+## 99  0.00000000           Lava_Lake  15.537420 15.537420
+## 100 1.00000000  North_Killeak_Lake  10.893057 10.893057
+## 101 0.69488130        Iniakuk_Lake  12.014107 12.014107
+## 102 0.61020011         Kurupa_Lake  12.227552 12.227552
+## 103 0.72816493      Lake_Matcharak  12.762617 12.762617
+## 104 0.42658857          Lake_Selby  12.586996 12.586996
+## 105 0.27884718      Nutavukti_Lake  13.333523 13.333523
+## 106 0.17982528         Summit_Lake  12.584043 12.584043
+## 107 0.84100800       Takahula_Lake  11.981594 11.981594
+## 108 0.22275977         Walker_Lake  12.155411 12.155411
+## 109 0.55627300           Wild_Lake  11.664465 11.664465
+## 110 0.45828409    Desperation_Lake  11.380075 11.380075
+## 111 0.23911946         Feniak_Lake  12.331521 12.331521
+## 112 0.70216300     Lake_Kangilipak  13.140487 13.140487
+## 113 0.16134329      Lake_Narvakrak  13.598031 13.598031
+## 114 0.54479234        Okoklik_Lake  13.617671 13.617671
+## 115 0.07151575 Devil_Mountain_Lake  19.539621 19.539621
+## 116 0.33562773         Imuruk_Lake  18.121249 18.121249
+## 117 0.44152998       Kuzitrin_Lake  19.202292 19.202292
+## 118 0.00000000           Lava_Lake  17.206002 17.206002
+## 119 1.00000000  North_Killeak_Lake   8.569390  8.569390
+## 120 0.50810627     White_Fish_Lake  12.014107 12.014107
+## 121 0.61020011         Kurupa_Lake  29.306129 29.306129
+## 122 0.72816493      Lake_Matcharak  27.575858 27.575858
+## 123 0.42658857          Lake_Selby  28.597259 28.597259
+## 124 0.27884718      Nutavukti_Lake  20.040756 20.040756
+## 125 0.17982528         Summit_Lake  19.558895 19.558895
+## 126 0.84100800       Takahula_Lake  26.906888 26.906888
+## 127 0.22275977         Walker_Lake  29.068926 29.068926
+## 128 0.55627300           Wild_Lake  25.565907 25.565907
+## 129 0.45828409    Desperation_Lake  19.528514 19.528514
+## 130 0.23911946         Feniak_Lake  21.566128 21.566128
+## 131 0.70216300     Lake_Kangilipak  18.540557 18.540557
+## 132 0.16134329      Lake_Narvakrak  19.062810 19.062810
+## 133 0.54479234        Okoklik_Lake  19.519258 19.519258
+## 134 0.07151575 Devil_Mountain_Lake  25.370183 25.370183
+## 135 0.33562773         Imuruk_Lake  23.600890 23.600890
+## 136 0.44152998       Kuzitrin_Lake  28.626037 28.626037
+## 137 0.00000000           Lava_Lake  19.736320 19.736320
+## 138 1.00000000  North_Killeak_Lake   8.599117  8.599117
+## 139 0.50810627     White_Fish_Lake  12.227552 12.227552
+## 140 0.69488130        Iniakuk_Lake  29.306129 29.306129
+## 141 0.72816493      Lake_Matcharak  34.385772 34.385772
+## 142 0.42658857          Lake_Selby  32.985518 32.985518
+## 143 0.27884718      Nutavukti_Lake  27.166660 27.166660
+## 144 0.17982528         Summit_Lake  28.442026 28.442026
+## 145 0.84100800       Takahula_Lake  25.666648 25.666648
+## 146 0.22275977         Walker_Lake  23.119421 23.119421
+## 147 0.55627300           Wild_Lake  19.903243 19.903243
+## 148 0.45828409    Desperation_Lake  27.299531 27.299531
+## 149 0.23911946         Feniak_Lake  35.715640 35.715640
+## 150 0.70216300     Lake_Kangilipak  22.873591 22.873591
+## 151 0.16134329      Lake_Narvakrak  24.432967 24.432967
+## 152 0.54479234        Okoklik_Lake  25.095272 25.095272
+## 153 0.07151575 Devil_Mountain_Lake  21.538172 21.538172
+## 154 0.33562773         Imuruk_Lake  21.702973 21.702973
+## 155 0.44152998       Kuzitrin_Lake  22.590304 22.590304
+## 156 0.00000000           Lava_Lake  20.405295 20.405295
+## 157 1.00000000  North_Killeak_Lake   8.657287  8.657287
+## 158 0.50810627     White_Fish_Lake  12.762617 12.762617
+## 159 0.69488130        Iniakuk_Lake  27.575858 27.575858
+## 160 0.61020011         Kurupa_Lake  34.385772 34.385772
+## 161 0.42658857          Lake_Selby  26.020745 26.020745
+## 162 0.27884718      Nutavukti_Lake  26.107531 26.107531
+## 163 0.17982528         Summit_Lake  24.078315 24.078315
+## 164 0.84100800       Takahula_Lake  34.283075 34.283075
+## 165 0.22275977         Walker_Lake  19.605166 19.605166
+## 166 0.55627300           Wild_Lake  21.669642 21.669642
+## 167 0.45828409    Desperation_Lake  22.820771 22.820771
+## 168 0.23911946         Feniak_Lake  26.071864 26.071864
+## 169 0.70216300     Lake_Kangilipak  23.261619 23.261619
+## 170 0.16134329      Lake_Narvakrak  24.299287 24.299287
+## 171 0.54479234        Okoklik_Lake  25.480513 25.480513
+## 172 0.07151575 Devil_Mountain_Lake  23.721105 23.721105
+## 173 0.33562773         Imuruk_Lake  26.402339 26.402339
+## 174 0.44152998       Kuzitrin_Lake  25.638511 25.638511
+## 175 0.00000000           Lava_Lake  24.058436 24.058436
+## 176 1.00000000  North_Killeak_Lake   8.411417  8.411417
+## 177 0.50810627     White_Fish_Lake  12.586996 12.586996
+## 178 0.69488130        Iniakuk_Lake  28.597259 28.597259
+## 179 0.61020011         Kurupa_Lake  32.985518 32.985518
+## 180 0.72816493      Lake_Matcharak  26.020745 26.020745
+## 181 0.27884718      Nutavukti_Lake  30.325726 30.325726
+## 182 0.17982528         Summit_Lake  25.485472 25.485472
+## 183 0.84100800       Takahula_Lake  22.107443 22.107443
+## 184 0.22275977         Walker_Lake  30.902503 30.902503
+## 185 0.55627300           Wild_Lake  17.920802 17.920802
+## 186 0.45828409    Desperation_Lake  21.352390 21.352390
+## 187 0.23911946         Feniak_Lake  24.512554 24.512554
+## 188 0.70216300     Lake_Kangilipak  21.880252 21.880252
+## 189 0.16134329      Lake_Narvakrak  29.118477 29.118477
+## 190 0.54479234        Okoklik_Lake  23.922055 23.922055
+## 191 0.07151575 Devil_Mountain_Lake  22.512750 22.512750
+## 192 0.33562773         Imuruk_Lake  37.874105 37.874105
+## 193 0.44152998       Kuzitrin_Lake  27.267321 27.267321
+## 194 0.00000000           Lava_Lake  29.050296 29.050296
+## 195 1.00000000  North_Killeak_Lake   8.375960  8.375960
+## 196 0.50810627     White_Fish_Lake  13.333523 13.333523
+## 197 0.69488130        Iniakuk_Lake  20.040756 20.040756
+## 198 0.61020011         Kurupa_Lake  27.166660 27.166660
+## 199 0.72816493      Lake_Matcharak  26.107531 26.107531
+## 200 0.42658857          Lake_Selby  30.325726 30.325726
+## 201 0.17982528         Summit_Lake  34.919828 34.919828
+## 202 0.84100800       Takahula_Lake  22.519256 22.519256
+## 203 0.22275977         Walker_Lake  20.691245 20.691245
+## 204 0.55627300           Wild_Lake  14.849076 14.849076
+## 205 0.45828409    Desperation_Lake  22.898270 22.898270
+## 206 0.23911946         Feniak_Lake  24.475829 24.475829
+## 207 0.70216300     Lake_Kangilipak  24.338113 24.338113
+## 208 0.16134329      Lake_Narvakrak  39.720584 39.720584
+## 209 0.54479234        Okoklik_Lake  26.825725 26.825725
+## 210 0.07151575 Devil_Mountain_Lake  23.412220 23.412220
+## 211 0.33562773         Imuruk_Lake  37.481999 37.481999
+## 212 0.44152998       Kuzitrin_Lake  28.401913 28.401913
+## 213 0.00000000           Lava_Lake  21.913953 21.913953
+## 214 1.00000000  North_Killeak_Lake   8.434401  8.434401
+## 215 0.50810627     White_Fish_Lake  12.584043 12.584043
+## 216 0.69488130        Iniakuk_Lake  19.558895 19.558895
+## 217 0.61020011         Kurupa_Lake  28.442026 28.442026
+## 218 0.72816493      Lake_Matcharak  24.078315 24.078315
+## 219 0.42658857          Lake_Selby  25.485472 25.485472
+## 220 0.27884718      Nutavukti_Lake  34.919828 34.919828
+## 221 0.84100800       Takahula_Lake  21.487522 21.487522
+## 222 0.22275977         Walker_Lake  19.213294 19.213294
+## 223 0.55627300           Wild_Lake  14.657072 14.657072
+## 224 0.45828409    Desperation_Lake  33.389277 33.389277
+## 225 0.23911946         Feniak_Lake  28.278325 28.278325
+## 226 0.70216300     Lake_Kangilipak  27.202119 27.202119
+## 227 0.16134329      Lake_Narvakrak  26.756677 26.756677
+## 228 0.54479234        Okoklik_Lake  28.292402 28.292402
+## 229 0.07151575 Devil_Mountain_Lake  19.630960 19.630960
+## 230 0.33562773         Imuruk_Lake  19.344113 19.344113
+## 231 0.44152998       Kuzitrin_Lake  20.529208 20.529208
+## 232 0.00000000           Lava_Lake  17.948024 17.948024
+## 233 1.00000000  North_Killeak_Lake   8.597140  8.597140
+## 234 0.50810627     White_Fish_Lake  11.981594 11.981594
+## 235 0.69488130        Iniakuk_Lake  26.906888 26.906888
+## 236 0.61020011         Kurupa_Lake  25.666648 25.666648
+## 237 0.72816493      Lake_Matcharak  34.283075 34.283075
+## 238 0.42658857          Lake_Selby  22.107443 22.107443
+## 239 0.27884718      Nutavukti_Lake  22.519256 22.519256
+## 240 0.17982528         Summit_Lake  21.487522 21.487522
+## 241 0.22275977         Walker_Lake  20.154688 20.154688
+## 242 0.55627300           Wild_Lake  18.397043 18.397043
+## 243 0.45828409    Desperation_Lake  21.064472 21.064472
+## 244 0.23911946         Feniak_Lake  22.528183 22.528183
+## 245 0.70216300     Lake_Kangilipak  19.667528 19.667528
+## 246 0.16134329      Lake_Narvakrak  20.982089 20.982089
+## 247 0.54479234        Okoklik_Lake  21.091405 21.091405
+## 248 0.07151575 Devil_Mountain_Lake  19.042422 19.042422
+## 249 0.33562773         Imuruk_Lake  18.673897 18.673897
+## 250 0.44152998       Kuzitrin_Lake  19.147405 19.147405
+## 251 0.00000000           Lava_Lake  18.125063 18.125063
+## 252 1.00000000  North_Killeak_Lake   8.451009  8.451009
+## 253 0.50810627     White_Fish_Lake  12.155411 12.155411
+## 254 0.69488130        Iniakuk_Lake  29.068926 29.068926
+## 255 0.61020011         Kurupa_Lake  23.119421 23.119421
+## 256 0.72816493      Lake_Matcharak  19.605166 19.605166
+## 257 0.42658857          Lake_Selby  30.902503 30.902503
+## 258 0.27884718      Nutavukti_Lake  20.691245 20.691245
+## 259 0.17982528         Summit_Lake  19.213294 19.213294
+## 260 0.84100800       Takahula_Lake  20.154688 20.154688
+## 261 0.55627300           Wild_Lake  17.218433 17.218433
+## 262 0.45828409    Desperation_Lake  17.148456 17.148456
+## 263 0.23911946         Feniak_Lake  18.792681 18.792681
+## 264 0.70216300     Lake_Kangilipak  16.249774 16.249774
+## 265 0.16134329      Lake_Narvakrak  19.628397 19.628397
+## 266 0.54479234        Okoklik_Lake  17.198853 17.198853
+## 267 0.07151575 Devil_Mountain_Lake  14.518555 14.518555
+## 268 0.33562773         Imuruk_Lake  13.555264 13.555264
+## 269 0.44152998       Kuzitrin_Lake  14.013562 14.013562
+## 270 0.00000000           Lava_Lake  13.734136 13.734136
+## 271 1.00000000  North_Killeak_Lake   8.185825  8.185825
+## 272 0.50810627     White_Fish_Lake  11.664465 11.664465
+## 273 0.69488130        Iniakuk_Lake  25.565907 25.565907
+## 274 0.61020011         Kurupa_Lake  19.903243 19.903243
+## 275 0.72816493      Lake_Matcharak  21.669642 21.669642
+## 276 0.42658857          Lake_Selby  17.920802 17.920802
+## 277 0.27884718      Nutavukti_Lake  14.849076 14.849076
+## 278 0.17982528         Summit_Lake  14.657072 14.657072
+## 279 0.84100800       Takahula_Lake  18.397043 18.397043
+## 280 0.22275977         Walker_Lake  17.218433 17.218433
+## 281 0.45828409    Desperation_Lake  14.849410 14.849410
+## 282 0.23911946         Feniak_Lake  15.923639 15.923639
+## 283 0.70216300     Lake_Kangilipak  14.950023 14.950023
+## 284 0.16134329      Lake_Narvakrak  14.230003 14.230003
+## 285 0.54479234        Okoklik_Lake  15.318508 15.318508
+## 286 0.07151575 Devil_Mountain_Lake  22.905093 22.905093
+## 287 0.33562773         Imuruk_Lake  24.515837 24.515837
+## 288 0.44152998       Kuzitrin_Lake  27.146227 27.146227
+## 289 0.00000000           Lava_Lake  16.924791 16.924791
+## 290 1.00000000  North_Killeak_Lake   8.166182  8.166182
+## 291 0.50810627     White_Fish_Lake  11.380075 11.380075
+## 292 0.69488130        Iniakuk_Lake  19.528514 19.528514
+## 293 0.61020011         Kurupa_Lake  27.299531 27.299531
+## 294 0.72816493      Lake_Matcharak  22.820771 22.820771
+## 295 0.42658857          Lake_Selby  21.352390 21.352390
+## 296 0.27884718      Nutavukti_Lake  22.898270 22.898270
+## 297 0.17982528         Summit_Lake  33.389277 33.389277
+## 298 0.84100800       Takahula_Lake  21.064472 21.064472
+## 299 0.22275977         Walker_Lake  17.148456 17.148456
+## 300 0.55627300           Wild_Lake  14.849410 14.849410
+## 301 0.23911946         Feniak_Lake  32.352123 32.352123
+## 302 0.70216300     Lake_Kangilipak  29.371502 29.371502
+## 303 0.16134329      Lake_Narvakrak  20.114813 20.114813
+## 304 0.54479234        Okoklik_Lake  28.785807 28.785807
+## 305 0.07151575 Devil_Mountain_Lake  33.618599 33.618599
+## 306 0.33562773         Imuruk_Lake  22.415371 22.415371
+## 307 0.44152998       Kuzitrin_Lake  41.548173 41.548173
+## 308 0.00000000           Lava_Lake  19.178672 19.178672
+## 309 1.00000000  North_Killeak_Lake   8.659553  8.659553
+## 310 0.50810627     White_Fish_Lake  12.331521 12.331521
+## 311 0.69488130        Iniakuk_Lake  21.566128 21.566128
+## 312 0.61020011         Kurupa_Lake  35.715640 35.715640
+## 313 0.72816493      Lake_Matcharak  26.071864 26.071864
+## 314 0.42658857          Lake_Selby  24.512554 24.512554
+## 315 0.27884718      Nutavukti_Lake  24.475829 24.475829
+## 316 0.17982528         Summit_Lake  28.278325 28.278325
+## 317 0.84100800       Takahula_Lake  22.528183 22.528183
+## 318 0.22275977         Walker_Lake  18.792681 18.792681
+## 319 0.55627300           Wild_Lake  15.923639 15.923639
+## 320 0.45828409    Desperation_Lake  32.352123 32.352123
+## 321 0.70216300     Lake_Kangilipak  25.336381 25.336381
+## 322 0.16134329      Lake_Narvakrak  23.651418 23.651418
+## 323 0.54479234        Okoklik_Lake  28.810164 28.810164
+## 324 0.07151575 Devil_Mountain_Lake  23.675680 23.675680
+## 325 0.33562773         Imuruk_Lake  26.509160 26.509160
+## 326 0.44152998       Kuzitrin_Lake  24.381247 24.381247
+## 327 0.00000000           Lava_Lake  21.450853 21.450853
+## 328 1.00000000  North_Killeak_Lake   8.378354  8.378354
+## 329 0.50810627     White_Fish_Lake  13.140487 13.140487
+## 330 0.69488130        Iniakuk_Lake  18.540557 18.540557
+## 331 0.61020011         Kurupa_Lake  22.873591 22.873591
+## 332 0.72816493      Lake_Matcharak  23.261619 23.261619
+## 333 0.42658857          Lake_Selby  21.880252 21.880252
+## 334 0.27884718      Nutavukti_Lake  24.338113 24.338113
+## 335 0.17982528         Summit_Lake  27.202119 27.202119
+## 336 0.84100800       Takahula_Lake  19.667528 19.667528
+## 337 0.22275977         Walker_Lake  16.249774 16.249774
+## 338 0.55627300           Wild_Lake  14.950023 14.950023
+## 339 0.45828409    Desperation_Lake  29.371502 29.371502
+## 340 0.23911946         Feniak_Lake  25.336381 25.336381
+## 341 0.16134329      Lake_Narvakrak  23.780074 23.780074
+## 342 0.54479234        Okoklik_Lake  56.270315 56.270315
+## 343 0.07151575 Devil_Mountain_Lake  26.013284 26.013284
+## 344 0.33562773         Imuruk_Lake  32.479310 32.479310
+## 345 0.44152998       Kuzitrin_Lake  28.050380 28.050380
+## 346 0.00000000           Lava_Lake  40.221132 40.221132
+## 347 1.00000000  North_Killeak_Lake   8.714042  8.714042
+## 348 0.50810627     White_Fish_Lake  13.598031 13.598031
+## 349 0.69488130        Iniakuk_Lake  19.062810 19.062810
+## 350 0.61020011         Kurupa_Lake  24.432967 24.432967
+## 351 0.72816493      Lake_Matcharak  24.299287 24.299287
+## 352 0.42658857          Lake_Selby  29.118477 29.118477
+## 353 0.27884718      Nutavukti_Lake  39.720584 39.720584
+## 354 0.17982528         Summit_Lake  26.756677 26.756677
+## 355 0.84100800       Takahula_Lake  20.982089 20.982089
+## 356 0.22275977         Walker_Lake  19.628397 19.628397
+## 357 0.55627300           Wild_Lake  14.230003 14.230003
+## 358 0.45828409    Desperation_Lake  20.114813 20.114813
+## 359 0.23911946         Feniak_Lake  23.651418 23.651418
+## 360 0.70216300     Lake_Kangilipak  23.780074 23.780074
+## 361 0.54479234        Okoklik_Lake  27.508635 27.508635
+## 362 0.07151575 Devil_Mountain_Lake  27.881988 27.881988
+## 363 0.33562773         Imuruk_Lake  27.323758 27.323758
+## 364 0.44152998       Kuzitrin_Lake  28.480051 28.480051
+## 365 0.00000000           Lava_Lake  23.945969 23.945969
+## 366 1.00000000  North_Killeak_Lake   8.583288  8.583288
+## 367 0.50810627     White_Fish_Lake  13.617671 13.617671
+## 368 0.69488130        Iniakuk_Lake  19.519258 19.519258
+## 369 0.61020011         Kurupa_Lake  25.095272 25.095272
+## 370 0.72816493      Lake_Matcharak  25.480513 25.480513
+## 371 0.42658857          Lake_Selby  23.922055 23.922055
+## 372 0.27884718      Nutavukti_Lake  26.825725 26.825725
+## 373 0.17982528         Summit_Lake  28.292402 28.292402
+## 374 0.84100800       Takahula_Lake  21.091405 21.091405
+## 375 0.22275977         Walker_Lake  17.198853 17.198853
+## 376 0.55627300           Wild_Lake  15.318508 15.318508
+## 377 0.45828409    Desperation_Lake  28.785807 28.785807
+## 378 0.23911946         Feniak_Lake  28.810164 28.810164
+## 379 0.70216300     Lake_Kangilipak  56.270315 56.270315
+## 380 0.16134329      Lake_Narvakrak  27.508635 27.508635
 ```
 
-The honest way to report a network is to say what cutoff you used and to have looked at what happens either side of it. If the grouping a reader sees only exists at one very specific threshold, it is an artefact of the cutoff, not a finding about the samples.
-
-### plotting the network {-}
-
-`buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`.
+These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`.
 
 
 ``` r
@@ -1841,23 +2766,16 @@ ggplot() +
     data = net$edges,
     aes(
       x = x, y = y, xend = xend, yend = yend,
-      linewidth = edgeweight,
-      alpha = edgeweight
+      linewidth = similarity,
+      alpha = similarity
     ),
     color = "grey40"
   ) +
   geom_point(
     data = net$nodes,
-    aes(x = x, y = y, fill = wood_type),
+    aes(x = x, y = y, fill = park),
     shape = 21, size = 3.2, color = "black", stroke = 0.2
   ) +
-  # ggrepel::geom_text_repel(
-  #   data = net$nodes,
-  #   aes(x = x, y = y, label = species),
-  #   size = 2.5,
-  #   max.overlaps = 40
-  # ) +
-  scale_fill_manual(values = c("hardwood" = "#1f78b4", "softwood" = "#33a02c")) +
   scale_linewidth_continuous(range = c(0.2, 1.4)) +
   scale_alpha_continuous(range = c(0.15, 0.8)) +
   guides(alpha = "none") +
@@ -1865,21 +2783,75 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Remember what an edge means here. Two woods are joined because their smoke chemistry resembles one another's. A wood sitting in the middle, touching everything, is not the most important wood — it is the most *average* one, the sample whose chemistry is intermediate enough to look a bit like everybody. That is the opposite of what a hub will mean in Part 2.
+## thresholds
 
-<!-- =====================================================================================
-     PART 2 — AUTHORING STUB (2026-08-27).
-     Outline, teaching points and verified worked-example numbers are below in prose so the
-     chapter reads coherently, but the CODE for this part is NOT yet written, because the
-     dataset it needs has no published home. See the TODO block below. Do not present this
-     part as finished material to students until that is resolved.
-     ===================================================================================== -->
+For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples.
 
-## part 2 — networks you are given {-}
+Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
 
-### edges as observed facts {-}
+
+``` r
+net_10 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 10),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_20 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 20),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_25 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 25),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+net_30 <- buildNetwork(
+  edgelist = filter(alaska_edges, similarity > 30),
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+
+net_10$nodes$threshold <- 10
+net_10$edges$threshold <- 10
+net_20$nodes$threshold <- 20
+net_20$edges$threshold <- 20
+net_25$nodes$threshold <- 25
+net_25$edges$threshold <- 25
+net_30$nodes$threshold <- 30
+net_30$edges$threshold <- 30
+
+net$nodes <- rbind(net_10$nodes, net_20$nodes, net_25$nodes, net_30$nodes)
+net$edges <- rbind(net_10$edges, net_20$edges, net_25$edges, net_30$edges)
+```
+
+
+``` r
+ggplot() +
+  geom_segment(
+    data = net$edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = similarity,
+      alpha = similarity
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = net$nodes,
+    aes(x = x, y = y, fill = park),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  facet_grid(.~threshold) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+
+## data themselves as networks {-}
 
 Everything in Part 1 was **derived**: we computed the edges ourselves out of a data matrix, and we chose the rule that put them there. Now consider a network nobody computed. An origin-and-destination table of journeys. A ledger of dispatches sent between garrisons. A record of which proteins were observed to bind which. Here the edge list *is* the raw data. You did not pick a distance measure and you did not pick a threshold, because there was nothing to pick — the edges are observations.
 
@@ -1947,7 +2919,7 @@ Ranking your nodes by how much traffic they carry would put the station that act
      re-verify every number quoted above in R before this stub note is removed.
      ===================================================================================== -->
 
-## part 3 — reading networks honestly {-}
+## interpreting networks {-}
 
 Three cautions, all of which apply whichever kind of network you have.
 
@@ -1978,38 +2950,7 @@ Three cautions, all of which apply whichever kind of network you have.
 
 ## clustering {-}
 
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;" />
-
-Please note that we can get distance matrices directly from `runMatrixAnalyses` by specifying `analysis = "dist"`:
-
-
-``` r
-alaska_lake_data %>%
-    select(-element_type) %>%
-    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
-
-dist <- runMatrixAnalyses(
-    data = alaska_lake_data_wide,
-    analysis = c("dist"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
-    columns_w_sample_ID_info = c("lake", "park")
-)
-## Replacing NAs in your data with mean
-
-as.matrix(dist)[1:3,1:3]
-##      sample_unique_ID_sample_1  sample_unique_ID_sample_2
-## [1,] "Devil_Mountain_Lake_BELA" "Imuruk_Lake_BELA"       
-## [2,] "Devil_Mountain_Lake_BELA" "Kuzitrin_Lake_BELA"     
-## [3,] "Devil_Mountain_Lake_BELA" "Lava_Lake_BELA"         
-##      distance   
-## [1,] " 3.672034"
-## [2,] " 1.663147"
-## [3,] " 3.401828"
-```
-
-There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalyses()` to use `analysis = "hclust"`: 
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, similar to how we did for networks, but we can do it all in one step by using `analysis = "hclust"`: 
 
 
 ``` r
@@ -2056,7 +2997,7 @@ ggtree() +
   scale_x_continuous(limits = c(0,700))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2074,7 +3015,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-256-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-262-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
 
@@ -2101,7 +3042,7 @@ ggtree() +
 ## Replacing NAs in your data with mean
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## Annotating trees {-}
 
@@ -2133,7 +3074,7 @@ tree_plot <- ggtree(hclust_out) +
 tree_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
 
@@ -2150,7 +3091,7 @@ heat_plot <- hclust_out %>%
 heat_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-266-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
 
@@ -2159,7 +3100,7 @@ With matching y scales, `plot_grid()` can align the tree and the heat map so the
 plot_grid(tree_plot, heat_plot, axis = "tb", align = "h")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
 
@@ -2171,7 +3112,7 @@ chemical_blooms %>%
   geom_tile()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-262-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## further reading {-}
@@ -2200,7 +3141,7 @@ chemical_blooms %>%
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-277)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
+<p class="caption">(\#fig:unnamed-chunk-281)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
 </div>
 
 In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalyses()`, a function that is loaded into your R Session when you run the source() command.
@@ -2242,7 +3183,7 @@ PCA looks at all the variance in a high dimensional data set and chooses new axe
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-279)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
+<p class="caption">(\#fig:unnamed-chunk-283)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
 </div>
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
@@ -2312,8 +3253,8 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-281-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-281)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
+<img src="index_files/figure-html/unnamed-chunk-285-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-285)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
 </div>
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
@@ -2368,8 +3309,8 @@ ggplot(AK_lakes_pca_ord) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-283)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
+<img src="index_files/figure-html/unnamed-chunk-287-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-287)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
 </div>
 
 Great! Here is how to read the ordination plot:
@@ -2419,8 +3360,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-284-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-284)PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
+<img src="index_files/figure-html/unnamed-chunk-288-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-288)PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
 </div>
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
@@ -2435,8 +3376,8 @@ AK_lakes_pca_ord %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-285-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-285)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
+<img src="index_files/figure-html/unnamed-chunk-289-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-289)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
 </div>
 
 ### principal components {-}
@@ -2472,8 +3413,8 @@ ggplot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-286-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-286)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
+<img src="index_files/figure-html/unnamed-chunk-290-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-290)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
 </div>
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
@@ -2484,7 +3425,7 @@ Static plots are great for reporting, but exploring PCA interactively can make i
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-287)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
+<p class="caption">(\#fig:unnamed-chunk-291)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
 </div>
 
 The function takes three key arguments:
@@ -2548,8 +3489,8 @@ wq %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-290-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-290)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
+<img src="index_files/figure-html/unnamed-chunk-294-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-294)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
 </div>
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
@@ -2574,8 +3515,8 @@ runMatrixAnalyses(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-291)UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
+<img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-295)UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
 </div>
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
@@ -2674,7 +3615,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-313-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-317-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -2718,7 +3659,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-315-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-319-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -2789,7 +3730,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-316-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-320-1.png" alt="" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -2976,7 +3917,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-343-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-347-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -3024,7 +3965,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-344-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-348-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether
 the distribution is skewed, and whether any group is bimodal. All three change which test you should
@@ -3052,7 +3993,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-345-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-349-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## test selection {-}
 
@@ -3115,7 +4056,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-348-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-352-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -3128,7 +4069,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-349-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-353-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3217,7 +4158,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-354-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-358-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3231,7 +4172,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-355-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-359-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3341,7 +4282,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-361-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-365-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3411,7 +4352,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-364-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-368-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3426,7 +4367,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-365-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-369-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3446,7 +4387,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 1.90e- 6
+##  4 Cl      aquifer_3    values       0.750 7.50e- 6
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -3576,7 +4517,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-370-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-374-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -3665,7 +4606,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-405-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-409-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
@@ -3766,7 +4707,7 @@ plot1 <- ggplot() +
 plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-411-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-415-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3778,7 +4719,7 @@ ggplot(predictions_from_basic_linear_model) +
   geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-412-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-416-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3799,7 +4740,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-414-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-418-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3811,7 +4752,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-415-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-419-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -3875,7 +4816,7 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-417-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-421-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -4027,7 +4968,7 @@ plot3 <- ggplot(model_comparison_data) + geom_point(aes(
 plot_grid(plot1, plot2, plot3, nrow = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-419-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-423-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -4098,7 +5039,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-420-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-424-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -4174,7 +5115,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-423-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-427-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -4201,7 +5142,7 @@ ggplot() +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-424-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-428-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -4253,7 +5194,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-426-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-430-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4528,7 +5469,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -4578,7 +5519,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-462-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-466-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4602,7 +5543,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-467-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4642,7 +5583,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-468-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -4674,18 +5615,18 @@ select(search_results, title, generation)
 ## # A tibble: 12 × 2
 ##    title                                          generation
 ##    <chr>                                          <chr>     
-##  1 Ginsenosides in Panax genus and their biosynt… "Natural …
-##  2 β-Amyrin synthase from Conyza blinii expresse… "# Tags:\…
+##  1 Ginsenosides in Panax genus and their biosynt… "# Tags f…
+##  2 β-Amyrin synthase from Conyza blinii expresse… "# Classi…
 ##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Classi…
-##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Classi…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Tags\n…
 ##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…
-##  6 Genome Mining and Gene Expression Reveal Mayt… "# Classi…
+##  6 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
 ##  7 Current status and prospects of herbicide-res… "Herbicid…
 ##  8 Sorghum (Sorghum bicolor).                     "# Tags\n…
 ##  9 Potential food applications of sorghum (Sorgh… "# Tags f…
-## 10 Cuticular wax in wheat: biosynthesis, genetic… "# Classi…
+## 10 Cuticular wax in wheat: biosynthesis, genetic… "Plant cu…
 ## 11 Regulatory mechanisms underlying cuticular wa… "Plant cu…
-## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant cu…
+## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant im…
 ```
 
 ## {-}
@@ -4827,7 +5768,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-488-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-492-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -5071,7 +6012,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-516-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-520-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5099,7 +6040,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-517-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-521-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5144,7 +6085,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-519-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5160,7 +6101,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-520-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-524-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5169,7 +6110,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-521-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-525-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5240,7 +6181,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-527-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5260,7 +6201,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-524-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-528-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5338,7 +6279,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-529-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-533-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5373,7 +6314,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -5595,7 +6536,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-552-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-556-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -6256,7 +7197,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-578-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-582-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -6446,7 +7387,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-602-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -6469,7 +7410,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-599-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-603-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -6490,7 +7431,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-604-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -6563,7 +7504,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-605-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-609-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -6575,7 +7516,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-606-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-610-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -6591,7 +7532,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-607-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-611-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -6606,7 +7547,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-608-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-612-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -6635,7 +7576,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-609-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-613-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -6660,7 +7601,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-610-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-614-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -6707,7 +7648,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-611-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-615-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -6728,7 +7669,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-612-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-616-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## {-}

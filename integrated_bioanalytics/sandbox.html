@@ -10,7 +10,9 @@
     * { box-sizing: border-box; }
     html, body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 system-ui, sans-serif; }
     main { max-width:1000px; margin:0 auto; padding:22px 20px 60px; }
-    h1 { font-size:20px; margin:0 0 2px; } h1 span { color:var(--amber); }
+    h1 { font-size:20px; margin:0; } h1 span { color:var(--amber); }
+    /* Title + ready-status on one baseline; wraps to two lines on a narrow screen rather than colliding. */
+    .pagehead { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:0 0 10px; }
     .sub { opacity:.65; font-size:13px; margin:0 0 16px; }
     .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
     #status { font-size:13px; color:var(--amber); min-height:18px; }
@@ -92,24 +94,21 @@
     .capchoices label { display:flex; align-items:center; gap:5px; cursor:pointer; opacity:.85; }
     button.capreset { margin-top:10px; background:#0a1620; color:var(--ink); border:1px solid var(--line);
                       border-radius:6px; padding:5px 12px; font:12px system-ui; cursor:pointer; }
-    /* Hint box — our plain-English gloss under an R error. Visually subordinate to the error itself:
-       the student should read R's words first and ours second, because R's are the ones they will meet
-       again in RStudio, where we are not there to translate. */
-    #output .hintbox { border-left:3px solid var(--amber); background:rgba(255,216,140,.06);
-                       padding:8px 12px; margin:-2px 0 8px; border-radius:0 6px 6px 0; font-size:13px; }
-    #output .hintbox .hlabel { font-size:11px; letter-spacing:.06em; color:var(--amber); opacity:.85;
-                               display:block; margin-bottom:3px; }
-    #output .hintbox .htry { display:block; margin-top:6px; font:12.5px ui-monospace, Menlo, Consolas, monospace;
-                             color:var(--green); }
+    /* Hint box (.webr-hintbox) — the plain-English gloss under an R error. Its CSS is NOT here any more:
+       the shared console injects its own, so a room and a chapter cell cannot end up with an unstyled
+       hint that nobody notices until a student meets it. Deliberately not re-styled from this side. */
     code { background:#0a1620; padding:1px 5px; border-radius:4px; }
     a { color:var(--amber); }
   </style>
 </head>
 <body>
   <main>
-    <h1>WebR <span>sandbox</span> · Integrated Bioanalytics</h1>
-
-    <div class="card">
+    <!-- Title and status share one line. The status used to sit in its own card below the title, which
+         cost three lines of height above the editor for one short sentence; on a laptop in class that
+         pushed the code out of view. Same element and same id, so the shared console's setStatus() and
+         the browser checks are untouched. -->
+    <div class="pagehead">
+      <h1>WebR <span>sandbox</span> · Integrated Bioanalytics</h1>
       <div id="status">Loading…</div>
     </div>
 
@@ -122,7 +121,6 @@
         <button class="run" id="run" disabled>&#9654; Run</button>
         <span class="hint">or press Ctrl/&#8984; + Enter &mdash; <b>highlight part of your code to run just that part</b></span>
       </div>
-      <div class="hint" style="margin-top:10px"><code>view(name)</code> opens a table &mdash; it works on anything, including a result you just built: <code>view(filter(solvents, category == "alcohol"))</code>. Also handy: <code>colnames(name)</code>, <code>glimpse(name)</code>, <code>summary(name)</code>. Writing a figure caption? <code>buildCaption()</code> opens the caption checklist. Packages ready: dplyr, ggplot2, tidyr, readr, stringr.</div>
       <div id="output"></div>
     </div>
 
@@ -158,7 +156,7 @@
     // This page is a THIRD consumer of that shared module, in a different repo, so the escape rooms'
     // validate_assets.py VBUMP check cannot see it — bump here by hand whenever that token moves,
     // or a console edit silently serves stale to the sandbox while the rooms pick it up.
-    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=92";
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=102";
 
     // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
     const DATASETS = [
@@ -258,6 +256,10 @@ View <- function(x, ...) view(x, ...)
       { status: document.getElementById("status"), output: document.getElementById("output") }
     );
 
+    // Surface-specific wording for the shared error hints. THIS page has an Environment pane to send a
+    // student to; a room does not, so the shared module only names one when told there is one.
+    console_.hintContext = { envLabel: "Environment pane" };
+
     const codeEl = document.getElementById("code");
     const runBtn = document.getElementById("run");
     codeEl.value = `# R in your browser. Try it:\nview(alaska_lake_data)\n\n# a quick plot:\nggplot(alaska_lake_data, aes(x = water_temp, y = lake)) +\n  geom_point()`;
@@ -271,16 +273,12 @@ View <- function(x, ...) view(x, ...)
     const envBody = document.getElementById("envbody");
     const ENV_GROUPS = [["data", "Data"], ["value", "Values"], ["function", "Functions"]];
 
-    // Names currently in the R session, kept so a "not found" hint can say "there IS a solvents".
-    let envNames = [];
-
     function renderEnvironment(rows) {
       envBody.innerHTML = "";
       const parsed = rows.map(r => {
         const [name, kind, cls, size] = String(r).split("\t");
         return { name, kind, cls, size };
       }).filter(o => o.name);
-      envNames = parsed.map(o => o.name);
       if (!parsed.length) {
         const p = document.createElement("div");
         p.className = "envempty";
@@ -416,63 +414,12 @@ View <- function(x, ...) view(x, ...)
     document.getElementById("caphide").onclick = () => captionCard.classList.remove("open");
 
     /*
-     * Add a plain-English hint under any error the run produced, and catch the one silent failure — a
-     * ggplot layer printed on its own because the line above it is missing its `+`.
-     *
-     * Why this is needed at all: WebR hands over only the FIRST LINE of an R error. For a mistyped column
-     * name R actually said "Problem while computing aesthetics." AND "Caused by error: object 'watertemp'
-     * not found" — and the half naming the mistake is the half that gets dropped. r_diagnose.js
-     * reconstructs the meaning from the headline (see its header for why the message cannot be recovered
-     * directly).
-     *
-     * Deliberately silent when it does not recognise the error: a wrong hint sends a student off to fix
-     * something that was never broken.
+     * Error hints used to be built HERE, and only here — which meant the sandbox explained a syntax
+     * error in class while the escape rooms, the homework for those same chapters, showed the raw and
+     * misleading parser message. They now live in the shared console (webr-console.js → annotateErrors),
+     * so all three surfaces explain an error identically and cannot drift apart again. This page only
+     * supplies `console_.hintContext` — see where the console is constructed, above.
      */
-    function annotateErrors() {
-      if (!diagnose) return;
-      const out = document.getElementById("output");
-      // The code that ACTUALLY ran — which is the selection, if they highlighted one. Using the whole
-      // editor here would make the structural analysis report brackets they never asked R to read.
-      const source = (console_.lastRun && console_.lastRun.code) || codeEl.value;
-
-      const box = (hint) => {
-        const div = document.createElement("div");
-        div.className = "hintbox";
-        const lab = document.createElement("span");
-        lab.className = "hlabel";
-        lab.textContent = "WHAT THAT MEANS";
-        div.appendChild(lab);
-        div.appendChild(document.createTextNode(hint.message));
-        if (hint.try) {
-          const t = document.createElement("span");
-          t.className = "htry";
-          t.textContent = hint.try;
-          div.appendChild(t);
-        }
-        return div;
-      };
-
-      let annotated = false;
-      out.querySelectorAll(".webr-out.err").forEach(el => {
-        if (el.dataset.hinted) return;
-        el.dataset.hinted = "1";
-        const hint = diagnose.explainError(el.textContent || "", { source, objects: envNames });
-        if (hint) { el.insertAdjacentElement("afterend", box(hint)); annotated = true; }
-      });
-      if (annotated) return;
-
-      // No error, but the output looks like ggplot internals → the missing `+`. Narrative + the reason
-      // this gate is shaped the way it is: tests/r_diagnose.test.mjs, above its orphan-layer section.
-      //
-      // Deliberately NOT gated on "no plot present". `ggplot(d, aes(...))` on its own DOES render — a
-      // blank panel with axes — so this case produces a canvas AND the stray layer text. Requiring the
-      // absence of a plot made the check never fire, which is how it was first written (2026-09-13).
-      if (out.querySelector(".webr-out.err")) return;
-      const plain = out.querySelector(".webr-out:not(.err):not(.muted)");
-      if (!plain || plain.dataset.hinted) return;
-      const orphan = diagnose.looksLikeOrphanLayer(plain.textContent || "");
-      if (orphan) { plain.dataset.hinted = "1"; plain.insertAdjacentElement("afterend", box(orphan)); }
-    }
 
     /*
      * One post-run trip into R, for both panes: the caption flag and the environment listing. Wrapped so
@@ -493,8 +440,9 @@ View <- function(x, ...) view(x, ...)
         }
         const env = await (await shelter.evalR('if (exists(".__env_take")) .__env_take() else character(0)')).toJs();
         renderEnvironment(Array.isArray(env.values) ? env.values : []);
-        // After the environment, so a "not found" hint can suggest a name that exists RIGHT NOW.
-        annotateErrors();
+        // No hint call here any more: the shared console annotates inside run() itself, reading the live
+        // session for "did you mean" candidates. That also removes an old fragility — hints used to be
+        // the LAST statement in this try, so a failure in either pane above silently took them with it.
       } catch (e) {
         /* the panes never break a run */
       } finally {
@@ -526,7 +474,7 @@ View <- function(x, ...) view(x, ...)
 
     /*
      * Syntax highlighting. The tokenizer is a separate pure module so it can be unit-tested in Node
-     * (`tests/r_highlight.test.mjs`) — this half is only the painting.
+     * (`../escape_rooms/tests/r_highlight.test.mjs` — the tokenizer moved repos on 2026-09-17) — this half is only the painting.
      *
      * Loaded with a DYNAMIC import, deliberately: a static `import` that 404s kills the whole module
      * script and takes the Run button with it, and this page has been dead-on-arrival once already
@@ -539,12 +487,17 @@ View <- function(x, ...) view(x, ...)
      * `hl-on` into the stylesheet, each re-introduce one of those two failures.
      */
     let highlightHTML = null;
-    try { ({ highlightHTML } = await import("./r_highlight.js?v=1")); } catch (e) { highlightHTML = null; }
+    try { ({ highlightHTML } = await import("/escape_rooms/shared/r_highlight.js?v=102")); }
+    catch (e) { highlightHTML = null; }
 
-    // Error hints. Same dynamic-import reasoning as above — if this module fails to load the sandbox
-    // simply stops explaining errors, which is exactly how it behaved before it existed.
-    let diagnose = null;
-    try { diagnose = await import("./r_diagnose.js?v=1"); } catch (e) { diagnose = null; }
+    // NOTE the path: the tokenizer moved into the escape_rooms repo on 2026-09-17, because r_diagnose.js
+    // (which imports it) had to move there to be shared. It is now a cross-repo import like the console
+    // above, and its ?v= token rides the same engine counter — bump it with the others or the browser
+    // holds two copies of the tokenizer, one stale.
+    //
+    // The error hints are NO LONGER wired up here. They are applied by the shared console itself, so the
+    // book's chapter cells and the escape rooms get the same explanations from the same code — see
+    // webr-console.js's annotateErrors(). All this page still does is tell it what IT has on screen.
 
     const hlEl = document.getElementById("hl");
     const editorEl = document.getElementById("editor");
