@@ -11612,6 +11612,93 @@
                 return(network_frame)
             }
 
+        #### collapseReciprocalEdges
+
+            #' Collapse duplicate and reciprocal edges in an edgelist (used by buildNetwork)
+            #'
+            #' Rows that are identical in every column are always dropped. Beyond that, each
+            #' row's node pair is put in alphabetical order so A->B and B->A share a key. If
+            #' every key's rows agree on all attribute columns (columns 3+; numbers compared
+            #' with a small relative tolerance), the input is symmetric and is collapsed to one
+            #' row per pair (the first occurrence, in its original direction). If any key's rows
+            #' disagree, the input is treated as directed and returned whole. It is all or
+            #' nothing across the table, never pair by pair.
+            #'
+            #' @param edgelist A data frame, node names (character) in columns 1 and 2.
+            #' @param directed NULL (decide from the data, as above), TRUE (never collapse
+            #'   reciprocal pairs), or FALSE (always collapse, keeping the first occurrence).
+            #' @param tol Relative tolerance for comparing numeric attribute columns.
+
+            collapseReciprocalEdges <- function(edgelist, directed = NULL, tol = sqrt(.Machine$double.eps)) {
+
+                n_input <- nrow(edgelist)
+                edgelist <- edgelist[!duplicated(edgelist), , drop = FALSE]
+                n_exact <- n_input - nrow(edgelist)
+                if (n_exact > 0) {
+                    message("buildNetwork: dropped ", n_exact, " edge row(s) that were exact copies of another row.")
+                }
+
+                pair_key <- paste(
+                    pmin(edgelist[[1]], edgelist[[2]]),
+                    pmax(edgelist[[1]], edgelist[[2]]),
+                    sep = "\r"
+                )
+                repeated <- duplicated(pair_key)
+                if (isTRUE(directed) || !any(repeated)) {
+                    rownames(edgelist) <- NULL
+                    return(edgelist)
+                }
+
+                # For every row, does it match the first row sharing its pair key on all attributes?
+                first_row <- match(pair_key, pair_key)
+                agrees <- rep(TRUE, nrow(edgelist))
+                if (ncol(edgelist) > 2) {
+                    for (i in 3:ncol(edgelist)) {
+                        x <- edgelist[[i]]
+                        if (is.numeric(x)) {
+                            ref <- x[first_row]
+                            same <- (is.na(x) & is.na(ref)) |
+                                (!is.na(x) & !is.na(ref) & abs(x - ref) <= tol * pmax(1, abs(ref)))
+                        } else {
+                            x <- as.character(x)
+                            ref <- x[first_row]
+                            same <- (is.na(x) & is.na(ref)) | (!is.na(x) & !is.na(ref) & x == ref)
+                        }
+                        agrees <- agrees & same
+                    }
+                }
+                n_conflicting_pairs <- length(unique(pair_key[!agrees]))
+
+                if (is.null(directed) && n_conflicting_pairs > 0) {
+                    message(
+                        "buildNetwork: ", n_conflicting_pairs, " node pair(s) appear more than once with ",
+                        "different edge attributes (e.g. A->B and B->A with different weights), so all ",
+                        nrow(edgelist), " edges were kept and the network is treated as directed. ",
+                        "Set directed = FALSE to keep one edge per pair (the first occurrence) instead."
+                    )
+                    rownames(edgelist) <- NULL
+                    return(edgelist)
+                }
+
+                collapsed <- edgelist[!repeated, , drop = FALSE]
+                rownames(collapsed) <- NULL
+                if (n_conflicting_pairs > 0) {
+                    message(
+                        "buildNetwork: directed = FALSE, so ", nrow(edgelist), " edges were collapsed to ",
+                        nrow(collapsed), ", one per node pair. ", n_conflicting_pairs, " pair(s) had ",
+                        "differing edge attributes; the first occurrence of each was kept."
+                    )
+                } else {
+                    message(
+                        "buildNetwork: every repeated node pair (A->B and B->A) had matching edge ",
+                        "attributes, so the network is treated as undirected and ", nrow(edgelist),
+                        " edges were collapsed to ", nrow(collapsed), ". ",
+                        "Set directed = TRUE to keep both directions."
+                    )
+                }
+                collapsed
+            }
+
         #### buildNetwork
 
             #' Build a network from an edgelist
@@ -11619,26 +11706,35 @@
             #' @param edgelist A data frame with origin nodes in the first column, destination nodes in the second column, and optional edge attributes in columns 3+, which are carried through to the returned edges frame as-is. No `weight` column is invented: for the force-directed layout, a column named `edgeweight` or `weight` is used if present, otherwise column 3.
             #' @param node_attributes A dataframe of attributes associated with the nodes. First column must contain node names.
             #' @param facet_variable Currently unused; retained for API compatibility.
+            #' @param directed How to handle node pairs that appear more than once. Rows identical in every column are always dropped. NULL (default) decides from the data: if every A->B / B->A pair (and any same-direction repeat) agrees on all edge attributes, as in a long-format distance or correlation matrix, the edgelist is collapsed to one edge per pair; if any pair disagrees, every edge is kept. TRUE always keeps both directions; FALSE always collapses, keeping the first occurrence of each pair. A message reports what was done. Note that when both directions are kept, their segments are drawn on top of one another, so a plot will only show one of them.
             #' @import
             #' @export
             #' @examples
             #' buildNetwork()
 
-            buildNetwork <- function(edgelist, node_attributes = NULL, facet_variable = NULL) {
+            buildNetwork <- function(edgelist, node_attributes = NULL, facet_variable = NULL, directed = NULL) {
 
                 edgelist <- as.data.frame(edgelist, stringsAsFactors = FALSE)
                 if (ncol(edgelist) < 2) {
                     stop("`edgelist` must have at least two columns: start node and end node.")
                 }
+                if (!is.null(directed) && !(isTRUE(directed) || isFALSE(directed))) {
+                    stop("`directed` must be NULL, TRUE or FALSE.")
+                }
 
                 edgelist[[1]] <- as.character(edgelist[[1]])
                 edgelist[[2]] <- as.character(edgelist[[2]])
 
+                edgelist <- collapseReciprocalEdges(edgelist, directed = directed)
+
                 # Build from an explicit edgelist so row-level edge attributes are preserved.
+                # multiple = TRUE: a same-direction repeat with differing attributes survives
+                # collapseReciprocalEdges() and would otherwise make network() stop on parallel edges.
                 network_object <- network::network(
                     edgelist[, 1:2, drop = FALSE],
                     matrix.type = "edgelist",
-                    ignore.eval = TRUE
+                    ignore.eval = TRUE,
+                    multiple = TRUE
                 )
 
                 if (ncol(edgelist) > 2) {

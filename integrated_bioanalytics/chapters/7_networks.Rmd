@@ -1,16 +1,14 @@
 # networks {-}
 
-## {-}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg', dpi = NA)
+```
 
-<!-- TODO (chapter art): this chapter has no header image yet. Every other chapter opens with
-     `images/<name>.png` via an absolute thebustalab.github.io URL (see 3_datavis_1.Rmd for the
-     pattern). Add `images/networks.png` and restore the include_graphics block here.
-     NB: `images/datavis3.png` is now unreferenced (data vis III was dissolved 2026-08-27) and is
-     available for reuse or deletion. -->
+## {-}
 
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the notes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
-- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough. Here an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using a threshold.
+- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using that threshold I mentioned.
 
 - Alternatively, we are sometimes **given** the network. This could be a list of connections that were actually observed in the world: journeys taken, messages sent, proteins that bind, and so forth. Networks derived from these data typically indicate "this thing interacted with this other thing".
 
@@ -28,7 +26,7 @@ First, we need our dataset in wide format:
 alaska_lake_data %>%
     select(-element_type) %>%
     pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
-alaska_lake_data_wide
+head(alaska_lake_data_wide)
 ```
 
 Now, we need a distance matrix. Here is the traditional way:
@@ -107,7 +105,7 @@ ggplot() +
 
 ## thresholds
 
-For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples.
+For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`wood_1`, `wood_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can colour them by something you know about the samples. Notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with `directed = TRUE` or `directed = FALSE`.
 
 Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
 
@@ -171,7 +169,7 @@ ggplot() +
 
 Everything in Part 1 was **derived**: we computed the edges ourselves out of a data matrix, and we chose the rule that put them there. Now consider a network nobody computed. An origin-and-destination table of journeys. A ledger of dispatches sent between garrisons. A record of which proteins were observed to bind which. Here the edge list *is* the raw data. You did not pick a distance measure and you did not pick a threshold, because there was nothing to pick — the edges are observations.
 
-`buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for this half of the chapter.
+`buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for this half of the chapter. One thing to watch: if A to B and B to A both appear and carry the same values (or no values at all), `buildNetwork()` will assume the network is undirected and merge them. When direction is part of the data, pass `directed = TRUE`.
 
 Three things become available that were not available in Part 1:
 

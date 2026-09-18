@@ -156,7 +156,7 @@
     // This page is a THIRD consumer of that shared module, in a different repo, so the escape rooms'
     // validate_assets.py VBUMP check cannot see it — bump here by hand whenever that token moves,
     // or a console edit silently serves stale to the sandbox while the rooms pick it up.
-    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=103";
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=104";
 
     // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
     const DATASETS = [
@@ -228,22 +228,9 @@ buildCaption <- function() {
 }
 `;
 
-    /*
-     * RStudio's capital-V View(). `utils::View` EXISTS in WebR and silently does nothing — no table, no
-     * error, just "(no output)" — so a student following the book's "the local RStudio equivalent is
-     * View()" note gets dead silence and no clue why. Aliasing it to our view() removes the trap.
-     *
-     * A wrapper, not `View <- view`: resolving `view` at CALL time means a later redefinition (a scenario
-     * with its own viewer) is still honoured. Defined in `setup`, which the shared console runs AFTER its
-     * VIEW_R_SHIM, so `view` is guaranteed to exist by then.
-     *
-     * Sandbox-only for now. The same trap exists in the book's cells and the escape rooms, but the fix
-     * belongs in the shared VIEW_R_SHIM (other repo, `?v=` bump + push order) — see this dir's AGENTS.md.
-     */
-    const VIEW_ALIAS_R = `
-View <- function(x, ...) view(x, ...)
-`;
-
+    // Capital-V View() is aliased to view() by the SHARED console's VIEW_R_SHIM
+    // (escape_rooms/shared/webr_view.js) since 2026-09-17, so every surface gets it — don't re-add a
+    // page-level copy here. It is still ours, hence "View" in ENV_R's exclusion list above.
 
     const console_ = new WebRConsole(
       {
@@ -251,7 +238,7 @@ View <- function(x, ...) view(x, ...)
         datasets: DATASETS,
         // The shared console appends its own reset snapshot AFTER this string, so everything defined
         // here is part of the state "reset session" restores. Nothing to do from this side.
-        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R + VIEW_ALIAS_R,
+        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R,
       },
       { status: document.getElementById("status"), output: document.getElementById("output") }
     );
@@ -487,7 +474,7 @@ View <- function(x, ...) view(x, ...)
      * `hl-on` into the stylesheet, each re-introduce one of those two failures.
      */
     let highlightHTML = null;
-    try { ({ highlightHTML } = await import("/escape_rooms/shared/r_highlight.js?v=103")); }
+    try { ({ highlightHTML } = await import("/escape_rooms/shared/r_highlight.js?v=104")); }
     catch (e) { highlightHTML = null; }
 
     // NOTE the path: the tokenizer moved into the escape_rooms repo on 2026-09-17, because r_diagnose.js
