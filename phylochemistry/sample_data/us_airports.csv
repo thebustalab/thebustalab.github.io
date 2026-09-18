@@ -1,0 +1,30 @@
+"airport","name","city","state","region","latitude","longitude"
+"ATL","Hartsfield-Jackson Atlanta International","Atlanta","GA","lower_48",33.6407,-84.4277
+"ORD","Chicago O'Hare International","Chicago","IL","lower_48",41.9742,-87.9073
+"DFW","Dallas/Fort Worth International","Dallas-Fort Worth","TX","lower_48",32.8998,-97.0403
+"DEN","Denver International","Denver","CO","lower_48",39.8561,-104.6737
+"LAX","Los Angeles International","Los Angeles","CA","lower_48",33.9416,-118.4085
+"JFK","John F. Kennedy International","New York","NY","lower_48",40.6413,-73.7781
+"SFO","San Francisco International","San Francisco","CA","lower_48",37.6213,-122.379
+"SEA","Seattle-Tacoma International","Seattle","WA","lower_48",47.4502,-122.3088
+"PDX","Portland International","Portland","OR","lower_48",45.5898,-122.5951
+"MSP","Minneapolis-Saint Paul International","Minneapolis","MN","lower_48",44.8848,-93.2223
+"BOS","Boston Logan International","Boston","MA","lower_48",42.3656,-71.0096
+"PHX","Phoenix Sky Harbor International","Phoenix","AZ","lower_48",33.4342,-112.0116
+"MIA","Miami International","Miami","FL","lower_48",25.7959,-80.287
+"CLT","Charlotte Douglas International","Charlotte","NC","lower_48",35.2144,-80.9473
+"LAS","Harry Reid International","Las Vegas","NV","lower_48",36.084,-115.1537
+"DTW","Detroit Metropolitan Wayne County","Detroit","MI","lower_48",42.2162,-83.3554
+"DLH","Duluth International","Duluth","MN","lower_48",46.8421,-92.1936
+"HNL","Daniel K. Inouye International","Honolulu","HI","hawaii",21.3187,-157.9225
+"OGG","Kahului","Kahului","HI","hawaii",20.8986,-156.4305
+"KOA","Ellison Onizuka Kona International","Kailua-Kona","HI","hawaii",19.7388,-156.0456
+"LIH","Lihue","Lihue","HI","hawaii",21.976,-159.339
+"ANC","Ted Stevens Anchorage International","Anchorage","AK","alaska",61.1743,-149.9963
+"FAI","Fairbanks International","Fairbanks","AK","alaska",64.8151,-147.8561
+"JNU","Juneau International","Juneau","AK","alaska",58.355,-134.5763
+"SIT","Sitka Rocky Gutierrez","Sitka","AK","alaska",57.0471,-135.3616
+"KTN","Ketchikan International","Ketchikan","AK","alaska",55.3556,-131.7137
+"BET","Bethel","Bethel","AK","alaska",60.7798,-161.838
+"OME","Nome","Nome","AK","alaska",64.5122,-165.4453
+"OTZ","Ralph Wien Memorial","Kotzebue","AK","alaska",66.8847,-162.5985

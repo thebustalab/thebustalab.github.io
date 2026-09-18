@@ -30,20 +30,47 @@ message("Loading dgx module...")
           max_tokens = 256,
           system = NULL,
           server_url = Sys.getenv("DGX_GENERATE_URL", "http://127.0.0.1:9002"),
-          timeout_sec = 900      # a cold model load is ~180s; 60 would fail on every first call
+          timeout_sec = 900,     # a cold model load is ~180s; 60 would fail on every first call
+          # If the dgx is too full to load the model right now (e.g. a big model while a video
+          # render is running), it answers 503 "memory_admission". That means "not yet", so
+          # WAIT and retry, for up to this long. 0 = fail straight away. Added 2026-09-18.
+          max_wait_sec = as.numeric(Sys.getenv("DGX_MEMORY_WAIT_SEC", 4 * 3600)),
+          on_wait = NULL         # internal: runModelGrid uses it to keep its lock fresh
         ) {
           suppressPackageStartupMessages({ library(httr); library(jsonlite) })
           payload <- list(prompt = prompt, max_tokens = max_tokens)
           if (!is.null(model))  payload$model  <- model
           if (!is.null(quant))  payload$quant  <- as.integer(quant)
           if (!is.null(system)) payload$system <- system
-          resp <- httr::POST(
-            url = paste0(sub("/+$", "", server_url), "/generate"),
-            httr::add_headers(`Content-Type` = "application/json",
-                              `User-Agent` = "Mozilla/5.0 (phylochemistry dgxGenerate)"),
-            body = jsonlite::toJSON(payload, auto_unbox = TRUE),
-            encode = "raw", httr::timeout(timeout_sec)
-          )
+          waited <- 0
+          repeat {
+            resp <- httr::POST(
+              url = paste0(sub("/+$", "", server_url), "/generate"),
+              httr::add_headers(`Content-Type` = "application/json",
+                                `User-Agent` = "Mozilla/5.0 (phylochemistry dgxGenerate)"),
+              body = jsonlite::toJSON(payload, auto_unbox = TRUE),
+              encode = "raw", httr::timeout(timeout_sec)
+            )
+            txt <- httr::content(resp, "text", encoding = "UTF-8")
+            if (httr::status_code(resp) != 503 || !grepl("memory_admission", txt, fixed = TRUE)) break
+            wait <- suppressWarnings(as.numeric(httr::headers(resp)[["retry-after"]]))
+            if (length(wait) != 1 || is.na(wait)) wait <- 300
+            why <- tryCatch(jsonlite::fromJSON(txt)$detail, error = function(e) txt)
+            why <- sub("memory_admission: ", "", why, fixed = TRUE)
+            if (waited + wait > max_wait_sec)
+              stop("Gave up after waiting ", round(waited / 60), " min for memory: ", why, call. = FALSE)
+            if (waited == 0) {
+              message("The dgx is too full to load ", model, " @ ", quant, "-bit right now:\n  ", why,
+                      "\nWaiting and retrying every ", round(wait / 60), " min (up to ",
+                      round(max_wait_sec / 3600), " h). Nothing is lost.")
+            } else {
+              message("  still waiting for memory (", round(waited / 60), " min so far)...")
+            }
+            if (is.function(on_wait)) on_wait()
+            Sys.sleep(wait)
+            waited <- waited + wait
+            if (is.function(on_wait)) on_wait()
+          }
           if (httr::status_code(resp) >= 300) {
             stop("dgx said ", httr::status_code(resp), ": ",
                  substr(httr::content(resp, "text", encoding = "UTF-8"), 1, 300))
@@ -244,7 +271,10 @@ message("Loading dgx module...")
               failed <- FALSE
               row <- tryCatch({
                 r <- dgxGenerate(prompts[i], model = m, quant = q,
-                                 max_tokens = max_tokens, system = system)
+                                 max_tokens = max_tokens, system = system,
+                                 on_wait = function() {   # keep the lock fresh while waiting
+                                   lock$heartbeat <- as.numeric(Sys.time()); .dgxWriteLock(lock)
+                                 })
                 tibble(model = m, quant = q, prompt_id = labels[i], prompt = prompts[i],
                        completion = r$completion, duration_sec = r$duration_sec,
                        error = NA_character_, timestamp = format(Sys.time()))

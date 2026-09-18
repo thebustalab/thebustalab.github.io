@@ -32,7 +32,7 @@
  * URL, exactly as sandbox.html already does. Its `?v=` token must be bumped by hand in lockstep with
  * escape_rooms/shared/ — nothing validates it from this side. See this dir's AGENTS.md.
  */
-import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=104";
+import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=105";
 
 let rconsole = null;
 // Every cell's reset button, so they can all be revealed together the moment a session exists.

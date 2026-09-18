@@ -14,8 +14,7 @@ scenarios are its exercise sets.
   improvements this plan asked for: the distance→similarity **inversion** warning and the
   **threshold-is-the-analysis** section with a cutoff sweep). Part 3 authored (layout is arbitrary; edge
   meaning determines hub meaning; when a network is a hairball hiding a table). **Part 2 is an authoring
-  stub** — prose and verified numbers are in place, code chunks are not, and the reason is a hard blocker;
-  see *Part 2 data blocker* below.
+  stub** — prose is in place, code chunks are not; see *Part 2 data — published as US airports* below.
 - `chapters/5_datavis_3.Rmd` — `### network plots {-}` **removed** (65 lines) and the chapter intro
   paragraph rewritten so it no longer promises similarity networks.
 - **Renumbered** old 7–18 → 8–19 (12 files), `index.Rmd` child chunks updated and the new
@@ -126,20 +125,11 @@ modules become **cliques** unless module membership is graded, and a gene cannot
 above **1/√2 ≈ 0.707** with two orthogonal programmes at once, which makes connector genes and
 therefore articulation points **impossible** on a correlation network.
 
-**Part 2 (relational) — passenger movement.**
-
-Passenger-movement data, 20 stations, origin/destination/journeys —
-`../escape_rooms/rooms/networks/subway/_scratch/superseded/passenger_flows.csv`. Built for an
-earlier version of the scenario and set aside there, but it is the cleanest demonstration of
-**volume versus criticality** we have:
-
-- **Busiest station:** ~40,000 journeys, **301%** more than the runner-up.
-- **Remove it:** the network is completely unchanged. 2 components before, 2 after.
-- **The critical station** ranks **19th of 20** by volume — nearly the quietest in the system.
-- **Remove it:** 2 components → 3. Sole articulation point, betweenness 8× the next station's.
-
-The busiest station can be deleted with zero structural effect; the nineteenth-busiest holds
-the whole thing together. Note this lesson is only available on **relational** data — see the
+**Part 2 (relational) — passenger movement.** Now the US airports dataset (`passenger_flows` +
+`us_airports`); numbers and design in *Part 2 data — published as US airports* below. It replaces the
+20-station subway prototype (`../escape_rooms/rooms/networks/subway/_scratch/superseded/passenger_flows.csv`,
+local-only). Same lesson: the busiest node can be deleted with zero structural effect while a
+near-quietest one holds the network together. Note this lesson is only available on **relational** data — see the
 0.707 constraint above for why a correlation network cannot produce it.
 
 A third verified dataset, `superseded/tunnel_dust.csv` (24 stations × 11 analytes of settled
@@ -257,22 +247,42 @@ that already breaks cold renders) — it would need a redacted public version or
 5. **Does the chapter need a helper function** for degree/components, or is base R plus
    `igraph` enough? (`table(c(edges$from, edges$to))` gives degree in one line.)
 
-## Part 2 data blocker (raised 2026-08-27) — the one thing standing between the stub and a finished chapter
+## Duplicate edges and scaling (2026-09-18, session "network")
 
-Part 2's verified worked example is `passenger_flows.csv` (20 stations, origin / destination / journeys),
-which currently lives at
-`../escape_rooms/rooms/networks/subway/_scratch/superseded/passenger_flows.csv`.
+- **Duplicate edges fixed in the toolkit, not the chapter.** The long distance matrix lists every pair in
+  both directions with identical distances, so Part 1 was drawing every edge twice (darker alpha, doubled
+  layout weight, 380 edges for 20 lakes instead of 190). Lucas chose an all-or-nothing rule: if every
+  repeated pair agrees on its edge values, `buildNetwork()` collapses to one edge per pair; if any differ,
+  every edge is kept; `directed =` overrides. Behaviour detail lives in `../phylochemistry/AGENTS.md`.
+  Lucas's manual `table(duplicated(...))` check was removed from the chapter; the thresholds paragraph and
+  the Part 2 intro now explain the rule.
+- **Part 2 consequence:** the dispatch/journey edge lists are directed. When their chunks are written,
+  pass `directed = TRUE`, or reciprocal pairs with equal (or no) values will be merged.
+- **Scaling explained here, not in ch.8.** New `### scaling first {-}` after the unscaled `dist()`: the
+  unscaled Alaska matrix correlates 0.99 with a chloride-only distance (Cl sd ~78 mg/L vs P sd ~0.001),
+  then `scale()`, then when not to scale. The `runMatrixAnalyses(analysis = "dist")` call now sets
+  `scale_variance = TRUE` explicitly (it was the default, but the prose claimed it was in the code).
+- Still stale in the chapter, left for Lucas: the thresholds paragraph says "`wood_1`, `wood_2` here", and
+  the hard-coded `filter(distance < 3.672035, ...)` line sits unexplained under the dist chunk.
 
-**That path cannot be referenced from the book.** `escape_rooms/.gitignore` contains `**/_scratch/`, so the
-file is local-only and never reaches the published site. Students could not obtain it, and a cold render on
-any other machine would fail on it — the same class of failure as the ch.5 `pfas_data_private.csv` path
-already documented in `AGENTS.md`.
+## Part 2 data — published as US airports (2026-09-18)
 
-**Fix before writing Part 2's code:** give the dataset a published home. The right one is almost certainly
-`../phylochemistry/sample_data/`, which is how every other dataset in this book reaches students — they
-arrive as objects via the phylochemistry `source()` (`wood_smoke`, `alaska_lake_data`, `hawaii_aquifers`),
-and that route also makes the data loadable in the WebR cells. Then write the chunks against it and
-**re-verify in R every number quoted in the stub** (busiest station ~40,000 journeys / +301%; removal
-leaves 2 components; critical station 19th of 20; removal 2→3 components; betweenness 8×) before deleting
-the stub warning. The same blocker applies to `tunnel_dust.csv` if the chemistry framing is ever wanted for
-Part 1.
+The old blocker (the subway `passenger_flows.csv` lived only in a gitignored `_scratch/` folder) is
+resolved by a **new** dataset rather than by moving the old one. At Lucas's request it uses **US
+airports**, so students can plot the map beside the force layout and see that layout is not geography.
+
+- Files: `../phylochemistry/sample_data/passenger_flows.csv` + `us_airports.csv`, registered in
+  `modules/datasets.R` as `passenger_flows` and `us_airports`. Generator + assertions:
+  `notes/build_passenger_flows.R` (phylochem conda R).
+- Simulated counts, real codes and coordinates, simplified routes (Alaska reaches the lower 48 only via
+  Ketchikan; a Fairbanks–Juneau link was added so Anchorage is not a second articulation point).
+- Verified: ATL busiest (1.90M, 36% over LAX), removal changes nothing (1 component stays 1); KTN 27th
+  of 29 by volume, sole articulation point, removal gives 2 components; KTN tops betweenness but only
+  1.2x SEA; Hawaii airports top inflow/outflow (1.11–1.18). `buildNetwork()` keeps all 192 rows (directed).
+- Layout lesson, checked by drawing it: with passenger weights the lower 48 collapses into a tight
+  ball and Alaska/Hawaii swing to different sides on each run; without weights the layout is readable
+  and HNL sits beside SFO/LAX, DLH beside DTW, KTN between PDX and JNU. Layout-to-map distance
+  correlation is ~0.5, because routes partly follow geography.
+- **Still owed:** Part 2 code chunks, and replacing the stub's subway numbers (20 stations, 40,000,
+  301%, 19th of 20, 2→3 components, 8× betweenness) with the airport ones. The TODO comment in the
+  chapter lists them.

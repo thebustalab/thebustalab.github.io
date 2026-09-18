@@ -10,17 +10,26 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## clustering {-}
 
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, similar to how we did for networks, but we can do it all in one step by using `analysis = "hclust"`: 
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
 
 ```{r, message = FALSE}
 AK_lakes_clustered <- runMatrixAnalyses(
     data = alaska_lake_data_wide,
     analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "ward.D2",
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
 )
 AK_lakes_clustered
 ```
+
+Three of those arguments are worth a closer look:
+
+- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalyses()` does **not** scale unless you ask it to, so don't leave this out.
+- `tree_method = "linkage_dendrogram"` builds the tree by hierarchical clustering proper: the step-by-step merging described below. The other option, `"neighbor_joining"`, is a tree-building method borrowed from phylogenetics, and it ignores the agglomeration method entirely.
+- `agglomeration_method` decides how groups of samples are merged as the tree is built. It is the subject of the second half of this chapter. For now we use Ward's method, `"ward.D2"`.
 
 It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
 
@@ -33,7 +42,7 @@ ggtree() +
   geom_tiplab() +
   geom_tippoint() +
   theme_classic() +
-  scale_x_continuous(limits = c(0,700))
+  scale_x_continuous(limits = c(0,10))
 ```
 
 Cool! Though that plot could use some tweaking... let's try:
@@ -41,13 +50,13 @@ Cool! Though that plot could use some tweaking... let's try:
 ```{r, fig.height = 4, fig.width = 5}
 AK_lakes_clustered %>%
 ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tiplab(aes(label = lake), offset = 0.2, align = TRUE) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,600)) +
+    scale_x_continuous(limits = c(0,12)) +
     scale_fill_brewer(palette = "Set1") +
     # theme_classic() +
     theme(
-      legend.position = c(0.4,0.2)
+      legend.position = c(0.2,0.8)
     )
     
 ```
@@ -61,20 +70,112 @@ alaska_lake_data_wide %>%
 runMatrixAnalyses(
     data = alaska_lake_data_wide_filtered,
     analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "ward.D2",
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
 ) %>%
 ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tiplab(aes(label = lake), offset = 0.2, align = TRUE) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,100)) +
+    scale_x_continuous(limits = c(0,9)) +
     scale_fill_brewer(palette = "Set1") +
     # theme_classic() +
     theme(
-      legend.position = c(0.05,0.9)
+      legend.position = c(0.1,0.85)
     )
     
 ```
+
+## how the tree is built {-}
+
+Hierarchical clustering builds its tree from the bottom up, by a very simple procedure:
+
+1. Start with every sample in a group of its own.
+2. Find the two groups that are closest to each other, and merge them into one group.
+3. Repeat step 2 until everything is in a single group.
+
+Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
+
+Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule you choose is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
+
+### single versus complete linkage {-}
+
+The two extremes are the easiest to understand:
+
+- **Single linkage**: the distance between two groups is the distance between their *closest* members. Two groups merge as soon as any one sample in the first is near any one sample in the second.
+- **Complete linkage**: the distance between two groups is the distance between their *furthest* members. Two groups only merge once every sample in the first is reasonably close to every sample in the second.
+
+Let's see what difference this makes, using the `solvents` dataset. We will cluster the solvents on six physical properties. (We leave out `vapor_pressure`, because it is missing for five of the solvents.) Everything is identical between the two runs except the agglomeration method:
+
+```{r, message = FALSE}
+solvent_properties <- c(
+  "boiling_point", "melting_point", "density",
+  "relative_polarity", "formula_weight", "refractive_index"
+)
+
+solvents_single <- runMatrixAnalyses(
+    data = solvents,
+    analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "single",
+    columns_w_values_for_single_analyte = solvent_properties,
+    columns_w_sample_ID_info = c("solvent", "category")
+)
+
+solvents_complete <- runMatrixAnalyses(
+    data = solvents,
+    analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "complete",
+    columns_w_values_for_single_analyte = solvent_properties,
+    columns_w_sample_ID_info = c("solvent", "category")
+)
+```
+
+Now let's plot the two trees side by side:
+
+```{r, fig.height = 6, fig.width = 10}
+single_plot <- ggtree(solvents_single) +
+    geom_tiplab(aes(label = solvent), offset = 0.05, size = 3) +
+    geom_tippoint(shape = 21, aes(fill = category), size = 3) +
+    scale_x_continuous(limits = c(0, 2.3)) +
+    scale_fill_brewer(palette = "Dark2") +
+    ggtitle("single linkage") +
+    theme(legend.position = "none")
+
+complete_plot <- ggtree(solvents_complete) +
+    geom_tiplab(aes(label = solvent), offset = 0.1, size = 3) +
+    geom_tippoint(shape = 21, aes(fill = category), size = 3) +
+    scale_x_continuous(limits = c(0, 6)) +
+    scale_fill_brewer(palette = "Dark2") +
+    ggtitle("complete linkage") +
+    theme(legend.position = "right")
+
+plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3))
+```
+
+The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. If you tried to cut this tree into four groups, you would get one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognise: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
+
+Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbours: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
+
+Notice also the colours, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
+
+### when does the choice matter? {-}
+
+Single and complete linkage give the most different trees when:
+
+- **the samples form a continuum rather than distinct groups.** Single linkage chains along the gradient, giving a lopsided tree. Complete linkage chops it into compact pieces, giving a more balanced one. This is what happened with the solvents.
+- **a few intermediate samples bridge two real groups.** Single linkage uses the bridge to join the two groups early. Complete linkage keeps them apart until late, because their furthest members are still far apart.
+- **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
+- **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
+
+The flip side is just as useful. When the groups in your data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on your result: if they agree, the grouping is robust; if they disagree, your data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
+
+Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever you report a tree.
 
 ## Annotating trees {-}
 
@@ -84,6 +185,9 @@ Overlaying sample traits on a ggtree-based plot is straightforward when we combi
 hclust_out <- runMatrixAnalyses(
   data = chemical_blooms,
   analysis = c("hclust"),
+  scale_variance = TRUE,
+  tree_method = "linkage_dendrogram",
+  agglomeration_method = "ward.D2",
   columns_w_values_for_single_analyte = colnames(chemical_blooms)[2:10],
   columns_w_sample_ID_info = "label"
 )
@@ -94,7 +198,7 @@ The object returned by `runMatrixAnalyses()` already contains the branch coordin
 ```{r}
 tree_plot <- ggtree(hclust_out) +
   geom_tiplab(size = 2, align = TRUE) +
-  scale_x_continuous(limits = c(0, 300)) +
+  scale_x_continuous(limits = c(0, 10)) +
   scale_y_continuous(limits = c(0, 80)) +
   theme_classic()
 tree_plot
