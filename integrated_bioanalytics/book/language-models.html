@@ -105,7 +105,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="language-models" class="section level1 unnumbered">
 <h1>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;"></div>
 <p>To run the analyses in this chapter, you will need three things.</p>
 <ol style="list-style-type: decimal">
 <li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
@@ -175,8 +175,8 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span><span class="co">##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
 <span><span class="co">##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…</span></span>
 <span><span class="co">##  4 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
-<span><span class="co">##  5 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
-<span><span class="co">##  6 friedelin synthase         Genome Mining and Gene Expres…</span></span>
+<span><span class="co">##  5 friedelin synthase         Genome Mining and Gene Expres…</span></span>
+<span><span class="co">##  6 friedelin synthase         Functional characterization o…</span></span>
 <span><span class="co">##  7 sorghum bicolor            Current status and prospects …</span></span>
 <span><span class="co">##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
 <span><span class="co">##  9 sorghum bicolor            Potential food applications o…</span></span>
@@ -234,7 +234,7 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span id="cb151-42"><a href="language-models.html#cb151-42" tabindex="-1"></a>    <span class="fu">geom_mark_ellipse</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> term), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
 <span id="cb151-43"><a href="language-models.html#cb151-43" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
 <span id="cb151-44"><a href="language-models.html#cb151-44" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"maroon"</span>, <span class="st">"gold"</span>, <span class="st">"steelblue"</span>, <span class="st">"darkgreen"</span>))</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-480-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="transformer-embeddings" class="section level3 unnumbered">
 <h3>transformer embeddings<a class="anchor" aria-label="anchor" href="#transformer-embeddings"><i class="fas fa-link"></i></a>
@@ -277,7 +277,7 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
 <div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
@@ -296,7 +296,7 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-483-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
 <div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="language-models.html#cb155-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
 <span id="cb155-2"><a href="language-models.html#cb155-2" tabindex="-1"></a></span>
@@ -336,7 +336,7 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span id="cb155-36"><a href="language-models.html#cb155-36" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb155-37"><a href="language-models.html#cb155-37" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>), <span class="at">fill =</span> pca_out<span class="sc">$</span>color, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
 <span id="cb155-38"><a href="language-models.html#cb155-38" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-486-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
 <div id="generative-models" class="section level2 unnumbered">
@@ -366,18 +366,18 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span><span class="co">## # A tibble: 12 × 2</span></span>
 <span><span class="co">##    title                                          generation</span></span>
 <span><span class="co">##    &lt;chr&gt;                                          &lt;chr&gt;     </span></span>
-<span><span class="co">##  1 Ginsenosides in Panax genus and their biosynt… "# Tags\n…</span></span>
-<span><span class="co">##  2 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…</span></span>
-<span><span class="co">##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Classi…</span></span>
-<span><span class="co">##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Classi…</span></span>
-<span><span class="co">##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…</span></span>
-<span><span class="co">##  6 Genome Mining and Gene Expression Reveal Mayt… "# Classi…</span></span>
-<span><span class="co">##  7 Current status and prospects of herbicide-res… "herbicid…</span></span>
-<span><span class="co">##  8 Sorghum (Sorghum bicolor).                     "# Tags\n…</span></span>
+<span><span class="co">##  1 Ginsenosides in Panax genus and their biosynt… "Natural …</span></span>
+<span><span class="co">##  2 β-Amyrin synthase from Conyza blinii expresse… "Triterpe…</span></span>
+<span><span class="co">##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Tags\n…</span></span>
+<span><span class="co">##  4 Friedelin in Maytenus ilicifolia Is Produced … "Plant se…</span></span>
+<span><span class="co">##  5 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…</span></span>
+<span><span class="co">##  6 Functional characterization of an oxidosquale… "# Classi…</span></span>
+<span><span class="co">##  7 Current status and prospects of herbicide-res… "# Classi…</span></span>
+<span><span class="co">##  8 Sorghum (Sorghum bicolor).                     "# Classi…</span></span>
 <span><span class="co">##  9 Potential food applications of sorghum (Sorgh… "# Tags\n…</span></span>
-<span><span class="co">## 10 Cuticular wax in wheat: biosynthesis, genetic… "Plant cu…</span></span>
+<span><span class="co">## 10 Cuticular wax in wheat: biosynthesis, genetic… "# Scient…</span></span>
 <span><span class="co">## 11 Regulatory mechanisms underlying cuticular wa… "Plant cu…</span></span>
-<span><span class="co">## 12 Update on Cuticular Wax Biosynthesis and Its … "plant de…</span></span></code></pre></div>
+<span><span class="co">## 12 Update on Cuticular Wax Biosynthesis and Its … "# Tags\n…</span></span></code></pre></div>
 </div>
 <div id="section-16" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
@@ -465,7 +465,7 @@ search_results_ex_embed_pca %>%
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-21.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

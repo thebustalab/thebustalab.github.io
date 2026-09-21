@@ -20,7 +20,7 @@ To build a network from a set of observations, we first need to calculate how si
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
 ```
 
-First, we need our dataset in wide format:
+First, we need our data set in wide format:
 
 ```{r}
 alaska_lake_data %>%
@@ -46,7 +46,7 @@ alaska_dist_long <- runMatrixAnalyses(
     columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_dist_long
+head(alaska_dist_long)
 ```
 
 Let's look at those distances. Why is North Killeak Lake so distant from everyone? Wasn't that lake the one with such high chloride?
@@ -95,13 +95,22 @@ runMatrixAnalyses(
 ) +
   geom_tile()
 ```
+
 Scaling is a choice, not a law. If every column is in the same units and the large values genuinely matter more to you, then you might deliberately leave the data unscaled. But whenever your columns are in different units, scale first. The same concern comes back whenever we compute distances, including in hierarchical clustering in the next chapter.
 
 ## threshold networks from data {-}
 
-We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.
+We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected: probably not what you want. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your metric runs.
 
 ```{r}
+runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    scale_variance = TRUE,
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) -> alaska_dist_long
+
 alaska_edges <- alaska_dist_long %>% 
   filter(distance > 0) %>%
   mutate(similarity = 1 / (1 + distance) * 100) %>%
@@ -109,8 +118,18 @@ alaska_edges <- alaska_dist_long %>%
 alaska_edges
 ```
 
+With the edgelist in hand, we can build a network easily with `buildNetwork()`:
 
-These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`.
+```{r}
+net <- buildNetwork(
+  edgelist = alaska_edges,
+  node_attributes = select(alaska_lake_data_wide, lake, park)
+)
+head(net$nodes)
+head(net$edges)
+```
+
+These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can color them by something you know about the samples.
 
 ```{r}
 ggplot() +
@@ -135,9 +154,8 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can color them by something you know about the samples. Notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with `directed = TRUE` or `directed = FALSE`.
 
-Now — where did `4.3` come from? This is the part of the procedure that is easiest to skip past and hardest to defend. **The threshold is not a formatting choice; it is the analysis.** Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and *which* structure appears depends on where you put the line.
+Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:
 
 ```{r}
 net_10 <- buildNetwork(
@@ -194,20 +212,52 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
+Minor note: notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with `directed = TRUE` or `directed = FALSE`.
 
-## data themselves as networks {-}
+## data as networks {-}
 
-Everything in the previous section was **derived**: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick becase the edges are observations.
+Everything in the previous section was **derived**: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick because the edges are observations.
 
 `buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for handling these sorts of datasets. Let's look at an example:
 
 
 ```{r}
+us_airports <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/us_airports.csv")
+us_airports
+passenger_flows <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/passenger_flows.csv")
+passenger_flows
+
+air_net <- buildNetwork(
+  edgelist = passenger_flows,
+  node_attributes = us_airports
+)
+
+ggplot() +
+  geom_segment(
+    data = air_net$edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = passengers,
+      alpha = passengers
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = air_net$nodes,
+    aes(x = x, y = y),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  geom_text_repel(
+    data = air_net$nodes,
+    aes(x = x, y = y, label = paste(city, state))
+  ) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
 
 ```
-
-
-
 
 
 That said, one thing to watch: if A to B and B to A both appear and carry the same values (or no values at all), `buildNetwork()` will assume the network is undirected and merge them. When direction is part of the data, pass `directed = TRUE`.

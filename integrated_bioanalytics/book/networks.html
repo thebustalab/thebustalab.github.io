@@ -119,7 +119,7 @@
 </h2>
 <p>To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>First, we need our dataset in wide format:</p>
+<p>First, we need our data set in wide format:</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -230,21 +230,16 @@
 <span><span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span>
 <span></span>
-<span><span class="va">alaska_dist_long</span></span>
-<span><span class="co">## # A tibble: 380 × 7</span></span>
-<span><span class="co">##    sample_unique_ID_sample_1 sample_unique_ID_sam…¹ distance</span></span>
-<span><span class="co">##    &lt;chr&gt;                     &lt;chr&gt;                     &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 Devil_Mountain_Lake_BELA  Imuruk_Lake_BELA           17.2</span></span>
-<span><span class="co">##  2 Devil_Mountain_Lake_BELA  Kuzitrin_Lake_BELA         13.9</span></span>
-<span><span class="co">##  3 Devil_Mountain_Lake_BELA  Lava_Lake_BELA             18.7</span></span>
-<span><span class="co">##  4 Devil_Mountain_Lake_BELA  North_Killeak_Lake_BE…    363. </span></span>
-<span><span class="co">##  5 Devil_Mountain_Lake_BELA  White_Fish_Lake_BELA      107. </span></span>
-<span><span class="co">##  6 Devil_Mountain_Lake_BELA  Iniakuk_Lake_GAAR          39.9</span></span>
-<span><span class="co">##  7 Devil_Mountain_Lake_BELA  Kurupa_Lake_GAAR           19.4</span></span>
-<span><span class="co">##  8 Devil_Mountain_Lake_BELA  Lake_Matcharak_GAAR        35.5</span></span>
-<span><span class="co">##  9 Devil_Mountain_Lake_BELA  Lake_Selby_GAAR            19.0</span></span>
-<span><span class="co">## 10 Devil_Mountain_Lake_BELA  Nutavukti_Lake_GAAR        18.5</span></span>
-<span><span class="co">## # ℹ 370 more rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_dist_long</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 7</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Devil_Mountain_Lake_BELA  Imuruk_Lake_BELA            17.2</span></span>
+<span><span class="co">## 2 Devil_Mountain_Lake_BELA  Kuzitrin_Lake_BELA          13.9</span></span>
+<span><span class="co">## 3 Devil_Mountain_Lake_BELA  Lava_Lake_BELA              18.7</span></span>
+<span><span class="co">## 4 Devil_Mountain_Lake_BELA  North_Killeak_Lake_BELA    363. </span></span>
+<span><span class="co">## 5 Devil_Mountain_Lake_BELA  White_Fish_Lake_BELA       107. </span></span>
+<span><span class="co">## 6 Devil_Mountain_Lake_BELA  Iniakuk_Lake_GAAR           39.9</span></span>
 <span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
 <span><span class="co">## # ℹ 4 more variables: lake_sample_1 &lt;chr&gt;,</span></span>
 <span><span class="co">## #   park_sample_1 &lt;chr&gt;, lake_sample_2 &lt;chr&gt;,</span></span>
@@ -313,16 +308,24 @@
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="inline-figure">
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="" width="100%" style="display: block; margin: auto;">
-Scaling is a choice, not a law. If every column is in the same units and the large values genuinely matter more to you, then you might deliberately leave the data unscaled. But whenever your columns are in different units, scale first. The same concern comes back whenever we compute distances, including in hierarchical clustering in the next chapter.</div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Scaling is a choice, not a law. If every column is in the same units and the large values genuinely matter more to you, then you might deliberately leave the data unscaled. But whenever your columns are in different units, scale first. The same concern comes back whenever we compute distances, including in hierarchical clustering in the next chapter.</p>
 </div>
-<div id="building-networks-from-data" class="section level2 unnumbered">
-<h2>building networks from data<a class="anchor" aria-label="anchor" href="#building-networks-from-data"><i class="fas fa-link"></i></a>
+<div id="threshold-networks-from-data" class="section level2 unnumbered">
+<h2>threshold networks from data<a class="anchor" aria-label="anchor" href="#threshold-networks-from-data"><i class="fas fa-link"></i></a>
 </h2>
-<p>We build networks from an <strong>edge list</strong>: a table that lists one row per connection in the network. So, we need to turn the distances into rows of <code>from</code>, <code>to</code>, <code>weight</code>. Fortunately, our long-style distance matrix makes this easy. There is just one trick: <strong>distance and similarity are the opposite of one another.</strong> A <em>small</em> distance means two samples are <em>alike</em>. But an edge weight is drawn thick when it is <em>large</em>. If you feed raw distance in as the edge weight, your plot will draw the most <strong>dissimilar</strong> pairs as the most strongly connected — a picture that is exactly backwards, and one that looks perfectly plausible. That is what <code>similarity = 1 / (1 + distance) * 100</code> is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your weight runs.</p>
+<p>We build networks from an <strong>edge list</strong>: a table that lists one row per connection in the network. So, we need to turn the distances into rows of <code>from</code>, <code>to</code>, <code>weight</code>. Fortunately, our long-style distance matrix makes this easy. There is just one trick: <strong>distance and similarity are the opposite of one another.</strong> A <em>small</em> distance means two samples are <em>alike</em>. But an edge weight is drawn thick when it is <em>large</em>. If you feed raw distance in as the edge weight, your plot will draw the most <strong>dissimilar</strong> pairs as the most strongly connected: probably not what you want. That is what <code>similarity = 1 / (1 + distance) * 100</code> is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your metric runs.</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_edges</span> <span class="op">&lt;-</span> <span class="va">alaska_dist_long</span> <span class="op">%&gt;%</span> </span>
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_dist_long</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="va">alaska_edges</span> <span class="op">&lt;-</span> <span class="va">alaska_dist_long</span> <span class="op">%&gt;%</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">distance</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>similarity <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">distance</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">lake_sample_1</span>, <span class="va">lake_sample_2</span>, <span class="va">similarity</span><span class="op">)</span></span>
@@ -330,49 +333,32 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <span><span class="co">## # A tibble: 380 × 3</span></span>
 <span><span class="co">##    lake_sample_1       lake_sample_2      similarity</span></span>
 <span><span class="co">##    &lt;chr&gt;               &lt;chr&gt;                   &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 Devil_Mountain_Lake Imuruk_Lake             5.48 </span></span>
-<span><span class="co">##  2 Devil_Mountain_Lake Kuzitrin_Lake           6.70 </span></span>
-<span><span class="co">##  3 Devil_Mountain_Lake Lava_Lake               5.09 </span></span>
-<span><span class="co">##  4 Devil_Mountain_Lake North_Killeak_Lake      0.274</span></span>
-<span><span class="co">##  5 Devil_Mountain_Lake White_Fish_Lake         0.924</span></span>
-<span><span class="co">##  6 Devil_Mountain_Lake Iniakuk_Lake            2.44 </span></span>
-<span><span class="co">##  7 Devil_Mountain_Lake Kurupa_Lake             4.90 </span></span>
-<span><span class="co">##  8 Devil_Mountain_Lake Lake_Matcharak          2.74 </span></span>
-<span><span class="co">##  9 Devil_Mountain_Lake Lake_Selby              5.01 </span></span>
-<span><span class="co">## 10 Devil_Mountain_Lake Nutavukti_Lake          5.14 </span></span>
+<span><span class="co">##  1 Devil_Mountain_Lake Imuruk_Lake             21.4 </span></span>
+<span><span class="co">##  2 Devil_Mountain_Lake Kuzitrin_Lake           37.5 </span></span>
+<span><span class="co">##  3 Devil_Mountain_Lake Lava_Lake               22.7 </span></span>
+<span><span class="co">##  4 Devil_Mountain_Lake North_Killeak_Lake       9.34</span></span>
+<span><span class="co">##  5 Devil_Mountain_Lake White_Fish_Lake         13.7 </span></span>
+<span><span class="co">##  6 Devil_Mountain_Lake Iniakuk_Lake            19.5 </span></span>
+<span><span class="co">##  7 Devil_Mountain_Lake Kurupa_Lake             25.4 </span></span>
+<span><span class="co">##  8 Devil_Mountain_Lake Lake_Matcharak          21.5 </span></span>
+<span><span class="co">##  9 Devil_Mountain_Lake Lake_Selby              23.7 </span></span>
+<span><span class="co">## 10 Devil_Mountain_Lake Nutavukti_Lake          22.5 </span></span>
 <span><span class="co">## # ℹ 370 more rows</span></span></code></pre></div>
-<div id="the-threshold-is-the-analysis" class="section level3 unnumbered">
-<h3>the threshold is the analysis<a class="anchor" aria-label="anchor" href="#the-threshold-is-the-analysis"><i class="fas fa-link"></i></a>
-</h3>
-<p>A distance matrix connects <em>everything to everything</em>: every pair of samples has some distance, so the complete network has an edge for every possible pair. That picture is useless. To get a network worth looking at, you keep only edges above some similarity cutoff:</p>
+<p>With the edgelist in hand, we can build a network easily with <code>buildNetwork()</code>:</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
-<span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span><span class="op">)</span>,</span>
+<span>  edgelist <span class="op">=</span> <span class="va">alaska_edges</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 380 edges were collapsed to 190. Set directed = TRUE to keep both directions.</span></span>
-<span><span class="va">net</span><span class="op">$</span><span class="va">nodes</span></span>
-<span><span class="co">##                              x          y</span></span>
-<span><span class="co">## Devil_Mountain_Lake 0.42293811 0.43934588</span></span>
-<span><span class="co">## Imuruk_Lake         0.24392076 0.71149419</span></span>
-<span><span class="co">## Kuzitrin_Lake       0.33737901 1.00000000</span></span>
-<span><span class="co">## Lava_Lake           0.11977665 0.79366490</span></span>
-<span><span class="co">## North_Killeak_Lake  1.00000000 0.56336581</span></span>
-<span><span class="co">## White_Fish_Lake     0.60655545 0.00000000</span></span>
-<span><span class="co">## Iniakuk_Lake        0.05122201 0.24998237</span></span>
-<span><span class="co">## Kurupa_Lake         0.30518730 0.38397912</span></span>
-<span><span class="co">## Lake_Matcharak      0.00000000 0.45279175</span></span>
-<span><span class="co">## Lake_Selby          0.18319775 0.55465368</span></span>
-<span><span class="co">## Nutavukti_Lake      0.08625284 0.67962832</span></span>
-<span><span class="co">## Summit_Lake         0.24657298 0.91939794</span></span>
-<span><span class="co">## Takahula_Lake       0.30534392 0.04413092</span></span>
-<span><span class="co">## Walker_Lake         0.17982233 0.33624665</span></span>
-<span><span class="co">## Wild_Lake           0.13976417 0.02581230</span></span>
-<span><span class="co">## Desperation_Lake    0.44662234 0.82114227</span></span>
-<span><span class="co">## Feniak_Lake         0.45207725 0.62659130</span></span>
-<span><span class="co">## Lake_Kangilipak     0.35004252 0.63225604</span></span>
-<span><span class="co">## Lake_Narvakrak      0.13611144 0.92166967</span></span>
-<span><span class="co">## Okoklik_Lake        0.34709135 0.81465440</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">net</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
+<span><span class="co">##                             x          y</span></span>
+<span><span class="co">## Devil_Mountain_Lake 0.6288512 0.21182409</span></span>
+<span><span class="co">## Imuruk_Lake         0.7044623 0.64857949</span></span>
+<span><span class="co">## Kuzitrin_Lake       0.4417220 0.04724479</span></span>
+<span><span class="co">## Lava_Lake           0.3255254 0.82479944</span></span>
+<span><span class="co">## North_Killeak_Lake  1.0000000 0.75230095</span></span>
+<span><span class="co">## White_Fish_Lake     0.5413863 1.00000000</span></span>
 <span><span class="co">##                               node_name park</span></span>
 <span><span class="co">## Devil_Mountain_Lake Devil_Mountain_Lake BELA</span></span>
 <span><span class="co">## Imuruk_Lake                 Imuruk_Lake BELA</span></span>
@@ -380,406 +366,23 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <span><span class="co">## Lava_Lake                     Lava_Lake BELA</span></span>
 <span><span class="co">## North_Killeak_Lake   North_Killeak_Lake BELA</span></span>
 <span><span class="co">## White_Fish_Lake         White_Fish_Lake BELA</span></span>
-<span><span class="co">## Iniakuk_Lake               Iniakuk_Lake GAAR</span></span>
-<span><span class="co">## Kurupa_Lake                 Kurupa_Lake GAAR</span></span>
-<span><span class="co">## Lake_Matcharak           Lake_Matcharak GAAR</span></span>
-<span><span class="co">## Lake_Selby                   Lake_Selby GAAR</span></span>
-<span><span class="co">## Nutavukti_Lake           Nutavukti_Lake GAAR</span></span>
-<span><span class="co">## Summit_Lake                 Summit_Lake GAAR</span></span>
-<span><span class="co">## Takahula_Lake             Takahula_Lake GAAR</span></span>
-<span><span class="co">## Walker_Lake                 Walker_Lake GAAR</span></span>
-<span><span class="co">## Wild_Lake                     Wild_Lake GAAR</span></span>
-<span><span class="co">## Desperation_Lake       Desperation_Lake NOAT</span></span>
-<span><span class="co">## Feniak_Lake                 Feniak_Lake NOAT</span></span>
-<span><span class="co">## Lake_Kangilipak         Lake_Kangilipak NOAT</span></span>
-<span><span class="co">## Lake_Narvakrak           Lake_Narvakrak NOAT</span></span>
-<span><span class="co">## Okoklik_Lake               Okoklik_Lake NOAT</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">net</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span>
+<span><span class="co">##           x         y          start_node      xend</span></span>
+<span><span class="co">## 1 0.6288512 0.2118241 Devil_Mountain_Lake 0.7044623</span></span>
+<span><span class="co">## 2 0.6288512 0.2118241 Devil_Mountain_Lake 0.4417220</span></span>
+<span><span class="co">## 3 0.6288512 0.2118241 Devil_Mountain_Lake 0.3255254</span></span>
+<span><span class="co">## 4 0.6288512 0.2118241 Devil_Mountain_Lake 1.0000000</span></span>
+<span><span class="co">## 5 0.6288512 0.2118241 Devil_Mountain_Lake 0.5413863</span></span>
+<span><span class="co">## 6 0.6288512 0.2118241 Devil_Mountain_Lake 0.0487207</span></span>
+<span><span class="co">##         yend           end_node similarity</span></span>
+<span><span class="co">## 1 0.64857949        Imuruk_Lake  21.403954</span></span>
+<span><span class="co">## 2 0.04724479      Kuzitrin_Lake  37.549555</span></span>
+<span><span class="co">## 3 0.82479944          Lava_Lake  22.717833</span></span>
+<span><span class="co">## 4 0.75230095 North_Killeak_Lake   9.342952</span></span>
+<span><span class="co">## 5 1.00000000    White_Fish_Lake  13.719374</span></span>
+<span><span class="co">## 6 0.27097409       Iniakuk_Lake  19.539621</span></span></code></pre></div>
+<p>These outputs are easy to plot with! <code>buildNetwork()</code> returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment()</a></code>, nodes with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>. For <code>buildNetwork()</code>, the <code>edgelist</code> should have node names in columns 1 and 2 (<code>lake_sample_1</code>, <code>lake_sample_2</code> here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. <code>node_attributes</code> is joined onto the nodes so you can color them by something you know about the samples.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">net</span><span class="op">$</span><span class="va">edges</span></span>
-<span><span class="co">##              x          y          start_node       xend</span></span>
-<span><span class="co">## 1   0.42293811 0.43934588 Devil_Mountain_Lake 0.24392076</span></span>
-<span><span class="co">## 2   0.42293811 0.43934588 Devil_Mountain_Lake 0.33737901</span></span>
-<span><span class="co">## 3   0.42293811 0.43934588 Devil_Mountain_Lake 0.11977665</span></span>
-<span><span class="co">## 4   0.42293811 0.43934588 Devil_Mountain_Lake 1.00000000</span></span>
-<span><span class="co">## 5   0.42293811 0.43934588 Devil_Mountain_Lake 0.60655545</span></span>
-<span><span class="co">## 6   0.42293811 0.43934588 Devil_Mountain_Lake 0.05122201</span></span>
-<span><span class="co">## 7   0.42293811 0.43934588 Devil_Mountain_Lake 0.30518730</span></span>
-<span><span class="co">## 8   0.42293811 0.43934588 Devil_Mountain_Lake 0.00000000</span></span>
-<span><span class="co">## 9   0.42293811 0.43934588 Devil_Mountain_Lake 0.18319775</span></span>
-<span><span class="co">## 10  0.42293811 0.43934588 Devil_Mountain_Lake 0.08625284</span></span>
-<span><span class="co">## 11  0.42293811 0.43934588 Devil_Mountain_Lake 0.24657298</span></span>
-<span><span class="co">## 12  0.42293811 0.43934588 Devil_Mountain_Lake 0.30534392</span></span>
-<span><span class="co">## 13  0.42293811 0.43934588 Devil_Mountain_Lake 0.17982233</span></span>
-<span><span class="co">## 14  0.42293811 0.43934588 Devil_Mountain_Lake 0.13976417</span></span>
-<span><span class="co">## 15  0.42293811 0.43934588 Devil_Mountain_Lake 0.44662234</span></span>
-<span><span class="co">## 16  0.42293811 0.43934588 Devil_Mountain_Lake 0.45207725</span></span>
-<span><span class="co">## 17  0.42293811 0.43934588 Devil_Mountain_Lake 0.35004252</span></span>
-<span><span class="co">## 18  0.42293811 0.43934588 Devil_Mountain_Lake 0.13611144</span></span>
-<span><span class="co">## 19  0.42293811 0.43934588 Devil_Mountain_Lake 0.34709135</span></span>
-<span><span class="co">## 20  0.24392076 0.71149419         Imuruk_Lake 0.33737901</span></span>
-<span><span class="co">## 21  0.24392076 0.71149419         Imuruk_Lake 0.11977665</span></span>
-<span><span class="co">## 22  0.24392076 0.71149419         Imuruk_Lake 1.00000000</span></span>
-<span><span class="co">## 23  0.24392076 0.71149419         Imuruk_Lake 0.60655545</span></span>
-<span><span class="co">## 24  0.24392076 0.71149419         Imuruk_Lake 0.05122201</span></span>
-<span><span class="co">## 25  0.24392076 0.71149419         Imuruk_Lake 0.30518730</span></span>
-<span><span class="co">## 26  0.24392076 0.71149419         Imuruk_Lake 0.00000000</span></span>
-<span><span class="co">## 27  0.24392076 0.71149419         Imuruk_Lake 0.18319775</span></span>
-<span><span class="co">## 28  0.24392076 0.71149419         Imuruk_Lake 0.08625284</span></span>
-<span><span class="co">## 29  0.24392076 0.71149419         Imuruk_Lake 0.24657298</span></span>
-<span><span class="co">## 30  0.24392076 0.71149419         Imuruk_Lake 0.30534392</span></span>
-<span><span class="co">## 31  0.24392076 0.71149419         Imuruk_Lake 0.17982233</span></span>
-<span><span class="co">## 32  0.24392076 0.71149419         Imuruk_Lake 0.13976417</span></span>
-<span><span class="co">## 33  0.24392076 0.71149419         Imuruk_Lake 0.44662234</span></span>
-<span><span class="co">## 34  0.24392076 0.71149419         Imuruk_Lake 0.45207725</span></span>
-<span><span class="co">## 35  0.24392076 0.71149419         Imuruk_Lake 0.35004252</span></span>
-<span><span class="co">## 36  0.24392076 0.71149419         Imuruk_Lake 0.13611144</span></span>
-<span><span class="co">## 37  0.24392076 0.71149419         Imuruk_Lake 0.34709135</span></span>
-<span><span class="co">## 38  0.33737901 1.00000000       Kuzitrin_Lake 0.11977665</span></span>
-<span><span class="co">## 39  0.33737901 1.00000000       Kuzitrin_Lake 1.00000000</span></span>
-<span><span class="co">## 40  0.33737901 1.00000000       Kuzitrin_Lake 0.60655545</span></span>
-<span><span class="co">## 41  0.33737901 1.00000000       Kuzitrin_Lake 0.05122201</span></span>
-<span><span class="co">## 42  0.33737901 1.00000000       Kuzitrin_Lake 0.30518730</span></span>
-<span><span class="co">## 43  0.33737901 1.00000000       Kuzitrin_Lake 0.00000000</span></span>
-<span><span class="co">## 44  0.33737901 1.00000000       Kuzitrin_Lake 0.18319775</span></span>
-<span><span class="co">## 45  0.33737901 1.00000000       Kuzitrin_Lake 0.08625284</span></span>
-<span><span class="co">## 46  0.33737901 1.00000000       Kuzitrin_Lake 0.24657298</span></span>
-<span><span class="co">## 47  0.33737901 1.00000000       Kuzitrin_Lake 0.30534392</span></span>
-<span><span class="co">## 48  0.33737901 1.00000000       Kuzitrin_Lake 0.17982233</span></span>
-<span><span class="co">## 49  0.33737901 1.00000000       Kuzitrin_Lake 0.13976417</span></span>
-<span><span class="co">## 50  0.33737901 1.00000000       Kuzitrin_Lake 0.44662234</span></span>
-<span><span class="co">## 51  0.33737901 1.00000000       Kuzitrin_Lake 0.45207725</span></span>
-<span><span class="co">## 52  0.33737901 1.00000000       Kuzitrin_Lake 0.35004252</span></span>
-<span><span class="co">## 53  0.33737901 1.00000000       Kuzitrin_Lake 0.13611144</span></span>
-<span><span class="co">## 54  0.33737901 1.00000000       Kuzitrin_Lake 0.34709135</span></span>
-<span><span class="co">## 55  0.11977665 0.79366490           Lava_Lake 1.00000000</span></span>
-<span><span class="co">## 56  0.11977665 0.79366490           Lava_Lake 0.60655545</span></span>
-<span><span class="co">## 57  0.11977665 0.79366490           Lava_Lake 0.05122201</span></span>
-<span><span class="co">## 58  0.11977665 0.79366490           Lava_Lake 0.30518730</span></span>
-<span><span class="co">## 59  0.11977665 0.79366490           Lava_Lake 0.00000000</span></span>
-<span><span class="co">## 60  0.11977665 0.79366490           Lava_Lake 0.18319775</span></span>
-<span><span class="co">## 61  0.11977665 0.79366490           Lava_Lake 0.08625284</span></span>
-<span><span class="co">## 62  0.11977665 0.79366490           Lava_Lake 0.24657298</span></span>
-<span><span class="co">## 63  0.11977665 0.79366490           Lava_Lake 0.30534392</span></span>
-<span><span class="co">## 64  0.11977665 0.79366490           Lava_Lake 0.17982233</span></span>
-<span><span class="co">## 65  0.11977665 0.79366490           Lava_Lake 0.13976417</span></span>
-<span><span class="co">## 66  0.11977665 0.79366490           Lava_Lake 0.44662234</span></span>
-<span><span class="co">## 67  0.11977665 0.79366490           Lava_Lake 0.45207725</span></span>
-<span><span class="co">## 68  0.11977665 0.79366490           Lava_Lake 0.35004252</span></span>
-<span><span class="co">## 69  0.11977665 0.79366490           Lava_Lake 0.13611144</span></span>
-<span><span class="co">## 70  0.11977665 0.79366490           Lava_Lake 0.34709135</span></span>
-<span><span class="co">## 71  1.00000000 0.56336581  North_Killeak_Lake 0.60655545</span></span>
-<span><span class="co">## 72  1.00000000 0.56336581  North_Killeak_Lake 0.05122201</span></span>
-<span><span class="co">## 73  1.00000000 0.56336581  North_Killeak_Lake 0.30518730</span></span>
-<span><span class="co">## 74  1.00000000 0.56336581  North_Killeak_Lake 0.00000000</span></span>
-<span><span class="co">## 75  1.00000000 0.56336581  North_Killeak_Lake 0.18319775</span></span>
-<span><span class="co">## 76  1.00000000 0.56336581  North_Killeak_Lake 0.08625284</span></span>
-<span><span class="co">## 77  1.00000000 0.56336581  North_Killeak_Lake 0.24657298</span></span>
-<span><span class="co">## 78  1.00000000 0.56336581  North_Killeak_Lake 0.30534392</span></span>
-<span><span class="co">## 79  1.00000000 0.56336581  North_Killeak_Lake 0.17982233</span></span>
-<span><span class="co">## 80  1.00000000 0.56336581  North_Killeak_Lake 0.13976417</span></span>
-<span><span class="co">## 81  1.00000000 0.56336581  North_Killeak_Lake 0.44662234</span></span>
-<span><span class="co">## 82  1.00000000 0.56336581  North_Killeak_Lake 0.45207725</span></span>
-<span><span class="co">## 83  1.00000000 0.56336581  North_Killeak_Lake 0.35004252</span></span>
-<span><span class="co">## 84  1.00000000 0.56336581  North_Killeak_Lake 0.13611144</span></span>
-<span><span class="co">## 85  1.00000000 0.56336581  North_Killeak_Lake 0.34709135</span></span>
-<span><span class="co">## 86  0.60655545 0.00000000     White_Fish_Lake 0.05122201</span></span>
-<span><span class="co">## 87  0.60655545 0.00000000     White_Fish_Lake 0.30518730</span></span>
-<span><span class="co">## 88  0.60655545 0.00000000     White_Fish_Lake 0.00000000</span></span>
-<span><span class="co">## 89  0.60655545 0.00000000     White_Fish_Lake 0.18319775</span></span>
-<span><span class="co">## 90  0.60655545 0.00000000     White_Fish_Lake 0.08625284</span></span>
-<span><span class="co">## 91  0.60655545 0.00000000     White_Fish_Lake 0.24657298</span></span>
-<span><span class="co">## 92  0.60655545 0.00000000     White_Fish_Lake 0.30534392</span></span>
-<span><span class="co">## 93  0.60655545 0.00000000     White_Fish_Lake 0.17982233</span></span>
-<span><span class="co">## 94  0.60655545 0.00000000     White_Fish_Lake 0.13976417</span></span>
-<span><span class="co">## 95  0.60655545 0.00000000     White_Fish_Lake 0.44662234</span></span>
-<span><span class="co">## 96  0.60655545 0.00000000     White_Fish_Lake 0.45207725</span></span>
-<span><span class="co">## 97  0.60655545 0.00000000     White_Fish_Lake 0.35004252</span></span>
-<span><span class="co">## 98  0.60655545 0.00000000     White_Fish_Lake 0.13611144</span></span>
-<span><span class="co">## 99  0.60655545 0.00000000     White_Fish_Lake 0.34709135</span></span>
-<span><span class="co">## 100 0.05122201 0.24998237        Iniakuk_Lake 0.30518730</span></span>
-<span><span class="co">## 101 0.05122201 0.24998237        Iniakuk_Lake 0.00000000</span></span>
-<span><span class="co">## 102 0.05122201 0.24998237        Iniakuk_Lake 0.18319775</span></span>
-<span><span class="co">## 103 0.05122201 0.24998237        Iniakuk_Lake 0.08625284</span></span>
-<span><span class="co">## 104 0.05122201 0.24998237        Iniakuk_Lake 0.24657298</span></span>
-<span><span class="co">## 105 0.05122201 0.24998237        Iniakuk_Lake 0.30534392</span></span>
-<span><span class="co">## 106 0.05122201 0.24998237        Iniakuk_Lake 0.17982233</span></span>
-<span><span class="co">## 107 0.05122201 0.24998237        Iniakuk_Lake 0.13976417</span></span>
-<span><span class="co">## 108 0.05122201 0.24998237        Iniakuk_Lake 0.44662234</span></span>
-<span><span class="co">## 109 0.05122201 0.24998237        Iniakuk_Lake 0.45207725</span></span>
-<span><span class="co">## 110 0.05122201 0.24998237        Iniakuk_Lake 0.35004252</span></span>
-<span><span class="co">## 111 0.05122201 0.24998237        Iniakuk_Lake 0.13611144</span></span>
-<span><span class="co">## 112 0.05122201 0.24998237        Iniakuk_Lake 0.34709135</span></span>
-<span><span class="co">## 113 0.30518730 0.38397912         Kurupa_Lake 0.00000000</span></span>
-<span><span class="co">## 114 0.30518730 0.38397912         Kurupa_Lake 0.18319775</span></span>
-<span><span class="co">## 115 0.30518730 0.38397912         Kurupa_Lake 0.08625284</span></span>
-<span><span class="co">## 116 0.30518730 0.38397912         Kurupa_Lake 0.24657298</span></span>
-<span><span class="co">## 117 0.30518730 0.38397912         Kurupa_Lake 0.30534392</span></span>
-<span><span class="co">## 118 0.30518730 0.38397912         Kurupa_Lake 0.17982233</span></span>
-<span><span class="co">## 119 0.30518730 0.38397912         Kurupa_Lake 0.13976417</span></span>
-<span><span class="co">## 120 0.30518730 0.38397912         Kurupa_Lake 0.44662234</span></span>
-<span><span class="co">## 121 0.30518730 0.38397912         Kurupa_Lake 0.45207725</span></span>
-<span><span class="co">## 122 0.30518730 0.38397912         Kurupa_Lake 0.35004252</span></span>
-<span><span class="co">## 123 0.30518730 0.38397912         Kurupa_Lake 0.13611144</span></span>
-<span><span class="co">## 124 0.30518730 0.38397912         Kurupa_Lake 0.34709135</span></span>
-<span><span class="co">## 125 0.00000000 0.45279175      Lake_Matcharak 0.18319775</span></span>
-<span><span class="co">## 126 0.00000000 0.45279175      Lake_Matcharak 0.08625284</span></span>
-<span><span class="co">## 127 0.00000000 0.45279175      Lake_Matcharak 0.24657298</span></span>
-<span><span class="co">## 128 0.00000000 0.45279175      Lake_Matcharak 0.30534392</span></span>
-<span><span class="co">## 129 0.00000000 0.45279175      Lake_Matcharak 0.17982233</span></span>
-<span><span class="co">## 130 0.00000000 0.45279175      Lake_Matcharak 0.13976417</span></span>
-<span><span class="co">## 131 0.00000000 0.45279175      Lake_Matcharak 0.44662234</span></span>
-<span><span class="co">## 132 0.00000000 0.45279175      Lake_Matcharak 0.45207725</span></span>
-<span><span class="co">## 133 0.00000000 0.45279175      Lake_Matcharak 0.35004252</span></span>
-<span><span class="co">## 134 0.00000000 0.45279175      Lake_Matcharak 0.13611144</span></span>
-<span><span class="co">## 135 0.00000000 0.45279175      Lake_Matcharak 0.34709135</span></span>
-<span><span class="co">## 136 0.18319775 0.55465368          Lake_Selby 0.08625284</span></span>
-<span><span class="co">## 137 0.18319775 0.55465368          Lake_Selby 0.24657298</span></span>
-<span><span class="co">## 138 0.18319775 0.55465368          Lake_Selby 0.30534392</span></span>
-<span><span class="co">## 139 0.18319775 0.55465368          Lake_Selby 0.17982233</span></span>
-<span><span class="co">## 140 0.18319775 0.55465368          Lake_Selby 0.13976417</span></span>
-<span><span class="co">## 141 0.18319775 0.55465368          Lake_Selby 0.44662234</span></span>
-<span><span class="co">## 142 0.18319775 0.55465368          Lake_Selby 0.45207725</span></span>
-<span><span class="co">## 143 0.18319775 0.55465368          Lake_Selby 0.35004252</span></span>
-<span><span class="co">## 144 0.18319775 0.55465368          Lake_Selby 0.13611144</span></span>
-<span><span class="co">## 145 0.18319775 0.55465368          Lake_Selby 0.34709135</span></span>
-<span><span class="co">## 146 0.08625284 0.67962832      Nutavukti_Lake 0.24657298</span></span>
-<span><span class="co">## 147 0.08625284 0.67962832      Nutavukti_Lake 0.30534392</span></span>
-<span><span class="co">## 148 0.08625284 0.67962832      Nutavukti_Lake 0.17982233</span></span>
-<span><span class="co">## 149 0.08625284 0.67962832      Nutavukti_Lake 0.13976417</span></span>
-<span><span class="co">## 150 0.08625284 0.67962832      Nutavukti_Lake 0.44662234</span></span>
-<span><span class="co">## 151 0.08625284 0.67962832      Nutavukti_Lake 0.45207725</span></span>
-<span><span class="co">## 152 0.08625284 0.67962832      Nutavukti_Lake 0.35004252</span></span>
-<span><span class="co">## 153 0.08625284 0.67962832      Nutavukti_Lake 0.13611144</span></span>
-<span><span class="co">## 154 0.08625284 0.67962832      Nutavukti_Lake 0.34709135</span></span>
-<span><span class="co">## 155 0.24657298 0.91939794         Summit_Lake 0.30534392</span></span>
-<span><span class="co">## 156 0.24657298 0.91939794         Summit_Lake 0.17982233</span></span>
-<span><span class="co">## 157 0.24657298 0.91939794         Summit_Lake 0.13976417</span></span>
-<span><span class="co">## 158 0.24657298 0.91939794         Summit_Lake 0.44662234</span></span>
-<span><span class="co">## 159 0.24657298 0.91939794         Summit_Lake 0.45207725</span></span>
-<span><span class="co">## 160 0.24657298 0.91939794         Summit_Lake 0.35004252</span></span>
-<span><span class="co">## 161 0.24657298 0.91939794         Summit_Lake 0.13611144</span></span>
-<span><span class="co">## 162 0.24657298 0.91939794         Summit_Lake 0.34709135</span></span>
-<span><span class="co">## 163 0.30534392 0.04413092       Takahula_Lake 0.17982233</span></span>
-<span><span class="co">## 164 0.30534392 0.04413092       Takahula_Lake 0.13976417</span></span>
-<span><span class="co">## 165 0.30534392 0.04413092       Takahula_Lake 0.44662234</span></span>
-<span><span class="co">## 166 0.30534392 0.04413092       Takahula_Lake 0.45207725</span></span>
-<span><span class="co">## 167 0.30534392 0.04413092       Takahula_Lake 0.35004252</span></span>
-<span><span class="co">## 168 0.30534392 0.04413092       Takahula_Lake 0.13611144</span></span>
-<span><span class="co">## 169 0.30534392 0.04413092       Takahula_Lake 0.34709135</span></span>
-<span><span class="co">## 170 0.17982233 0.33624665         Walker_Lake 0.13976417</span></span>
-<span><span class="co">## 171 0.17982233 0.33624665         Walker_Lake 0.44662234</span></span>
-<span><span class="co">## 172 0.17982233 0.33624665         Walker_Lake 0.45207725</span></span>
-<span><span class="co">## 173 0.17982233 0.33624665         Walker_Lake 0.35004252</span></span>
-<span><span class="co">## 174 0.17982233 0.33624665         Walker_Lake 0.13611144</span></span>
-<span><span class="co">## 175 0.17982233 0.33624665         Walker_Lake 0.34709135</span></span>
-<span><span class="co">## 176 0.13976417 0.02581230           Wild_Lake 0.44662234</span></span>
-<span><span class="co">## 177 0.13976417 0.02581230           Wild_Lake 0.45207725</span></span>
-<span><span class="co">## 178 0.13976417 0.02581230           Wild_Lake 0.35004252</span></span>
-<span><span class="co">## 179 0.13976417 0.02581230           Wild_Lake 0.13611144</span></span>
-<span><span class="co">## 180 0.13976417 0.02581230           Wild_Lake 0.34709135</span></span>
-<span><span class="co">## 181 0.44662234 0.82114227    Desperation_Lake 0.45207725</span></span>
-<span><span class="co">## 182 0.44662234 0.82114227    Desperation_Lake 0.35004252</span></span>
-<span><span class="co">## 183 0.44662234 0.82114227    Desperation_Lake 0.13611144</span></span>
-<span><span class="co">## 184 0.44662234 0.82114227    Desperation_Lake 0.34709135</span></span>
-<span><span class="co">## 185 0.45207725 0.62659130         Feniak_Lake 0.35004252</span></span>
-<span><span class="co">## 186 0.45207725 0.62659130         Feniak_Lake 0.13611144</span></span>
-<span><span class="co">## 187 0.45207725 0.62659130         Feniak_Lake 0.34709135</span></span>
-<span><span class="co">## 188 0.35004252 0.63225604     Lake_Kangilipak 0.13611144</span></span>
-<span><span class="co">## 189 0.35004252 0.63225604     Lake_Kangilipak 0.34709135</span></span>
-<span><span class="co">## 190 0.13611144 0.92166967      Lake_Narvakrak 0.34709135</span></span>
-<span><span class="co">##           yend           end_node similarity</span></span>
-<span><span class="co">## 1   0.71149419        Imuruk_Lake  5.4794866</span></span>
-<span><span class="co">## 2   1.00000000      Kuzitrin_Lake  6.7047638</span></span>
-<span><span class="co">## 3   0.79366490          Lava_Lake  5.0888931</span></span>
-<span><span class="co">## 4   0.56336581 North_Killeak_Lake  0.2744483</span></span>
-<span><span class="co">## 5   0.00000000    White_Fish_Lake  0.9242411</span></span>
-<span><span class="co">## 6   0.24998237       Iniakuk_Lake  2.4426037</span></span>
-<span><span class="co">## 7   0.38397912        Kurupa_Lake  4.9007807</span></span>
-<span><span class="co">## 8   0.45279175     Lake_Matcharak  2.7372296</span></span>
-<span><span class="co">## 9   0.55465368         Lake_Selby  5.0093428</span></span>
-<span><span class="co">## 10  0.67962832     Nutavukti_Lake  5.1405611</span></span>
-<span><span class="co">## 11  0.91939794        Summit_Lake  6.4148487</span></span>
-<span><span class="co">## 12  0.04413092      Takahula_Lake  1.8184825</span></span>
-<span><span class="co">## 13  0.33624665        Walker_Lake  3.4907378</span></span>
-<span><span class="co">## 14  0.02581230          Wild_Lake  1.8197689</span></span>
-<span><span class="co">## 15  0.82114227   Desperation_Lake  6.8241655</span></span>
-<span><span class="co">## 16  0.62659130        Feniak_Lake  6.4475337</span></span>
-<span><span class="co">## 17  0.63225604    Lake_Kangilipak  7.0652770</span></span>
-<span><span class="co">## 18  0.92166967     Lake_Narvakrak  5.1227341</span></span>
-<span><span class="co">## 19  0.81465440       Okoklik_Lake  7.0809799</span></span>
-<span><span class="co">## 20  1.00000000      Kuzitrin_Lake  9.2373870</span></span>
-<span><span class="co">## 21  0.79366490          Lava_Lake  7.6250036</span></span>
-<span><span class="co">## 22  0.56336581 North_Killeak_Lake  0.2656153</span></span>
-<span><span class="co">## 23  0.00000000    White_Fish_Lake  0.8300860</span></span>
-<span><span class="co">## 24  0.24998237       Iniakuk_Lake  2.2361802</span></span>
-<span><span class="co">## 25  0.38397912        Kurupa_Lake  4.3507221</span></span>
-<span><span class="co">## 26  0.45279175     Lake_Matcharak  2.4516094</span></span>
-<span><span class="co">## 27  0.55465368         Lake_Selby  6.3961133</span></span>
-<span><span class="co">## 28  0.67962832     Nutavukti_Lake  8.1658204</span></span>
-<span><span class="co">## 29  0.91939794        Summit_Lake 11.3822178</span></span>
-<span><span class="co">## 30  0.04413092      Takahula_Lake  1.6991524</span></span>
-<span><span class="co">## 31  0.33624665        Walker_Lake  3.4766038</span></span>
-<span><span class="co">## 32  0.02581230          Wild_Lake  1.6794175</span></span>
-<span><span class="co">## 33  0.82114227   Desperation_Lake  5.9342852</span></span>
-<span><span class="co">## 34  0.62659130        Feniak_Lake  5.6496643</span></span>
-<span><span class="co">## 35  0.63225604    Lake_Kangilipak  6.6970983</span></span>
-<span><span class="co">## 36  0.92166967     Lake_Narvakrak  8.4558391</span></span>
-<span><span class="co">## 37  0.81465440       Okoklik_Lake  6.7030928</span></span>
-<span><span class="co">## 38  0.79366490          Lava_Lake  5.4417076</span></span>
-<span><span class="co">## 39  0.56336581 North_Killeak_Lake  0.2651843</span></span>
-<span><span class="co">## 40  0.00000000    White_Fish_Lake  0.8249705</span></span>
-<span><span class="co">## 41  0.24998237       Iniakuk_Lake  2.3059616</span></span>
-<span><span class="co">## 42  0.38397912        Kurupa_Lake  4.7475310</span></span>
-<span><span class="co">## 43  0.45279175     Lake_Matcharak  2.5135729</span></span>
-<span><span class="co">## 44  0.55465368         Lake_Selby  6.0000654</span></span>
-<span><span class="co">## 45  0.67962832     Nutavukti_Lake  6.4745470</span></span>
-<span><span class="co">## 46  0.91939794        Summit_Lake 14.2344095</span></span>
-<span><span class="co">## 47  0.04413092      Takahula_Lake  1.7333225</span></span>
-<span><span class="co">## 48  0.33624665        Walker_Lake  3.4787623</span></span>
-<span><span class="co">## 49  0.02581230          Wild_Lake  1.7228290</span></span>
-<span><span class="co">## 50  0.82114227   Desperation_Lake 11.5521582</span></span>
-<span><span class="co">## 51  0.62659130        Feniak_Lake  8.5178504</span></span>
-<span><span class="co">## 52  0.63225604    Lake_Kangilipak 10.0122218</span></span>
-<span><span class="co">## 53  0.92166967     Lake_Narvakrak  6.3216356</span></span>
-<span><span class="co">## 54  0.81465440       Okoklik_Lake  9.3904343</span></span>
-<span><span class="co">## 55  0.56336581 North_Killeak_Lake  0.2675126</span></span>
-<span><span class="co">## 56  0.00000000    White_Fish_Lake  0.8532124</span></span>
-<span><span class="co">## 57  0.24998237       Iniakuk_Lake  2.7968531</span></span>
-<span><span class="co">## 58  0.38397912        Kurupa_Lake  5.0768486</span></span>
-<span><span class="co">## 59  0.45279175     Lake_Matcharak  3.1600157</span></span>
-<span><span class="co">## 60  0.55465368         Lake_Selby  8.7080152</span></span>
-<span><span class="co">## 61  0.67962832     Nutavukti_Lake 14.2142956</span></span>
-<span><span class="co">## 62  0.91939794        Summit_Lake  7.0894078</span></span>
-<span><span class="co">## 63  0.04413092      Takahula_Lake  2.0430647</span></span>
-<span><span class="co">## 64  0.33624665        Walker_Lake  4.9752104</span></span>
-<span><span class="co">## 65  0.02581230          Wild_Lake  1.9506452</span></span>
-<span><span class="co">## 66  0.82114227   Desperation_Lake  4.8502441</span></span>
-<span><span class="co">## 67  0.62659130        Feniak_Lake  4.9699594</span></span>
-<span><span class="co">## 68  0.63225604    Lake_Kangilipak  5.9194386</span></span>
-<span><span class="co">## 69  0.92166967     Lake_Narvakrak 18.6870166</span></span>
-<span><span class="co">## 70  0.81465440       Okoklik_Lake  6.5696483</span></span>
-<span><span class="co">## 71  0.00000000    White_Fish_Lake  0.3875273</span></span>
-<span><span class="co">## 72  0.24998237       Iniakuk_Lake  0.2659568</span></span>
-<span><span class="co">## 73  0.38397912        Kurupa_Lake  0.2668357</span></span>
-<span><span class="co">## 74  0.45279175     Lake_Matcharak  0.2678960</span></span>
-<span><span class="co">## 75  0.55465368         Lake_Selby  0.2652718</span></span>
-<span><span class="co">## 76  0.67962832     Nutavukti_Lake  0.2653748</span></span>
-<span><span class="co">## 77  0.91939794        Summit_Lake  0.2651097</span></span>
-<span><span class="co">## 78  0.04413092      Takahula_Lake  0.2652686</span></span>
-<span><span class="co">## 79  0.33624665        Walker_Lake  0.2656956</span></span>
-<span><span class="co">## 80  0.02581230          Wild_Lake  0.2656161</span></span>
-<span><span class="co">## 81  0.82114227   Desperation_Lake  0.2652638</span></span>
-<span><span class="co">## 82  0.62659130        Feniak_Lake  0.2654818</span></span>
-<span><span class="co">## 83  0.63225604    Lake_Kangilipak  0.2658458</span></span>
-<span><span class="co">## 84  0.92166967     Lake_Narvakrak  0.2657108</span></span>
-<span><span class="co">## 85  0.81465440       Okoklik_Lake  0.2660173</span></span>
-<span><span class="co">## 86  0.24998237       Iniakuk_Lake  0.8189067</span></span>
-<span><span class="co">## 87  0.38397912        Kurupa_Lake  0.8419903</span></span>
-<span><span class="co">## 88  0.45279175     Lake_Matcharak  0.8424049</span></span>
-<span><span class="co">## 89  0.55465368         Lake_Selby  0.8291270</span></span>
-<span><span class="co">## 90  0.67962832     Nutavukti_Lake  0.8308049</span></span>
-<span><span class="co">## 91  0.91939794        Summit_Lake  0.8262061</span></span>
-<span><span class="co">## 92  0.04413092      Takahula_Lake  0.7933519</span></span>
-<span><span class="co">## 93  0.33624665        Walker_Lake  0.8284183</span></span>
-<span><span class="co">## 94  0.02581230          Wild_Lake  0.7948150</span></span>
-<span><span class="co">## 95  0.82114227   Desperation_Lake  0.8263908</span></span>
-<span><span class="co">## 96  0.62659130        Feniak_Lake  0.8289467</span></span>
-<span><span class="co">## 97  0.63225604    Lake_Kangilipak  0.8359146</span></span>
-<span><span class="co">## 98  0.92166967     Lake_Narvakrak  0.8345062</span></span>
-<span><span class="co">## 99  0.81465440       Okoklik_Lake  0.8381632</span></span>
-<span><span class="co">## 100 0.38397912        Kurupa_Lake  3.6279004</span></span>
-<span><span class="co">## 101 0.45279175     Lake_Matcharak 12.1932550</span></span>
-<span><span class="co">## 102 0.55465368         Lake_Selby  3.2161844</span></span>
-<span><span class="co">## 103 0.67962832     Nutavukti_Lake  2.9395255</span></span>
-<span><span class="co">## 104 0.91939794        Summit_Lake  2.5314782</span></span>
-<span><span class="co">## 105 0.04413092      Takahula_Lake  5.1146035</span></span>
-<span><span class="co">## 106 0.33624665        Walker_Lake  5.3128737</span></span>
-<span><span class="co">## 107 0.02581230          Wild_Lake  4.8885149</span></span>
-<span><span class="co">## 108 0.82114227   Desperation_Lake  2.5876567</span></span>
-<span><span class="co">## 109 0.62659130        Feniak_Lake  2.7581471</span></span>
-<span><span class="co">## 110 0.63225604    Lake_Kangilipak  2.5769651</span></span>
-<span><span class="co">## 111 0.92166967     Lake_Narvakrak  2.8590891</span></span>
-<span><span class="co">## 112 0.81465440       Okoklik_Lake  2.7426192</span></span>
-<span><span class="co">## 113 0.45279175     Lake_Matcharak  4.2700400</span></span>
-<span><span class="co">## 114 0.55465368         Lake_Selby  8.5930153</span></span>
-<span><span class="co">## 115 0.67962832     Nutavukti_Lake  6.1212962</span></span>
-<span><span class="co">## 116 0.91939794        Summit_Lake  5.9350457</span></span>
-<span><span class="co">## 117 0.04413092      Takahula_Lake  2.2363844</span></span>
-<span><span class="co">## 118 0.33624665        Walker_Lake  5.5125426</span></span>
-<span><span class="co">## 119 0.02581230          Wild_Lake  2.5267509</span></span>
-<span><span class="co">## 120 0.82114227   Desperation_Lake  5.8748229</span></span>
-<span><span class="co">## 121 0.62659130        Feniak_Lake  7.3948521</span></span>
-<span><span class="co">## 122 0.63225604    Lake_Kangilipak  5.3955335</span></span>
-<span><span class="co">## 123 0.92166967     Lake_Narvakrak  5.5596974</span></span>
-<span><span class="co">## 124 0.81465440       Okoklik_Lake  5.9346365</span></span>
-<span><span class="co">## 125 0.55465368         Lake_Selby  3.6877578</span></span>
-<span><span class="co">## 126 0.67962832     Nutavukti_Lake  3.3051862</span></span>
-<span><span class="co">## 127 0.91939794        Summit_Lake  2.7971059</span></span>
-<span><span class="co">## 128 0.04413092      Takahula_Lake  4.1923360</span></span>
-<span><span class="co">## 129 0.33624665        Walker_Lake  6.2047533</span></span>
-<span><span class="co">## 130 0.02581230          Wild_Lake  4.4267452</span></span>
-<span><span class="co">## 131 0.82114227   Desperation_Lake  2.8290642</span></span>
-<span><span class="co">## 132 0.62659130        Feniak_Lake  3.0136951</span></span>
-<span><span class="co">## 133 0.63225604    Lake_Kangilipak  2.8514117</span></span>
-<span><span class="co">## 134 0.92166967     Lake_Narvakrak  3.2044933</span></span>
-<span><span class="co">## 135 0.81465440       Okoklik_Lake  3.0550134</span></span>
-<span><span class="co">## 136 0.67962832     Nutavukti_Lake 14.3827430</span></span>
-<span><span class="co">## 137 0.91939794        Summit_Lake  8.8905076</span></span>
-<span><span class="co">## 138 0.04413092      Takahula_Lake  2.1565406</span></span>
-<span><span class="co">## 139 0.33624665        Walker_Lake  6.1496824</span></span>
-<span><span class="co">## 140 0.02581230          Wild_Lake  2.2099956</span></span>
-<span><span class="co">## 141 0.82114227   Desperation_Lake  6.1899660</span></span>
-<span><span class="co">## 142 0.62659130        Feniak_Lake  6.8028419</span></span>
-<span><span class="co">## 143 0.63225604    Lake_Kangilipak  6.4222593</span></span>
-<span><span class="co">## 144 0.92166967     Lake_Narvakrak 11.4980512</span></span>
-<span><span class="co">## 145 0.81465440       Okoklik_Lake  7.4185928</span></span>
-<span><span class="co">## 146 0.91939794        Summit_Lake  9.6474092</span></span>
-<span><span class="co">## 147 0.04413092      Takahula_Lake  2.0859224</span></span>
-<span><span class="co">## 148 0.33624665        Walker_Lake  5.6313222</span></span>
-<span><span class="co">## 149 0.02581230          Wild_Lake  2.0192170</span></span>
-<span><span class="co">## 150 0.82114227   Desperation_Lake  5.8760837</span></span>
-<span><span class="co">## 151 0.62659130        Feniak_Lake  6.0694400</span></span>
-<span><span class="co">## 152 0.63225604    Lake_Kangilipak  6.5931553</span></span>
-<span><span class="co">## 153 0.92166967     Lake_Narvakrak 31.4624291</span></span>
-<span><span class="co">## 154 0.81465440       Okoklik_Lake  7.5700673</span></span>
-<span><span class="co">## 155 0.04413092      Takahula_Lake  1.8400396</span></span>
-<span><span class="co">## 156 0.33624665        Walker_Lake  4.0808507</span></span>
-<span><span class="co">## 157 0.02581230          Wild_Lake  1.8516857</span></span>
-<span><span class="co">## 158 0.82114227   Desperation_Lake  9.8790726</span></span>
-<span><span class="co">## 159 0.62659130        Feniak_Lake  9.2247162</span></span>
-<span><span class="co">## 160 0.63225604    Lake_Kangilipak  9.4177515</span></span>
-<span><span class="co">## 161 0.92166967     Lake_Narvakrak  8.9324573</span></span>
-<span><span class="co">## 162 0.81465440       Okoklik_Lake  9.9422178</span></span>
-<span><span class="co">## 163 0.33624665        Walker_Lake  3.1506553</span></span>
-<span><span class="co">## 164 0.02581230          Wild_Lake  3.5455736</span></span>
-<span><span class="co">## 165 0.82114227   Desperation_Lake  1.8686923</span></span>
-<span><span class="co">## 166 0.62659130        Feniak_Lake  1.9181442</span></span>
-<span><span class="co">## 167 0.63225604    Lake_Kangilipak  1.8813440</span></span>
-<span><span class="co">## 168 0.92166967     Lake_Narvakrak  2.0615144</span></span>
-<span><span class="co">## 169 0.81465440       Okoklik_Lake  1.9700788</span></span>
-<span><span class="co">## 170 0.02581230          Wild_Lake  2.7656369</span></span>
-<span><span class="co">## 171 0.82114227   Desperation_Lake  3.8012763</span></span>
-<span><span class="co">## 172 0.62659130        Feniak_Lake  4.0156871</span></span>
-<span><span class="co">## 173 0.63225604    Lake_Kangilipak  3.8292163</span></span>
-<span><span class="co">## 174 0.92166967     Lake_Narvakrak  5.3480000</span></span>
-<span><span class="co">## 175 0.81465440       Okoklik_Lake  4.2580351</span></span>
-<span><span class="co">## 176 0.82114227   Desperation_Lake  1.8990895</span></span>
-<span><span class="co">## 177 0.62659130        Feniak_Lake  2.0106443</span></span>
-<span><span class="co">## 178 0.63225604    Lake_Kangilipak  1.8806853</span></span>
-<span><span class="co">## 179 0.92166967     Lake_Narvakrak  1.9739463</span></span>
-<span><span class="co">## 180 0.81465440       Okoklik_Lake  1.9549090</span></span>
-<span><span class="co">## 181 0.62659130        Feniak_Lake 15.3000618</span></span>
-<span><span class="co">## 182 0.63225604    Lake_Kangilipak 12.0288242</span></span>
-<span><span class="co">## 183 0.92166967     Lake_Narvakrak  5.5832496</span></span>
-<span><span class="co">## 184 0.81465440       Okoklik_Lake 11.6373725</span></span>
-<span><span class="co">## 185 0.63225604    Lake_Kangilipak  9.3957886</span></span>
-<span><span class="co">## 186 0.92166967     Lake_Narvakrak  5.6844192</span></span>
-<span><span class="co">## 187 0.81465440       Okoklik_Lake  9.6880240</span></span>
-<span><span class="co">## 188 0.92166967     Lake_Narvakrak  6.5477530</span></span>
-<span><span class="co">## 189 0.81465440       Okoklik_Lake 27.2907186</span></span>
-<span><span class="co">## 190 0.81465440       Okoklik_Lake  7.4549202</span></span></code></pre></div>
-<p>These outputs are easy to plot with! <code>buildNetwork()</code> returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment()</a></code>, nodes with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">edges</span>,</span>
@@ -800,36 +403,29 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-250-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-</div>
-</div>
-<div id="thresholds" class="section level2" number="2.1">
-<h2>
-<span class="header-section-number">2.1</span> thresholds<a class="anchor" aria-label="anchor" href="#thresholds"><i class="fas fa-link"></i></a>
-</h2>
-<p>For <code>buildNetwork()</code>, the <code>edgelist</code> should have node names in columns 1 and 2 (<code>wood_1</code>, <code>wood_2</code> here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. <code>node_attributes</code> is joined onto the nodes so you can colour them by something you know about the samples. Notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. <code>buildNetwork()</code> spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with <code>directed = TRUE</code> or <code>directed = FALSE</code>.</p>
-<p>Now — where did <code>4.3</code> come from? This is the part of the procedure that is easiest to skip past and hardest to defend. <strong>The threshold is not a formatting choice; it is the analysis.</strong> Set it too low and every node connects to every other: a hairball that says nothing. Set it too high and the network falls to dust, a scatter of isolated points. In between, structure appears — and <em>which</em> structure appears depends on where you put the line.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-249-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:</p>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net_10</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span>, <span class="va">similarity</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 28 edges were collapsed to 14. Set directed = TRUE to keep both directions.</span></span>
+<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 344 edges were collapsed to 172. Set directed = TRUE to keep both directions.</span></span>
 <span><span class="va">net_20</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span>, <span class="va">similarity</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 4 edges were collapsed to 2. Set directed = TRUE to keep both directions.</span></span>
+<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 222 edges were collapsed to 111. Set directed = TRUE to keep both directions.</span></span>
 <span><span class="va">net_25</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span>, <span class="va">similarity</span> <span class="op">&gt;</span> <span class="fl">25</span><span class="op">)</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 4 edges were collapsed to 2. Set directed = TRUE to keep both directions.</span></span>
+<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 120 edges were collapsed to 60. Set directed = TRUE to keep both directions.</span></span>
 <span><span class="va">net_30</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span>, <span class="va">similarity</span> <span class="op">&gt;</span> <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 2 edges were collapsed to 1. Set directed = TRUE to keep both directions.</span></span>
+<span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 36 edges were collapsed to 18. Set directed = TRUE to keep both directions.</span></span>
 <span></span>
 <span><span class="va">net_10</span><span class="op">$</span><span class="va">nodes</span><span class="op">$</span><span class="va">threshold</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span><span class="va">net_10</span><span class="op">$</span><span class="va">edges</span><span class="op">$</span><span class="va">threshold</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
@@ -842,7 +438,7 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <span></span>
 <span><span class="va">net</span><span class="op">$</span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_10</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_20</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_25</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_30</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
 <span><span class="va">net</span><span class="op">$</span><span class="va">edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_10</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_20</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_25</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_30</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">edges</span>,</span>
@@ -864,13 +460,95 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-252-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Minor note: notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. <code>buildNetwork()</code> spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with <code>directed = TRUE</code> or <code>directed = FALSE</code>.</p>
 </div>
-<div id="data-themselves-as-networks" class="section level2 unnumbered">
-<h2>data themselves as networks<a class="anchor" aria-label="anchor" href="#data-themselves-as-networks"><i class="fas fa-link"></i></a>
+<div id="data-as-networks" class="section level2 unnumbered">
+<h2>data as networks<a class="anchor" aria-label="anchor" href="#data-as-networks"><i class="fas fa-link"></i></a>
 </h2>
-<p>Everything in the previous section was <strong>derived</strong>: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list <em>is</em> the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick becase the edges are observations.</p>
+<p>Everything in the previous section was <strong>derived</strong>: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list <em>is</em> the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick because the edges are observations.</p>
 <p><code>buildNetwork()</code> already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for handling these sorts of datasets. Let’s look at an example:</p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">us_airports</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/us_airports.csv"</span><span class="op">)</span></span>
+<span><span class="co">## Rows: 29 Columns: 7</span></span>
+<span><span class="co">## ── Column specification ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">## Delimiter: ","</span></span>
+<span><span class="co">## chr (5): airport, name, city, state, region</span></span>
+<span><span class="co">## dbl (2): latitude, longitude</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="va">us_airports</span></span>
+<span><span class="co">## # A tibble: 29 × 7</span></span>
+<span><span class="co">##    airport name        city  state region latitude longitude</span></span>
+<span><span class="co">##    &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 ATL     Hartsfield… Atla… GA    lower…     33.6     -84.4</span></span>
+<span><span class="co">##  2 ORD     Chicago O'… Chic… IL    lower…     42.0     -87.9</span></span>
+<span><span class="co">##  3 DFW     Dallas/For… Dall… TX    lower…     32.9     -97.0</span></span>
+<span><span class="co">##  4 DEN     Denver Int… Denv… CO    lower…     39.9    -105. </span></span>
+<span><span class="co">##  5 LAX     Los Angele… Los … CA    lower…     33.9    -118. </span></span>
+<span><span class="co">##  6 JFK     John F. Ke… New … NY    lower…     40.6     -73.8</span></span>
+<span><span class="co">##  7 SFO     San Franci… San … CA    lower…     37.6    -122. </span></span>
+<span><span class="co">##  8 SEA     Seattle-Ta… Seat… WA    lower…     47.5    -122. </span></span>
+<span><span class="co">##  9 PDX     Portland I… Port… OR    lower…     45.6    -123. </span></span>
+<span><span class="co">## 10 MSP     Minneapoli… Minn… MN    lower…     44.9     -93.2</span></span>
+<span><span class="co">## # ℹ 19 more rows</span></span>
+<span><span class="va">passenger_flows</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/passenger_flows.csv"</span><span class="op">)</span></span>
+<span><span class="co">## Rows: 192 Columns: 3</span></span>
+<span><span class="co">## ── Column specification ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">## Delimiter: ","</span></span>
+<span><span class="co">## chr (2): origin, destination</span></span>
+<span><span class="co">## dbl (1): passengers</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="va">passenger_flows</span></span>
+<span><span class="co">## # A tibble: 192 × 3</span></span>
+<span><span class="co">##    origin destination passengers</span></span>
+<span><span class="co">##    &lt;chr&gt;  &lt;chr&gt;            &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 ANC    BET               9290</span></span>
+<span><span class="co">##  2 ANC    FAI              19360</span></span>
+<span><span class="co">##  3 ANC    JNU              14650</span></span>
+<span><span class="co">##  4 ANC    OME               5140</span></span>
+<span><span class="co">##  5 ANC    OTZ               4020</span></span>
+<span><span class="co">##  6 ANC    SIT               5810</span></span>
+<span><span class="co">##  7 ATL    BOS              69040</span></span>
+<span><span class="co">##  8 ATL    CLT              73400</span></span>
+<span><span class="co">##  9 ATL    DEN              58310</span></span>
+<span><span class="co">## 10 ATL    DFW              75820</span></span>
+<span><span class="co">## # ℹ 182 more rows</span></span>
+<span></span>
+<span><span class="va">air_net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
+<span>  edgelist <span class="op">=</span> <span class="va">passenger_flows</span>,</span>
+<span>  node_attributes <span class="op">=</span> <span class="va">us_airports</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## buildNetwork: 95 node pair(s) appear more than once with different edge attributes (e.g. A-&gt;B and B-&gt;A with different weights), so all 192 edges were kept and the network is treated as directed. Set directed = FALSE to keep one edge per pair (the first occurrence) instead.</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">air_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, xend <span class="op">=</span> <span class="va">xend</span>, yend <span class="op">=</span> <span class="va">yend</span>,</span>
+<span>      linewidth <span class="op">=</span> <span class="va">passengers</span>,</span>
+<span>      alpha <span class="op">=</span> <span class="va">passengers</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"grey40"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">air_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3.2</span>, color <span class="op">=</span> <span class="st">"black"</span>, stroke <span class="op">=</span> <span class="fl">0.2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">air_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">state</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_linewidth.html">scale_linewidth_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">1.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_alpha.html">scale_alpha_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-252-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>That said, one thing to watch: if A to B and B to A both appear and carry the same values (or no values at all), <code>buildNetwork()</code> will assume the network is undirected and merge them. When direction is part of the data, pass <code>directed = TRUE</code>.</p>
 <p>Three things become available that were not available in Part 1:</p>
 <p><strong>Direction.</strong> An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A distance is always symmetric, so a derived network can never be directed. And in a directed network, <em>the asymmetry is often the finding</em> — a node that sends far more than it receives is doing something structurally different from one that is balanced.</p>
@@ -953,12 +631,9 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <li><a class="nav-link" href="#networks">networks</a></li>
 <li><a class="nav-link" href="#section-6"></a></li>
 <li><a class="nav-link" href="#distances-and-scaling">distances and scaling</a></li>
+<li><a class="nav-link" href="#threshold-networks-from-data">threshold networks from data</a></li>
 <li>
-<a class="nav-link" href="#building-networks-from-data">building networks from data</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#the-threshold-is-the-analysis">the threshold is the analysis</a></li></ul>
-</li>
-<li><a class="nav-link" href="#thresholds"><span class="header-section-number">2.1</span> thresholds</a></li>
-<li>
-<a class="nav-link" href="#data-themselves-as-networks">data themselves as networks</a><ul class="nav navbar-nav">
+<a class="nav-link" href="#data-as-networks">data as networks</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#node-summaries-degree-and-volume">node summaries: degree and volume</a></li>
 <li><a class="nav-link" href="#volume-is-not-importance">volume is not importance</a></li>
 <li><a class="nav-link" href="#components-and-critical-nodes">components and critical nodes</a></li>
@@ -984,7 +659,7 @@ Scaling is a choice, not a law. If every column is in the same units and the lar
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-21.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
