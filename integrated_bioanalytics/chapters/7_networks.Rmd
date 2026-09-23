@@ -1,7 +1,7 @@
 # networks {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges.'}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg', dpi = NA)
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG', dpi = NA)
 ```
 
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:

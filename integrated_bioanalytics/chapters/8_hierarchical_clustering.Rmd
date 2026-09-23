@@ -1,6 +1,6 @@
 # hierarchical clustering {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit together in stands rather than being scattered at random. The image is decorative, but it stands in for the question this chapter answers: given a set of samples described by many measurements, which of them belong together?'}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
 ```
 

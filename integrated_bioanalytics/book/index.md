@@ -1722,10 +1722,7 @@ Some pointers:
 
 # networks {-}
 
-<div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg" alt="Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-237)Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges.</p>
-</div>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG" alt="" width="100%" style="display: block; margin: auto;" />
 
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
@@ -2580,10 +2577,7 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 # hierarchical clustering {-}
 
-<div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit together in stands rather than being scattered at random. The image is decorative, but it stands in for the question this chapter answers: given a set of samples described by many measurements, which of them belong together?" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-285)Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit together in stands rather than being scattered at random. The image is decorative, but it stands in for the question this chapter answers: given a set of samples described by many measurements, which of them belong together?</p>
-</div>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 "Which of my samples are most closely related?"
 
@@ -3034,10 +3028,7 @@ Using AK_tree from the first concept check, fill in the blank with the coordinat
 
 # dimensional reduction {-}
 
-<div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-311)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
-</div>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 

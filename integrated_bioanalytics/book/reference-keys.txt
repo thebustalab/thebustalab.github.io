@@ -1,5 +1,4 @@
 fig:unnamed-chunk-156
-fig:unnamed-chunk-237
 fig:unnamed-chunk-238
 fig:unnamed-chunk-242
 fig:unnamed-chunk-244
@@ -8,7 +7,6 @@ fig:unnamed-chunk-249
 fig:unnamed-chunk-251
 fig:unnamed-chunk-253
 fig:unnamed-chunk-258
-fig:unnamed-chunk-285
 fig:unnamed-chunk-287
 fig:unnamed-chunk-288
 fig:unnamed-chunk-289
@@ -17,7 +15,6 @@ fig:unnamed-chunk-293
 fig:unnamed-chunk-294
 fig:unnamed-chunk-295
 fig:unnamed-chunk-296
-fig:unnamed-chunk-311
 fig:unnamed-chunk-313
 fig:unnamed-chunk-315
 fig:unnamed-chunk-317
