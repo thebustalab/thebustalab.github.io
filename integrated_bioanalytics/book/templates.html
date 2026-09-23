@@ -14,14 +14,14 @@
     })();
   </script><title>templates | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content='3.1 matrix analyses  3.1.1 basic runMatrixAnalyses() template  runMatrixAnalyses(   data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  columns_w_values_for_single_analyte = NULL, ...'>
+<meta name="description" content="3.1 matrix analyses There is one matrix-analysis function in this course: runMatrixAnalysis(). If you meet older material calling runMatrixAnalyses(), with an “es” on the end, that was a...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="templates | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content='3.1 matrix analyses  3.1.1 basic runMatrixAnalyses() template  runMatrixAnalyses(   data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  columns_w_values_for_single_analyte = NULL, ...'>
+<meta property="og:description" content="3.1 matrix analyses There is one matrix-analysis function in this course: runMatrixAnalysis(). If you meet older material calling runMatrixAnalyses(), with an “es” on the end, that was a...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="templates | Integrated Bioanalytics">
-<meta name="twitter:description" content='3.1 matrix analyses  3.1.1 basic runMatrixAnalyses() template  runMatrixAnalyses(   data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  columns_w_values_for_single_analyte = NULL, ...'>
+<meta name="twitter:description" content="3.1 matrix analyses There is one matrix-analysis function in this course: runMatrixAnalysis(). If you meet older material calling runMatrixAnalyses(), with an “es” on the end, that was a...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -109,24 +109,49 @@
 <h2>
 <span class="header-section-number">3.1</span> matrix analyses<a class="anchor" aria-label="anchor" href="#matrix-analyses"><i class="fas fa-link"></i></a>
 </h2>
-<div id="basic-runmatrixanalyses-template" class="section level3" number="3.1.1">
+<p>There is <strong>one</strong> matrix-analysis function in this course: <code>runMatrixAnalysis()</code>. If you meet older
+material calling <code>runMatrixAnalyses()</code>, with an “es” on the end, that was a wide-data-only version and
+it was retired in September 2026 — calling it now returns a message telling you what to use instead.</p>
+<div id="basic-template-a-wide-data-frame" class="section level3" number="3.1.1">
 <h3>
-<span class="header-section-number">3.1.1</span> basic <code>runMatrixAnalyses()</code> template<a class="anchor" aria-label="anchor" href="#basic-runmatrixanalyses-template"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1.1</span> basic template: a wide data frame<a class="anchor" aria-label="anchor" href="#basic-template-a-wide-data-frame"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb232"><pre class="downlit sourceCode r">
+<p>A <strong>wide</strong> data frame has one row per sample and one column per analyte. <code>chemical_blooms</code> is exactly
+that shape: a <code>label</code> column naming each plant, and then one column for each compound class.</p>
+<div class="sourceCode" id="cb237"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">runMatrixAnalyses</span><span class="op">(</span>   </span>
-<span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span>, <span class="st">"pca"</span>, <span class="st">"pca_ord"</span>, <span class="st">"pca_dim"</span><span class="op">)</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Alkanes"</span>, <span class="st">"Sec_Alcohols"</span>, <span class="st">"Others"</span>, <span class="st">"Fatty_acids"</span>, <span class="st">"Alcohols"</span>,</span>
+<span>    <span class="st">"Triterpenoids"</span>, <span class="st">"Ketones"</span>, <span class="st">"Other_compounds"</span>, <span class="st">"Aldehydes"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"label"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>That is the whole basic call, and it is only four questions:</p>
+<ul>
+<li>
+<code>data</code> — which table.</li>
+<li>
+<code>analysis</code> — which analysis. <code>"pca"</code>, <code>"hclust"</code>, <code>"kmeans"</code>, <code>"dist"</code> and the rest are listed in
+the full template below.</li>
+<li>
+<code>columns_w_values_for_single_analyte</code> — which columns hold the <strong>numbers</strong>. One column per analyte.</li>
+<li>
+<code>columns_w_sample_ID_info</code> — which column (or columns) <strong>name a sample</strong>. If it takes two columns
+together to identify a sample, list both.</li>
+</ul>
+<p>If your data are <strong>long</strong> instead — one row per sample per analyte, with the analyte names stacked in
+a single column — then swap <code>columns_w_values_for_single_analyte</code> for the pair
+<code>column_w_names_of_multiple_analytes</code> and <code>column_w_values_for_multiple_analytes</code>. Everything else
+stays the same.</p>
 </div>
-<div id="advanced-runmatrixanalysis-template" class="section level3" number="3.1.2">
+<div id="full-template" class="section level3" number="3.1.2">
 <h3>
-<span class="header-section-number">3.1.2</span> advanced <code>runMatrixAnalysis()</code> template<a class="anchor" aria-label="anchor" href="#advanced-runmatrixanalysis-template"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1.2</span> full template<a class="anchor" aria-label="anchor" href="#full-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb233"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb238"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># data to use for analysis</span></span>
@@ -145,10 +170,8 @@
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  transpose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># default = FALSE, this chooses whether to transpose the data</span></span>
 <span>  distance_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span> <span class="co"># the distance metric to use in computing a distance matrix</span></span>
-<span>    <span class="st">"euclidean"</span>, <span class="st">"maximum"</span>,</span>
-<span>    <span class="st">"manhattan"</span>, <span class="st">"canberra"</span>,</span>
-<span>    <span class="st">"binary"</span>, <span class="st">"minkowski"</span>,</span>
-<span>    <span class="st">"coeff_unlike"</span></span>
+<span>    <span class="st">"euclidean"</span>, <span class="st">"manhattan"</span>,</span>
+<span>    <span class="st">"gower"</span> <span class="co"># for mixed numeric / categorical data; computed with cluster::daisy</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  agglomeration_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span> <span class="co"># the clustering method to use in heirarchical clustering</span></span>
 <span>      <span class="st">"ward.D2"</span>, <span class="st">"ward.D"</span>, <span class="st">"single"</span>, <span class="st">"complete"</span>,</span>
@@ -157,12 +180,20 @@
 <span>      <span class="st">"median"</span>, <span class="co"># (= WPGMC)</span></span>
 <span>      <span class="st">"centroid"</span> <span class="co"># (= UPGMC)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  tree_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nj"</span><span class="op">)</span>,</span>
+<span>  tree_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span> <span class="co"># how a tree is built, for analysis = "hclust" / "hclust_phylo"</span></span>
+<span>    <span class="st">"linkage_dendrogram"</span>, <span class="co"># DEFAULT. Hierarchical clustering proper: uses agglomeration_method,</span></span>
+<span>                          <span class="co"># and returns bootstrap support values.</span></span>
+<span>    <span class="st">"neighbor_joining"</span>    <span class="co"># The phylogenetic method. Works from the distance matrix alone, so it</span></span>
+<span>                          <span class="co"># IGNORES agglomeration_method, and gives no bootstrap values.</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  unknown_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  components_to_return <span class="op">=</span> <span class="fl">2</span>, <span class="co"># how many principal components to return</span></span>
 <span>  scale_variance <span class="op">=</span> <span class="cn">NULL</span>, <span class="co">## default = TRUE, except for hclust, then default = FALSE</span></span>
 <span>  na_replacement <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"none"</span>, <span class="st">"zero"</span>, <span class="st">"drop"</span><span class="op">)</span>, <span class="co"># default = "mean", this chooses what to do with missing values</span></span>
-<span>  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wide"</span>, <span class="st">"long"</span><span class="op">)</span>, <span class="co"># default = "wide", this chooses whether to output a wide or long format</span></span>
+<span>  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wide"</span>, <span class="st">"long"</span><span class="op">)</span>, <span class="co"># default = "wide". For analysis = "dist" this chooses the</span></span>
+<span>                                     <span class="co"># RETURN TYPE: "wide" gives a base R `dist` object, "long"</span></span>
+<span>                                     <span class="co"># gives one row per PAIR of samples, which is what you want</span></span>
+<span>                                     <span class="co"># if you are about to build a network from the distances.</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -176,8 +207,8 @@
 <li><a class="nav-link" href="#templates">templates</a></li>
 <li>
 <a class="nav-link" href="#matrix-analyses"><span class="header-section-number">3.1</span> matrix analyses</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#basic-runmatrixanalyses-template"><span class="header-section-number">3.1.1</span> basic runMatrixAnalyses() template</a></li>
-<li><a class="nav-link" href="#advanced-runmatrixanalysis-template"><span class="header-section-number">3.1.2</span> advanced runMatrixAnalysis() template</a></li>
+<li><a class="nav-link" href="#basic-template-a-wide-data-frame"><span class="header-section-number">3.1.1</span> basic template: a wide data frame</a></li>
+<li><a class="nav-link" href="#full-template"><span class="header-section-number">3.1.2</span> full template</a></li>
 </ul>
 </li>
 </ul>
@@ -197,7 +228,7 @@
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-21.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-22.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

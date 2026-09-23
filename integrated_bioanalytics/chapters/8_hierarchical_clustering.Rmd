@@ -13,7 +13,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
 
 ```{r, message = FALSE}
-AK_lakes_clustered <- runMatrixAnalyses(
+AK_lakes_clustered <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -27,11 +27,11 @@ AK_lakes_clustered
 
 Three of those arguments are worth a closer look:
 
-- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalyses()` does **not** scale unless you ask it to, so don't leave this out.
+- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalysis()` does **not** scale unless asked to, so don't leave this out.
 - `tree_method = "linkage_dendrogram"` builds the tree by hierarchical clustering proper: the step-by-step merging described below. The other option, `"neighbor_joining"`, is a tree-building method borrowed from phylogenetics, and it ignores the agglomeration method entirely.
 - `agglomeration_method` decides how groups of samples are merged as the tree is built. It is the subject of the second half of this chapter. For now we use Ward's method, `"ward.D2"`.
 
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though with the output of the `runMatrixAnalysis()` function, these two (`data` and `tr`) can be treated the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
 
 Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
 
@@ -67,7 +67,7 @@ Very nice! Since North Killeak and White Fish are so different from the others, 
 alaska_lake_data_wide %>%
   filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
 
-runMatrixAnalyses(
+runMatrixAnalysis(
     data = alaska_lake_data_wide_filtered,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -98,7 +98,7 @@ Hierarchical clustering builds its tree from the bottom up, by a very simple pro
 
 Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
 
-Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule you choose is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
+Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
 
 ### single versus complete linkage {-}
 
@@ -115,7 +115,7 @@ solvent_properties <- c(
   "relative_polarity", "formula_weight", "refractive_index"
 )
 
-solvents_single <- runMatrixAnalyses(
+solvents_single <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -125,7 +125,7 @@ solvents_single <- runMatrixAnalyses(
     columns_w_sample_ID_info = c("solvent", "category")
 )
 
-solvents_complete <- runMatrixAnalyses(
+solvents_complete <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -158,11 +158,11 @@ complete_plot <- ggtree(solvents_complete) +
 plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3))
 ```
 
-The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. If you tried to cut this tree into four groups, you would get one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognise: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
+The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
 
-Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbours: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
+Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
 
-Notice also the colours, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
+Notice also the colors, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
 
 ### when does the choice matter? {-}
 
@@ -173,16 +173,16 @@ Single and complete linkage give the most different trees when:
 - **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
 - **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
 
-The flip side is just as useful. When the groups in your data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on your result: if they agree, the grouping is robust; if they disagree, your data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
+The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
 
-Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever you report a tree.
+Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.
 
 ## Annotating trees {-}
 
 Overlaying sample traits on a ggtree-based plot is straightforward when we combine `ggtree` with `ggplot2`. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.
 
 ```{r}
-hclust_out <- runMatrixAnalyses(
+hclust_out <- runMatrixAnalysis(
   data = chemical_blooms,
   analysis = c("hclust"),
   scale_variance = TRUE,
@@ -193,7 +193,7 @@ hclust_out <- runMatrixAnalyses(
 )
 ```
 
-The object returned by `runMatrixAnalyses()` already contains the branch coordinates, so we can pass it directly to `ggtree()` and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.
+The object returned by `runMatrixAnalysis()` already contains the branch coordinates, so we can pass it directly to `ggtree()` and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.
 
 ```{r}
 tree_plot <- ggtree(hclust_out) +
@@ -243,7 +243,7 @@ chemical_blooms %>%
 <!-- ## exercises {-} -->
 
 
-<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+<!-- For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
 
 <!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
 

@@ -1,22 +1,29 @@
 # networks {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg', dpi = NA)
 ```
 
+A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
+
+- A **similarity network** is a structure we build. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other", and we decide how much resemblance is required for two samples to be connected, usually using that threshold I mentioned.
+
+- An **interaction network** is a structure we are given. Here the data are already a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, and so forth. An edge means "this thing did something to, or with, this other thing". There is no threshold to choose, because the edges are the observations.
+
+That distinction is worth fixing firmly in mind now, because two networks built from these two different sources can look identical on the page but mean opposite things. A gene co-expression network is a *similarity* network: an edge says that the expression levels of two genes rise and fall together across the samples measured, which is something computed rather than observed. A protein-protein interaction network is an *interaction* network: an edge says that two proteins were observed to bind. These two distinct sorts of networks are easy to confuse, since both are drawn as dots and lines and both are about the molecules of the cell. But a well-connected gene in the first is simply a gene whose expression profile is unremarkable, while a well-connected protein in the second may be the most important molecule in the system.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
+</script>
+
 ## {-}
-
-A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the notes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
-
-- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using that threshold I mentioned.
-
-- Alternatively, we are sometimes **given** the network. This could be a list of connections that were actually observed in the world: journeys taken, messages sent, proteins that bind, and so forth. Networks derived from these data typically indicate "this thing interacted with this other thing".
 
 ## distances and scaling {-}
 
 To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
 ```
 
@@ -35,12 +42,13 @@ Now, we need a distance matrix. Here is the traditional way:
 dist(alaska_lake_data_wide[,3:15])
 ```
 
-We can also get long-style distance matrices directly from a wrapper function we have called `runMatrixAnalyses` by specifying `analysis = "dist"`, as below. The `scale_variance = TRUE` argument does the scaling step for us before the distances are computed.
+We can also get distances directly from `runMatrixAnalysis()`, this course's matrix-analysis function, by specifying `analysis = "dist"`. One argument matters here (well, and a few others, below): `output_format = "long"` asks for the distances as a **long table**, one row per pair of lakes, rather than as the compact triangle `dist()` printed above. The long shape is the one we want, because in a moment we are going to turn each of those rows into an edge.
 
 ```{r}
-alaska_dist_long <- runMatrixAnalyses(
+alaska_dist_long <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = FALSE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -51,12 +59,14 @@ head(alaska_dist_long)
 
 Let's look at those distances. Why is North Killeak Lake so distant from everyone? Wasn't that lake the one with such high chloride?
 
-```{r}
-ggplot(
+```{r fig.height = 5.5, fig.width = 6.5, fig.align = "center", fig.cap = "Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+plot1 <- ggplot(
   alaska_dist_long,
   aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
 ) +
-  geom_tile()
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+plot1
 ```
 
 ```{r}
@@ -68,44 +78,67 @@ alaska_lake_data %>%
   )
 ```
 
-```{r}
+```{r fig.height = 4, fig.width = 6, fig.align = "center", fig.cap = "Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
 alaska_lake_data %>% filter(element == "Cl") %>%
   ggplot(aes(x = mg_per_L, y = lake)) + geom_col()
-  
 ```
 
-Yes, chloride is far more abundant that all the elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
+Yes, chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
 
 ```{r}
 alaska_scaled <- scale(alaska_lake_data_wide[,3:15])
 head(round(alaska_scaled, 2))
 ```
 
-We can do that directly in `runMatrixAnalysis()`:
+We can do that directly in `runMatrixAnalysis()`, which saves a bit of time, using `scale_variance` (see below). Importantly, note that scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. But whenever the columns are in different units, scale first.
 
-```{r}
-runMatrixAnalyses(
+```{r fig.height = 10, fig.width = 6.5, fig.align = "center", fig.cap = "The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = TRUE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
 ) %>% ggplot(
   aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
 ) +
-  geom_tile()
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) -> plot2
+
+plot_grid(plot1, plot2, ncol = 1, labels = c("A", "B"))
 ```
 
-Scaling is a choice, not a law. If every column is in the same units and the large values genuinely matter more to you, then you might deliberately leave the data unscaled. But whenever your columns are in different units, scale first. The same concern comes back whenever we compute distances, including in hierarchical clustering in the next chapter.
+#### concept check {-}
 
-## threshold networks from data {-}
+Fill in the blank with the command that centers each column and divides it by its standard deviation. Press Run.
 
-We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected: probably not what you want. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your metric runs.
+<div class="webr-cell"><textarea class="webr-code">alaska_lake_data %>%
+  select(-element_type) %>%
+  pivot_wider(names_from = "element", values_from = "mg_per_L") -> lakes_wide
+
+round(head(____(lakes_wide[,3:15])), 2)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Scaling puts every analyte on the same footing, so a one-standard-deviation difference counts the same in chloride as it does in phosphorus. Without it, the analyte reported in the largest numbers controls the distances almost on its own.">
+<p class="scq">Self-check: why does scaling change which lakes come out looking similar?</p>
+<label><input type="radio"> Because it removes outlying lakes from the data set</label>
+<label><input type="radio"> Because it puts every analyte on the same footing, so no single large-valued analyte can dominate the distance</label>
+<label><input type="radio"> Because it converts distances into similarities</label>
+</div>
+
+<hr>
+
+## similarity networks {-}
+
+Once we have a distance matrix (scaled or unscaled), we can build networks. However, networks are built from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, and `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. Feeding raw distance in as the edge weight draws the most **dissimilar** pairs as the most strongly connected: rarely what is intended. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever a network is built from distances, it is worth stopping to check which direction the metric runs in.
+
+The similarity function above has a few parts that are perhaps not immediately obvious. Think about it like this: distance ranges, conceivably, from 0 to infinity. We would like similarity values derived from those distances that range from 0 to 100 (0% similar to 100% similar). If a distance is zero (100% similarity), then in our formula we get (1/(1+0)*100) = 100. If distance is really large, say, 10000, then the similarity is small (1/(1+10000)*100) = 0.01% similar. Minor notes: (i) adding the +1 means a distance of zero (identical items) is allowed, and (ii) if the distances are all very large or very small relative to 1, a scale factor can be added: 1 / (1 + d/k), where k is a "typical" distance to be mapped to 50%.
 
 ```{r}
-runMatrixAnalyses(
+runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = TRUE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -129,9 +162,9 @@ head(net$nodes)
 head(net$edges)
 ```
 
-These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can color them by something you know about the samples.
+These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so they can be colored by something already known about the samples.
 
-```{r}
+```{r fig.height = 5, fig.width = 6.5, fig.align = "center", fig.cap = "A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
 ggplot() +
   geom_segment(
     data = net$edges,
@@ -153,7 +186,6 @@ ggplot() +
   theme_void() +
   theme(legend.position = "bottom")
 ```
-
 
 Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:
 
@@ -188,7 +220,7 @@ net$nodes <- rbind(net_10$nodes, net_20$nodes, net_25$nodes, net_30$nodes)
 net$edges <- rbind(net_10$edges, net_20$edges, net_25$edges, net_30$edges)
 ```
 
-```{r}
+```{r fig.height = 3.5, fig.width = 11, fig.align = "center", fig.cap = "The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
 ggplot() +
   geom_segment(
     data = net$edges,
@@ -212,24 +244,49 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-Minor note: notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with `directed = TRUE` or `directed = FALSE`.
+Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to *why* — and to when it is the wrong thing to do — under "directed and undirected", below.
 
-## data as networks {-}
+#### concept check {-}
 
-Everything in the previous section was **derived**: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick because the edges are observations.
+Fill in the blank so that a large distance turns into a small similarity. Press Run.
 
-`buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for handling these sorts of datasets. Let's look at an example:
+<div class="webr-cell"><textarea class="webr-code">tibble(distance = c(0.5, 2, 8)) %>%
+  mutate(similarity = 1 / (1 + ____) * 100)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Edges are drawn thick when their weight is large. Distance runs the other way round, so feeding raw distance in as the weight draws the least similar pairs as the most strongly connected.">
+<p class="scq">Self-check: what happens if you use raw distance as the edge weight instead of inverting it first?</p>
+<label><input type="radio"> Nothing; distance and similarity are interchangeable as edge weights</label>
+<label><input type="radio"> The most dissimilar pairs get drawn as the most strongly connected</label>
+<label><input type="radio"> The network becomes directed</label>
+</div>
+
+<hr>
+
+## interaction networks {-}
+
+The networks in the previous section were built from properties of the subjects we measured (lake pH, water temp, etcetera). But what if each observation *itself* is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data, instead of something we compute from a data matrix. Accordingly, we do not need to choose whether or not to scale, nor to pick a threshold: there is nothing to pick, because the edges are the observations. Three things become possible here that were not possible in a similarity network:
+
+**Direction.** An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A similarity network can never show this, because distance is symmetric — if lake A is close to lake B, then lake B is exactly that close to lake A, always. And when a network *is* directed, the asymmetry is often the finding: a node that sends far more than it receives is a result in and of itself.
+
+**Weight as a count.** An edge can document how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.
+
+**Structure.** Because the edges are facts rather than resemblances, questions about the shape of the graph become meaningful: how many separate pieces are there, which nodes hold them together, and what breaks if a node is removed. In a similarity network every node is joined to every other until we impose a threshold, as we saw above, so the shape of that graph is mostly a consequence of the number we picked. In an interaction network, the shape is a property of the world.
+
+On the operational end of things, `buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for these sorts of data sets. Let's look at an example. We will use two data sets that come with `phylochemistry`: `passenger_flows`, a ledger of how many passengers flew between pairs of US airports, and `us_airports`, which tells us something about each airport.
 
 
 ```{r}
-us_airports <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/us_airports.csv")
 us_airports
-passenger_flows <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/passenger_flows.csv")
 passenger_flows
+```
 
+Note that `passenger_flows` is already an edge list: two columns naming the nodes, and a third carrying the weight. That is all `buildNetwork()` needs. Because each row is a directed fact (passengers who flew *from* the origin *to* the destination), we pass `directed = TRUE`.
+
+```{r fig.height = 6, fig.width = 8, fig.align = "center", fig.cap = "An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725."}
 air_net <- buildNetwork(
   edgelist = passenger_flows,
-  node_attributes = us_airports
+  node_attributes = us_airports,
+  directed = TRUE
 )
 
 ggplot() +
@@ -249,7 +306,8 @@ ggplot() +
   ) +
   geom_text_repel(
     data = air_net$nodes,
-    aes(x = x, y = y, label = paste(city, state))
+    aes(x = x, y = y, label = paste(city, state)),
+    max.overlaps = Inf, size = 3
   ) +
   scale_linewidth_continuous(range = c(0.2, 1.4)) +
   scale_alpha_continuous(range = c(0.15, 0.8)) +
@@ -259,72 +317,217 @@ ggplot() +
 
 ```
 
+#### concept check {-}
 
-That said, one thing to watch: if A to B and B to A both appear and carry the same values (or no values at all), `buildNetwork()` will assume the network is undirected and merge them. When direction is part of the data, pass `directed = TRUE`.
+Fill in the blank to sort the routes so the busiest one is at the top. Press Run.
 
-Three things become available that were not available in Part 1:
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  arrange(desc(____)) %>%
+  head()</textarea></div>
 
-**Direction.** An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A distance is always symmetric, so a derived network can never be directed. And in a directed network, *the asymmetry is often the finding* — a node that sends far more than it receives is doing something structurally different from one that is balanced.
+<div class="selfcheck" data-answer="1" data-explain="Every row of this table is a journey that was actually recorded, so the edges are the raw data. There is nothing for us to compute, and so nothing for us to threshold.">
+<p class="scq">Self-check: why is there no threshold to choose for this network?</p>
+<label><input type="radio"> Because the data set is too small for a threshold to make a difference</label>
+<label><input type="radio"> Because each row is an observed journey, so the edges are the data rather than something we calculated</label>
+<label><input type="radio"> Because the network is directed, and thresholds only apply to undirected networks</label>
+</div>
 
-**Weight as a count.** An edge can carry how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.
-
-**Structure.** Because the edges are facts rather than similarities, questions about the shape of the graph become meaningful: how many separate components are there, which nodes hold them together, and what breaks if a node is removed.
-
-### node summaries: degree and volume {-}
-
-The simplest node-level summary is **degree** — how many other nodes a node connects to. In base R that is one line over both ends of the edge list:
-
-```
-table(c(edges$from, edges$to))
-```
-
-If the edges carry counts, you can also ask for **strength**, or total volume: group by node and sum the traffic over both ends. That is `group_by()` and `summarise()` from the wrangling chapter, applied to a network.
-
-### volume is not importance {-}
-
-Here is the lesson this half of the chapter exists for, and it is one you cannot demonstrate on a derived network at all.
-
-**The busiest node in a system can be structurally irrelevant, and a very quiet node can be holding the whole thing together.**
-
-On a verified passenger-movement network of twenty stations:
-
-- The **busiest** station carries around 40,000 journeys — 301% more than the runner-up. Delete it, and the network is completely unchanged: two components before, two components after.
-- The **critical** station ranks **nineteenth of twenty** by volume — nearly the quietest in the system. Delete it and the network splits: two components become three. It is the sole articulation point, with betweenness eight times the next station's.
-
-Ranking your nodes by how much traffic they carry would put the station that actually matters second from last. This is the same lesson that co-expression analysis exists to teach in biology — you cannot find regulators by ranking expression level — and it has a sharp mathematical reason for living in Part 2 rather than Part 1. In a correlation network, a gene cannot correlate above 1/√2 ≈ 0.707 with two unrelated programmes at once, so genuine connector nodes, and therefore articulation points, are effectively impossible to observe. Only a relational network can show you this.
-
-### components and critical nodes {-}
-
-- **Components**: which sets of nodes can reach each other at all. Counting components before and after removing a node is the cheapest possible test of whether that node is load-bearing, and it needs nothing beyond base R.
-- **Articulation points and betweenness**: the formal version of the same question — which node's removal disconnects the graph, and which nodes sit on the most paths between other nodes.
-
-<!-- =====================================================================================
-     TODO — PART 2 DATA NOW PUBLISHED (2026-09-18); CHUNKS AND NUMBERS STILL OWED.
-
-     Students get `passenger_flows` (origin, destination, passengers; 192 directed rows) and
-     `us_airports` (node attributes incl. region, latitude, longitude) from sample_data/.
-     Simulated counts on real US airport codes.
-
-     The numbers quoted above are from the OLD 20-station subway data and must be replaced.
-     Verified values for the airport data:
-       - busiest: ATL, ~1.9 million passengers, 36% more than LAX; removing it: 1 component -> 1
-       - critical: KTN (Ketchikan), 27th of 29 by volume; sole articulation point;
-         removing it: 1 component -> 2 (Alaska cut off)
-       - betweenness: KTN highest, but only ~1.2x SEA (not 8x)
-       - direction: the four Hawaii airports top the inflow/outflow ratio (~1.1-1.2)
-       - layout vs geography: orientation changes run to run (Alaska and Hawaii move around);
-         unweighted, HNL sits beside SFO/LAX and DLH beside DTW
-     ===================================================================================== -->
+<hr>
 
 ## interpreting networks {-}
 
-Three cautions, all of which apply whichever kind of network you have.
+### directed and undirected {-}
 
-**Layout is arbitrary.** The positions of the nodes carry no information. A force-directed layout is a physics simulation run until it settles, and it settles somewhere different every time unless you fix the seed. Two plots of the *same* graph can look nothing alike, and neither is more correct. Never read distance-on-the-page as distance-in-the-data; the only real content is which nodes are joined.
+An edge either has a direction or it does not, and the case in which a given analysis lies is a property of the relationship measured in the data.
 
-**What an edge means determines what a hub means.** This is where the chapter began and it is worth ending on. A central node in a similarity network is the least distinctive sample you have. A central node in an interaction network may be the most important thing in the system. The topology cannot tell you which situation you are in — only knowing where the edges came from can.
+Some relationships are **mutual**. Two proteins bind each other. Two lakes resemble each other. Two towers are within sight of each other. There is no "from" and no "to" here; the edge is simply a pair, and we call such a network **undirected** and draw it with plain lines. Every similarity network is undirected, for the reason given above: distance is symmetric, so there is nothing else it could be.
 
-**Sometimes a network is a hairball hiding a table.** A network is the right picture when the *connections* are the finding. If what you actually want to say is "these five samples have high values and these five have low values", a network will say it far worse than a bar chart. Before drawing one, ask what a reader is supposed to learn from an edge. If you cannot answer, you want a different plot.
+Other relationships are **oriented**. A passenger flies from Seattle to Ketchikan. One protein phosphorylates another. Here "A to B" and "B to A" are two different facts, and they can carry different numbers. We call such a network **directed** and draw it with arrows. Only an interaction network can be directed.
+
+One case in between that can cause confusion: sometimes a directed network turns out to be almost perfectly balanced: roughly as many passengers fly Seattle to Ketchikan as fly Ketchikan to Seattle. It is tempting to call that network undirected and collapse the two rows into one. Resist. The network is still directed, and the balance is a *result* — one that would be destroyed the moment it is collapsed, because afterwards the analyst can no longer ask which airports send more than they receive. Undirected means direction was never defined. Balanced means direction was defined, and came out even.
+
+This is also why `buildNetwork()` cannot make the call about directed versus undirected for a user. When it sees "A to B" and "B to A" carrying identical values, it assumes the network is undirected, keeps one edge per pair, and prints a message saying so. That is the right guess for a long-style distance matrix, where the pair is simply listed twice, and the wrong guess for a flight ledger that happens to be balanced. The numbers look the same in both cases; only the analyst knows which one is in hand. Say so with `directed = TRUE` or `directed = FALSE`.
+
+#### concept check {-}
+
+Fill in the blank so that both directions of the Seattle to Ketchikan route come back. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  filter(origin %in% c("SEA", "____"), destination %in% c("SEA", "KTN"))</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Those two rows are two separate facts that happen to be close in size. Merging them would hide the balance rather than report it, and would make questions like which airports send more than they receive impossible to ask.">
+<p class="scq">Self-check: the two rows carry almost the same number of passengers. What should you do with them?</p>
+<label><input type="radio"> Merge them into one undirected edge, since they are near enough equal</label>
+<label><input type="radio"> Keep them as two directed edges; the near-balance is a result, and merging would throw it away</label>
+<label><input type="radio"> Drop the smaller of the two, since it is within the noise</label>
+</div>
+
+<hr>
+
+### node summaries {-}
+
+The simplest node-level summary is **degree** — how many other nodes a node connects to. For an edge list, this is just counting how many times each node is listed, which is `group_by()` and `summarize()` from the wrangling chapter applied to a network. In a directed network, degree splits in two: **out-degree** (how many places can be reached *from* here) and **in-degree** (how many places reach here), so we count each column separately and join the results. Note the `airport = origin` inside `group_by()`: that names the grouping column as it is created, which saves renaming it afterwards and means both tables come out with a column of the same name to join on.
+
+```{r}
+passenger_flows %>%
+  group_by(airport = origin) %>%
+  summarize(out_degree = n()) -> out_degree
+
+passenger_flows %>%
+  group_by(airport = destination) %>%
+  summarize(in_degree = n()) -> in_degree
+
+full_join(out_degree, in_degree, by = "airport") %>%
+  arrange(desc(out_degree))
+```
+
+If the edges carry counts, we can also ask for **strength**, or total volume: the same grouping, but summing the passengers instead of counting the rows. Notice that degree and strength do not have to agree, and that neither of them is the same question as "which airport matters most". That last one turns out to need a different approach altogether (see below).
+
+
+```{r}
+passenger_flows %>%
+  group_by(airport = origin) %>%
+  summarize(passengers_out = sum(passengers)) -> passengers_out
+
+passenger_flows %>%
+  group_by(airport = destination) %>%
+  summarize(passengers_in = sum(passengers)) -> passengers_in
+
+full_join(passengers_out, passengers_in, by = "airport") %>%
+  mutate(total_passengers = passengers_out + passengers_in) %>%
+  arrange(desc(total_passengers))
+```
+
+#### concept check {-}
+
+Fill in the blank with the function that adds up the passengers on each airport's outbound routes. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  group_by(origin) %>%
+  summarize(passengers_out = ____(passengers)) %>%
+  arrange(desc(passengers_out))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Degree counts connections and ignores their size; strength adds up the traffic and ignores how many partners it came from. An airport with four busy routes and one with twenty quiet ones can have the same strength and very different degrees.">
+<p class="scq">Self-check: what is the difference between a node&rsquo;s degree and its strength?</p>
+<label><input type="radio"> Degree counts how many other nodes it joins to; strength adds up the traffic carried on those connections</label>
+<label><input type="radio"> They are two names for the same number</label>
+<label><input type="radio"> Degree only applies to directed networks, and strength only to undirected ones</label>
+</div>
+
+<hr>
+
+### node removal {-}
+
+Degree and strength both answer "how much?", but neither answers "does this node matter?". The cheapest way to ask the second question is to delete a node and see what happens to everything else. Deleting a node just means dropping every edge that touches it, which is a single `filter()`. Let's do it twice: once for the busiest airport in the network, and once for one of the lowest-traffic airports.
+
+```{r}
+passenger_flows %>%
+  filter(origin != "ATL", destination != "ATL") -> flows_no_atlanta
+
+passenger_flows %>%
+  filter(origin != "KTN", destination != "KTN") -> flows_no_ketchikan
+```
+
+Now we rebuild and plot each one, in exactly the same way we compared thresholds earlier:
+
+```{r}
+net_no_atlanta <- buildNetwork(
+  edgelist = flows_no_atlanta,
+  node_attributes = us_airports,
+  directed = TRUE
+)
+net_no_ketchikan <- buildNetwork(
+  edgelist = flows_no_ketchikan,
+  node_attributes = us_airports,
+  directed = TRUE
+)
+
+net_no_atlanta$nodes$removed <- "Atlanta removed (busiest)"
+net_no_atlanta$edges$removed <- "Atlanta removed (busiest)"
+net_no_ketchikan$nodes$removed <- "Ketchikan removed (27th of 29)"
+net_no_ketchikan$edges$removed <- "Ketchikan removed (27th of 29)"
+
+removal_nodes <- rbind(net_no_atlanta$nodes, net_no_ketchikan$nodes)
+removal_edges <- rbind(net_no_atlanta$edges, net_no_ketchikan$edges)
+```
+
+```{r fig.height = 5, fig.width = 11, fig.align = "center", fig.cap = "What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725."}
+ggplot() +
+  geom_segment(
+    data = removal_edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = passengers,
+      alpha = passengers
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = removal_nodes,
+    aes(x = x, y = y),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  facet_grid(.~removed) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+Based on the above, we can say the following: take the busiest airport out and the picture barely changes: everything that is left can still be reached from everything else. Take Ketchikan out and the network falls into two clearly separate clumps, with the Alaskan airports floating free of the rest of the country. A node whose removal breaks a network into more pieces than it was in before is called an **articulation point**, and in this data set Ketchikan is the only one.
+
+This is worth pausing on, because it is the one thing a force-directed layout (the kind `buildNetwork()` creates) reports honestly. Where a node sits *within* a clump is arbitrary, as the warning below insists. But whether there is one clump or two is not arbitrary at all: separate pieces drift apart because there are no edges pulling them together. Counting the pieces in the picture is a real measurement.
+
+For numbers rather than a picture in these sorts of node removal analyses, the `igraph` package provides connected components, articulation points, and related measures directly. The further reading section at the end of this chapter is a good place to start on that.
+
+#### concept check {-}
+
+Fill in the blank with the operator that keeps every route *not* touching Ketchikan. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  filter(origin != "KTN", destination ____ "KTN")</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Splitting into two pieces means no path remains between the two groups. Since dropping this one airport is what caused the split, every route between the Alaskan airports and the rest of the country must have passed through it.">
+<p class="scq">Self-check: removing Ketchikan splits the network in two. What does that tell you about Ketchikan?</p>
+<label><input type="radio"> That it is the busiest airport in the network</label>
+<label><input type="radio"> That it is the only link between the Alaskan airports and the rest of the country</label>
+<label><input type="radio"> That the force-directed layout was computed with the wrong random seed</label>
+</div>
+
+<hr>
+
+### warnings {-}
+
+- **The busiest node in a system can be structurally irrelevant, and a very quiet node can be holding the whole thing together.** We saw this just above: Atlanta carries about 1.9 million passengers, 36% more than Los Angeles behind it, and removing it changes nothing about what can reach what. Ketchikan carries about a hundredth of that traffic, and it is the only thing holding seven of the twenty-nine airports onto the rest of the network. Ranking these airports by volume and working down the list protecting the important ones would have left the airport that actually matters for connectivity third from the bottom. Volume is easy to measure and it is not the same thing as importance.
+
+- **Absolute layout is arbitrary.** The positions of the nodes carry no information. A force-directed layout is a physics simulation that starts the nodes in random positions and runs until they settle, so unless the random seed is fixed, two plots of the *same* network can look nothing alike and neither one is more correct. Never read distance-on-the-page as distance-in-the-data; the only real content is which nodes are joined to which.
+
+- **What an edge means determines what a hub means.** This is the concept this chapter started with. A well-connected node in a similarity network is a data set's *least* distinctive sample: it sits near everything because there is nothing unusual about it. A well-connected node in an interaction network may be the most important thing in the whole system. The two plots look the same, and no amount of staring at the shape of the graph will reveal which one is the case; only knowing whether the graph is a similarity network or an interaction network will.
+
+- **Sometimes a network is a hairball hiding a table.** A network is the right picture when the *connections* are the finding. If the actual finding is "these five samples have high values and these five have low values", a network will say it far worse than a bar chart. Before drawing one, ask what a reader is supposed to learn from an edge. If there is no answer to that, a different plot is probably the right one.
+
+#### concept check {-}
+
+Fill in the blank with the function that shows you just the first few rows, so you can see the quietest airports in the network. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  group_by(origin) %>%
+  summarize(total_passengers = sum(passengers)) %>%
+  arrange(total_passengers) %>%
+  ____(5)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Ketchikan is in that bottom handful, and it is the one airport whose removal breaks the network apart. A volume ranking puts the airport that matters most structurally almost last, which is exactly the trap this chapter is warning about.">
+<p class="scq">Self-check: a colleague ranks these airports by passenger volume and proposes protecting the top five first. What is wrong with that plan?</p>
+<label><input type="radio"> Nothing; the busiest airports are always the most important ones</label>
+<label><input type="radio"> The one airport whose loss would split the network sits near the bottom of that ranking, not the top</label>
+<label><input type="radio"> Passenger volume cannot be calculated from this data set</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+
 
 ## exercises {-}
 
@@ -339,6 +542,14 @@ cat('
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the warden of a chain of beacon towers in the Harrows, and the meltwater will surge tonight. Read the dispatch ledgers to find the station that really holds the network together, then survey the ridges and choose which four fires to light so that no village goes unwarned.</div>
 </div>
 </div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/cover.png" alt="The Faintest Line cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Faintest Line</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Networks &middot; correlation networks, modules + degree</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Correlate the gene readings into a network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.</div>
+</div>
+</div>
 </div>
 ')
 ```
@@ -351,4 +562,4 @@ cat('
 
 - [Network structure and minimum degree](https://doi.org/10.1016/0378-8733(83)90028-X). Seidman's paper introducing k-cores, a durable and easily computed way of describing how densely connected the interior of a network is.
 
-- [ggraph and tidygraph](https://ggraph.data-imaginist.com/). Thomas Lin Pedersen's grammar-of-graphics approach to networks, useful once you want more control over layout and edge drawing than a helper function gives you.
+- [ggraph and tidygraph](https://ggraph.data-imaginist.com/). Thomas Lin Pedersen's grammar-of-graphics approach to networks, useful once more control over layout and edge drawing is wanted than a helper function provides.

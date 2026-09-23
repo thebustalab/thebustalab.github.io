@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-21"
+date: "2026-09-22"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -41,7 +41,7 @@ output:
 # WELCOME {-}
 
 <!-- start preface-->
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover1.png" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Integrated Bioanalytics documents methods for chemical, phylogenetic, genomic, and language model-based analyses in R, as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. The table of contents on the left shows what this book covers at this moment. We are often adding new content since the methods we rely on change. Even though the techniques change, the questions we bring to our data tend not to: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?". These and related questions define the cores of each chapter.
 
@@ -87,7 +87,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 
 ## objects {-}
 
-In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
+In R, data is stored in objects. Objects can be thought of as "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
 
 
 ``` r
@@ -146,7 +146,7 @@ Excellent - we've got data. Now we need to manipulate it. For this we need funct
 
 * A function is a command that tells R to perform an action!
 * A function begins and ends with parentheses: `this_is_a_function()`
-* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
+* The stuff inside the parentheses are the details of how the function should perform its action: `run_this_analysis(on_this_data)`
 
 Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
 
@@ -246,7 +246,7 @@ Now we have a nice, small table that we can use to practice data visualization. 
 
 There are three steps to setting up a ggplot:
 
-1. **Define the data you want to use.**
+1. **Define the data to be used.**
 
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
@@ -257,7 +257,7 @@ ggplot(data = algae_data_small)
 
 <img src="index_files/figure-html/unnamed-chunk-62-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-2. **Define how your variables map onto the axes.**
+2. **Define how the variables map onto the axes.**
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
@@ -268,9 +268,9 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 
 <img src="index_files/figure-html/unnamed-chunk-63-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-3. **Use geometric shapes to represent other variables in your data.**
+3. **Use geometric shapes to represent other variables in the data.**
 
-Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
+Map the variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to the plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
 
 
 ``` r
@@ -280,7 +280,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-64-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
+In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map the variables onto the geometric features of the shapes:
 
 
 ``` r
@@ -328,7 +328,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-67-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
+**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. This shows up in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -341,7 +341,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
-As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
+As is probably clear by now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
 
 ``` r
@@ -531,7 +531,7 @@ What advantages does this one extra line (i.e. facet_grid) provide over what you
 
 
 
-8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
+8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behavior of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
 
 
 ``` r
@@ -559,7 +559,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 - [R for Data Science: Data transformation](https://r4ds.hadley.nz/data-transform). The dplyr chapter of Wickham and Grolemund's book, covering `filter`, `select`, and the other core verbs for reshaping data before plotting.
 
-- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep beside you while filtering.
+- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep open while filtering.
 
 - [ggplot2 cheat sheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf). A compact overview of the ggplot2 grammar (geoms, aesthetics, facets), useful for recalling syntax at a glance.
 
@@ -576,7 +576,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 # data visualization II {-}
 
-In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
+In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -589,7 +589,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RCol
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
 
-We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
+We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 
 ``` r
@@ -615,9 +615,9 @@ ggplot(
 
 <img src="index_files/figure-html/unnamed-chunk-142-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+These examples should illustrate that there is, to some degree, correspondence between the type of data being plotted (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
-Two more geoms are worth knowing at this stage, because they let you write text directly onto the plot. The first, `geom_text()`, draws a piece of text at each data point. To use it, you map a variable to the `label` aesthetic and ggplot prints it. This is enormously useful when you want to know *which* point is which, rather than just where the points sit. Let's go back to the `solvents` scatter plot from earlier and label each point with the name of the solvent:
+Two more geoms are worth knowing at this stage, because they place text directly onto the plot. The first, `geom_text()`, draws a piece of text at each data point. To use it, map a variable to the `label` aesthetic and ggplot prints it. This is enormously useful for knowing *which* point is which, rather than just where the points sit. Let's go back to the `solvents` scatter plot from earlier and label each point with the name of the solvent:
 
 
 ``` r
@@ -660,7 +660,7 @@ Stack the points on top of the smoothed line by filling in the blank with the ge
 
 ## facets {-}
 
-As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
+As alluded to in Exercises 1, it is possible to map variables in the dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of the plot, each of which shows a different subset of the data based on a chosen categorical variable. Let's check it out.
 
 Here, we can facet in the horizontal direction:
 
@@ -692,7 +692,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 
 <img src="index_files/figure-html/unnamed-chunk-147-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
+Faceting is a great way to describe more variation in a plot without having to make the geoms more complicated. For situations that call for lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
 
 
@@ -723,7 +723,7 @@ Fill in the blank so the heat map is split into one panel per `replicate`, arran
 
 ## scales {-}
 
-Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+Every aesthetic mapping (e.g. aes(x = algae_strain)) defines a new scale that is added to the plot. The `scale_*` family of commands controls these scales. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that typing `?scale_fill_` into the console will point to relevant help topics that provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
 
 ``` r
@@ -775,9 +775,9 @@ The fill is mapped to a continuous variable, so its scale is a color gradient. F
 
 ## themes {-}
 
-So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
+So far we've just looked at how to control the means by which the *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
-`ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
+`ggplot` comes with a handful of built in "complete themes". These will change the appearance of plots with respect to the non-data ink. Compare the following plots:
 
 
 ``` r
@@ -815,7 +815,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 <img src="index_files/figure-html/unnamed-chunk-154-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Here is an example (and google will provide many, many more).
+Individual components of themes can also be changed. This can be a bit tricky, but running `?theme()` explains it all. Here is an example (and google will provide many, many more).
 
 
 ``` r
@@ -1024,7 +1024,7 @@ ________________________________________________________________________________
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting your *own* data into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
+Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an *outside* data set into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -1035,17 +1035,17 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 
 ## viewing data {-}
 
-Before you can wrangle a data set, it helps to be able to *see* it. `head()` shows you the first six rows, which is enough to remind yourself what the columns are called, but not enough to get a feel for what is actually in the table. For that, use `view()`:
+Before a data set can be wrangled, it helps to be able to *see* it. `head()` shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, use `view()`:
 
 <div class="webr-cell"><textarea class="webr-code">view(alaska_lake_data)</textarea></div>
 
 That opens the whole table as a scrollable grid. Each column shows its name with its **type** underneath — `chr` for text, `dbl` for numbers with decimals, `int` for whole numbers, `lgl` for TRUE/FALSE, `fct` for a factor. Knowing a column's type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as `chr` is one of the most common reasons a calculation can fail.
 
-If you are using these commands in this books webR sandbox, know that very large tables are capped at the first 1000 rows so your browser stays responsive. When that happens the caption says so, and you can ask for more with `view(alaska_lake_data, n = 5000)`. In addition, `view()` is not limited to data sets that were loaded for you — it will show you anything, including a table you just built:
+In this book's webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with `view(alaska_lake_data, n = 5000)`. In addition, `view()` is not limited to data sets that were loaded in advance — it will show anything, including a table just built:
 
 <div class="webr-cell"><textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea></div>
 
-That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what you meant is to look at the result rather than guess at it. Finally, please note that `view()` is provided by the sandboxes in this book (and by the escape rooms). If you move to R and RStudio on your own machine, the equivalent is `View()`, with a capital V.
+That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what was intended is to look at the result rather than guess at it. Finally, please note that `view()` is provided by the sandboxes in this book (and by the escape rooms). In R and RStudio on a local machine, the equivalent is `View()`, with a capital V.
 
 #### concept check {-}
 
@@ -1164,7 +1164,7 @@ head(fadb_sample)
 ## #   Nuytsia_floribunda <dbl>
 ```
 
-While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. This function can be thought of as transforming both the data's column names (or some of the column names) and the data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
 
 
 ``` r
@@ -1376,7 +1376,7 @@ ny_trees_by_spc_summ
 ## 12 ZELKOVA SERRATA              101.         10.7
 ```
 
-Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` for variation along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
 
 
 ``` r
@@ -1709,34 +1709,47 @@ Some pointers:
 
 ## further reading {-}
 
-- [Tidy Data Tutor](https://tidydatatutor.com/vis.html). This interactive site animates what happens to a data frame as you apply verbs like `select()`, `filter()`, or `pivot_longer()`, making it easier to see how each operation reshapes your tables.
+- [Tidy Data Tutor](https://tidydatatutor.com/vis.html). This interactive site animates what happens to a data frame as verbs like `select()`, `filter()`, or `pivot_longer()` are applied, making it easier to see how each operation reshapes the tables.
 
-- [tidyverse cheat sheet](https://posit.co/resources/cheatsheets/#r-programming). Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for quick lookups when you forget an argument name or want to explore related functions.
+- [tidyverse cheat sheet](https://posit.co/resources/cheatsheets/#r-programming). Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for looking up a forgotten argument name or exploring related functions.
 
 - [tidyr and dplyr vignettes](https://tidyr.tidyverse.org/articles/tidy-data.html). The official package articles dig into the philosophy behind tidy data, the rationale for pivoting functions, and worked examples that go deeper than our walkthrough.
 
 - [R for Data Science, Chapter 5–10](https://r4ds.hadley.nz/transform). Hadley Wickham and Mine Çetinkaya-Rundel’s open textbook expands on wrangling, reshaping, and summarizing with narratives, exercises, and datasets that reinforce the patterns we practiced.
 
-- [genzplyr](https://github.com/hadley/genzplyr). genzplyr is an alternative syntax for dplyr that replaces boring old function names with GenZ slang. Your data wrangling is about to hit different.
+- [genzplyr](https://github.com/hadley/genzplyr). genzplyr is an alternative syntax for dplyr that replaces boring old function names with GenZ slang. Data wrangling is about to hit different.
 
 
 # networks {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.jpg" alt="Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-237)Overview of networks. The schematic shows a set of nodes (points) joined by edges (lines). Nodes represent entities and edges represent a relationship between them; properties of the entities can be encoded on the nodes and properties of the relationship can be encoded on the edges.</p>
+</div>
+
+A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
+
+- A **similarity network** is a structure we build. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other", and we decide how much resemblance is required for two samples to be connected, usually using that threshold I mentioned.
+
+- An **interaction network** is a structure we are given. Here the data are already a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, and so forth. An edge means "this thing did something to, or with, this other thing". There is no threshold to choose, because the edges are the observations.
+
+That distinction is worth fixing firmly in mind now, because two networks built from these two different sources can look identical on the page but mean opposite things. A gene co-expression network is a *similarity* network: an edge says that the expression levels of two genes rise and fall together across the samples measured, which is something computed rather than observed. A protein-protein interaction network is an *interaction* network: an edge says that two proteins were observed to bind. These two distinct sorts of networks are easy to confuse, since both are drawn as dots and lines and both are about the molecules of the cell. But a well-connected gene in the first is simply a gene whose expression profile is unremarkable, while a well-connected protein in the second may be the most important molecule in the system.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
+</script>
 
 ## {-}
-
-A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the notes. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
-
-- Sometimes we **build** the network. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other". Importantly, in this mode, the user decides how much resemblance is required for two samples to be connected, usually using that threshold I mentioned.
-
-- Alternatively, we are sometimes **given** the network. This could be a list of connections that were actually observed in the world: journeys taken, messages sent, proteins that bind, and so forth. Networks derived from these data typically indicate "this thing interacted with this other thing".
 
 ## distances and scaling {-}
 
 To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-238)How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples.</p>
+</div>
 
 First, we need our data set in wide format:
 
@@ -1846,13 +1859,14 @@ dist(alaska_lake_data_wide[,3:15])
 ## 20   7.593005   9.322022   2.664249  12.413960
 ```
 
-We can also get long-style distance matrices directly from a wrapper function we have called `runMatrixAnalyses` by specifying `analysis = "dist"`, as below. The `scale_variance = TRUE` argument does the scaling step for us before the distances are computed.
+We can also get distances directly from `runMatrixAnalysis()`, this course's matrix-analysis function, by specifying `analysis = "dist"`. One argument matters here (well, and a few others, below): `output_format = "long"` asks for the distances as a **long table**, one row per pair of lakes, rather than as the compact triangle `dist()` printed above. The long shape is the one we want, because in a moment we are going to turn each of those rows into an edge.
 
 
 ``` r
-alaska_dist_long <- runMatrixAnalyses(
+alaska_dist_long <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = FALSE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -1879,14 +1893,19 @@ Let's look at those distances. Why is North Killeak Lake so distant from everyon
 
 
 ``` r
-ggplot(
+plot1 <- ggplot(
   alaska_dist_long,
   aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
 ) +
-  geom_tile()
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-242)Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+</div>
 
 
 ``` r
@@ -1918,9 +1937,12 @@ alaska_lake_data %>% filter(element == "Cl") %>%
   ggplot(aes(x = mg_per_L, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-244)Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+</div>
 
-Yes, chloride is far more abundant that all the elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
+Yes, chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
 
 
 ``` r
@@ -1942,36 +1964,63 @@ head(round(alaska_scaled, 2))
 ## [6,]  1.00  1.12  1.32  0.03  1.05
 ```
 
-We can do that directly in `runMatrixAnalysis()`:
+We can do that directly in `runMatrixAnalysis()`, which saves a bit of time, using `scale_variance` (see below). Importantly, note that scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. But whenever the columns are in different units, scale first.
 
 
 ``` r
-runMatrixAnalyses(
+runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = TRUE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
 ) %>% ggplot(
   aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
 ) +
-  geom_tile()
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) -> plot2
 ## Replacing NAs in your data with mean
+
+plot_grid(plot1, plot2, ncol = 1, labels = c("A", "B"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-246)The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+</div>
 
-Scaling is a choice, not a law. If every column is in the same units and the large values genuinely matter more to you, then you might deliberately leave the data unscaled. But whenever your columns are in different units, scale first. The same concern comes back whenever we compute distances, including in hierarchical clustering in the next chapter.
+#### concept check {-}
 
-## threshold networks from data {-}
+Fill in the blank with the command that centers each column and divides it by its standard deviation. Press Run.
 
-We build networks from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. If you feed raw distance in as the edge weight, your plot will draw the most **dissimilar** pairs as the most strongly connected: probably not what you want. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever you build a network from distances, stop and check which way round your metric runs.
+<div class="webr-cell"><textarea class="webr-code">alaska_lake_data %>%
+  select(-element_type) %>%
+  pivot_wider(names_from = "element", values_from = "mg_per_L") -> lakes_wide
+
+round(head(____(lakes_wide[,3:15])), 2)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Scaling puts every analyte on the same footing, so a one-standard-deviation difference counts the same in chloride as it does in phosphorus. Without it, the analyte reported in the largest numbers controls the distances almost on its own.">
+<p class="scq">Self-check: why does scaling change which lakes come out looking similar?</p>
+<label><input type="radio"> Because it removes outlying lakes from the data set</label>
+<label><input type="radio"> Because it puts every analyte on the same footing, so no single large-valued analyte can dominate the distance</label>
+<label><input type="radio"> Because it converts distances into similarities</label>
+</div>
+
+<hr>
+
+## similarity networks {-}
+
+Once we have a distance matrix (scaled or unscaled), we can build networks. However, networks are built from an **edge list**: a table that lists one row per connection in the network. So, we need to turn the distances into rows of `from`, `to`, and `weight`. Fortunately, our long-style distance matrix makes this easy. There is just one trick: **distance and similarity are the opposite of one another.** A *small* distance means two samples are *alike*. But an edge weight is drawn thick when it is *large*. Feeding raw distance in as the edge weight draws the most **dissimilar** pairs as the most strongly connected: rarely what is intended. That is what `similarity = 1 / (1 + distance) * 100` is for: it inverts distance into similarity. Whenever a network is built from distances, it is worth stopping to check which direction the metric runs in.
+
+The similarity function above has a few parts that are perhaps not immediately obvious. Think about it like this: distance ranges, conceivably, from 0 to infinity. We would like similarity values derived from those distances that range from 0 to 100 (0% similar to 100% similar). If a distance is zero (100% similarity), then in our formula we get (1/(1+0)*100) = 100. If distance is really large, say, 10000, then the similarity is small (1/(1+10000)*100) = 0.01% similar. Minor notes: (i) adding the +1 means a distance of zero (identical items) is allowed, and (ii) if the distances are all very large or very small relative to 1, a scale factor can be added: 1 / (1 + d/k), where k is a "typical" distance to be mapped to 50%.
 
 
 ``` r
-runMatrixAnalyses(
+runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
+    output_format = "long",
     scale_variance = TRUE,
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -2009,13 +2058,13 @@ net <- buildNetwork(
 )
 ## buildNetwork: every repeated node pair (A->B and B->A) had matching edge attributes, so the network is treated as undirected and 380 edges were collapsed to 190. Set directed = TRUE to keep both directions.
 head(net$nodes)
-##                             x          y
-## Devil_Mountain_Lake 0.6288512 0.21182409
-## Imuruk_Lake         0.7044623 0.64857949
-## Kuzitrin_Lake       0.4417220 0.04724479
-## Lava_Lake           0.3255254 0.82479944
-## North_Killeak_Lake  1.0000000 0.75230095
-## White_Fish_Lake     0.5413863 1.00000000
+##                              x         y
+## Devil_Mountain_Lake 0.09311715 0.6401000
+## Imuruk_Lake         0.49176389 0.7587307
+## Kuzitrin_Lake       0.18068294 0.4368628
+## Lava_Lake           0.69544184 0.6986885
+## North_Killeak_Lake  1.00000000 0.5764555
+## White_Fish_Lake     0.60125990 1.0000000
 ##                               node_name park
 ## Devil_Mountain_Lake Devil_Mountain_Lake BELA
 ## Imuruk_Lake                 Imuruk_Lake BELA
@@ -2024,23 +2073,23 @@ head(net$nodes)
 ## North_Killeak_Lake   North_Killeak_Lake BELA
 ## White_Fish_Lake         White_Fish_Lake BELA
 head(net$edges)
-##           x         y          start_node      xend
-## 1 0.6288512 0.2118241 Devil_Mountain_Lake 0.7044623
-## 2 0.6288512 0.2118241 Devil_Mountain_Lake 0.4417220
-## 3 0.6288512 0.2118241 Devil_Mountain_Lake 0.3255254
-## 4 0.6288512 0.2118241 Devil_Mountain_Lake 1.0000000
-## 5 0.6288512 0.2118241 Devil_Mountain_Lake 0.5413863
-## 6 0.6288512 0.2118241 Devil_Mountain_Lake 0.0487207
-##         yend           end_node similarity
-## 1 0.64857949        Imuruk_Lake  21.403954
-## 2 0.04724479      Kuzitrin_Lake  37.549555
-## 3 0.82479944          Lava_Lake  22.717833
-## 4 0.75230095 North_Killeak_Lake   9.342952
-## 5 1.00000000    White_Fish_Lake  13.719374
-## 6 0.27097409       Iniakuk_Lake  19.539621
+##            x      y          start_node      xend      yend
+## 1 0.09311715 0.6401 Devil_Mountain_Lake 0.4917639 0.7587307
+## 2 0.09311715 0.6401 Devil_Mountain_Lake 0.1806829 0.4368628
+## 3 0.09311715 0.6401 Devil_Mountain_Lake 0.6954418 0.6986885
+## 4 0.09311715 0.6401 Devil_Mountain_Lake 1.0000000 0.5764555
+## 5 0.09311715 0.6401 Devil_Mountain_Lake 0.6012599 1.0000000
+## 6 0.09311715 0.6401 Devil_Mountain_Lake 0.2417816 0.0000000
+##             end_node similarity
+## 1        Imuruk_Lake  21.403954
+## 2      Kuzitrin_Lake  37.549555
+## 3          Lava_Lake  22.717833
+## 4 North_Killeak_Lake   9.342952
+## 5    White_Fish_Lake  13.719374
+## 6       Iniakuk_Lake  19.539621
 ```
 
-These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so you can color them by something you know about the samples.
+These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so they can be colored by something already known about the samples.
 
 
 ``` r
@@ -2066,8 +2115,10 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" alt="" width="100%" style="display: block; margin: auto;" />
-
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-249)A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+</div>
 
 Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:
 
@@ -2132,28 +2183,44 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-251)The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+</div>
 
-Minor note: notice also that a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this: if every repeated pair carries identical values, it treats the network as undirected, keeps one edge per pair, and prints a message saying so. If any repeated pair differs, it keeps every edge. You can override either way with `directed = TRUE` or `directed = FALSE`.
+Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to *why* — and to when it is the wrong thing to do — under "directed and undirected", below.
 
-## data as networks {-}
+#### concept check {-}
 
-Everything in the previous section was **derived**: we computed the edges ourselves from a data matrix and applied a threshold (or not) to define which nodes were connected. Now consider a data structure where each observation itself is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data. Accordingly, we do not need to choose whether or not to scale or to pick a threshold: there is nothing to pick because the edges are observations.
+Fill in the blank so that a large distance turns into a small similarity. Press Run.
 
-`buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for handling these sorts of datasets. Let's look at an example:
+<div class="webr-cell"><textarea class="webr-code">tibble(distance = c(0.5, 2, 8)) %>%
+  mutate(similarity = 1 / (1 + ____) * 100)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Edges are drawn thick when their weight is large. Distance runs the other way round, so feeding raw distance in as the weight draws the least similar pairs as the most strongly connected.">
+<p class="scq">Self-check: what happens if you use raw distance as the edge weight instead of inverting it first?</p>
+<label><input type="radio"> Nothing; distance and similarity are interchangeable as edge weights</label>
+<label><input type="radio"> The most dissimilar pairs get drawn as the most strongly connected</label>
+<label><input type="radio"> The network becomes directed</label>
+</div>
+
+<hr>
+
+## interaction networks {-}
+
+The networks in the previous section were built from properties of the subjects we measured (lake pH, water temp, etcetera). But what if each observation *itself* is an edge: an origin-and-destination table of journeys, a ledger of letters sent between cities, a record of which proteins were observed to bind which, and so forth. In such data sets, the edge list *is* the raw data, instead of something we compute from a data matrix. Accordingly, we do not need to choose whether or not to scale, nor to pick a threshold: there is nothing to pick, because the edges are the observations. Three things become possible here that were not possible in a similarity network:
+
+**Direction.** An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A similarity network can never show this, because distance is symmetric — if lake A is close to lake B, then lake B is exactly that close to lake A, always. And when a network *is* directed, the asymmetry is often the finding: a node that sends far more than it receives is a result in and of itself.
+
+**Weight as a count.** An edge can document how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.
+
+**Structure.** Because the edges are facts rather than resemblances, questions about the shape of the graph become meaningful: how many separate pieces are there, which nodes hold them together, and what breaks if a node is removed. In a similarity network every node is joined to every other until we impose a threshold, as we saw above, so the shape of that graph is mostly a consequence of the number we picked. In an interaction network, the shape is a property of the world.
+
+On the operational end of things, `buildNetwork()` already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for these sorts of data sets. Let's look at an example. We will use two data sets that come with `phylochemistry`: `passenger_flows`, a ledger of how many passengers flew between pairs of US airports, and `us_airports`, which tells us something about each airport.
 
 
 
 ``` r
-us_airports <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/us_airports.csv")
-## Rows: 29 Columns: 7
-## ── Column specification ─────────────────────────────────────────────────────────────────────────────
-## Delimiter: ","
-## chr (5): airport, name, city, state, region
-## dbl (2): latitude, longitude
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 us_airports
 ## # A tibble: 29 × 7
 ##    airport name        city  state region latitude longitude
@@ -2169,15 +2236,6 @@ us_airports
 ##  9 PDX     Portland I… Port… OR    lower…     45.6    -123. 
 ## 10 MSP     Minneapoli… Minn… MN    lower…     44.9     -93.2
 ## # ℹ 19 more rows
-passenger_flows <- read_csv("/Users/bust0037/Documents/Tools/websites/thebustalab.github.io/phylochemistry/sample_data/passenger_flows.csv")
-## Rows: 192 Columns: 3
-## ── Column specification ─────────────────────────────────────────────────────────────────────────────
-## Delimiter: ","
-## chr (2): origin, destination
-## dbl (1): passengers
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 passenger_flows
 ## # A tibble: 192 × 3
 ##    origin destination passengers
@@ -2193,12 +2251,17 @@ passenger_flows
 ##  9 ATL    DEN              58310
 ## 10 ATL    DFW              75820
 ## # ℹ 182 more rows
+```
 
+Note that `passenger_flows` is already an edge list: two columns naming the nodes, and a third carrying the weight. That is all `buildNetwork()` needs. Because each row is a directed fact (passengers who flew *from* the origin *to* the destination), we pass `directed = TRUE`.
+
+
+``` r
 air_net <- buildNetwork(
   edgelist = passenger_flows,
-  node_attributes = us_airports
+  node_attributes = us_airports,
+  directed = TRUE
 )
-## buildNetwork: 95 node pair(s) appear more than once with different edge attributes (e.g. A->B and B->A with different weights), so all 192 edges were kept and the network is treated as directed. Set directed = FALSE to keep one edge per pair (the first occurrence) instead.
 
 ggplot() +
   geom_segment(
@@ -2217,7 +2280,8 @@ ggplot() +
   ) +
   geom_text_repel(
     data = air_net$nodes,
-    aes(x = x, y = y, label = paste(city, state))
+    aes(x = x, y = y, label = paste(city, state)),
+    max.overlaps = Inf, size = 3
   ) +
   scale_linewidth_continuous(range = c(0.2, 1.4)) +
   scale_alpha_continuous(range = c(0.15, 0.8)) +
@@ -2226,74 +2290,260 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-253)An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+</div>
 
+#### concept check {-}
 
-That said, one thing to watch: if A to B and B to A both appear and carry the same values (or no values at all), `buildNetwork()` will assume the network is undirected and merge them. When direction is part of the data, pass `directed = TRUE`.
+Fill in the blank to sort the routes so the busiest one is at the top. Press Run.
 
-Three things become available that were not available in Part 1:
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  arrange(desc(____)) %>%
+  head()</textarea></div>
 
-**Direction.** An observed edge often has a direction: A sent to B is not the same fact as B sent to A. A distance is always symmetric, so a derived network can never be directed. And in a directed network, *the asymmetry is often the finding* — a node that sends far more than it receives is doing something structurally different from one that is balanced.
+<div class="selfcheck" data-answer="1" data-explain="Every row of this table is a journey that was actually recorded, so the edges are the raw data. There is nothing for us to compute, and so nothing for us to threshold.">
+<p class="scq">Self-check: why is there no threshold to choose for this network?</p>
+<label><input type="radio"> Because the data set is too small for a threshold to make a difference</label>
+<label><input type="radio"> Because each row is an observed journey, so the edges are the data rather than something we calculated</label>
+<label><input type="radio"> Because the network is directed, and thresholds only apply to undirected networks</label>
+</div>
 
-**Weight as a count.** An edge can carry how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.
-
-**Structure.** Because the edges are facts rather than similarities, questions about the shape of the graph become meaningful: how many separate components are there, which nodes hold them together, and what breaks if a node is removed.
-
-### node summaries: degree and volume {-}
-
-The simplest node-level summary is **degree** — how many other nodes a node connects to. In base R that is one line over both ends of the edge list:
-
-```
-table(c(edges$from, edges$to))
-```
-
-If the edges carry counts, you can also ask for **strength**, or total volume: group by node and sum the traffic over both ends. That is `group_by()` and `summarise()` from the wrangling chapter, applied to a network.
-
-### volume is not importance {-}
-
-Here is the lesson this half of the chapter exists for, and it is one you cannot demonstrate on a derived network at all.
-
-**The busiest node in a system can be structurally irrelevant, and a very quiet node can be holding the whole thing together.**
-
-On a verified passenger-movement network of twenty stations:
-
-- The **busiest** station carries around 40,000 journeys — 301% more than the runner-up. Delete it, and the network is completely unchanged: two components before, two components after.
-- The **critical** station ranks **nineteenth of twenty** by volume — nearly the quietest in the system. Delete it and the network splits: two components become three. It is the sole articulation point, with betweenness eight times the next station's.
-
-Ranking your nodes by how much traffic they carry would put the station that actually matters second from last. This is the same lesson that co-expression analysis exists to teach in biology — you cannot find regulators by ranking expression level — and it has a sharp mathematical reason for living in Part 2 rather than Part 1. In a correlation network, a gene cannot correlate above 1/√2 ≈ 0.707 with two unrelated programmes at once, so genuine connector nodes, and therefore articulation points, are effectively impossible to observe. Only a relational network can show you this.
-
-### components and critical nodes {-}
-
-- **Components**: which sets of nodes can reach each other at all. Counting components before and after removing a node is the cheapest possible test of whether that node is load-bearing, and it needs nothing beyond base R.
-- **Articulation points and betweenness**: the formal version of the same question — which node's removal disconnects the graph, and which nodes sit on the most paths between other nodes.
-
-<!-- =====================================================================================
-     TODO — PART 2 DATA NOW PUBLISHED (2026-09-18); CHUNKS AND NUMBERS STILL OWED.
-
-     Students get `passenger_flows` (origin, destination, passengers; 192 directed rows) and
-     `us_airports` (node attributes incl. region, latitude, longitude) from sample_data/.
-     Simulated counts on real US airport codes.
-
-     The numbers quoted above are from the OLD 20-station subway data and must be replaced.
-     Verified values for the airport data:
-       - busiest: ATL, ~1.9 million passengers, 36% more than LAX; removing it: 1 component -> 1
-       - critical: KTN (Ketchikan), 27th of 29 by volume; sole articulation point;
-         removing it: 1 component -> 2 (Alaska cut off)
-       - betweenness: KTN highest, but only ~1.2x SEA (not 8x)
-       - direction: the four Hawaii airports top the inflow/outflow ratio (~1.1-1.2)
-       - layout vs geography: orientation changes run to run (Alaska and Hawaii move around);
-         unweighted, HNL sits beside SFO/LAX and DLH beside DTW
-     ===================================================================================== -->
+<hr>
 
 ## interpreting networks {-}
 
-Three cautions, all of which apply whichever kind of network you have.
+### directed and undirected {-}
 
-**Layout is arbitrary.** The positions of the nodes carry no information. A force-directed layout is a physics simulation run until it settles, and it settles somewhere different every time unless you fix the seed. Two plots of the *same* graph can look nothing alike, and neither is more correct. Never read distance-on-the-page as distance-in-the-data; the only real content is which nodes are joined.
+An edge either has a direction or it does not, and the case in which a given analysis lies is a property of the relationship measured in the data.
 
-**What an edge means determines what a hub means.** This is where the chapter began and it is worth ending on. A central node in a similarity network is the least distinctive sample you have. A central node in an interaction network may be the most important thing in the system. The topology cannot tell you which situation you are in — only knowing where the edges came from can.
+Some relationships are **mutual**. Two proteins bind each other. Two lakes resemble each other. Two towers are within sight of each other. There is no "from" and no "to" here; the edge is simply a pair, and we call such a network **undirected** and draw it with plain lines. Every similarity network is undirected, for the reason given above: distance is symmetric, so there is nothing else it could be.
 
-**Sometimes a network is a hairball hiding a table.** A network is the right picture when the *connections* are the finding. If what you actually want to say is "these five samples have high values and these five have low values", a network will say it far worse than a bar chart. Before drawing one, ask what a reader is supposed to learn from an edge. If you cannot answer, you want a different plot.
+Other relationships are **oriented**. A passenger flies from Seattle to Ketchikan. One protein phosphorylates another. Here "A to B" and "B to A" are two different facts, and they can carry different numbers. We call such a network **directed** and draw it with arrows. Only an interaction network can be directed.
+
+One case in between that can cause confusion: sometimes a directed network turns out to be almost perfectly balanced: roughly as many passengers fly Seattle to Ketchikan as fly Ketchikan to Seattle. It is tempting to call that network undirected and collapse the two rows into one. Resist. The network is still directed, and the balance is a *result* — one that would be destroyed the moment it is collapsed, because afterwards the analyst can no longer ask which airports send more than they receive. Undirected means direction was never defined. Balanced means direction was defined, and came out even.
+
+This is also why `buildNetwork()` cannot make the call about directed versus undirected for a user. When it sees "A to B" and "B to A" carrying identical values, it assumes the network is undirected, keeps one edge per pair, and prints a message saying so. That is the right guess for a long-style distance matrix, where the pair is simply listed twice, and the wrong guess for a flight ledger that happens to be balanced. The numbers look the same in both cases; only the analyst knows which one is in hand. Say so with `directed = TRUE` or `directed = FALSE`.
+
+#### concept check {-}
+
+Fill in the blank so that both directions of the Seattle to Ketchikan route come back. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  filter(origin %in% c("SEA", "____"), destination %in% c("SEA", "KTN"))</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Those two rows are two separate facts that happen to be close in size. Merging them would hide the balance rather than report it, and would make questions like which airports send more than they receive impossible to ask.">
+<p class="scq">Self-check: the two rows carry almost the same number of passengers. What should you do with them?</p>
+<label><input type="radio"> Merge them into one undirected edge, since they are near enough equal</label>
+<label><input type="radio"> Keep them as two directed edges; the near-balance is a result, and merging would throw it away</label>
+<label><input type="radio"> Drop the smaller of the two, since it is within the noise</label>
+</div>
+
+<hr>
+
+### node summaries {-}
+
+The simplest node-level summary is **degree** — how many other nodes a node connects to. For an edge list, this is just counting how many times each node is listed, which is `group_by()` and `summarize()` from the wrangling chapter applied to a network. In a directed network, degree splits in two: **out-degree** (how many places can be reached *from* here) and **in-degree** (how many places reach here), so we count each column separately and join the results. Note the `airport = origin` inside `group_by()`: that names the grouping column as it is created, which saves renaming it afterwards and means both tables come out with a column of the same name to join on.
+
+
+``` r
+passenger_flows %>%
+  group_by(airport = origin) %>%
+  summarize(out_degree = n()) -> out_degree
+
+passenger_flows %>%
+  group_by(airport = destination) %>%
+  summarize(in_degree = n()) -> in_degree
+
+full_join(out_degree, in_degree, by = "airport") %>%
+  arrange(desc(out_degree))
+## # A tibble: 29 × 3
+##    airport out_degree in_degree
+##    <chr>        <int>     <int>
+##  1 ATL             15        15
+##  2 LAX             14        14
+##  3 ORD             14        14
+##  4 SEA             11        11
+##  5 SFO             11        11
+##  6 DEN             10        10
+##  7 DFW              9         9
+##  8 HNL              9         9
+##  9 LAS              8         8
+## 10 PHX              8         8
+## # ℹ 19 more rows
+```
+
+If the edges carry counts, we can also ask for **strength**, or total volume: the same grouping, but summing the passengers instead of counting the rows. Notice that degree and strength do not have to agree, and that neither of them is the same question as "which airport matters most". That last one turns out to need a different approach altogether (see below).
+
+
+
+``` r
+passenger_flows %>%
+  group_by(airport = origin) %>%
+  summarize(passengers_out = sum(passengers)) -> passengers_out
+
+passenger_flows %>%
+  group_by(airport = destination) %>%
+  summarize(passengers_in = sum(passengers)) -> passengers_in
+
+full_join(passengers_out, passengers_in, by = "airport") %>%
+  mutate(total_passengers = passengers_out + passengers_in) %>%
+  arrange(desc(total_passengers))
+## # A tibble: 29 × 4
+##    airport passengers_out passengers_in total_passengers
+##    <chr>            <dbl>         <dbl>            <dbl>
+##  1 ATL             949320        948300          1897620
+##  2 LAX             720780        669520          1390300
+##  3 ORD             680120        664860          1344980
+##  4 SFO             493050        476020           969070
+##  5 DEN             466700        457170           923870
+##  6 DFW             400880        404790           805670
+##  7 JFK             386610        382780           769390
+##  8 HNL             338940        398300           737240
+##  9 LAS             355340        346350           701690
+## 10 SEA             341220        332130           673350
+## # ℹ 19 more rows
+```
+
+#### concept check {-}
+
+Fill in the blank with the function that adds up the passengers on each airport's outbound routes. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  group_by(origin) %>%
+  summarize(passengers_out = ____(passengers)) %>%
+  arrange(desc(passengers_out))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Degree counts connections and ignores their size; strength adds up the traffic and ignores how many partners it came from. An airport with four busy routes and one with twenty quiet ones can have the same strength and very different degrees.">
+<p class="scq">Self-check: what is the difference between a node&rsquo;s degree and its strength?</p>
+<label><input type="radio"> Degree counts how many other nodes it joins to; strength adds up the traffic carried on those connections</label>
+<label><input type="radio"> They are two names for the same number</label>
+<label><input type="radio"> Degree only applies to directed networks, and strength only to undirected ones</label>
+</div>
+
+<hr>
+
+### node removal {-}
+
+Degree and strength both answer "how much?", but neither answers "does this node matter?". The cheapest way to ask the second question is to delete a node and see what happens to everything else. Deleting a node just means dropping every edge that touches it, which is a single `filter()`. Let's do it twice: once for the busiest airport in the network, and once for one of the lowest-traffic airports.
+
+
+``` r
+passenger_flows %>%
+  filter(origin != "ATL", destination != "ATL") -> flows_no_atlanta
+
+passenger_flows %>%
+  filter(origin != "KTN", destination != "KTN") -> flows_no_ketchikan
+```
+
+Now we rebuild and plot each one, in exactly the same way we compared thresholds earlier:
+
+
+``` r
+net_no_atlanta <- buildNetwork(
+  edgelist = flows_no_atlanta,
+  node_attributes = us_airports,
+  directed = TRUE
+)
+net_no_ketchikan <- buildNetwork(
+  edgelist = flows_no_ketchikan,
+  node_attributes = us_airports,
+  directed = TRUE
+)
+
+net_no_atlanta$nodes$removed <- "Atlanta removed (busiest)"
+net_no_atlanta$edges$removed <- "Atlanta removed (busiest)"
+net_no_ketchikan$nodes$removed <- "Ketchikan removed (27th of 29)"
+net_no_ketchikan$edges$removed <- "Ketchikan removed (27th of 29)"
+
+removal_nodes <- rbind(net_no_atlanta$nodes, net_no_ketchikan$nodes)
+removal_edges <- rbind(net_no_atlanta$edges, net_no_ketchikan$edges)
+```
+
+
+``` r
+ggplot() +
+  geom_segment(
+    data = removal_edges,
+    aes(
+      x = x, y = y, xend = xend, yend = yend,
+      linewidth = passengers,
+      alpha = passengers
+    ),
+    color = "grey40"
+  ) +
+  geom_point(
+    data = removal_nodes,
+    aes(x = x, y = y),
+    shape = 21, size = 3.2, color = "black", stroke = 0.2
+  ) +
+  facet_grid(.~removed) +
+  scale_linewidth_continuous(range = c(0.2, 1.4)) +
+  scale_alpha_continuous(range = c(0.15, 0.8)) +
+  guides(alpha = "none") +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-258)What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+</div>
+
+Based on the above, we can say the following: take the busiest airport out and the picture barely changes: everything that is left can still be reached from everything else. Take Ketchikan out and the network falls into two clearly separate clumps, with the Alaskan airports floating free of the rest of the country. A node whose removal breaks a network into more pieces than it was in before is called an **articulation point**, and in this data set Ketchikan is the only one.
+
+This is worth pausing on, because it is the one thing a force-directed layout (the kind `buildNetwork()` creates) reports honestly. Where a node sits *within* a clump is arbitrary, as the warning below insists. But whether there is one clump or two is not arbitrary at all: separate pieces drift apart because there are no edges pulling them together. Counting the pieces in the picture is a real measurement.
+
+For numbers rather than a picture in these sorts of node removal analyses, the `igraph` package provides connected components, articulation points, and related measures directly. The further reading section at the end of this chapter is a good place to start on that.
+
+#### concept check {-}
+
+Fill in the blank with the operator that keeps every route *not* touching Ketchikan. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  filter(origin != "KTN", destination ____ "KTN")</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Splitting into two pieces means no path remains between the two groups. Since dropping this one airport is what caused the split, every route between the Alaskan airports and the rest of the country must have passed through it.">
+<p class="scq">Self-check: removing Ketchikan splits the network in two. What does that tell you about Ketchikan?</p>
+<label><input type="radio"> That it is the busiest airport in the network</label>
+<label><input type="radio"> That it is the only link between the Alaskan airports and the rest of the country</label>
+<label><input type="radio"> That the force-directed layout was computed with the wrong random seed</label>
+</div>
+
+<hr>
+
+### warnings {-}
+
+- **The busiest node in a system can be structurally irrelevant, and a very quiet node can be holding the whole thing together.** We saw this just above: Atlanta carries about 1.9 million passengers, 36% more than Los Angeles behind it, and removing it changes nothing about what can reach what. Ketchikan carries about a hundredth of that traffic, and it is the only thing holding seven of the twenty-nine airports onto the rest of the network. Ranking these airports by volume and working down the list protecting the important ones would have left the airport that actually matters for connectivity third from the bottom. Volume is easy to measure and it is not the same thing as importance.
+
+- **Absolute layout is arbitrary.** The positions of the nodes carry no information. A force-directed layout is a physics simulation that starts the nodes in random positions and runs until they settle, so unless the random seed is fixed, two plots of the *same* network can look nothing alike and neither one is more correct. Never read distance-on-the-page as distance-in-the-data; the only real content is which nodes are joined to which.
+
+- **What an edge means determines what a hub means.** This is the concept this chapter started with. A well-connected node in a similarity network is a data set's *least* distinctive sample: it sits near everything because there is nothing unusual about it. A well-connected node in an interaction network may be the most important thing in the whole system. The two plots look the same, and no amount of staring at the shape of the graph will reveal which one is the case; only knowing whether the graph is a similarity network or an interaction network will.
+
+- **Sometimes a network is a hairball hiding a table.** A network is the right picture when the *connections* are the finding. If the actual finding is "these five samples have high values and these five have low values", a network will say it far worse than a bar chart. Before drawing one, ask what a reader is supposed to learn from an edge. If there is no answer to that, a different plot is probably the right one.
+
+#### concept check {-}
+
+Fill in the blank with the function that shows you just the first few rows, so you can see the quietest airports in the network. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">passenger_flows %>%
+  group_by(origin) %>%
+  summarize(total_passengers = sum(passengers)) %>%
+  arrange(total_passengers) %>%
+  ____(5)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Ketchikan is in that bottom handful, and it is the one airport whose removal breaks the network apart. A volume ranking puts the airport that matters most structurally almost last, which is exactly the trap this chapter is warning about.">
+<p class="scq">Self-check: a colleague ranks these airports by passenger volume and proposes protecting the top five first. What is wrong with that plan?</p>
+<label><input type="radio"> Nothing; the busiest airports are always the most important ones</label>
+<label><input type="radio"> The one airport whose loss would split the network sits near the bottom of that ranking, not the top</label>
+<label><input type="radio"> Passenger volume cannot be calculated from this data set</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+
 
 ## exercises {-}
 
@@ -2307,6 +2557,14 @@ Three cautions, all of which apply whichever kind of network you have.
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the warden of a chain of beacon towers in the Harrows, and the meltwater will surge tonight. Read the dispatch ledgers to find the station that really holds the network together, then survey the ridges and choose which four fires to light so that no village goes unwarned.</div>
 </div>
 </div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/cover.png" alt="The Faintest Line cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Faintest Line</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Networks &middot; correlation networks, modules + degree</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Correlate the gene readings into a network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.</div>
+</div>
+</div>
 </div>
 
 ## {-}
@@ -2317,7 +2575,7 @@ Three cautions, all of which apply whichever kind of network you have.
 
 - [Network structure and minimum degree](https://doi.org/10.1016/0378-8733(83)90028-X). Seidman's paper introducing k-cores, a durable and easily computed way of describing how densely connected the interior of a network is.
 
-- [ggraph and tidygraph](https://ggraph.data-imaginist.com/). Thomas Lin Pedersen's grammar-of-graphics approach to networks, useful once you want more control over layout and edge drawing than a helper function gives you.
+- [ggraph and tidygraph](https://ggraph.data-imaginist.com/). Thomas Lin Pedersen's grammar-of-graphics approach to networks, useful once more control over layout and edge drawing is wanted than a helper function provides.
 
 
 # hierarchical clustering {-}
@@ -2334,7 +2592,7 @@ So far we have been looking at how to plot raw data, summarize data, and reduce 
 
 
 ``` r
-AK_lakes_clustered <- runMatrixAnalyses(
+AK_lakes_clustered <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -2367,11 +2625,11 @@ AK_lakes_clustered
 
 Three of those arguments are worth a closer look:
 
-- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalyses()` does **not** scale unless you ask it to, so don't leave this out.
+- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalysis()` does **not** scale unless asked to, so don't leave this out.
 - `tree_method = "linkage_dendrogram"` builds the tree by hierarchical clustering proper: the step-by-step merging described below. The other option, `"neighbor_joining"`, is a tree-building method borrowed from phylogenetics, and it ignores the agglomeration method entirely.
 - `agglomeration_method` decides how groups of samples are merged as the tree is built. It is the subject of the second half of this chapter. For now we use Ward's method, `"ward.D2"`.
 
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though with the output of the `runMatrixAnalysis()` function, these two (`data` and `tr`) can be treated the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
 
 Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
 
@@ -2386,7 +2644,7 @@ ggtree() +
   scale_x_continuous(limits = c(0,10))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-275-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-287-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2404,7 +2662,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-276-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-288-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
 
@@ -2413,7 +2671,7 @@ Very nice! Since North Killeak and White Fish are so different from the others, 
 alaska_lake_data_wide %>%
   filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
 
-runMatrixAnalyses(
+runMatrixAnalysis(
     data = alaska_lake_data_wide_filtered,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -2434,7 +2692,7 @@ ggtree() +
 ## Replacing NAs in your data with mean
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-277-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-289-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## how the tree is built {-}
 
@@ -2446,7 +2704,7 @@ Hierarchical clustering builds its tree from the bottom up, by a very simple pro
 
 Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
 
-Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule you choose is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
+Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
 
 ### single versus complete linkage {-}
 
@@ -2464,7 +2722,7 @@ solvent_properties <- c(
   "relative_polarity", "formula_weight", "refractive_index"
 )
 
-solvents_single <- runMatrixAnalyses(
+solvents_single <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -2474,7 +2732,7 @@ solvents_single <- runMatrixAnalyses(
     columns_w_sample_ID_info = c("solvent", "category")
 )
 
-solvents_complete <- runMatrixAnalyses(
+solvents_complete <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
@@ -2508,13 +2766,13 @@ complete_plot <- ggtree(solvents_complete) +
 plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-279-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. If you tried to cut this tree into four groups, you would get one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognise: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
+The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
 
-Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbours: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
+Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
 
-Notice also the colours, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
+Notice also the colors, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
 
 ### when does the choice matter? {-}
 
@@ -2525,9 +2783,9 @@ Single and complete linkage give the most different trees when:
 - **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
 - **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
 
-The flip side is just as useful. When the groups in your data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on your result: if they agree, the grouping is robust; if they disagree, your data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
+The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
 
-Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever you report a tree.
+Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.
 
 ## Annotating trees {-}
 
@@ -2535,7 +2793,7 @@ Overlaying sample traits on a ggtree-based plot is straightforward when we combi
 
 
 ``` r
-hclust_out <- runMatrixAnalyses(
+hclust_out <- runMatrixAnalysis(
   data = chemical_blooms,
   analysis = c("hclust"),
   scale_variance = TRUE,
@@ -2546,7 +2804,7 @@ hclust_out <- runMatrixAnalyses(
 )
 ```
 
-The object returned by `runMatrixAnalyses()` already contains the branch coordinates, so we can pass it directly to `ggtree()` and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.
+The object returned by `runMatrixAnalysis()` already contains the branch coordinates, so we can pass it directly to `ggtree()` and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.
 
 
 ``` r
@@ -2560,7 +2818,7 @@ tree_plot <- ggtree(hclust_out) +
 tree_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-281-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
 
@@ -2577,7 +2835,7 @@ heat_plot <- hclust_out %>%
 heat_plot
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-282-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-294-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
 
@@ -2586,7 +2844,7 @@ With matching y scales, `plot_grid()` can align the tree and the heat map so the
 plot_grid(tree_plot, heat_plot, axis = "tb", align = "h")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
 
@@ -2598,7 +2856,7 @@ chemical_blooms %>%
   geom_tile()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-284-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-296-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## further reading {-}
@@ -2610,7 +2868,7 @@ chemical_blooms %>%
 <!-- ## exercises {-} -->
 
 
-<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+<!-- For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
 
 <!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
 
@@ -2627,12 +2885,12 @@ chemical_blooms %>%
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-299)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
+<p class="caption">(\#fig:unnamed-chunk-311)Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.</p>
 </div>
 
-In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalyses()`, a function that is loaded into your R Session when you run the source() command.
+In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 
-Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalyses()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
+Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
 
 ``` r
@@ -2654,7 +2912,7 @@ alaska_lake_data
 ## # ℹ 1 more variable: element_type <chr>
 ```
 
-We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalyses()` function how each column relates to this samples and analytes structuree
+We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structuree
 
 ## {-}
 
@@ -2669,12 +2927,12 @@ PCA looks at all the variance in a high dimensional data set and chooses new axe
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-301)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
+<p class="caption">(\#fig:unnamed-chunk-313)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
 </div>
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
 
-We can run and visualize principal components analyses using the `runMatrixAnalyses()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As the output shows, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case further processing is needed.
 
 
 ``` r
@@ -2707,7 +2965,7 @@ alaska_lake_data_wide
 ## # ℹ 7 more variables: S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
 ## #   K <dbl>, Ca <dbl>, Mg <dbl>
 
-AK_lakes_pca <- runMatrixAnalyses(
+AK_lakes_pca <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
@@ -2739,8 +2997,8 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-303-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-303)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
+<img src="index_files/figure-html/unnamed-chunk-315-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-315)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
 </div>
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
@@ -2749,7 +3007,7 @@ Important question: what makes the lakes listed above different from the others?
 
 ### ordination plots {-}
 
-Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalyses()` with `analysis = "pca_ord"`:
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it reveals which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
 
 ```
@@ -2764,7 +3022,7 @@ Let's look at how to access the information about which analytes are major contr
 ## 6 Cl         0.953    0.0148
 ```
 
-We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. Using `geom_label_repel()` is not required; the built in `geom_label()` works too, but `geom_label_repel()` can make labeling the segments easier.
 
 
 ``` r
@@ -2795,8 +3053,8 @@ ggplot(AK_lakes_pca_ord) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-305-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-305)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
+<img src="index_files/figure-html/unnamed-chunk-317-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-317)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
 </div>
 
 Great! Here is how to read the ordination plot:
@@ -2846,11 +3104,11 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-306-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-306)PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
+<img src="index_files/figure-html/unnamed-chunk-318-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-318)PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
 </div>
 
-Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
+Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
 
 ``` r
@@ -2862,8 +3120,8 @@ AK_lakes_pca_ord %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-307-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-307)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
+<img src="index_files/figure-html/unnamed-chunk-319-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-319)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
 </div>
 
 ### principal components {-}
@@ -2872,7 +3130,7 @@ We also can access information about the how much of the variance in the data se
 
 
 ``` r
-AK_lakes_pca_dim <- runMatrixAnalyses(
+AK_lakes_pca_dim <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
   analysis = c("pca_dim"),
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
@@ -2899,26 +3157,26 @@ ggplot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-308-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-308)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
+<img src="index_files/figure-html/unnamed-chunk-320-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-320)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
 </div>
 
-Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding `coord_fixed()` to a ggplot.
 
 ### pcaVisualizer {-}
 
-Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between your samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalyses()` and assembles a dashboard with coordinated plots.
+Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-309)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
+<p class="caption">(\#fig:unnamed-chunk-321)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
 </div>
 
 The function takes three key arguments:
 
 * `data`: a data frame that contains both the sample identifiers and the numeric analyte columns.
 * `columns_w_sample_ID_info`: the column names that identify each sample (for example `c("lake", "park")`).
-* `columns_w_values_for_single_analyte`: the numeric columns that should be analysed (for example `colnames(alaska_lake_data_wide)[3:15]`).
+* `columns_w_values_for_single_analyte`: the numeric columns that should be analyzed (for example `colnames(alaska_lake_data_wide)[3:15]`).
 
 To launch the app for the Alaska lakes example:
 
@@ -2933,18 +3191,18 @@ pcaVisualizer(
 
 This opens a browser window (or RStudio viewer) with three linked panels:
 
-* **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to colour or shape; the app reuses the `discrete_palette` defined earlier so colours stay consistent with the rest of this chapter.
-* **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below your chosen threshold, making it easier to focus on the analytes that matter.
-* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. You can order rows by Dim.1 or Dim.2 so the heatmap aligns with the direction of separation you care about in the scores plot.
+* **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to color or shape; the app reuses the `discrete_palette` defined earlier so colors stay consistent with the rest of this chapter.
+* **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below a chosen threshold, making it easier to focus on the analytes that matter.
+* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim.1 or Dim.2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
 
-Because `pcaVisualizer()` calls `runMatrixAnalyses()` under the hood, any transformations you perform on your data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while you are refining preprocessing steps, and once you are satisfied, you can reproduce the final view with scripted ggplot code for publication-quality figures.
+Because `pcaVisualizer()` calls `runMatrixAnalysis()` under the hood, any transformations performed on the data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while refining preprocessing steps, and once the preprocessing is settled, reproduce the final view with scripted ggplot code for publication-quality figures.
 
 ## umap and tsne {-}
 
 "How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
 "Can I identify clusters or subtle gradients in my dataset that might be missed by PCA?"
 
-UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. You can think of umap as a technique that "unwinds" a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as `n_neighbors` and `min_dist`, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.
+UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when the data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. Think of umap as a technique that "unwinds" a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as `n_neighbors` and `min_dist`, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.
 
 We will work here with the `wine_quality` dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:
 
@@ -2959,7 +3217,7 @@ Before starting with non-linear techniques, it can be helpful to see how a linea
 
 
 ``` r
-wq <- runMatrixAnalyses(
+wq <- runMatrixAnalysis(
   data = wine_quality,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -2975,8 +3233,8 @@ wq %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-312-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-312)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
+<img src="index_files/figure-html/unnamed-chunk-324-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-324)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
 </div>
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
@@ -2986,7 +3244,7 @@ We can perform UMAP on the wine quality dataset just as easily as PCA. The code 
 
 
 ``` r
-runMatrixAnalyses(
+runMatrixAnalysis(
   data = wine_quality,
   analysis = "umap",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -3001,18 +3259,18 @@ runMatrixAnalyses(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-313-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-313)UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
+<img src="index_files/figure-html/unnamed-chunk-325-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-325)UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
 </div>
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
-t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne" (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, t‑SNE can be run using the runMatrixAnalysis() function by specifying analysis = "tsne" (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.
 
 
 ``` r
 wine_quality_deduplicated <- wine_quality[!duplicated(wine_quality[4:14]),]
-tsne_results <- runMatrixAnalyses(
+tsne_results <- runMatrixAnalysis(
   data = wine_quality_deduplicated,
   analysis = "tsne",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -3020,9 +3278,9 @@ tsne_results <- runMatrixAnalyses(
 )
 ```
 
-From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.
+From there, the t‑SNE dimensions can be plotted in a similar fashion to the PCA and UMAP examples.
 
-Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
+Both UMAP and t‑SNE provide powerful alternatives to PCA when the data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
 
 ## exercises {-}
 
@@ -3064,14 +3322,14 @@ alaska_lake_data %>%
   select(-element_type) %>%
   pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
 
-alaska_lake_data_pca <- runMatrixAnalyses(
+alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("pca"),
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
     analysis = c("kmeans"),
     parameters = c(5),
@@ -3101,7 +3359,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-347-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -3109,14 +3367,14 @@ There is another method to define clusters that we call dbscan. In this method, 
 
 
 ``` r
-alaska_lake_data_pca <- runMatrixAnalyses(
+alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("pca"),
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 ) 
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
     analysis = c("dbscan"),
     parameters = c(4, 0.45),
@@ -3126,7 +3384,7 @@ alaska_lake_data_pca_clusters <- runMatrixAnalyses(
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
 ```
-We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
+We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs it needs data without NAs:
 
 
 ``` r
@@ -3145,7 +3403,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-337-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-349-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -3160,7 +3418,7 @@ alaska_lake_data_pca <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   data = alaska_lake_data_pca,
   analysis = c("dbscan"),
   parameters = c(4, 0.45),
@@ -3216,7 +3474,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-350-1.png" alt="" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -3351,7 +3609,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
-I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
 
 
 ``` r
@@ -3403,7 +3661,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-365-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -3428,17 +3686,17 @@ Please note that the the *p* value is not the probability of a detected differen
 
 Before comparing two means, look at the two distributions. This is not a formality. Every test in this
 chapter makes assumptions about the *shape* of the data — whether it is roughly normal, whether the
-groups have comparable spread — and a mean on its own tells you nothing about either. Two groups can
+groups have comparable spread — and a mean on its own reveals nothing about either. Two groups can
 have identical means and completely different distributions, and a bar chart of the means will hide
-that from you perfectly.
+that perfectly.
 
 So it is worth knowing how to draw a distribution in full rather than summarizing it away.
 
 ### distributions in full {-}
 
-Combining geoms lets you show the summary, the density and the raw observations at once. The half-eye
-gives you the density, the boxplot the quartiles, and the dots every actual measurement — so you can
-see the shape, the spread and the sample size in one picture:
+Combining geoms shows the summary, the density and the raw observations at once. The half-eye
+gives the density, the boxplot the quartiles, and the dots every actual measurement — showing
+the shape, the spread and the sample size in one picture:
 
 
 ``` r
@@ -3451,15 +3709,15 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-366-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-378-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether
-the distribution is skewed, and whether any group is bimodal. All three change which test you should
+the distribution is skewed, and whether any group is bimodal. All three change which test to
 reach for in the next section.
 
 ### distributions alongside a scatter plot {-}
 
-When you are looking at two variables at once, you can attach the distribution of each to the margins
+With two variables in play at once, the distribution of each can be attached to the margins
 of the plot, so the relationship and the two individual distributions are visible together:
 
 
@@ -3479,15 +3737,15 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-367-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-379-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## test selection {-}
 
-There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
+There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. There are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/stats.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modeled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
 
 We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
@@ -3542,7 +3800,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-370-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-382-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -3555,7 +3813,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-371-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-383-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3587,7 +3845,7 @@ The p-value from this test is 0.596! This means that their variances are not sig
 
 ## two means {-}
 
-Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
+Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
 
 ``` r
@@ -3644,7 +3902,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-376-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-388-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3658,7 +3916,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-389-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3768,13 +4026,13 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-383-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-395-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
 ### Kruskal, Dunn tests {-}
 
-The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
+The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modeled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
 
 ``` r
@@ -3838,7 +4096,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-386-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-398-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3853,7 +4111,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-387-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-399-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3873,7 +4131,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 3.19e- 6
+##  4 Cl      aquifer_3    values       0.750 4.28e- 6
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -4003,7 +4261,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-392-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-404-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -4092,7 +4350,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-427-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-439-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
@@ -4193,7 +4451,7 @@ plot1 <- ggplot() +
 plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-433-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-445-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -4205,7 +4463,7 @@ ggplot(predictions_from_basic_linear_model) +
   geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-434-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-446-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -4226,7 +4484,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-436-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-448-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -4238,7 +4496,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-437-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-449-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -4264,7 +4522,7 @@ total_sum_of_squares <- sum(
 ## [1] 0.403351
 ```
 
-Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
+Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
 - The amount of variance in the response explained by the dependent variable.
 - How much better the line of best fit describes the data than the flat line.
 Now, let's put it all together and make it pretty:
@@ -4302,7 +4560,7 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-439-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-451-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -4454,7 +4712,7 @@ plot3 <- ggplot(model_comparison_data) + geom_point(aes(
 plot_grid(plot1, plot2, plot3, nrow = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-441-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-453-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -4525,7 +4783,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-442-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-454-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -4539,9 +4797,9 @@ We can use the `buildModel()` function to make a random forest model. We need to
 
 - n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
 
-- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. By carefully tuning this parameter, you can strike a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
+- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
 
-`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy. In this function:
+`buildModel()` explores a number of settings for both n_vars_at_split and n_trees, then selects the combination with the highest predictive accuracy. In this function:
 
 - `data` specifies the dataset to be used for model training, here metabolomics_data.
 - `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
@@ -4601,7 +4859,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-445-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-457-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -4628,7 +4886,7 @@ ggplot() +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-446-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-458-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -4680,7 +4938,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-448-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4715,7 +4973,7 @@ data.frame(
 
 - [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
 
-- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient you in the landscape of ML methods.
+- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient the reader in the landscape of ML methods.
 
 - [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
 
@@ -4891,7 +5149,7 @@ Please read over the following:
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
-First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. You can obtain one by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Here, rather than typing the key into the code, we read it out of the environment with `Sys.getenv("PUBMED_TOKEN")` — the same `.Renviron` file you set up at the start of this chapter. Pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
+First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that authenticates a user when using an API. It acts like a password, granting permission to access the API services. Obtaining one requires signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Here, rather than typing the key into the code, we read it out of the environment with `Sys.getenv("PUBMED_TOKEN")` — the same `.Renviron` file set up at the start of this chapter. Pass it to the searchPubMed function along with the search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
 
 ``` r
@@ -4910,11 +5168,11 @@ select(search_results, term, title)
 ##    term                       title                         
 ##    <chr>                      <chr>                         
 ##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
-##  2 beta-amyrin synthase       [Cloning and bioinformatics a…
-##  3 beta-amyrin synthase       A newly identified β-amyrin s…
+##  2 beta-amyrin synthase       Adjusting Catalytic Activity …
+##  3 beta-amyrin synthase       β-Amyrin synthase from Conyza…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  5 friedelin synthase         Genome Mining and Gene Expres…
-##  6 friedelin synthase         Oxidosqualene cyclases involv…
+##  5 friedelin synthase         Friedelin Synthase from Mayte…
+##  6 friedelin synthase         Genome Mining and Gene Expres…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
@@ -4923,7 +5181,7 @@ select(search_results, term, title)
 ## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
 ```
 
-From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
+The output here shows that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
 
 ### GloVe embeddings {-}
 
@@ -4931,7 +5189,7 @@ GloVe (Global Vectors) embeddings represent words as fixed numeric vectors based
 
 At the word level, each token is replaced by its corresponding vector from the GloVe table. At the sentence level, these word vectors are combined into a single vector that represents the whole sentence. A simple approach is to average the word vectors across the sentence (other approaches include weighted averages or more complex pooling).
 
-Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from https://nlp.stanford.edu/projects/glove/ and update the path to the file on your machine.
+Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from https://nlp.stanford.edu/projects/glove/ and update the path to the file on the local machine.
 
 
 ``` r
@@ -4955,7 +5213,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-494-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -4963,9 +5221,9 @@ Transformer embeddings start with a vector for each word, then update those vect
 
 Below, we generate transformer-based embeddings using the course embedding endpoint. This example uses the existing PubMed results and embeds the titles with a pretrained transformer model.
 
-Next, we use the embedText function to create embeddings for the titles of the extracted publications. Unlike PubMed, this does not need an API key of your own: the request is authenticated with the class token you put in your `.Renviron` above, and `embedText()` picks that up on its own.
+Next, we use the embedText function to create embeddings for the titles of the extracted publications. Unlike PubMed, this does not need a personal API key: the request is authenticated with the class token placed in the `.Renviron` file above, and `embedText()` picks that up on its own.
 
-To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above) and the column with the text (title). That is all it needs. The embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', which runs on the course server. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can read its documentation at https://huggingface.co/BAAI/bge-small-en-v1.5.
+To set up the embedText function, provide the dataset containing the text to be embedded (in this case, search_results, the output from the PubMed search above) and the column with the text (title). That is all it needs. The embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', which runs on the course server. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. For more about the model and its capabilities, its documentation is at https://huggingface.co/BAAI/bge-small-en-v1.5.
 
 
 ``` r
@@ -4979,8 +5237,8 @@ search_results_embedded[1:3,1:10]
 ##   entry_number term  date       journal title doi   abstract
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
 ## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
-## 2            2 beta… 2022-09-28 Zhongg… [Clo… 10.1… Dipsaci…
-## 3            3 beta… 2023-07-18 Heliyon A ne… 10.1… Talinum…
+## 2            2 beta… 2025-04-23 Journa… Adju… 10.1… β-Amyri…
+## 3            3 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -5005,7 +5263,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-496-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -5029,7 +5287,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-497-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -5069,15 +5327,15 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-486-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-498-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
-Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. You supply a column with prompts (the `prompt_column`, which contains the text you want processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions that you want the model to follow when processing your input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. It takes a column with prompts (the `prompt_column`, which contains the text to be processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions the model should follow when processing the input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
 
-In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. As with `embedText()`, there is no key in the code — the class token from your `.Renviron` authenticates the request. Finally, we select the title and the generated tags to see the results.
+In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. As with `embedText()`, there is no key in the code — the class token from the `.Renviron` file authenticates the request. Finally, we select the title and the generated tags to see the results.
 
-Note that generation is much slower and much more expensive than embedding: each row is a separate request to a large model. Keep the number of rows small while you are experimenting.
+Note that generation is much slower and much more expensive than embedding: each row is a separate request to a large model. Keep the number of rows small while experimenting.
 
 <!-- NOTE (2026-09-08): re-enabled after the course generation endpoint
      (generate.lbusta.org) went live; `cache = TRUE` so a rebuild does not re-spend
@@ -5102,17 +5360,17 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… "# Tags\n…
-##  2 [Cloning and bioinformatics analysis of β-amy… "# Classi…
-##  3 A newly identified β-amyrin synthase gene hyp… "# Classi…
-##  4 Friedelin in Maytenus ilicifolia Is Produced … "Plant se…
-##  5 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
-##  6 Oxidosqualene cyclases involved in the biosyn… "# Classi…
+##  2 Adjusting Catalytic Activity of β-Amyrin Synt… "# Classi…
+##  3 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … "Triterpe…
+##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…
+##  6 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
 ##  7 Current status and prospects of herbicide-res… "Herbicid…
 ##  8 Sorghum (Sorghum bicolor).                     "# Classi…
 ##  9 Potential food applications of sorghum (Sorgh… "# Tags\n…
-## 10 Cuticular wax in wheat: biosynthesis, genetic… "# Scient…
+## 10 Cuticular wax in wheat: biosynthesis, genetic… "Wheat cu…
 ## 11 Regulatory mechanisms underlying cuticular wa… "# Classi…
-## 12 Update on Cuticular Wax Biosynthesis and Its … "plant-pa…
+## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant cu…
 ```
 
 ## {-}
@@ -5168,7 +5426,7 @@ search_results_ex_embed_pca %>%
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-To run the analyses in this chapter, you will need three things.
+Running the analyses in this chapter requires three things.
 
 1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
 
@@ -5202,7 +5460,7 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
 
-In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` object provided by the `source()` code works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
 
 
 ``` r
@@ -5216,7 +5474,7 @@ all_sequences <- c(g1, g2)
 all_sequences <- all_sequences[all_sequences@ranges@width < 1024]
 ```
 
-Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
+Once some sequences are in hand, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.
 
 
 ``` r
@@ -5228,7 +5486,7 @@ all_sequences_embedded <- embedAminoAcids(
 )
 all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
 all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
-saveRDS(all_sequences_embedded, "../data/protein_embeddings_example.rds")
+saveRDS(all_sequences_embedded, "data/protein_embeddings_example.rds")
 all_sequences_embedded[1:5,1:6]
 ```
 
@@ -5254,7 +5512,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-510-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-522-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -5290,7 +5548,7 @@ HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequ
 
 ## blastNCBI {-}
 
-The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like "core_nt" initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
 
 
 ``` r
@@ -5311,7 +5569,7 @@ blastNCBI(
 
 ## local blast {-}
 
-On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
+On NCBI, various sequence collections can be searched with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. The function can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
 
 Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
 
@@ -5319,12 +5577,12 @@ Let's check out `polyBlast()` by looking at an example. For this example, we nee
 * "query_in_path": One or more queries, all listed in a single fasta file.
 * "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
 * "blast_module_directory_path": The path to the folder of BLAST+ executable.
-* "blast_mode": The default shorthand is XYblastZ where X describes the subject type (`n` for nucleotide, `p` for amino acid), Y indicates whether subjects are translated (`t`) or not (`n`), and Z describes the query type (`n` or `p`). For example, `ntblastp` translates nucleotide subjects and compares them to protein queries. You can also supply specific BLAST+ presets such as `megablast`, `dc-megablast`, `blastx`, `tblastn`, or `tblastx` when you want BLAST to manage the translation behaviour for you.
+* "blast_mode": The default shorthand is XYblastZ where X describes the subject type (`n` for nucleotide, `p` for amino acid), Y indicates whether subjects are translated (`t`) or not (`n`), and Z describes the query type (`n` or `p`). For example, `ntblastp` translates nucleotide subjects and compares them to protein queries. Specific BLAST+ presets such as `megablast`, `dc-megablast`, `blastx`, `tblastn`, or `tblastx` can also be supplied to let BLAST manage the translation behavior.
 * "e_value_cutoff": Hits with an e-value greater than this cutoff are discarded. Default = 1.
-* "queries_in_output": TRUE/FALSE, should the queries be included in the output? Set to TRUE if you need the query sequences for downstream analyses like tree building.
+* "queries_in_output": TRUE/FALSE, should the queries be included in the output? Set to TRUE when the query sequences are needed for downstream analyses like tree building.
 * "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
 
-Different BLAST modes tailor the search to the molecule types you are comparing. In the XYblastZ naming scheme, `nnblastn` reproduces the classic nucleotide-vs-nucleotide search (`blastn`), `ntblastp` lines up with `tblastn`, and `pnblastp` matches `blastp`. Preset names such as `blastx`, `megablast`, or `dc-megablast` extend these basics to translated queries or alternate nucleotide heuristics, while `tblastx` translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of your query and target sequences so the scoring and heuristics work in your favor.
+Different BLAST modes tailor the search to the molecule types being compared. In the XYblastZ naming scheme, `nnblastn` reproduces the classic nucleotide-vs-nucleotide search (`blastn`), `ntblastp` lines up with `tblastn`, and `pnblastp` matches `blastp`. Preset names such as `blastx`, `megablast`, or `dc-megablast` extend these basics to translated queries or alternate nucleotide heuristics, while `tblastx` translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of the query and target sequences so the scoring and heuristics work in the analyst’s favor.
 
 Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
@@ -5360,9 +5618,9 @@ HMM, which stands for Hidden Markov Model, is a statistical model often used in 
 
 Here's a general idea of how HMMs are used for sequence similarity searching:
 
-1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once you have an alignment, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once an alignment is in hand, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
 
-2. Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
+2. Predict domains in unknown sequences: After training, the HMMs can then score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. The HMM can search databases of uncharacterized sequences. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
 
 We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
 
@@ -5388,13 +5646,13 @@ predictDomains(
 
 ## interpreting homology data {-}
 
-Bitscore versus e-value: when the expected value becomes extremely small (for example < 1e-250), R prints it as zero and you lose the ability to rank hits. In those cases rely on the bit score, which remains informative across the full range of alignments.
+Bitscore versus e-value: when the expected value becomes extremely small (for example < 1e-250), R prints it as zero and the ability to rank hits disappears. In those cases rely on the bit score, which remains informative across the full range of alignments.
 
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
 The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb from the CLC Genomics Workbench documentation—treat them as approximate, database-dependent guidelines:
 
-* E-value < 1e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* E-value < 1e-100 Identical sequences. Long alignments span the entire query and hit sequence.
 * 1e-100 < E-value < 1e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
 * 1e-50 < E-value < 1e-10 Closely related sequences, could be a domain match or similar.
 * 1e-10 < E-value < 1 Could be a true homologue but it is a gray area.
@@ -5405,7 +5663,7 @@ reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkben
 
 reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
 
-* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, the E-value is all that is needed to decide on the significance of a match.
 
 E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
 
@@ -5418,16 +5676,16 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
 
-Multiple sequence alignments form the bridge between raw sequences and downstream phylogenetic analysis. In this chapter we first use `alignSequences()` to assemble consistent nucleotide, amino-acid, or codon alignments. This is easily accomplished from the monolist generated by `polyBlast()`, if your sequences were generated that way. Then we turn to `analyzeAlignment()` to diagnose gap-heavy or poorly conserved sites, interactively trim them away, and export a cleaned alignment for tree building.
+Multiple sequence alignments form the bridge between raw sequences and downstream phylogenetic analysis. In this chapter we first use `alignSequences()` to assemble consistent nucleotide, amino-acid, or codon alignments. This is easily accomplished from the monolist generated by `polyBlast()`, if the sequences were generated that way. Then we turn to `analyzeAlignment()` to diagnose gap-heavy or poorly conserved sites, interactively trim them away, and export a cleaned alignment for tree building.
 
 ## alignSequences {-}
 
-There are, of course, many tools for aligning sequences. `alignSequences()`, from the phylochemistry toolkit, is designed to be flexible: it will align nucleotide, amino-acid, or codon sequences, and it can restrict the alignment to any subset of records in your BLAST monolist. If you already ran `polyBlast()`, most of the inputs outlined below should be ready to go. The function writes the aligned FASTA to `alignment_out_path` and returns nothing (invisibly).
+There are, of course, many tools for aligning sequences. `alignSequences()`, from the phylochemistry toolkit, is designed to be flexible: it will align nucleotide, amino-acid, or codon sequences, and it can restrict the alignment to any subset of records in the BLAST monolist. If `polyBlast()` has already been run, most of the inputs outlined below should be ready to go. The function writes the aligned FASTA to `alignment_out_path` and returns nothing (invisibly).
 
 * `"monolist"`: a data frame where each row represents a hit of interest. It must contain an `accession` column whose values match individual FASTA files in `sequences_of_interest_directory_path`. The helper `readMonolist()` returns this object from the CSV generated by `polyBlast()`.
-* `"subset"`: the name of a logical column in the monolist (for example `subset_all`). Only rows where that column is `TRUE` are aligned. Create additional `subset_*` columns if you want multiple alignment configurations.
+* `"subset"`: the name of a logical column in the monolist (for example `subset_all`). Only rows where that column is `TRUE` are aligned. Create additional `subset_*` columns for multiple alignment configurations.
 * `"alignment_out_path"`: full file path (including filename) for the alignment that will be written, e.g. `/tmp/my_alignment.fa`. Existing files at this path are overwritten.
-* `"sequences_of_interest_directory_path"`: directory that stores one FASTA per accession, as produced by `polyBlast()`. The function normalises the path internally, so either absolute or relative locations are fine.
+* `"sequences_of_interest_directory_path"`: directory that stores one FASTA per accession, as produced by `polyBlast()`. The function normalizes the path internally, so either absolute or relative locations are fine.
 * `"input_sequence_type"`: set to `"nucl"` when the subject FASTA files contain nucleotide sequences and `"amin"` for amino-acid sequences. Codon alignments start from nucleotides, while amino-acid alignments can start from either input type (translation happens automatically when needed).
 * `"mode"`: chooses the alignment strategy. `"nucl_align"` performs a straight nucleotide multiple sequence alignment. `"amin_align"` aligns amino-acid sequences (translated from nucleotides if required). `"codon_align"` translates to protein, aligns there, and then projects the alignment back to nucleotides. `"fragment_align"` is reserved for fragment-to-fragment workflows and currently expects a base fragment defined via `base_fragment`.
 * `"base_fragment"`: optional path to a FASTA file containing the fragment that other sequences should be aligned against. Only used when `mode = "fragment_align"`.
@@ -5447,13 +5705,13 @@ alignSequences(
 
 ## analyzeAlignment {-}
 
-Once you have an alignment on disk, `analyzeAlignment()` helps you decide which positions to keep before phylogeny building. It reads a FASTA alignment, profiles each column for gap content and conservation, and launches a Shiny interface that lets you tune thresholds while inspecting the original and trimmed alignments alongside neighbour-joining trees. The function returns the trimmed alignment (as a `DNAStringSet` or `AAStringSet`) invisibly and also writes it to `<alignment_in_path>_trimmed`.
+Once an alignment is on disk, `analyzeAlignment()` helps decide which positions to keep before phylogeny building. It reads a FASTA alignment, profiles each column for gap content and conservation, and launches a Shiny interface for tuning thresholds while inspecting the original and trimmed alignments alongside neighbor-joining trees. The function returns the trimmed alignment (as a `DNAStringSet` or `AAStringSet`) invisibly and also writes it to `<alignment_in_path>_trimmed`.
 
 * `"alignment_in_path"`: path to the FASTA alignment to review. This is typically the file produced by `alignSequences()`, e.g. `/tmp/subset_all_amin_seqs_aligned.fa`.
 * `"type"`: `"DNA"` for nucleotide alignments or `"AA"` for amino acids. This determines how the alignment is read, which tree scaffold is built, and which Biostrings container is used when writing the trimmed alignment.
 * `"jupyter"`: set to `TRUE` when launching from a Jupyter environment so the app claims an available internal port and prints the connection URL. Leave at the default `FALSE` for regular RStudio or terminal sessions.
 
-The interface plots gap percentages and conservation across the alignment, highlights the positions that survive the current filters, and previews the trimmed tree. When you click **Return Trimmed Alignment & Close App**, the filtered alignment is written to `<alignment_in_path>_trimmed` (with `_trimmed` appended) and returned to the caller.
+The interface plots gap percentages and conservation across the alignment, highlights the positions that survive the current filters, and previews the trimmed tree. Clicking **Return Trimmed Alignment & Close App** writes the filtered alignment to `<alignment_in_path>_trimmed` (with `_trimmed` appended) and returns it to the caller.
 
 
 ``` r
@@ -5498,7 +5756,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-538-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-550-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5526,19 +5784,19 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-539-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-551-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
+Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
 ### alignment input {-}
 
 Arguments in this case are:
 
 * "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
-* "scaffold_in_path": path to the fasta file that contains the alignment from which you want to build a tree.
-* "ml": Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
-* "model_test": if you say TRUE to "ml", should buildTree test different maximum liklihood models and then use the "best" one? 
-* "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
+* "scaffold_in_path": path to the fasta file that contains the alignment from which the tree will be built.
+* "ml": Logical, TRUE to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
+* "model_test": if "ml" is TRUE, should buildTree test different maximum liklihood models and then use the "best" one? 
+* "bootstrap": TRUE or FALSE, whether bootstrap values should appear on the nodes.
 * "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
 * "root": NULL, or the name of an accession that should form the root of the tree.
 
@@ -5571,7 +5829,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-541-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-553-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5587,7 +5845,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-542-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-554-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5596,9 +5854,9 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-543-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-555-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+Another convenient fucntion is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
 
 ``` r
@@ -5667,7 +5925,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-545-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-557-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5687,7 +5945,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-546-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-558-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5765,7 +6023,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-551-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-563-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5800,7 +6058,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-552-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-564-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -6006,7 +6264,7 @@ head(anc_traits_tree)
 ## # ℹ 3 more variables: angle <dbl>, trait <chr>, value <dbl>
 ```
 
-In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
+In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that an object passed to ggtree() with duplicate node names requires the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
 
 
 ``` r
@@ -6022,7 +6280,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-574-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-586-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -6683,7 +6941,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-612-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -6873,7 +7131,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-620-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-632-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -6896,18 +7154,22 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-621-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-633-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
 
+Ternary plots come from the `ggtern` package. Note that it is called with `ggtern::` in front of it
+rather than being attached with `library(ggtern)`: attaching `ggtern` replaces several of `ggplot2`'s
+own functions, including `ggplot()` itself, so every ordinary plot made afterwards in the same R
+session goes through `ggtern` instead. Calling it with `ggtern::` gets the ternary plot without that
+side effect.
+
 
 ``` r
-library(ggplot2)
-library(ggtern)
 alaska_lake_data %>%
   pivot_wider(names_from = "element", values_from = "mg_per_L") %>%
-  ggtern(aes(
+  ggtern::ggtern(aes(
     x = Ca,
     y = S,
     z = Na,
@@ -6917,7 +7179,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-622-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-634-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -6990,7 +7252,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-627-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-639-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -7002,7 +7264,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-628-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-640-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -7018,7 +7280,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-629-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-641-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -7033,7 +7295,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-630-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-642-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -7062,7 +7324,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-631-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-643-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -7087,7 +7349,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-632-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-644-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -7134,7 +7396,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-633-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-645-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -7155,7 +7417,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-634-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-646-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## {-}
@@ -7415,20 +7677,44 @@ ggplot(alaska_lake_data) +
 
 ## matrix analyses
 
-### basic `runMatrixAnalyses()` template
+There is **one** matrix-analysis function in this course: `runMatrixAnalysis()`. If you meet older
+material calling `runMatrixAnalyses()`, with an "es" on the end, that was a wide-data-only version and
+it was retired in September 2026 — calling it now returns a message telling you what to use instead.
+
+### basic template: a wide data frame
+
+A **wide** data frame has one row per sample and one column per analyte. `chemical_blooms` is exactly
+that shape: a `label` column naming each plant, and then one column for each compound class.
 
 
 ``` r
 
-runMatrixAnalyses(   
-  data = NULL,
-  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_sample_ID_info = NULL
+runMatrixAnalysis(
+  data = chemical_blooms,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = c(
+    "Alkanes", "Sec_Alcohols", "Others", "Fatty_acids", "Alcohols",
+    "Triterpenoids", "Ketones", "Other_compounds", "Aldehydes"
+  ),
+  columns_w_sample_ID_info = c("label")
 )
 ```
 
-### advanced `runMatrixAnalysis()` template
+That is the whole basic call, and it is only four questions:
+
+- `data` — which table.
+- `analysis` — which analysis. `"pca"`, `"hclust"`, `"kmeans"`, `"dist"` and the rest are listed in
+  the full template below.
+- `columns_w_values_for_single_analyte` — which columns hold the **numbers**. One column per analyte.
+- `columns_w_sample_ID_info` — which column (or columns) **name a sample**. If it takes two columns
+  together to identify a sample, list both.
+
+If your data are **long** instead — one row per sample per analyte, with the analyte names stacked in
+a single column — then swap `columns_w_values_for_single_analyte` for the pair
+`column_w_names_of_multiple_analytes` and `column_w_values_for_multiple_analytes`. Everything else
+stays the same.
+
+### full template
 
 
 ``` r
@@ -7450,10 +7736,8 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = NULL,
   transpose = FALSE, # default = FALSE, this chooses whether to transpose the data
   distance_method = c( # the distance metric to use in computing a distance matrix
-    "euclidean", "maximum",
-    "manhattan", "canberra",
-    "binary", "minkowski",
-    "coeff_unlike"
+    "euclidean", "manhattan",
+    "gower" # for mixed numeric / categorical data; computed with cluster::daisy
   ),
   agglomeration_method = c( # the clustering method to use in heirarchical clustering
       "ward.D2", "ward.D", "single", "complete",
@@ -7462,12 +7746,20 @@ runMatrixAnalysis(
       "median", # (= WPGMC)
       "centroid" # (= UPGMC)
   ),
-  tree_method = c("nj"),
+  tree_method = c( # how a tree is built, for analysis = "hclust" / "hclust_phylo"
+    "linkage_dendrogram", # DEFAULT. Hierarchical clustering proper: uses agglomeration_method,
+                          # and returns bootstrap support values.
+    "neighbor_joining"    # The phylogenetic method. Works from the distance matrix alone, so it
+                          # IGNORES agglomeration_method, and gives no bootstrap values.
+  ),
   unknown_sample_ID_info = NULL,
   components_to_return = 2, # how many principal components to return
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
-  output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
+  output_format = c("wide", "long"), # default = "wide". For analysis = "dist" this chooses the
+                                     # RETURN TYPE: "wide" gives a base R `dist` object, "long"
+                                     # gives one row per PAIR of samples, which is what you want
+                                     # if you are about to build a network from the distances.
 )
 ```
 

@@ -502,5 +502,77 @@
     },
     "source_topic": "pks",
     "discovered": "2026-09-15"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_02f4eef3195a",
+    "title": "Functional characterization of SHC-like triterpene cyclase genes in azole response and virulence-related traits of Aspergillus fumigatus",
+    "authors": "Kerui Ye; Fangyan Chen; Lingxue Hu; Jinghui Han; Dingchen Li; Mandong Hu; Changjun Wang; Jumei Zeng; Li Han",
+    "journal": "Virulence",
+    "year": 2026,
+    "doi": "10.1080/21505594.2026.2715234",
+    "link": "https://doi.org/10.1080/21505594.2026.2715234",
+    "abstract": ".",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1080/21505594.2026.2715234"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-22"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_3f92eaf66f91",
+    "title": "Haplotype-resolved regulation of secondary metabolism in cannabis",
+    "authors": "Sen Cai; Zhiyuan Zhang; Xiang Li; Yucheng Zhao; Chengwei Lin; Manru Huang; Mingwei Shen; Deyong Ao; Yaxing Li; Shijun You; Nirit Bernstein; Kailei Tang; Yuanyuan Liu",
+    "journal": "Horticulture Research",
+    "year": 2026,
+    "doi": "10.1093/hr/uhag159",
+    "link": "https://doi.org/10.1093/hr/uhag159",
+    "abstract": "produces a rich array of specialized metabolites, including cannabinoids, terpenoids, and flavonoids, which are of immense therapeutic interest. However, the genetic and regulatory complexity arising from its highly heterozygous genome has obscured a complete understanding of their biosynthesis. Here, we present a fully phased, chromosome-level genome assembly of the wild diploid cannabis accession CSLZ. Comparative genomics and transcriptomics reveal that extensive haplotype-specific variation is a major driver of metabolic diversification within this accession. We find that structural variants and transposable element insertions differentially shape the allelic architecture of key biosynthetic genes, leading to divergent expression and function between haplotypes. This is exemplified by haplotype-specific loss of germacrene D synthase activity, copy number variation in oxidosqualene cyclases, and silencing of a flavonoid glycosyltransferase allele via promoter motif loss. Furthermore, allele-specific expression contributes to the spatiotemporal regulation of metabolic pathways, from cuticle formation in leaves to cannabinoid production in glandular trichomes. Our haplotype-resolved resource uncovers the pervasive role of allelic divergence in generating the specialized metabolome of wild cannabis accession CSLZ, providing a foundation for genomics-guided breeding and metabolic engineering.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1093/hr/uhag159"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-22"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_b29f65484b34",
+    "title": "Functional characterization and key residue analysis of oxidosqualene cyclases involved in amyrin and cycloartenol formation in Parashorea chinensis",
+    "authors": "Jingyang Ding; Xue Wang; Haiyan Li; Guisheng Xiang; Shiyan Yuan; Yongkang Zhang; Xianbin Deng; Zihan Yang; Bing Hao; Shengchao Yang; Xiaobo Li; Guanghui Zhang",
+    "journal": "Plant Physiology and Biochemistry",
+    "year": 2026,
+    "doi": "10.1016/j.plaphy.2026.111381",
+    "link": "https://doi.org/10.1016/j.plaphy.2026.111381",
+    "abstract": "Dipterocarpaceae dammar resins contain diverse triterpenoids, including dammarane constituents and scaffolds other than dammarane, such as derivatives with oleanane, ursane or lupane scaffolds, but the oxidosqualene cyclases (OSCs) underlying this scaffold diversity remain poorly characterized. OSCs catalyze the cyclization of 2,3-oxidosqualene to generate distinct triterpene scaffolds. Genome mining identified 13 putative PcOSC genes in Parashorea chinensis. Guided by triterpenoid scaffold information from accessible leaf and stem tissues and by phylogenetic placement, we prioritized a PcOSC clade related to amyrin formation and a branch related to cycloartenol and sterol biosynthesis for functional analysis. Yeast expression assigned PcOSC10 as a cycloartenol synthase, PcOSC4 as a β-amyrin synthase, and PcOSC3 as a multifunctional α/β-amyrin synthase. Transient expression in Nicotiana benthamiana provided complementary evidence from a plant host for PcOSC3 and PcOSC4, whereas the cycloartenol signal associated with PcOSC10 expression was interpreted relative to the matched control because cycloartenol is an endogenous sterol intermediate in plant tissues. Key residue analysis identified residues associated with scaffold outcome and product output. PcOSC3 M729N shifted products from amyrins to lupeol, PcOSC4 K729N enabled germanicol formation, and PcOSC4 L483I increased β-amyrin output by approximately 4.3-fold under the tested yeast expression conditions. Together, these data define representative PcOSCs involved in amyrin formation and in the cycloartenol/sterol-related branch and identify residues associated with OSC scaffold choice and product output. Although the branch responsible for dammarane formation remains to be resolved by separate functional characterization, the present study provides an initial framework guided by metabolite information and phylogenetic analysis for dissecting triterpenoid scaffold diversification controlled by OSCs in Dipterocarpaceae.",
+    "prefill": {
+      "enzyme_name": "PcOSC4",
+      "product": "β-amyrin",
+      "doi": "doi:10.1016/j.plaphy.2026.111381"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-22"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_831c1596f39c",
+    "title": "Modeling the Impact of Active Site Mutations on the Quenching Fate and Cyclization Depth of a Rare Oxidosqualene Cyclase",
+    "authors": "Chenxu Liu; Shun Liang; Ying Zheng; Feng Wang; Jiaqi Jiao; Bing Li; Jincai Liang; Zhongqiu Liu; Lixin Duan; Ruibo Wu; Fan Zhang",
+    "journal": "Journal of Chemical Theory and Computation",
+    "year": 2026,
+    "doi": "10.1021/acs.jctc.6c01306",
+    "link": "https://doi.org/10.1021/acs.jctc.6c01306",
+    "abstract": "Abstract Oxidosqualene cyclases (OSCs) convert linear 2,3-oxidosqualene into diverse polycyclic triterpenoids. The precise control over highly reactive carbocation intermediates, particularly the ultimate quenching mechanism (deprotonation vs hydroxylation), remains a fundamental challenge in mechanism-driven enzyme reshaping. Here, we investigate AaOSC-20433, a rare OSC from Artemisia argyi exhibiting absolute specificity for pure deprotonation to produce dammara-20,24-dien-3β-ol. This starkly contrasts with the homologous dammarenediol synthase from Panax ginseng (PgDDS), which favors hydroxylation to yield dammarenediol II. Integrating multiscale QM/MM simulations and site-directed mutagenesis, we modeled the impact of crucial active site mutations on the reaction cascade. Our simulations revealed that S411 acts as a general base governing the terminal deprotonation. More importantly, we demonstrate that mechanism-guided active site substitutions can dramatically alter the chemical trajectory. Relaxing steric constraints (F728A) induces catalytic promiscuity to yield tricyclic and tetracyclic products. Furthermore, the L259Y mutation significantly alters the quenching network. It unlocks the hydroxylation pathway to form dammarenediol II and acts as an engineered base extending cyclization depth to yield the pentacyclic lupeol. Notably, combining these functional loci (L259Y+F728S) reveals notable synergistic epistasis between the steric cavity and the proton-transfer network, driving competitive hydration events to diversify the hydroxylated product profile. This study provides a comprehensive mechanistic framework for understanding how OSC active site mutations govern product specificity, offering a robust theoretical basis for the tailored, mechanism-driven functional reprogramming of triterpene synthases in synthetic biology.",
+    "prefill": {
+      "enzyme_name": "AaOSC-20433",
+      "product": "dammara-20,24-dien-3β-ol",
+      "doi": "doi:10.1021/acs.jctc.6c01306"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-22"
   }
 ]

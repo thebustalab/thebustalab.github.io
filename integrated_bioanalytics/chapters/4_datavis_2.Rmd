@@ -1,6 +1,6 @@
 # data visualization II {-}
 
-In the last chapter we learned the core grammar of ggplot: pick your data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take you from a plot that simply works to one that is genuinely nice to look at.
+In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -15,7 +15,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RCol
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg', dpi = NA)
 ```
 
-We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
+We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
@@ -33,9 +33,9 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", linewidth = 1)
 ```
 
-These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+These examples should illustrate that there is, to some degree, correspondence between the type of data being plotted (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
-Two more geoms are worth knowing at this stage, because they let you write text directly onto the plot. The first, `geom_text()`, draws a piece of text at each data point. To use it, you map a variable to the `label` aesthetic and ggplot prints it. This is enormously useful when you want to know *which* point is which, rather than just where the points sit. Let's go back to the `solvents` scatter plot from earlier and label each point with the name of the solvent:
+Two more geoms are worth knowing at this stage, because they place text directly onto the plot. The first, `geom_text()`, draws a piece of text at each data point. To use it, map a variable to the `label` aesthetic and ggplot prints it. This is enormously useful for knowing *which* point is which, rather than just where the points sit. Let's go back to the `solvents` scatter plot from earlier and label each point with the name of the solvent:
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
@@ -72,7 +72,7 @@ Stack the points on top of the smoothed line by filling in the blank with the ge
 
 ## facets {-}
 
-As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
+As alluded to in Exercises 1, it is possible to map variables in the dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of the plot, each of which shows a different subset of the data based on a chosen categorical variable. Let's check it out.
 
 Here, we can facet in the horizontal direction:
 ```{r, fig.width = 6}
@@ -95,7 +95,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
+Faceting is a great way to describe more variation in a plot without having to make the geoms more complicated. For situations that call for lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
 
 ```{r}
@@ -123,7 +123,7 @@ Fill in the blank so the heat map is split into one panel per `replicate`, arran
 
 ## scales {-}
 
-Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+Every aesthetic mapping (e.g. aes(x = algae_strain)) defines a new scale that is added to the plot. The `scale_*` family of commands controls these scales. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that typing `?scale_fill_` into the console will point to relevant help topics that provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
 ```{r, fig.width = 7}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
@@ -166,9 +166,9 @@ The fill is mapped to a continuous variable, so its scale is a color gradient. F
 
 ## themes {-}
 
-So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
+So far we've just looked at how to control the means by which the *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
-`ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
+`ggplot` comes with a handful of built in "complete themes". These will change the appearance of plots with respect to the non-data ink. Compare the following plots:
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
@@ -191,7 +191,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   theme_void()
 ```
 
-You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Here is an example (and google will provide many, many more).
+Individual components of themes can also be changed. This can be a bit tricky, but running `?theme()` explains it all. Here is an example (and google will provide many, many more).
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 

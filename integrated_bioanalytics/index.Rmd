@@ -900,19 +900,43 @@ ggplot(alaska_lake_data) +
 
 ## matrix analyses
 
-### basic `runMatrixAnalyses()` template
+There is **one** matrix-analysis function in this course: `runMatrixAnalysis()`. If you meet older
+material calling `runMatrixAnalyses()`, with an "es" on the end, that was a wide-data-only version and
+it was retired in September 2026 — calling it now returns a message telling you what to use instead.
+
+### basic template: a wide data frame
+
+A **wide** data frame has one row per sample and one column per analyte. `chemical_blooms` is exactly
+that shape: a `label` column naming each plant, and then one column for each compound class.
 
 ```{r, eval = FALSE}
 
-runMatrixAnalyses(   
-  data = NULL,
-  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_sample_ID_info = NULL
+runMatrixAnalysis(
+  data = chemical_blooms,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = c(
+    "Alkanes", "Sec_Alcohols", "Others", "Fatty_acids", "Alcohols",
+    "Triterpenoids", "Ketones", "Other_compounds", "Aldehydes"
+  ),
+  columns_w_sample_ID_info = c("label")
 )
 ```
 
-### advanced `runMatrixAnalysis()` template
+That is the whole basic call, and it is only four questions:
+
+- `data` — which table.
+- `analysis` — which analysis. `"pca"`, `"hclust"`, `"kmeans"`, `"dist"` and the rest are listed in
+  the full template below.
+- `columns_w_values_for_single_analyte` — which columns hold the **numbers**. One column per analyte.
+- `columns_w_sample_ID_info` — which column (or columns) **name a sample**. If it takes two columns
+  together to identify a sample, list both.
+
+If your data are **long** instead — one row per sample per analyte, with the analyte names stacked in
+a single column — then swap `columns_w_values_for_single_analyte` for the pair
+`column_w_names_of_multiple_analytes` and `column_w_values_for_multiple_analytes`. Everything else
+stays the same.
+
+### full template
 
 ```{r, eval = FALSE}
 
@@ -933,10 +957,8 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = NULL,
   transpose = FALSE, # default = FALSE, this chooses whether to transpose the data
   distance_method = c( # the distance metric to use in computing a distance matrix
-    "euclidean", "maximum",
-    "manhattan", "canberra",
-    "binary", "minkowski",
-    "coeff_unlike"
+    "euclidean", "manhattan",
+    "gower" # for mixed numeric / categorical data; computed with cluster::daisy
   ),
   agglomeration_method = c( # the clustering method to use in heirarchical clustering
       "ward.D2", "ward.D", "single", "complete",
@@ -945,12 +967,20 @@ runMatrixAnalysis(
       "median", # (= WPGMC)
       "centroid" # (= UPGMC)
   ),
-  tree_method = c("nj"),
+  tree_method = c( # how a tree is built, for analysis = "hclust" / "hclust_phylo"
+    "linkage_dendrogram", # DEFAULT. Hierarchical clustering proper: uses agglomeration_method,
+                          # and returns bootstrap support values.
+    "neighbor_joining"    # The phylogenetic method. Works from the distance matrix alone, so it
+                          # IGNORES agglomeration_method, and gives no bootstrap values.
+  ),
   unknown_sample_ID_info = NULL,
   components_to_return = 2, # how many principal components to return
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
-  output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
+  output_format = c("wide", "long"), # default = "wide". For analysis = "dist" this chooses the
+                                     # RETURN TYPE: "wide" gives a base R `dist` object, "long"
+                                     # gives one row per PAIR of samples, which is what you want
+                                     # if you are about to build a network from the distances.
 )
 ```
 

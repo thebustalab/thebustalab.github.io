@@ -4,7 +4,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
 ```
 
-Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting your *own* data into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
+Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an *outside* data set into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -15,17 +15,17 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 
 ## viewing data {-}
 
-Before you can wrangle a data set, it helps to be able to *see* it. `head()` shows you the first six rows, which is enough to remind yourself what the columns are called, but not enough to get a feel for what is actually in the table. For that, use `view()`:
+Before a data set can be wrangled, it helps to be able to *see* it. `head()` shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, use `view()`:
 
 <div class="webr-cell"><textarea class="webr-code">view(alaska_lake_data)</textarea></div>
 
 That opens the whole table as a scrollable grid. Each column shows its name with its **type** underneath — `chr` for text, `dbl` for numbers with decimals, `int` for whole numbers, `lgl` for TRUE/FALSE, `fct` for a factor. Knowing a column's type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as `chr` is one of the most common reasons a calculation can fail.
 
-If you are using these commands in this books webR sandbox, know that very large tables are capped at the first 1000 rows so your browser stays responsive. When that happens the caption says so, and you can ask for more with `view(alaska_lake_data, n = 5000)`. In addition, `view()` is not limited to data sets that were loaded for you — it will show you anything, including a table you just built:
+In this book's webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with `view(alaska_lake_data, n = 5000)`. In addition, `view()` is not limited to data sets that were loaded in advance — it will show anything, including a table just built:
 
 <div class="webr-cell"><textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea></div>
 
-That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what you meant is to look at the result rather than guess at it. Finally, please note that `view()` is provided by the sandboxes in this book (and by the escape rooms). If you move to R and RStudio on your own machine, the equivalent is `View()`, with a capital V.
+That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what was intended is to look at the result rather than guess at it. Finally, please note that `view()` is provided by the sandboxes in this book (and by the escape rooms). In R and RStudio on a local machine, the equivalent is `View()`, with a capital V.
 
 #### concept check {-}
 
@@ -90,7 +90,7 @@ When we make data tables by hand, it's often easy to make a **wide-style table**
 head(fadb_sample)
 ```
 
-While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. This function can be thought of as transforming both the data's column names (or some of the column names) and the data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
 
 ```{r}
 pivot_longer(
@@ -212,7 +212,7 @@ ny_trees %>%
 ny_trees_by_spc_summ
 ```
 
-Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` for variation along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
 
 ```{r}
 ny_trees_by_spc_summ %>%
@@ -528,12 +528,12 @@ ggplot(pt_by_year_summ,
 
 ## further reading {-}
 
-- [Tidy Data Tutor](https://tidydatatutor.com/vis.html). This interactive site animates what happens to a data frame as you apply verbs like `select()`, `filter()`, or `pivot_longer()`, making it easier to see how each operation reshapes your tables.
+- [Tidy Data Tutor](https://tidydatatutor.com/vis.html). This interactive site animates what happens to a data frame as verbs like `select()`, `filter()`, or `pivot_longer()` are applied, making it easier to see how each operation reshapes the tables.
 
-- [tidyverse cheat sheet](https://posit.co/resources/cheatsheets/#r-programming). Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for quick lookups when you forget an argument name or want to explore related functions.
+- [tidyverse cheat sheet](https://posit.co/resources/cheatsheets/#r-programming). Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for looking up a forgotten argument name or exploring related functions.
 
 - [tidyr and dplyr vignettes](https://tidyr.tidyverse.org/articles/tidy-data.html). The official package articles dig into the philosophy behind tidy data, the rationale for pivoting functions, and worked examples that go deeper than our walkthrough.
 
 - [R for Data Science, Chapter 5–10](https://r4ds.hadley.nz/transform). Hadley Wickham and Mine Çetinkaya-Rundel’s open textbook expands on wrangling, reshaping, and summarizing with narratives, exercises, and datasets that reinforce the patterns we practiced.
 
-- [genzplyr](https://github.com/hadley/genzplyr). genzplyr is an alternative syntax for dplyr that replaces boring old function names with GenZ slang. Your data wrangling is about to hit different.
+- [genzplyr](https://github.com/hadley/genzplyr). genzplyr is an alternative syntax for dplyr that replaces boring old function names with GenZ slang. Data wrangling is about to hit different.

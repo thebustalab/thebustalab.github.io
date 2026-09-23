@@ -4,7 +4,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA)
 ```
 
-To run the analyses in this chapter, you will need three things.
+Running the analyses in this chapter requires three things.
 
 1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
 ```{r}
@@ -33,7 +33,7 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
 
-In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` object provided by the `source()` code works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
 
 ```{r, cache = TRUE}
 g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
@@ -46,7 +46,7 @@ all_sequences <- c(g1, g2)
 all_sequences <- all_sequences[all_sequences@ranges@width < 1024]
 ```
 
-Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
+Once some sequences are in hand, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.
 
 ```{r, cache = TRUE, eval = FALSE}
 all_sequences_embedded <- embedAminoAcids(
@@ -57,12 +57,42 @@ all_sequences_embedded <- embedAminoAcids(
 )
 all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
 all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
-saveRDS(all_sequences_embedded, "../data/protein_embeddings_example.rds")
+saveRDS(all_sequences_embedded, "data/protein_embeddings_example.rds")
 all_sequences_embedded[1:5,1:6]
 ```
 
 ```{r, echo = FALSE}
-all_sequences_embedded <- readRDS("../data/protein_embeddings_example.rds")
+## RENDER-TIME INPUT, not something a student runs. The chunk above (eval = FALSE) is what produced
+## it, via the NVIDIA embedding API -- so this file must NOT be regenerated casually.
+##
+## 2026-09-22: a COLD render died here with `gzfile(): cannot open the connection`. That was the first
+## time this line had actually executed in months -- it had been a chunk-cache hit, so a broken read
+## was invisible for as long as the cache survived. Resolve the path defensively and, if it still
+## fails, say WHY (working directory, what is actually in data/, open-connection count) instead of
+## repeating a four-word error.
+## THE WORKING DIRECTORY FOR A CHAPTER CHUNK IS `chapters/`, NOT THE BOOK ROOT. Measured in a real
+## render 2026-09-22: `getwd()` here is
+## .../integrated_bioanalytics/chapters, so the correct relative path to the book's data/ dir is
+## "../data/...". A bare "data/..." looks right, is wrong, and was masked for months by the chunk
+## cache. Candidates are tried in order so the chunk works from either directory.
+.pe_candidates <- c("../data/protein_embeddings_example.rds",
+                    "data/protein_embeddings_example.rds")
+.pe_path <- .pe_candidates[file.exists(.pe_candidates)][1]
+if (is.na(.pe_path)) {
+  stop("ch14: embeddings file not found.\n  wd: ", getwd(),
+       "\n  tried: ", paste(.pe_candidates, collapse = " , "),
+       "\n  ../data/ contains: ",
+       paste(head(list.files("../data"), 20), collapse = ", "), call. = FALSE)
+}
+all_sequences_embedded <- tryCatch(
+  readRDS(.pe_path),
+  error = function(e) stop(
+    "ch14: the embeddings file EXISTS but could not be read.\n  wd: ", getwd(),
+    "\n  path: ", normalizePath(.pe_path, mustWork = FALSE),
+    "\n  size: ", file.info(.pe_path)$size, " bytes",
+    "\n  open connections: ", nrow(showConnections(all = FALSE)),
+    "\n  underlying error: ", conditionMessage(e), call. = FALSE)
+)
 ```
 
 Nice! Once we've got the embeddings, we can run a PCA analysis to visualize them in 2D space:

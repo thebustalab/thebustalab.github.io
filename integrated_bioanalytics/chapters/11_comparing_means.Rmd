@@ -10,7 +10,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
-I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
 
 ```{r}
 hawaii_aquifers
@@ -52,17 +52,17 @@ Please note that the the *p* value is not the probability of a detected differen
 
 Before comparing two means, look at the two distributions. This is not a formality. Every test in this
 chapter makes assumptions about the *shape* of the data — whether it is roughly normal, whether the
-groups have comparable spread — and a mean on its own tells you nothing about either. Two groups can
+groups have comparable spread — and a mean on its own reveals nothing about either. Two groups can
 have identical means and completely different distributions, and a bar chart of the means will hide
-that from you perfectly.
+that perfectly.
 
 So it is worth knowing how to draw a distribution in full rather than summarizing it away.
 
 ### distributions in full {-}
 
-Combining geoms lets you show the summary, the density and the raw observations at once. The half-eye
-gives you the density, the boxplot the quartiles, and the dots every actual measurement — so you can
-see the shape, the spread and the sample size in one picture:
+Combining geoms shows the summary, the density and the raw observations at once. The half-eye
+gives the density, the boxplot the quartiles, and the dots every actual measurement — showing
+the shape, the spread and the sample size in one picture:
 
 ```{r}
 mpg %>% filter(cyl %in% c(4,6,8)) %>%
@@ -75,12 +75,12 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
 ```
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether
-the distribution is skewed, and whether any group is bimodal. All three change which test you should
+the distribution is skewed, and whether any group is bimodal. All three change which test to
 reach for in the next section.
 
 ### distributions alongside a scatter plot {-}
 
-When you are looking at two variables at once, you can attach the distribution of each to the margins
+With two variables in play at once, the distribution of each can be attached to the margins
 of the plot, so the relationship and the two individual distributions are visible together:
 
 ```{r}
@@ -101,13 +101,13 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
 
 ## test selection {-}
 
-There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
+There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. There are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/stats.png', dpi = NA)
 ```
 
-When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modeled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
 
 We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
@@ -159,7 +159,7 @@ The p-value from this test is 0.596! This means that their variances are not sig
 
 ## two means {-}
 
-Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
+Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
 ```{r}
 K_data_1_6 %>%
@@ -259,7 +259,7 @@ Excellent! This plot shows us, using the letters on the same line with each aqui
 
 ### Kruskal, Dunn tests {-}
 
-The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
+The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modeled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
 ```{r}
 K_data %>%

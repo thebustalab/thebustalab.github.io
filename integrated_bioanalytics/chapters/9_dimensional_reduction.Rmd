@@ -4,15 +4,15 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
 ```
 
-In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalyses()`, a function that is loaded into your R Session when you run the source() command.
+In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 
-Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalyses()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
+Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
 ```{r, message = FALSE}
 alaska_lake_data
 ```
 
-We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalyses()` function how each column relates to this samples and analytes structuree
+We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structuree
 
 ## {-}
 
@@ -31,14 +31,14 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
 
-We can run and visualize principal components analyses using the `runMatrixAnalyses()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As the output shows, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case further processing is needed.
 
 ```{r, message = FALSE, fig.align = "center"}
 
 alaska_lake_data_wide <- pivot_wider(alaska_lake_data[,1:6], names_from = "element", values_from = "mg_per_L")
 alaska_lake_data_wide
 
-AK_lakes_pca <- runMatrixAnalyses(
+AK_lakes_pca <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
@@ -62,10 +62,10 @@ Important question: what makes the lakes listed above different from the others?
 
 ### ordination plots {-}
 
-Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalyses()` with `analysis = "pca_ord"`:
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it reveals which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
 ```{r, echo = FALSE, message = FALSE}
-AK_lakes_pca_ord <- runMatrixAnalyses(
+AK_lakes_pca_ord <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
   analysis = c("pca_ord"),
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
@@ -74,7 +74,7 @@ AK_lakes_pca_ord <- runMatrixAnalyses(
 head(AK_lakes_pca_ord)
 ```
 
-We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. Using `geom_label_repel()` is not required; the built in `geom_label()` works too, but `geom_label_repel()` can make labeling the segments easier.
 
 ```{r, fig.align = "center", fig.height = 4, fig.width = 5, message = FALSE, fig.cap='Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.'}
 # AK_lakes_pca_ord <- runMatrixAnalysis(
@@ -111,7 +111,7 @@ Great! Here is how to read the ordination plot:
 
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
 
-```{r, fig.height = 4.5, fig.width = 6, fig.cap='PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.'}
+```{r, fig.height = 4.5, fig.width = 6, fig.cap='PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.'}
 # AK_lakes_pca <- runMatrixAnalysis(
 #   data = alaska_lake_data,
 #   analysis = c("pca"),
@@ -148,7 +148,7 @@ ggplot() +
   theme_classic()
 ```
 
-Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
+Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
 ```{r, fig.cap='Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.'}
 AK_lakes_pca_ord %>%
@@ -163,7 +163,7 @@ AK_lakes_pca_ord %>%
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
 ```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center", fig.cap='Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.'}
-AK_lakes_pca_dim <- runMatrixAnalyses(
+AK_lakes_pca_dim <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
   analysis = c("pca_dim"),
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
@@ -180,11 +180,11 @@ ggplot(
   theme_bw()
 ```
 
-Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding `coord_fixed()` to a ggplot.
 
 ### pcaVisualizer {-}
 
-Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between your samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalyses()` and assembles a dashboard with coordinated plots.
+Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png', dpi = NA)
@@ -194,7 +194,7 @@ The function takes three key arguments:
 
 * `data`: a data frame that contains both the sample identifiers and the numeric analyte columns.
 * `columns_w_sample_ID_info`: the column names that identify each sample (for example `c("lake", "park")`).
-* `columns_w_values_for_single_analyte`: the numeric columns that should be analysed (for example `colnames(alaska_lake_data_wide)[3:15]`).
+* `columns_w_values_for_single_analyte`: the numeric columns that should be analyzed (for example `colnames(alaska_lake_data_wide)[3:15]`).
 
 To launch the app for the Alaska lakes example:
 
@@ -208,18 +208,18 @@ pcaVisualizer(
 
 This opens a browser window (or RStudio viewer) with three linked panels:
 
-* **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to colour or shape; the app reuses the `discrete_palette` defined earlier so colours stay consistent with the rest of this chapter.
-* **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below your chosen threshold, making it easier to focus on the analytes that matter.
-* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. You can order rows by Dim.1 or Dim.2 so the heatmap aligns with the direction of separation you care about in the scores plot.
+* **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to color or shape; the app reuses the `discrete_palette` defined earlier so colors stay consistent with the rest of this chapter.
+* **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below a chosen threshold, making it easier to focus on the analytes that matter.
+* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim.1 or Dim.2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
 
-Because `pcaVisualizer()` calls `runMatrixAnalyses()` under the hood, any transformations you perform on your data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while you are refining preprocessing steps, and once you are satisfied, you can reproduce the final view with scripted ggplot code for publication-quality figures.
+Because `pcaVisualizer()` calls `runMatrixAnalysis()` under the hood, any transformations performed on the data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while refining preprocessing steps, and once the preprocessing is settled, reproduce the final view with scripted ggplot code for publication-quality figures.
 
 ## umap and tsne {-}
 
 "How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
 "Can I identify clusters or subtle gradients in my dataset that might be missed by PCA?"
 
-UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. You can think of umap as a technique that "unwinds" a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as `n_neighbors` and `min_dist`, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.
+UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when the data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. Think of umap as a technique that "unwinds" a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as `n_neighbors` and `min_dist`, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.
 
 We will work here with the `wine_quality` dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:
 
@@ -232,7 +232,7 @@ In this command, the dollar sign ($) is used to access (or create) the ID column
 Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
 
 ```{r, fig.height = 7, fig.width = 7, fig.cap='PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.'}
-wq <- runMatrixAnalyses(
+wq <- runMatrixAnalysis(
   data = wine_quality,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -252,8 +252,8 @@ In this PCA plot, each point represents a wine sample, with its position determi
 We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():
 
 
-```{r, fig.height = 7, fig.width = 7, fig.cap='UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.'}
-runMatrixAnalyses(
+```{r, fig.height = 7, fig.width = 7, fig.cap='UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.'}
+runMatrixAnalysis(
   data = wine_quality,
   analysis = "umap",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -269,11 +269,11 @@ runMatrixAnalyses(
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
-t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne" (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, t‑SNE can be run using the runMatrixAnalysis() function by specifying analysis = "tsne" (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.
 
 ```{r, eval = FALSE}
 wine_quality_deduplicated <- wine_quality[!duplicated(wine_quality[4:14]),]
-tsne_results <- runMatrixAnalyses(
+tsne_results <- runMatrixAnalysis(
   data = wine_quality_deduplicated,
   analysis = "tsne",
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
@@ -281,9 +281,9 @@ tsne_results <- runMatrixAnalyses(
 )
 ```
 
-From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.
+From there, the t‑SNE dimensions can be plotted in a similar fashion to the PCA and UMAP examples.
 
-Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
+Both UMAP and t‑SNE provide powerful alternatives to PCA when the data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
 
 ## exercises {-}
 

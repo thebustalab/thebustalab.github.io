@@ -152,7 +152,7 @@ pcaVisualizer <- function(data,
         shiny::need(length(columns_w_values_for_single_analyte) >= 2, "Data must include at least two analyte columns.")
       )
 
-      runMatrixAnalyses(
+      runMatrixAnalysis(
         data = data,
         analysis = "pca",
         columns_w_sample_ID_info = cols,
@@ -165,7 +165,7 @@ pcaVisualizer <- function(data,
       cols <- id_cols()
       shiny::validate(shiny::need(length(cols) >= 1, "Data must include at least one sample-ID column."))
 
-      runMatrixAnalyses(
+      runMatrixAnalysis(
         data = data,
         analysis = "pca_ord",
         columns_w_sample_ID_info = cols,

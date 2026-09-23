@@ -225,27 +225,30 @@ that already breaks cold renders) — it would need a redacted public version or
 ## Open items
 
 1. ~~**Confirm placement + renumbering**~~ **DONE 2026-08-27** — chapter 7, old 7–18 → 8–19, executed.
-2. ~~**Possible bug in the existing ch.5 network example.**~~ **RESOLVED 2026-08-27 — NOT a bug, but a
-   real trap worth knowing about.** `phylochemistry.R` defines **two similarly-named functions**, and they
-   return **different types** for the same `analysis = "dist"`:
-   - **`runMatrixAnalysis`** (singular, definition ~L14479) — the one the book calls — hits
-     `return(dist_matrix)` at ~L14922 and returns a genuine **`dist` object**. So
-     `as.data.frame(as.table(as.matrix(wood_dist)))` is **correct**, and the rendered book confirms it
-     (the chunk produces a figure).
-   - **`runMatrixAnalyses`** (PLURAL, definition ~L13907) returns a **long data frame** at ~L14139
-     (`sample_1`, `sample_2`, `distance`, right-joined with sample metadata, diagonal pre-filtered).
-     Feeding *that* into `as.matrix()` would produce a character matrix and silent nonsense.
-   The original worry came from reading the plural function's branch. The code was lifted into
-   `7_networks.Rmd` **unchanged**. **Caveat on method:** this was settled by reading the source and by
-   the rendered figure, **not** by executing the chunk — an attempt to run it here timed out sourcing
-   `phylochemistry.R`. If a live re-check is ever wanted, do it on the Mac.
+2. ~~**Possible bug in the existing ch.5 network example.**~~ **RESOLVED — and the underlying hazard was
+   removed at the root 2026-09-22.** The original worry came from two similarly-named functions returning
+   **different types** for the same `analysis = "dist"`. There is now **one** function:
+   `runMatrixAnalysis()`. The two return shapes survive as an explicit, named choice rather than a name
+   collision — the default gives a base R `dist` object, and `output_format = "long"` gives the
+   one-row-per-pair frame. Chapter 7 passes `output_format = "long"` at all three call sites. Both paths
+   are now **executed**, in a real browser, by `escape_rooms/tests/matrix_analysis_smoke.mjs` — which also
+   answers the old caveat that this had only ever been settled by reading the source.
 3. **Ch.5's exercises block is wrong regardless** — `5_datavis_3.Rmd:387–397` is commented out
    and its text is about normality tests and t-tests, copy-pasted from comparing means.
-4. **How far to take Part 2.** Degree and components are clearly in scope. Betweenness and
-   articulation points are the payoff but are heavier; decide whether they are taught properly
-   or introduced by demonstration only.
-5. **Does the chapter need a helper function** for degree/components, or is base R plus
-   `igraph` enough? (`table(c(edges$from, edges$to))` gives degree in one line.)
+4. ~~**How far to take Part 2.**~~ **SETTLED 2026-09-22 — by demonstration, not by formula.** Degree and
+   strength are taught with `group_by()`/`summarize()`. Components and articulation points are shown by
+   *deleting a node with `filter()` and re-plotting* — the `### node removal {-}` section — so the only
+   new idea is the deletion itself, and no new function is introduced. The term **articulation point** is
+   named at the moment it is demonstrated, and `igraph` is pointed at in further reading for anyone who
+   wants the numbers. Betweenness is not taught at all; it earned no place once the picture made the
+   point.
+5. ~~**Does the chapter need a helper function** for degree/components?~~ **SETTLED 2026-09-22 — no
+   helper, and the one-line shortcut once floated here is a TRAP.** `table(c(edges$from, edges$to))`
+   double-counts whenever every route appears in both directions, which is true of the flight ledger AND
+   of any long-format distance matrix, before and after thresholding — so the same line silently returns
+   different answers depending on a property of the data the student was never asked to check. The
+   chapter groups each column separately instead, which is longer and never asks anyone to guess. The
+   trap itself is now written up in the chapter as a caution.
 
 ## Duplicate edges and scaling (2026-09-18, session "network")
 
@@ -258,12 +261,12 @@ that already breaks cold renders) — it would need a redacted public version or
   the Part 2 intro now explain the rule.
 - **Part 2 consequence:** the dispatch/journey edge lists are directed. When their chunks are written,
   pass `directed = TRUE`, or reciprocal pairs with equal (or no) values will be merged.
-- **Scaling explained here, not in ch.8.** New `### scaling first {-}` after the unscaled `dist()`: the
-  unscaled Alaska matrix correlates 0.99 with a chloride-only distance (Cl sd ~78 mg/L vs P sd ~0.001),
-  then `scale()`, then when not to scale. The `runMatrixAnalyses(analysis = "dist")` call now sets
-  `scale_variance = TRUE` explicitly (it was the default, but the prose claimed it was in the code).
-- Still stale in the chapter, left for Lucas: the thresholds paragraph says "`wood_1`, `wood_2` here", and
-  the hard-coded `filter(distance < 3.672035, ...)` line sits unexplained under the dist chunk.
+- **Scaling explained here, not in ch.8.** The `## distances and scaling {-}` section, after the unscaled
+  `dist()`: the unscaled Alaska matrix correlates 0.99 with a chloride-only distance (Cl sd ~78 mg/L vs P
+  sd ~0.001), then `scale()`, then when not to scale. `scale_variance` is set explicitly on the
+  `runMatrixAnalysis(analysis = "dist")` calls rather than relied on as a default.
+- The two stale fragments once listed here — the thresholds paragraph naming "`wood_1`, `wood_2`" and the
+  unexplained hard-coded `filter(distance < 3.672035, ...)` — are both gone from the chapter.
 
 ## Part 2 data — published as US airports (2026-09-18)
 
@@ -283,6 +286,57 @@ airports**, so students can plot the map beside the force layout and see that la
   ball and Alaska/Hawaii swing to different sides on each run; without weights the layout is readable
   and HNL sits beside SFO/LAX, DLH beside DTW, KTN between PDX and JNU. Layout-to-map distance
   correlation is ~0.5, because routes partly follow geography.
-- **Still owed:** Part 2 code chunks, and replacing the stub's subway numbers (20 stations, 40,000,
-  301%, 19th of 20, 2→3 components, 8× betweenness) with the airport ones. The TODO comment in the
-  chapter lists them.
+- **Delivered 2026-09-22:** the Part 2 code chunks are written, and the old subway placeholder numbers
+  (20 stations, 40,000, 301%, 19th of 20, 2→3 components, 8x betweenness) are replaced with the airport
+  ones, each re-derived from the CSV rather than copied. The TODO comment that carried them is gone.
+
+## Terminology, the function merge, and a local render path (2026-09-22, session "networks")
+
+**The chapter's spine is now `similarity networks` vs `interaction networks`.** Earlier drafts paired
+derived/relational, then derived/observed. Both mixed two independent axes: *provenance* (computed vs
+handed to you) and *direction* (does the relation have an orientation). The pair that survived names what
+an **edge means**, which is what the chapter's closing warning turns on, and it lets the co-expression vs
+protein-protein-interaction confusion be stated directly — a confusion worth pre-empting because students
+meet a co-expression network in the exercises. "Observed" was rejected late: the distances section already
+opens by calling the lake measurements observations, so the word collides with itself.
+
+**Direction is NOT the provenance axis** and now lives in `### directed and undirected {-}` under
+interpretation. The settled account: a similarity network built from distances is *always* undirected
+because distance is symmetric; an interaction network may be either; and a directed network that comes out
+**balanced** is still directed — the balance is a result, destroyed by collapsing it. That last case is why
+`buildNetwork()` cannot decide for the user: identical reciprocal values mean "listed twice" in a distance
+matrix and "genuinely balanced" in a flight ledger, and the numbers look the same either way. Nice accident:
+the airport data *is* a balanced digraph — every airport has equal in- and out-degree with unequal passenger
+counts — so the example proves its own point.
+
+**`runMatrixAnalyses` (plural) is retired; `runMatrixAnalysis` (singular) absorbed it.** They were two
+independent implementations (~550 and ~680 lines) of the same pipeline, differing mainly in that the plural
+was wide-input-only. Three capabilities were ported into the singular *first*: `tree_method`, `gower` via
+`cluster::daisy`, and the long-format `dist` return. Two traps surfaced doing it, both recorded in
+`../phylochemistry/AGENTS.md`: `tree_method` had to be added to the argument-name **whitelist** (which
+tests every formal, not just what was passed, so omitting it fails *every* call), and `tree_method` defaults
+to `linkage_dendrogram` **not** the plural's `neighbor_joining`, because escape-room trees are graded
+against the linkage route. A named regression guard in the smoke test pins that default. Gower was a latent
+bug: it was an accepted value the singular never implemented, so asking for it silently returned euclidean.
+
+**Voice: expository prose is impersonal, book-wide.** Lucas asked for "you"/"your" out of the explanation.
+Applied to ch.7 by hand and then to ch.3-4, 6, 8-19. Convention and the four exempt categories are canon in
+`chapters/AGENTS.md` -> *Voice*. The thing worth remembering is the method: **recast, don't substitute** —
+across the whole book the conversion needed an actor noun only seven times, so "the analyst" appearing often
+would be the smell of a pass done badly. `2_installation.Rmd` and `index.Rmd` were deliberately left whole,
+being procedure and course policy.
+
+**This box can render the book.** The `phylochem` conda env already had the full stack; the only missing
+piece was the harness, which `_agent_reference/build_harness.md` had recorded as lost with its paths
+"unknown -- ask Lucas". They were all findable on the box. `_local_harness.R` + `_render_check.R` are the
+result; detail in that reference file. Rendering earned its keep immediately by catching a bug no amount of
+reading would have: **`S4Vectors::rename()` masks `dplyr::rename()`** in a full-scope book session, so a
+bare `rename()` in a chapter dies with a message about arguments needing to be character. Invisible in WebR
+(no Bioconductor) and in a plain tidyverse session. Canon in `AGENTS.md`.
+
+**Figure captions and sizes** are now on every figure-producing chunk in ch.7, following the caption guide
+in `index.Rmd`. Steps 5 and 6 of the chapter-enhancement checklist in `chapters/AGENTS.md` were added for
+this, including the point that plot sizing is a **render-time** check that cannot be done by reading source.
+
+**Still genuinely owed for ch.7:** nothing blocking. Chapters 8-10 have many figures still at the 4x3 global
+default -- i.e. never explicitly sized -- which `_render_check.R` flags by design.

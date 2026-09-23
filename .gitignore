@@ -112,3 +112,7 @@ integrated_bioanalytics/notes/
 integrated_bioanalytics/_agent_reference/
 # Co-located canon history (canon_slim). AGENTS.md-derived, so it inherits AGENTS.md's privacy.
 z_history/
+
+# Local-only build harness (machine paths, private data location) — never publish
+integrated_bioanalytics/_local_harness.R
+integrated_bioanalytics/book_test/

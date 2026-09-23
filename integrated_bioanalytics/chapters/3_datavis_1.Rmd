@@ -15,7 +15,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 
 ## objects {-}
 
-In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
+In R, data is stored in objects. Objects can be thought of as "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
 
 ```{r}
 new_object <- 1
@@ -55,7 +55,7 @@ Excellent - we've got data. Now we need to manipulate it. For this we need funct
 
 * A function is a command that tells R to perform an action!
 * A function begins and ends with parentheses: `this_is_a_function()`
-* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
+* The stuff inside the parentheses are the details of how the function should perform its action: `run_this_analysis(on_this_data)`
 
 Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
 
@@ -109,7 +109,7 @@ Now we have a nice, small table that we can use to practice data visualization. 
 
 There are three steps to setting up a ggplot:
 
-1. **Define the data you want to use.**
+1. **Define the data to be used.**
 
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
@@ -117,7 +117,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-2. **Define how your variables map onto the axes.**
+2. **Define how the variables map onto the axes.**
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
@@ -125,16 +125,16 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-3. **Use geometric shapes to represent other variables in your data.**
+3. **Use geometric shapes to represent other variables in the data.**
 
-Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
+Map the variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to the plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end of the top line. Let's try it:
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
+In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map the variables onto the geometric features of the shapes:
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
@@ -173,7 +173,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
+**Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. This shows up in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -183,7 +183,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
+As is probably clear by now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
 ```{r, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
@@ -325,7 +325,19 @@ geom_point()
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
 ```{r, include = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+## DO NOT put a bare source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") back here.
+## `include = FALSE` hides this chunk's output; it does NOT stop it evaluating. The whole book knits in
+## ONE session, and ch3 runs before ch7, so a bare re-source replaced the working-copy library that
+## _common.R had just loaded with the PREVIOUS RELEASE -- and ch7's runMatrixAnalysis(analysis = "dist",
+## output_format = "long") then returned a bare `dist` that ggplot() could not fortify. That broke the
+## 2026-09-22 deploy repeatedly, with an error ~12000 lines from its cause. _common.R already
+## bootstraps the library for every chapter, so this is a no-op; it only acts if something upstream
+## failed, and then it prefers the working copy.
+if (!exists("algae_data")) {
+  .pc3 <- file.path("..", "phylochemistry", "phylochemistry.R")
+  if (file.exists(.pc3)) source(.pc3) else
+    source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+}
 ggplot(
   data = filter(
     algae_data, 
@@ -465,7 +477,7 @@ ggplot(
   geom_point()
 ```
 
-8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
+8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behavior of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
 
 ```{r}
 ggplot(
@@ -499,7 +511,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 - [R for Data Science: Data transformation](https://r4ds.hadley.nz/data-transform). The dplyr chapter of Wickham and Grolemund's book, covering `filter`, `select`, and the other core verbs for reshaping data before plotting.
 
-- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep beside you while filtering.
+- [dplyr cheat sheet](https://rstudio.github.io/cheatsheets/data-transformation.pdf). A one-page visual reference for the dplyr data-manipulation verbs, handy to keep open while filtering.
 
 - [ggplot2 cheat sheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf). A compact overview of the ggplot2 grammar (geoms, aesthetics, facets), useful for recalling syntax at a glance.
 

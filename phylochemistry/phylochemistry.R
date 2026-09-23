@@ -14015,588 +14015,88 @@
 
         #### runMatrixAnalyses
 
-            #' Runs a matrix analysis (clustering, kmeans, pca).
+            #' RETIRED. Use runMatrixAnalysis() (singular) instead.
             #'
-            #' @param data The data frame or tibble to analyze
-            #' @param analysis The type of analysis to run. Can be one of: "hclust" (heirarchical clustering), "pca" (principal components analysis), "pca-ord" (principal components analysis ordination plot), or "pca-dim" (principal components scree plot)
-            #' @param column_w_names_of_multiple_analytes  
-            #' @param column_w_values_for_multiple_analytes
-            #' @param columns_w_additional_analyte_info
-            #' @param columns_w_sample_ID_info
-            #' @param scale_variance
-            #' @param na_replacement
-            #' @param output_format
-            #' @examples
+            #' Retired 2026-09-22. This was a wide-data-only fork of runMatrixAnalysis(); every
+            #' capability it had has been ported into the singular, which also handles long-format
+            #' input. Calling it raises an error explaining the migration.
+            #'
+            #' @param ... Ignored; the function always stops.
             #' @export
             #' runMatrixAnalyses 
 
-                runMatrixAnalyses <-    function(
-                        data,
-                        analysis = c(
-                            "pca", "pca_ord", "pca_dim",
-                            "mca", "mca_ord", "mca_dim",
-                            "mds", "mds_ord", "mds_dim",
-                            "tsne", "dbscan", "kmeans",
-                            "hclust", "hclust_phylo", "hclust_cat", "dist"
-                        ),
-                        parameters = NULL,
-                        columns_w_values_for_single_analyte = NULL,
-                        columns_w_sample_ID_info = NULL,
-                        distance_method = c("euclidean", "manhattan", "gower"),
-                        agglomeration_method = c(
-                            "ward.D2", "ward.D", "single", "complete",
-                            "average", # (= UPGMA)
-                            "mcquitty", # (= WPGMA)
-                            "median", # (= WPGMC)
-                            "centroid" # (= UPGMC)
-                        ),
-                        tree_method = c(
-                          "neighbor_joining",     # ape::nj; additive, non-ultrametric
-                          "linkage_dendrogram"   # hclust -> as.phylo; branch lengths = merge heights (tips aligned)
-                        ),
-                        components_to_return = 2,
-                        scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
-                        na_replacement = c("mean", "none", "zero", "drop"),
-                        output_format = c("wide", "long"),
-                        ...
-                    ) {
-
-                    # Check that argument names are spelled correctly
-
-                        passed_args <- names(c(as.list(environment()), list(...)))
-
-                        if (!all(passed_args %in%
-                            c(
-                                "data",
-                                "analysis",
-                                "parameters",
-                                "columns_w_values_for_single_analyte",
-                                "columns_w_sample_ID_info",
-                                "transpose",
-                                "distance_method",
-                                "agglomeration_method",
-                                "tree_method",
-                                "components_to_return",
-                                "scale_variance",
-                                "na_replacement",
-                                "output_format",
-                                "..."
-                            ))
-                        ) {stop("One of your argument names is misspelled, please double check spelling.")}
-
-                    # Check that column names are spelled correctly
-
-                        if( any(
-                            !c(
-                                columns_w_values_for_single_analyte,
-                                columns_w_sample_ID_info
-                            ) %in% colnames(data)
-                            ) == TRUE
-                        ) {
-                            stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
-                        }
-
-                        if (all(c(
-                            is.null(columns_w_values_for_single_analyte)
-                        ))) { stop("You need to specify at least one column with values for analytes.")}
-
-                    # Pre-process data
-
-                        # Remove columns that are not included in input column lists
-
-                            if (length(
-                                    which(!colnames(data) %in% 
-                                        c(
-                                            columns_w_values_for_single_analyte,
-                                            columns_w_sample_ID_info
-                                        )
-                                    )
-                                ) > 0 
-                            ) {
-                                data <- data[,-which(!colnames(data) %in% 
-                                    c(
-                                        columns_w_values_for_single_analyte,
-                                        columns_w_sample_ID_info
-                                    )
-                                )]
-                            }
-
-                        # Check for duplicate analyte names
-
-                            if( length(columns_w_values_for_single_analyte) > 0 ) {
-                                if( any(duplicated(columns_w_values_for_single_analyte)) ) {
-                                    stop("There are duplicate analyte names in columns_w_values_for_single_analyte.")
-                                }
-                            }
-
-                        # If no pivot required, skip pivoting
-
-                            if( length(columns_w_values_for_single_analyte) >= 1 ) {
-                                data_wide <- data
-                                analyte_columns <- columns_w_values_for_single_analyte
-                                data_wide <- unique(data_wide)
-                            }
-
-                        # Check to see if analyte columns are numeric and compatible with analysis
-
-                            which_analyte_columns <- which(colnames(data_wide) %in% analyte_columns)
-                            are_they_numeric <- list()
-                            for( i in which_analyte_columns ) {
-                              are_they_numeric <- c(are_they_numeric, is.numeric(data_wide[[i]]))
-                            }
-
-                            # Should selected analysis proceed?
-
-                                if ( all(unlist(are_they_numeric)) ) {
-                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord") ) {
-                                        # cat("Analytes are all numeric and compatible with the analysis selected.\n")
-                                    }
-                                    if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-                                        stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
-                                    }
-                                }
-
-                                if ( !all(unlist(are_they_numeric)) ) {
-                                    if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                        # cat("Analytes are all categorical and compatible with the analysis selected.\n")
-                                    }
-                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord") ) {
-                                        stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
-                                    }
-
-                                }
-
-                        # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
-
-                            if( length(columns_w_sample_ID_info) > 1 ) {
-                                sample_unique_IDs <- apply(
-                                    data_wide[,match(columns_w_sample_ID_info, colnames(data_wide))],
-                                    1, paste, collapse = "_"
-                                )
-                                if( any(duplicated(sample_unique_IDs)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
-                                data_wide$sample_unique_ID <- sample_unique_IDs
-                            } else {
-                                colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] <- "sample_unique_ID"
-                                if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
-                            }
-
-                            # Make sure "sample_unique_ID" is character
-                                data_wide$sample_unique_ID <- as.character(data_wide$sample_unique_ID)
-
-                        # Prepare the matrix
-
-                            matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
-                            rownames(matrix) <- data_wide$sample_unique_ID
-
-                        # Handle NAs
-
-                            if( na_replacement[1] == "none") {
-                            }
-
-                            if( na_replacement[1] == "drop" ) {
-                                message("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
-                                if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
-                                    message(names(which(apply(is.na(matrix), 2, any))))    
-                                } else {
-                                    message("none")
-                                }
-                                cat("\n")
-                                matrix <- matrix[,!apply(is.na(matrix), 2, any)]
-                            }
-                            if( na_replacement[1] %in% c("zero", "mean") ) {
-
-                                if( any(is.na(matrix)) ) {
-                                    
-                                    message(paste0("Replacing NAs in your data with ", na_replacement[1]), "\n")
-
-                                        for( column in 1:dim(matrix)[2]) {
-                                            
-                                            if( any(is.na(matrix[,column])) ) {
-
-                                                if( na_replacement[1] == "mean" ) {
-                                                    replacement <- mean(matrix[,column], na.rm = TRUE)
-                                                }
-                                                if( na_replacement[1] == "zero" ) {
-                                                    replacement <- 0
-                                                }
-                                                if( !any(na_replacement %in% c("mean", "zero")) ) {
-                                                    stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
-                                                }
-                                                
-                                                matrix[,column][is.na(matrix[,column])] <- as.numeric(replacement)
-
-                                            } else {}
-                                        }
-                                }
-                            }
-
-                        # Scale data, unless not requested
-
-                            if ( is.null(scale_variance) ) {
-                                if (analysis != "hclust") {scale_variance <- TRUE} else {scale_variance <- FALSE}
-                            }
-
-                            if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                
-                                scaled_matrix <- scale(matrix)
-
-                                if( any(is.na(scaled_matrix)) ) {
-                                    message("Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.")
-                                    scaled_matrix[is.na(scaled_matrix)] <- 0
-                                }
-
-                            }
-
-                            if( scale_variance == FALSE ) {
-                                scaled_matrix <- matrix
-                            }
-
-                        # Generate distance matrix
-
-                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-
-                                if (distance_method[1] == "gower") {
-                                    dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
-                                } else {
-                                    dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                                }
-                                
-                                if( analysis == "dist") {
-                                    df <- as.data.frame(as.table(as.matrix(dist_matrix)))
-                                    names(df) <- c("sample_1", "sample_2", "distance")
-                                    df <- filter(df, distance != 0)
-                                    clustering <- df
-
-                                    clustering <- right_join(
-                                      data_wide[,match(
-                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                        colnames(data_wide))
-                                      ], clustering, by = c("sample_unique_ID" = "sample_1"), suffix = c("sample_1", "sample_2")
-                                    )
-
-                                    clustering <- right_join(
-                                      data_wide[,match(
-                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                        colnames(data_wide))
-                                      ], clustering, by = c("sample_unique_ID" = "sample_2"), suffix = c("_sample_1", "_sample_2")
-                                    )
-
-                                    colnames(clustering)[colnames(clustering) == "sample_unique_ID"] <- "sample_unique_ID_sample_1"
-                                    clustering <- select(clustering, sample_unique_ID_sample_1, sample_unique_ID_sample_2, distance, everything())
-                                    return(clustering)
-                                    # return(dist_matrix)
-                                    stop()
-                                }
-
-                            }
-
-                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
-
-                    # Run the matrix analysis selected
-
-                        ## HCLUST, HCLUST_PHYLO ##
-
-                            if( analysis %in% c("hclust", "hclust_phylo")) {
-
-                                if (tree_method[1] == "linkage_dendrogram") {
-                                
-                                    ## BClust approach to bootstrapped hclust
-
-                                        bclust <- Bclust(
-                                            scaled_matrix, method.d = distance_method[1],
-                                            method.c = agglomeration_method[1],
-                                            monitor = FALSE
-                                        )
-                                        phylo <- ape::as.phylo(bclust$hclust)
-
-                                } else if (tree_method[1] == "neighbor_joining") {
-                                    phylo <- ape::nj(dist_matrix)
-                                }
-
-                                if( analysis == "hclust_phylo" ) {
-                                    return(phylo)
-                                    stop("Returning hclust_phylo.")
-                                }
-                                clustering <- ggtree::fortify(phylo)
-                                clustering$sample_unique_ID <- clustering$label
-                                clustering$bootstrap <- NA
-
-                                ## Add bootstrap values starting from the furthest node to the highest node
-                                if (tree_method[1] == "linkage_dendrogram") {
-                                    bs_vals <- data.frame(
-                                        xval = clustering$x[clustering$isTip != TRUE],
-                                        bs_val = NA
-                                    )
-                                    for (i in 1:length(bclust$value)) { # i=1
-                                        bs_vals$bs_val[
-                                            order(bs_vals$xval, decreasing = TRUE)[i]
-                                        ] <- bclust$values[i]
-                                    }
-                                    clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
-                                }
-                            }
-
-                            if (analysis == "hclust_cat") {
-
-                                ## "bootstrap" approach
-                                    temp <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
-                                    rownames(temp) <- rownames(scaled_matrix)
-                                    scaled_matrix <- temp
-                                    createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
-                                    b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
-                                    phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
-
-                                    clustering <- ggtree::fortify(phylo)
-                                    clustering$sample_unique_ID <- clustering$label
-                                    clustering$bootstrap <- NA
-
-                                ## Add bootstrap values starting from the furthest node to the highest node
-                                    bs_vals <- data.frame( xval = clustering$x[clustering$isTip != TRUE], bs_val = NA )
-                                    for (i in 1:length(b)) { bs_vals$bs_val[order(bs_vals$xval, decreasing = TRUE)[i]] <- b[i] }
-
-                                clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
-
-                            }
-
-                        ## Dimensionality reduction
-
-                            ## MDS
-
-                                if( analysis == "mds" ) {
-                                    coords <- stats::cmdscale(dist_matrix)
-                                    colnames(coords) <- c("Dim_1", "Dim_2")
-                                    clustering <- as_tibble(coords)
-                                    clustering$sample_unique_ID <- rownames(coords)
-                                }
-                        
-                            ## tSNE
-
-                                if( analysis == "tsne" ) {
-                                    clustering <- Rtsne(scaled_matrix, theta = 0.0, perplexity = 2)
-                                    clustering <- as.data.frame(clustering$Y)
-                                    clustering$sample_unique_ID <- rownames(scaled_matrix)
-                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                    clustering <- select(clustering, sample_unique_ID, Dim_1, Dim_2)
-                                    rownames(clustering) <- NULL
-                                }
-
-                            ## umap
-
-                                if( analysis == "umap" ) {
-                                    clustering <- as.data.frame(umap(scaled_matrix)$layout)
-                                    clustering$sample_unique_ID <- rownames(clustering)
-                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                    clustering <- select(clustering, sample_unique_ID, Dim_1, Dim_2)
-                                    rownames(clustering) <- NULL
-                                }
-
-                            ## MCA, MCA_ORD, MCA_DIM ##
-
-                                if( analysis == "mca" ) {
-                                    message("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:components_to_return)]
-                                    clustering <- as_tibble(coords)
-                                    clustering$sample_unique_ID <- rownames(coords)
-                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                    message("Done!\n")
-                                }
-
-                                if( analysis == "mca_ord" ) {
-                                    message("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$eta2[,c(1,components_to_return)]
-                                    clustering <- as_tibble(coords)
-                                    clustering$analyte <- rownames(coords)
-                                    colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
-                                    clustering <- select(clustering, analyte, Dim_1, Dim_2)
-                                    return(clustering)
-                                    stop("Returning ordination plot coordinates. \nDone!")
-                                }
-
-                                if( analysis == "mca_dim" ) {
-                                    message("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
-                                    clustering <- tibble::enframe(coords, name = NULL)
-                                    clustering$principal_component <- names(coords)
-                                    clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
-                                    colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                    clustering <- select(clustering, principal_component, percent_variance_explained)
-                                    return(clustering)
-                                    stop("Returning eigenvalues. \nDone!")
-                                }
-
-                            ## PCA, PCA_ORD, PCA_DIM ## 
-
-                                if( analysis == "pca" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:components_to_return)]
-                                    clustering <- as_tibble(coords)
-                                    clustering$sample_unique_ID <- rownames(coords)
-                                    # colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                }
-
-                                if( analysis == "pca_ord" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1:components_to_return)]
-                                    clustering <- as_tibble(coords)
-                                    clustering$analyte <- rownames(coords)
-                                    clustering <- select(clustering, analyte, c(paste0("Dim.", seq(1,components_to_return,1))))
-                                    # colnames(clustering) <- c("analyte", "Dim_1", "Dim_2")
-                                    return(clustering)
-                                    stop("Returning ordination plot coordinates.")
-                                }
-
-                                if( analysis == "pca_dim" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
-                                    clustering <- tibble::enframe(coords, name = NULL)
-                                    clustering$principal_component <- names(coords)
-                                    clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                                    colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                    clustering <- select(clustering, principal_component, percent_variance_explained)
-                                    return(clustering)
-                                    stop("Returning eigenvalues.")
-                                }
-                    
-                        ## Clustering
-
-                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-
-                                if( any(is.na(scaled_matrix)) == TRUE ) {
-                                    stop("clustering cannot handle NA. Please choose an option for na_replacement.")
-                                }
-
-                            }
-
-                            ## DBSCAN
-
-                                if( analysis == "dbscan" ) {
-
-                                    if ( length(parameters) > 0 ) {
-                                        cluster_k <- parameters[1]
-                                        cluster_threshold <- parameters[2]
-                                    }
-
-                                    if ( length(parameters) == 0 ) {
-                                        findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
-                                    }
-
-                                    message("Using", cluster_k, "as a value for k.\n")
-                                    message("Using", cluster_threshold, "as a value for threshold.\n")
-                                    clustering <- as_tibble(data.frame(
-                                        sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(cluster_threshold), MinPts = as.numeric(cluster_k), scale = FALSE, method = "dist")[[1]])
-                                    ))
-                                    clustering$cluster[clustering$cluster == "cluster_0"] <- NA
-
-                                }
-
-                            ## k-means
-
-                                if (analysis == "kmeans") {
-
-                                    if ( length(parameters) > 0 ) {
-                                        n_clusters <- parameters[1]
-                                    }
-
-                                    if ( length(parameters) == 0 ) {
-                                        findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
-                                    }
-
-                                    message("Using", n_clusters, "as a value for cluster_number.\n")
-                                    clustering <- as_tibble(data.frame(
-                                        sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = stats::kmeans(x = matrix, centers = as.numeric(n_clusters), nstart = 25, iter.max = 1000)$cluster
-                                    ))
-
-                                }
-
-                            ## OPTICS
-
-                                # out <- dbscan::optics(scaled_matrix, minPts = 5)
-                                # out <- data.frame(
-                                #     order = out$order,
-                                #     reach_dist = out$reachdist,
-                                #     name = rownames(scaled_matrix)
-                                # )
-                                # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
-                                # ggplot(out[2:19,]) +
-                                #     geom_col(aes(x = name, y = reach_dist))                                
-                        
-                    # Post processing and return.
-
-                        if( !analysis %in% c("hclust_phylo")) {
-
-                            ## Add back annotations to the output
-
-                                if( length(columns_w_sample_ID_info) == 1 ) {
-                                } else {
-                                clustering <-   right_join(
-                                                    data_wide[,match(
-                                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                                        colnames(data_wide))
-                                                    ], clustering, by = "sample_unique_ID"
-                                                )
-                                }
-
-                                rownames_matrix <- tibble::enframe(rownames(scaled_matrix), name = NULL)
-                                colnames(rownames_matrix)[1] <- "sample_unique_ID"
-
-                                # if (analysis != "pca") { ## Don't do this for pca for some reason?? I don't understand why...
-                                    clustering <- full_join(
-                                        clustering,
-                                        as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
-                                        by = "sample_unique_ID"
-                                    )
-                                # }
-                                # clustering
-
-                                ## Order the returned matrix so that the sample_unique_ID comes first
-
-                                    clustering <- select(clustering, sample_unique_ID, everything())
-
-                            # Annotate internal nodes in tree output if all its descendants share a property
-
-                                if( analysis == "hclust" ) {
-                                    for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
-                                        for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
-                                            descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
-                                            if (length( unlist(unique(descends[,colnames(descends) == sample_property])) ) == 1 ) {
-                                                clustering[
-                                                    which(clustering$node == node),
-                                                    which(colnames(clustering) == sample_property)
-                                                ] <- unlist(descends[,colnames(descends) == sample_property])[1]
-                                            }
-                                        }
-                                    }
-                                }
-
-                            # Return results
-
-                                if( output_format[1] == "long" ) {
-                                    clustering <- pivot_longer(
-                                        clustering,
-                                        cols = c(which(colnames(clustering) == analyte_columns[1]): dim(clustering)[2]),
-                                        names_to = "analyte_name", 
-                                        values_to = "value"
-                                    )
-                                    analyte_annotation_frame <- unique(select(ungroup(data), all_of(c(column_w_names_of_multiple_analytes, columns_w_additional_analyte_info))))
-                                    clustering <- left_join(clustering, analyte_annotation_frame, by = c("analyte_name" = column_w_names_of_multiple_analytes))
-                                }
-
-                                return( clustering )
-                        }
+                ## ── RETIRED 2026-09-22 ────────────────────────────────────────────────────────────────
+                ## runMatrixAnalyses() (plural) was a wide-data-only fork of runMatrixAnalysis()
+                ## (singular). Two near-identical names for "the simple one" and "the full one" was a
+                ## reliable source of student confusion, and the two returned DIFFERENT TYPES for the
+                ## same analysis = "dist", which is worse than confusing.
+                ##
+                ## Everything it could do, the singular now does:
+                ##   - tree_method = c("linkage_dendrogram", "neighbor_joining")  -> ported
+                ##   - distance_method = "gower" via cluster::daisy               -> ported
+                ##   - analysis = "dist" returning a long data frame              -> ported, now opt-in
+                ##     via output_format = "long" (the default "wide" gives a base R `dist` object)
+                ## and the singular additionally takes long-format input, transpose,
+                ## unknown_sample_ID_info and columns_w_additional_analyte_info, none of which the
+                ## plural ever had. The plural also carried a live bug: output_format = "long"
+                ## referenced two variables that did not exist in it, so it always errored.
+                ##
+                ## It is kept as a stop() rather than deleted so that an old script gets a sentence
+                ## telling it what to do, instead of "could not find function".
+                runMatrixAnalyses <- function(...) {
+                    stop(
+                        "runMatrixAnalyses() (plural) was retired on 2026-09-22. Use runMatrixAnalysis() ",
+                        "(singular) instead \u2014 it does everything the plural did and more.\n\n",
+                        "  - Wide data: the arguments are the same. Rename the function and it will run.\n",
+                        "  - analysis = \"dist\": the singular returns a base R `dist` object by default. ",
+                        "For the long, one-row-per-pair data frame the plural returned, add ",
+                        "output_format = \"long\".\n",
+                        "  - Hierarchical clustering: tree_method now defaults to \"linkage_dendrogram\" ",
+                        "rather than \"neighbor_joining\". Pass tree_method explicitly if you want NJ.\n",
+                        call. = FALSE
+                    )
                 }
 
         #### runMatrixAnalysis
 
-            #' Runs a matrix analysis (clustering, kmeans, pca).
+            #' Runs a matrix analysis (clustering, kmeans, pca, distances).
             #'
-            #' @param data The data frame or tibble to analyze
-            #' @param analysis The type of analysis to run. Can be one of: "hclust" (heirarchical clustering), "pca" (principal components analysis), "pca-ord" (principal components analysis ordination plot), or "pca-dim" (principal components scree plot)
-            #' @param column_w_names_of_multiple_analytes  
-            #' @param column_w_values_for_multiple_analytes
-            #' @param columns_w_additional_analyte_info
-            #' @param columns_w_sample_ID_info
-            #' @param kmeans
-            #' @param na_replacement
-            #' @param output_format
+            #' The single matrix-analysis verb for the course. It absorbed runMatrixAnalyses()
+            #' (plural) on 2026-09-22; the plural is retired and now stops with a migration message.
+            #'
+            #' @param data The data frame or tibble to analyze. May be WIDE (one column per analyte,
+            #'   named in columns_w_values_for_single_analyte) or LONG (one row per sample per
+            #'   analyte, named in column_w_names_of_multiple_analytes plus
+            #'   column_w_values_for_multiple_analytes).
+            #' @param analysis The type of analysis to run: one of "pca", "pca_ord", "pca_dim",
+            #'   "mca", "mca_ord", "mca_dim", "mds", "mds_ord", "mds_dim", "tsne", "dbscan",
+            #'   "kmeans", "hclust", "hclust_phylo", "hclust_cat" or "dist".
+            #' @param parameters Analysis-specific parameters. For kmeans, the number of clusters;
+            #'   for dbscan, c(eps, MinPts). Required for both.
+            #' @param column_w_names_of_multiple_analytes Long input: the column holding analyte names.
+            #' @param column_w_values_for_multiple_analytes Long input: the column holding the values.
+            #' @param columns_w_values_for_single_analyte Wide input: the columns holding the values.
+            #' @param columns_w_additional_analyte_info Per-analyte metadata to carry through.
+            #' @param columns_w_sample_ID_info The columns that together identify a sample.
+            #' @param transpose Analyse analytes as rows rather than samples. Default FALSE.
+            #' @param distance_method "euclidean", "manhattan" or "gower". Gower is computed with
+            #'   cluster::daisy; the other two with stats::dist.
+            #' @param agglomeration_method The linkage rule for hierarchical clustering. Only used
+            #'   when tree_method = "linkage_dendrogram".
+            #' @param tree_method How a tree is built for "hclust"/"hclust_phylo".
+            #'   "linkage_dendrogram" (the DEFAULT) is hierarchical clustering proper: it honours
+            #'   agglomeration_method and returns bootstrap support. "neighbor_joining" is the
+            #'   phylogenetic method, works from the distance matrix alone, IGNORES
+            #'   agglomeration_method, and returns no bootstrap values.
+            #' @param unknown_sample_ID_info Sample IDs to treat as unknowns for nearest-neighbour
+            #'   matching against the rest (used by the GC-MS workflows).
+            #' @param components_to_return How many components to return. Default 2.
+            #' @param scale_variance Default TRUE, except for "hclust" where the default is FALSE.
+            #' @param na_replacement "mean" (default), "none", "zero" or "drop".
+            #' @param output_format "wide" (default) or "long". For analysis = "dist" this chooses
+            #'   the RETURN TYPE: "wide" gives a base R `dist` object, "long" gives one row per pair
+            #'   (sample_1, sample_2, distance) plus the sample ID columns, which is the shape an
+            #'   edge list wants.
             #' @examples
             #' @export
             #' runMatrixAnalysis 
@@ -14625,6 +14125,20 @@
                                                 "median", # (= WPGMC)
                                                 "centroid" # (= UPGMC)
                                             ),
+                                            ## NOTE the order: "linkage_dendrogram" is FIRST and so is the
+                                            ## default. That is deliberate and differs from the retired
+                                            ## runMatrixAnalyses(), which defaulted to neighbour joining.
+                                            ## Every existing caller of runMatrixAnalysis -- the escape
+                                            ## rooms, the GC-MS functions, the book -- was written against
+                                            ## the linkage/Bclust behaviour this function has always had,
+                                            ## so defaulting to NJ would have silently changed trees that
+                                            ## puzzles already grade against. Nothing live relied on the
+                                            ## plural's NJ default (its hclust callers all passed
+                                            ## tree_method explicitly).
+                                            tree_method = c(
+                                                "linkage_dendrogram", # hclust -> as.phylo; honours agglomeration_method; bootstrapped
+                                                "neighbor_joining"    # ape::nj; additive, non-ultrametric; IGNORES agglomeration_method
+                                            ),
                                             unknown_sample_ID_info = NULL,
                                             components_to_return = 2,
                                             scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
@@ -14650,10 +14164,10 @@
                                 "transpose",
                                 "distance_method",
                                 "agglomeration_method",
+                                "tree_method",
                                 "unknown_sample_ID_info",
                                 "components_to_return",
                                 "scale_variance",
-                                "kmeans",
                                 "na_replacement",
                                 "output_format",
                                 "..."
@@ -14955,17 +14469,38 @@
                         ## HCLUST, HCLUST_PHYLO ##
 
                             if( analysis == "hclust" | analysis == "hclust_phylo") {
-                                
-                                ## BClust approach to bootstrapped hclust
 
-                                    bclust <- Bclust(
-                                        scaled_matrix, method.d = distance_method[1],
-                                        method.c = agglomeration_method[1],
-                                        monitor = FALSE
-                                    )
-                                    # print(bclust$value)
-                                    # plot(bclust)
-                                    phylo <- ape::as.phylo(bclust$hclust)
+                                ## Two ways to turn the data into a tree. `linkage_dendrogram` is
+                                ## hierarchical clustering proper -- the step-by-step merging the book
+                                ## teaches -- and it is the only one that honours agglomeration_method
+                                ## and that yields bootstrap support. `neighbor_joining` is the
+                                ## phylogenetic method; it works from the distance matrix alone and
+                                ## IGNORES agglomeration_method entirely.
+                                if (tree_method[1] == "linkage_dendrogram") {
+
+                                    ## BClust approach to bootstrapped hclust
+
+                                        bclust <- Bclust(
+                                            scaled_matrix, method.d = distance_method[1],
+                                            method.c = agglomeration_method[1],
+                                            monitor = FALSE
+                                        )
+                                        phylo <- ape::as.phylo(bclust$hclust)
+
+                                } else if (tree_method[1] == "neighbor_joining") {
+
+                                    ## The distance matrix is computed further down for the other
+                                    ## analyses, so neighbour joining makes its own here.
+                                    if (distance_method[1] == "gower") {
+                                        nj_dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
+                                    } else {
+                                        nj_dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
+                                    }
+                                    phylo <- ape::nj(nj_dist_matrix)
+
+                                } else {
+                                    stop("tree_method must be one of \"neighbor_joining\" or \"linkage_dendrogram\".")
+                                }
 
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
@@ -14975,7 +14510,10 @@
                                 clustering$sample_unique_ID <- clustering$label
                                 clustering$bootstrap <- NA
 
-                                ## Add bootstrap values starting from the furthest node to the highest node
+                                ## Add bootstrap values starting from the furthest node to the highest
+                                ## node. Only the linkage route has them -- neighbour joining is not
+                                ## bootstrapped here, so its bootstrap column stays NA.
+                                if (tree_method[1] == "linkage_dendrogram") {
                                     bs_vals <- data.frame(
                                         xval = clustering$x[clustering$isTip != TRUE],
                                         bs_val = NA
@@ -14985,8 +14523,8 @@
                                             order(bs_vals$xval, decreasing = TRUE)[i]
                                         ] <- bclust$values[i]
                                     }
-
-                                clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                                    clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                                }
                             }
 
                             if (analysis == "hclust_cat") {
@@ -15042,11 +14580,48 @@
 
                             if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
-                                dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                                
+                                ## `gower` is in distance_method's list and stats::dist cannot compute
+                                ## it -- it needs cluster::daisy. Without this branch, asking for gower
+                                ## silently gave you a euclidean distance instead.
+                                if (distance_method[1] == "gower") {
+                                    dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
+                                } else {
+                                    dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
+                                }
+
                                 if( analysis == "dist") {
+
+                                    ## Two shapes, chosen with output_format. The default "wide" gives
+                                    ## the `dist` object base R expects (hclust(), cmdscale(), print()).
+                                    ## "long" gives one row per PAIR -- sample_1, sample_2, distance,
+                                    ## plus the sample ID columns suffixed for each side -- which is the
+                                    ## shape an edge list wants, and what the networks chapter plots.
+                                    if( output_format[1] == "long" ) {
+                                        df <- as.data.frame(as.table(as.matrix(dist_matrix)))
+                                        names(df) <- c("sample_1", "sample_2", "distance")
+                                        df <- filter(df, distance != 0)
+                                        clustering <- df
+
+                                        clustering <- right_join(
+                                          data_wide[,match(
+                                            c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                            colnames(data_wide))
+                                          ], clustering, by = c("sample_unique_ID" = "sample_1"), suffix = c("sample_1", "sample_2")
+                                        )
+
+                                        clustering <- right_join(
+                                          data_wide[,match(
+                                            c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                            colnames(data_wide))
+                                          ], clustering, by = c("sample_unique_ID" = "sample_2"), suffix = c("_sample_1", "_sample_2")
+                                        )
+
+                                        colnames(clustering)[colnames(clustering) == "sample_unique_ID"] <- "sample_unique_ID_sample_1"
+                                        clustering <- select(clustering, sample_unique_ID_sample_1, sample_unique_ID_sample_2, distance, everything())
+                                        return(clustering)
+                                    }
+
                                     return(dist_matrix)
-                                    stop()
                                 }
 
                             }

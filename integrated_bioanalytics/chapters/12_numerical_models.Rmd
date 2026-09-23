@@ -165,7 +165,7 @@ total_sum_of_squares <- sum(
 1 - (residual_sum_of_squares / total_sum_of_squares)
 ```
 
-Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
+Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
 - The amount of variance in the response explained by the dependent variable.
 - How much better the line of best fit describes the data than the flat line.
 Now, let's put it all together and make it pretty:
@@ -355,9 +355,9 @@ We can use the `buildModel()` function to make a random forest model. We need to
 
 - n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
 
-- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. By carefully tuning this parameter, you can strike a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
+- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
 
-`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy. In this function:
+`buildModel()` explores a number of settings for both n_vars_at_split and n_trees, then selects the combination with the highest predictive accuracy. In this function:
 
 - `data` specifies the dataset to be used for model training, here metabolomics_data.
 - `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
@@ -488,7 +488,7 @@ data.frame(
 
 - [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
 
-- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient you in the landscape of ML methods.
+- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient the reader in the landscape of ML methods.
 
 - [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
 

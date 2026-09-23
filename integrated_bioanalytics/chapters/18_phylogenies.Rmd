@@ -34,17 +34,17 @@ tree
 plot(tree)
 ```
 
-Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
+Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
 ### alignment input {-}
 
 Arguments in this case are:
 
 * "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
-* "scaffold_in_path": path to the fasta file that contains the alignment from which you want to build a tree.
-* "ml": Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
-* "model_test": if you say TRUE to "ml", should buildTree test different maximum liklihood models and then use the "best" one? 
-* "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
+* "scaffold_in_path": path to the fasta file that contains the alignment from which the tree will be built.
+* "ml": Logical, TRUE to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
+* "model_test": if "ml" is TRUE, should buildTree test different maximum liklihood models and then use the "best" one? 
+* "bootstrap": TRUE or FALSE, whether bootstrap values should appear on the nodes.
 * "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
 * "root": NULL, or the name of an accession that should form the root of the tree.
 
@@ -93,7 +93,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+Another convenient fucntion is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
 ```{r}
 test_tree_big_fortified <- fortify(test_tree_big)

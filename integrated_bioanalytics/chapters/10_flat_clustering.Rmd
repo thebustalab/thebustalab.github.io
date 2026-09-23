@@ -22,14 +22,14 @@ alaska_lake_data %>%
   select(-element_type) %>%
   pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
 
-alaska_lake_data_pca <- runMatrixAnalyses(
+alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("pca"),
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
     analysis = c("kmeans"),
     parameters = c(5),
@@ -63,14 +63,14 @@ ggplot() +
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 ```{r, message = FALSE}
-alaska_lake_data_pca <- runMatrixAnalyses(
+alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("pca"),
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 ) 
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
     analysis = c("dbscan"),
     parameters = c(4, 0.45),
@@ -80,7 +80,7 @@ alaska_lake_data_pca_clusters <- runMatrixAnalyses(
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
 ```
-We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
+We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs it needs data without NAs:
 
 ```{r, fig.width = 6, fig.height = 6}
 alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
@@ -110,7 +110,7 @@ alaska_lake_data_pca <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalyses(
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   data = alaska_lake_data_pca,
   analysis = c("dbscan"),
   parameters = c(4, 0.45),
