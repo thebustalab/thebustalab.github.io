@@ -151,17 +151,16 @@ try({
   }
 }, silent = TRUE)
 
-# BUILD STAMP (temporary, 2026-09-22). Printed to stderr so it lands in the deploy log. Its only job
-# is to answer "is the render actually using THIS file, on THIS machine?" -- a question that cost
-# several rounds of fixing things that were never being executed. Remove once ch7 compiles.
-cat(
-  "[_common.R] stamp 2026-09-22-B | file: ", normalizePath("_common.R", mustWork = FALSE), "\n",
-  "[_common.R] local library: ", normalizePath(.pc_local, mustWork = FALSE),
-  " exists=", file.exists(.pc_local), "\n",
-  "[_common.R] source() redirect installed: ",
-  isTRUE(attr(get0("source", envir = globalenv()), "pc_redirect")), "\n",
-  "[_common.R] runMatrixAnalysis has long-dist branch: ",
+# BUILD STAMP — one line, kept deliberately (2026-09-22). Written to stderr so it lands in the deploy
+# log. On 2026-09-22 several fixes were made to files whose presence in the render was never verified,
+# and the render gave no way to tell. One line at the top of every compile removes that whole class of
+# wasted round trip: which library loaded, whether the URL redirect is armed, and whether the function
+# ch7 depends on is the current one. If it ever reads redirect=FALSE or long_dist=FALSE, stop and fix
+# that before touching a chapter.
+cat(sprintf(
+  "[_common.R] library=%s | redirect=%s | long_dist=%s\n",
+  normalizePath(.pc_local, mustWork = FALSE),
+  isTRUE(attr(get0("source", envir = globalenv()), "pc_redirect")),
   any(grepl('"sample_1", "sample_2", "distance"',
-            deparse(body(runMatrixAnalysis)), fixed = TRUE)), "\n",
-  sep = "", file = stderr()
-)
+            deparse(body(runMatrixAnalysis)), fixed = TRUE))
+), file = stderr())

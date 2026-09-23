@@ -172,11 +172,11 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span><span class="co">##    term                       title                         </span></span>
 <span><span class="co">##    &lt;chr&gt;                      &lt;chr&gt;                         </span></span>
 <span><span class="co">##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…</span></span>
-<span><span class="co">##  2 beta-amyrin synthase       Adjusting Catalytic Activity …</span></span>
-<span><span class="co">##  3 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
+<span><span class="co">##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
+<span><span class="co">##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…</span></span>
 <span><span class="co">##  4 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
-<span><span class="co">##  5 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
-<span><span class="co">##  6 friedelin synthase         Genome Mining and Gene Expres…</span></span>
+<span><span class="co">##  5 friedelin synthase         Genome Mining and Gene Expres…</span></span>
+<span><span class="co">##  6 friedelin synthase         Functional characterization o…</span></span>
 <span><span class="co">##  7 sorghum bicolor            Current status and prospects …</span></span>
 <span><span class="co">##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
 <span><span class="co">##  9 sorghum bicolor            Potential food applications o…</span></span>
@@ -257,8 +257,8 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span id="cb157-12"><a href="language-models.html#cb157-12" tabindex="-1"></a><span class="do">##   entry_number term  date       journal title doi   abstract</span></span>
 <span id="cb157-13"><a href="language-models.html#cb157-13" tabindex="-1"></a><span class="do">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
 <span id="cb157-14"><a href="language-models.html#cb157-14" tabindex="-1"></a><span class="do">## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
-<span id="cb157-15"><a href="language-models.html#cb157-15" tabindex="-1"></a><span class="do">## 2            2 beta… 2025-04-23 Journa… Adju… 10.1… β-Amyri…</span></span>
-<span id="cb157-16"><a href="language-models.html#cb157-16" tabindex="-1"></a><span class="do">## 3            3 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span id="cb157-15"><a href="language-models.html#cb157-15" tabindex="-1"></a><span class="do">## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span id="cb157-16"><a href="language-models.html#cb157-16" tabindex="-1"></a><span class="do">## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…</span></span>
 <span id="cb157-17"><a href="language-models.html#cb157-17" tabindex="-1"></a><span class="do">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
 <span id="cb157-18"><a href="language-models.html#cb157-18" tabindex="-1"></a><span class="do">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:</p>
@@ -367,16 +367,16 @@ PUBMED_TOKEN=paste_your_own_pubmed_key_here</code></pre>
 <span><span class="co">##    title                                          generation</span></span>
 <span><span class="co">##    &lt;chr&gt;                                          &lt;chr&gt;     </span></span>
 <span><span class="co">##  1 Ginsenosides in Panax genus and their biosynt… "# Tags\n…</span></span>
-<span><span class="co">##  2 Adjusting Catalytic Activity of β-Amyrin Synt… "# Classi…</span></span>
-<span><span class="co">##  3 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…</span></span>
+<span><span class="co">##  2 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…</span></span>
+<span><span class="co">##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Tags\n…</span></span>
 <span><span class="co">##  4 Friedelin in Maytenus ilicifolia Is Produced … "Triterpe…</span></span>
-<span><span class="co">##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…</span></span>
-<span><span class="co">##  6 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…</span></span>
-<span><span class="co">##  7 Current status and prospects of herbicide-res… "Herbicid…</span></span>
-<span><span class="co">##  8 Sorghum (Sorghum bicolor).                     "# Classi…</span></span>
-<span><span class="co">##  9 Potential food applications of sorghum (Sorgh… "# Tags\n…</span></span>
-<span><span class="co">## 10 Cuticular wax in wheat: biosynthesis, genetic… "Wheat cu…</span></span>
-<span><span class="co">## 11 Regulatory mechanisms underlying cuticular wa… "# Classi…</span></span>
+<span><span class="co">##  5 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…</span></span>
+<span><span class="co">##  6 Functional characterization of an oxidosquale… "# Classi…</span></span>
+<span><span class="co">##  7 Current status and prospects of herbicide-res… "crop wee…</span></span>
+<span><span class="co">##  8 Sorghum (Sorghum bicolor).                     "# Tags\n…</span></span>
+<span><span class="co">##  9 Potential food applications of sorghum (Sorgh… "# Classi…</span></span>
+<span><span class="co">## 10 Cuticular wax in wheat: biosynthesis, genetic… "Plant cu…</span></span>
+<span><span class="co">## 11 Regulatory mechanisms underlying cuticular wa… "Plant cu…</span></span>
 <span><span class="co">## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant cu…</span></span></code></pre></div>
 </div>
 <div id="section-16" class="section level2 unnumbered">
@@ -465,7 +465,7 @@ search_results_ex_embed_pca %>%
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-23.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

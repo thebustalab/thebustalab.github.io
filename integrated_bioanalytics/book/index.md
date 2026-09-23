@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-22"
+date: "2026-09-23"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -41,7 +41,7 @@ output:
 # WELCOME {-}
 
 <!-- start preface-->
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover2.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Integrated Bioanalytics documents methods for chemical, phylogenetic, genomic, and language model-based analyses in R, as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. The table of contents on the left shows what this book covers at this moment. We are often adding new content since the methods we rely on change. Even though the techniques change, the questions we bring to our data tend not to: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?". These and related questions define the cores of each chapter.
 
@@ -2059,12 +2059,12 @@ net <- buildNetwork(
 ## buildNetwork: every repeated node pair (A->B and B->A) had matching edge attributes, so the network is treated as undirected and 380 edges were collapsed to 190. Set directed = TRUE to keep both directions.
 head(net$nodes)
 ##                              x         y
-## Devil_Mountain_Lake 0.09311715 0.6401000
-## Imuruk_Lake         0.49176389 0.7587307
-## Kuzitrin_Lake       0.18068294 0.4368628
-## Lava_Lake           0.69544184 0.6986885
-## North_Killeak_Lake  1.00000000 0.5764555
-## White_Fish_Lake     0.60125990 1.0000000
+## Devil_Mountain_Lake 0.27680568 0.6307944
+## Imuruk_Lake         0.27948381 0.0000000
+## Kuzitrin_Lake       0.05977573 0.5360999
+## Lava_Lake           0.00000000 0.3553212
+## North_Killeak_Lake  1.00000000 0.4350483
+## White_Fish_Lake     0.47482513 1.0000000
 ##                               node_name park
 ## Devil_Mountain_Lake Devil_Mountain_Lake BELA
 ## Imuruk_Lake                 Imuruk_Lake BELA
@@ -2073,20 +2073,20 @@ head(net$nodes)
 ## North_Killeak_Lake   North_Killeak_Lake BELA
 ## White_Fish_Lake         White_Fish_Lake BELA
 head(net$edges)
-##            x      y          start_node      xend      yend
-## 1 0.09311715 0.6401 Devil_Mountain_Lake 0.4917639 0.7587307
-## 2 0.09311715 0.6401 Devil_Mountain_Lake 0.1806829 0.4368628
-## 3 0.09311715 0.6401 Devil_Mountain_Lake 0.6954418 0.6986885
-## 4 0.09311715 0.6401 Devil_Mountain_Lake 1.0000000 0.5764555
-## 5 0.09311715 0.6401 Devil_Mountain_Lake 0.6012599 1.0000000
-## 6 0.09311715 0.6401 Devil_Mountain_Lake 0.2417816 0.0000000
-##             end_node similarity
-## 1        Imuruk_Lake  21.403954
-## 2      Kuzitrin_Lake  37.549555
-## 3          Lava_Lake  22.717833
-## 4 North_Killeak_Lake   9.342952
-## 5    White_Fish_Lake  13.719374
-## 6       Iniakuk_Lake  19.539621
+##           x         y          start_node       xend
+## 1 0.2768057 0.6307944 Devil_Mountain_Lake 0.27948381
+## 2 0.2768057 0.6307944 Devil_Mountain_Lake 0.05977573
+## 3 0.2768057 0.6307944 Devil_Mountain_Lake 0.00000000
+## 4 0.2768057 0.6307944 Devil_Mountain_Lake 1.00000000
+## 5 0.2768057 0.6307944 Devil_Mountain_Lake 0.47482513
+## 6 0.2768057 0.6307944 Devil_Mountain_Lake 0.72222396
+##        yend           end_node similarity
+## 1 0.0000000        Imuruk_Lake  21.403954
+## 2 0.5360999      Kuzitrin_Lake  37.549555
+## 3 0.3553212          Lava_Lake  22.717833
+## 4 0.4350483 North_Killeak_Lake   9.342952
+## 5 1.0000000    White_Fish_Lake  13.719374
+## 6 0.5350723       Iniakuk_Lake  19.539621
 ```
 
 These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so they can be colored by something already known about the samples.
@@ -4131,7 +4131,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 4.28e- 6
+##  4 Cl      aquifer_3    values       0.750 4.63e- 6
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -5168,11 +5168,11 @@ select(search_results, term, title)
 ##    term                       title                         
 ##    <chr>                      <chr>                         
 ##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
-##  2 beta-amyrin synthase       Adjusting Catalytic Activity …
-##  3 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Genome Mining and Gene Expres…
+##  5 friedelin synthase         Genome Mining and Gene Expres…
+##  6 friedelin synthase         Functional characterization o…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
@@ -5237,8 +5237,8 @@ search_results_embedded[1:3,1:10]
 ##   entry_number term  date       journal title doi   abstract
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
 ## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
-## 2            2 beta… 2025-04-23 Journa… Adju… 10.1… β-Amyri…
-## 3            3 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -5360,16 +5360,16 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… "# Tags\n…
-##  2 Adjusting Catalytic Activity of β-Amyrin Synt… "# Classi…
-##  3 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…
+##  2 β-Amyrin synthase from Conyza blinii expresse… "# Tags\n…
+##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Tags\n…
 ##  4 Friedelin in Maytenus ilicifolia Is Produced … "Triterpe…
-##  5 Friedelin Synthase from Maytenus ilicifolia: … "# Classi…
-##  6 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
-##  7 Current status and prospects of herbicide-res… "Herbicid…
-##  8 Sorghum (Sorghum bicolor).                     "# Classi…
-##  9 Potential food applications of sorghum (Sorgh… "# Tags\n…
-## 10 Cuticular wax in wheat: biosynthesis, genetic… "Wheat cu…
-## 11 Regulatory mechanisms underlying cuticular wa… "# Classi…
+##  5 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
+##  6 Functional characterization of an oxidosquale… "# Classi…
+##  7 Current status and prospects of herbicide-res… "crop wee…
+##  8 Sorghum (Sorghum bicolor).                     "# Tags\n…
+##  9 Potential food applications of sorghum (Sorgh… "# Classi…
+## 10 Cuticular wax in wheat: biosynthesis, genetic… "Plant cu…
+## 11 Regulatory mechanisms underlying cuticular wa… "Plant cu…
 ## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant cu…
 ```
 

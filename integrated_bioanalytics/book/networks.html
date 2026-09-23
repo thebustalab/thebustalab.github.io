@@ -411,12 +411,12 @@ Self-check: why does scaling change which lakes come out looking similar?
 <span><span class="co">## buildNetwork: every repeated node pair (A-&gt;B and B-&gt;A) had matching edge attributes, so the network is treated as undirected and 380 edges were collapsed to 190. Set directed = TRUE to keep both directions.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">net</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
 <span><span class="co">##                              x         y</span></span>
-<span><span class="co">## Devil_Mountain_Lake 0.09311715 0.6401000</span></span>
-<span><span class="co">## Imuruk_Lake         0.49176389 0.7587307</span></span>
-<span><span class="co">## Kuzitrin_Lake       0.18068294 0.4368628</span></span>
-<span><span class="co">## Lava_Lake           0.69544184 0.6986885</span></span>
-<span><span class="co">## North_Killeak_Lake  1.00000000 0.5764555</span></span>
-<span><span class="co">## White_Fish_Lake     0.60125990 1.0000000</span></span>
+<span><span class="co">## Devil_Mountain_Lake 0.27680568 0.6307944</span></span>
+<span><span class="co">## Imuruk_Lake         0.27948381 0.0000000</span></span>
+<span><span class="co">## Kuzitrin_Lake       0.05977573 0.5360999</span></span>
+<span><span class="co">## Lava_Lake           0.00000000 0.3553212</span></span>
+<span><span class="co">## North_Killeak_Lake  1.00000000 0.4350483</span></span>
+<span><span class="co">## White_Fish_Lake     0.47482513 1.0000000</span></span>
 <span><span class="co">##                               node_name park</span></span>
 <span><span class="co">## Devil_Mountain_Lake Devil_Mountain_Lake BELA</span></span>
 <span><span class="co">## Imuruk_Lake                 Imuruk_Lake BELA</span></span>
@@ -425,20 +425,20 @@ Self-check: why does scaling change which lakes come out looking similar?
 <span><span class="co">## North_Killeak_Lake   North_Killeak_Lake BELA</span></span>
 <span><span class="co">## White_Fish_Lake         White_Fish_Lake BELA</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">net</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span>
-<span><span class="co">##            x      y          start_node      xend      yend</span></span>
-<span><span class="co">## 1 0.09311715 0.6401 Devil_Mountain_Lake 0.4917639 0.7587307</span></span>
-<span><span class="co">## 2 0.09311715 0.6401 Devil_Mountain_Lake 0.1806829 0.4368628</span></span>
-<span><span class="co">## 3 0.09311715 0.6401 Devil_Mountain_Lake 0.6954418 0.6986885</span></span>
-<span><span class="co">## 4 0.09311715 0.6401 Devil_Mountain_Lake 1.0000000 0.5764555</span></span>
-<span><span class="co">## 5 0.09311715 0.6401 Devil_Mountain_Lake 0.6012599 1.0000000</span></span>
-<span><span class="co">## 6 0.09311715 0.6401 Devil_Mountain_Lake 0.2417816 0.0000000</span></span>
-<span><span class="co">##             end_node similarity</span></span>
-<span><span class="co">## 1        Imuruk_Lake  21.403954</span></span>
-<span><span class="co">## 2      Kuzitrin_Lake  37.549555</span></span>
-<span><span class="co">## 3          Lava_Lake  22.717833</span></span>
-<span><span class="co">## 4 North_Killeak_Lake   9.342952</span></span>
-<span><span class="co">## 5    White_Fish_Lake  13.719374</span></span>
-<span><span class="co">## 6       Iniakuk_Lake  19.539621</span></span></code></pre></div>
+<span><span class="co">##           x         y          start_node       xend</span></span>
+<span><span class="co">## 1 0.2768057 0.6307944 Devil_Mountain_Lake 0.27948381</span></span>
+<span><span class="co">## 2 0.2768057 0.6307944 Devil_Mountain_Lake 0.05977573</span></span>
+<span><span class="co">## 3 0.2768057 0.6307944 Devil_Mountain_Lake 0.00000000</span></span>
+<span><span class="co">## 4 0.2768057 0.6307944 Devil_Mountain_Lake 1.00000000</span></span>
+<span><span class="co">## 5 0.2768057 0.6307944 Devil_Mountain_Lake 0.47482513</span></span>
+<span><span class="co">## 6 0.2768057 0.6307944 Devil_Mountain_Lake 0.72222396</span></span>
+<span><span class="co">##        yend           end_node similarity</span></span>
+<span><span class="co">## 1 0.0000000        Imuruk_Lake  21.403954</span></span>
+<span><span class="co">## 2 0.5360999      Kuzitrin_Lake  37.549555</span></span>
+<span><span class="co">## 3 0.3553212          Lava_Lake  22.717833</span></span>
+<span><span class="co">## 4 0.4350483 North_Killeak_Lake   9.342952</span></span>
+<span><span class="co">## 5 1.0000000    White_Fish_Lake  13.719374</span></span>
+<span><span class="co">## 6 0.5350723       Iniakuk_Lake  19.539621</span></span></code></pre></div>
 <p>These outputs are easy to plot with! <code>buildNetwork()</code> returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment()</a></code>, nodes with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>. For <code>buildNetwork()</code>, the <code>edgelist</code> should have node names in columns 1 and 2 (<code>lake_sample_1</code>, <code>lake_sample_2</code> here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. <code>node_attributes</code> is joined onto the nodes so they can be colored by something already known about the samples.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -949,7 +949,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-23.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
