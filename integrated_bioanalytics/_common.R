@@ -31,12 +31,13 @@ if (file.exists("_local_harness.R")) try(source("_local_harness.R"), silent = TR
 # published library and ggplot() could not fortify it. Sourcing the tree removes the whole class.
 .pc_local <- file.path("..", "phylochemistry", "phylochemistry.R")
 
-# NOT folded into cache.extra on purpose. Keying the chunk cache on this file's checksum would be
-# more correct, but it makes every library edit a COLD rebuild of the whole book, which re-runs the
-# deliberately-live API chunks in ch13/ch14 and can fail a deploy on a spent class budget. If a
-# library change needs to show up in already-cached chapters, force it by hand:
-#   rm -rf _bookdown_files      (then Rscript build.R)
-# The Linux canary harness does set cache.extra, because there a full cold render is the point.
+# SUPERSEDED 2026-09-23 — the old note here said the cache was deliberately NOT keyed on this file,
+# because a whole-file checksum makes every library edit a COLD rebuild (re-running the live ch13/ch14
+# API chunks, which can fail a deploy on a spent class budget). That trade-off no longer has to be
+# made: see "PER-CHUNK CACHE KEYING" further down, which keys each chunk on the fingerprints of just
+# the library functions THAT chunk calls. A library edit now invalidates the affected chunks and
+# leaves the rest cached. `rm -rf _bookdown_files` (or `../deploy.sh --cold-book`) remains the
+# belt-and-braces option; it is no longer the routine one.
 
 # ANY source() OF A phylochemistry URL IS REDIRECTED TO THE LOCAL WORKING COPY (2026-09-22).
 #
@@ -150,6 +151,82 @@ try({
     }
   }
 }, silent = TRUE)
+
+# ---------------------------------------------------------------------------------------------
+# PER-CHUNK CACHE KEYING ON THE LIBRARY FUNCTIONS A CHUNK ACTUALLY CALLS (2026-09-23)
+#
+# THE PROBLEM. `cache = TRUE` is global (index.Rmd setup). knitr keys a chunk on its own CODE only,
+# so a library change that alters what a function RETURNS leaves every chunk a cache hit and the new
+# behaviour never runs. The blunt fix -- key every chunk on the library's checksum -- makes any
+# library edit a COLD rebuild of the whole book, which re-runs the deliberately-live ch13/ch14 API
+# chunks. Most of the compile time is in chunks that never touch the library, so that is a bad trade.
+#
+# WHAT THIS DOES. Fingerprint every function the library defines, then give each chunk a
+# `cache.extra` built from just the fingerprints of the functions THAT chunk calls. Change
+# `runMatrixAnalysis()` and only the chunks calling it re-run; everything else stays cached.
+#
+# INDIRECT CALLS ARE COVERED. A fingerprint is the transitive closure: f's own body plus the bodies
+# of every library function f calls, and everything they call. So a chunk calling `buildNetwork()`
+# re-runs when a helper three levels down changes, which a naive body-hash would miss and which
+# would have been a silent-wrong-results bug rather than a loud one.
+#
+# Function names are taken from the chunk's PARSED code (`all.names`), not a regex, so a mention in
+# a string or a comment does not count and a call does.
+#
+# LIMITS, stated plainly: a change to a DATASET, or to library code that runs at load time rather
+# than inside a function, is invisible to this. `../deploy.sh --cold-book` remains the belt-and-
+# braces answer and should still be run before a semester starts.
+local({
+  fn_names <- Filter(function(n) {
+    obj <- get0(n, envir = globalenv(), inherits = FALSE)
+    is.function(obj) && !is.primitive(obj)
+  }, ls(globalenv(), all.names = FALSE))
+  if (length(fn_names) == 0) return(invisible(NULL))
+
+  hash_of <- if (requireNamespace("digest", quietly = TRUE)) {
+    function(x) digest::digest(x)
+  } else {
+    function(x) x   # knitr digests cache.extra itself; raw text is correct, just bulkier
+  }
+
+  own <- vapply(fn_names, function(n) {
+    f <- get(n, envir = globalenv())
+    hash_of(paste(c(deparse(formals(f)), deparse(body(f))), collapse = "\n"))
+  }, character(1))
+
+  ## direct library-callees of each function, from the language object (no re-parsing)
+  deps <- lapply(fn_names, function(n) {
+    b <- body(get(n, envir = globalenv()))
+    if (is.null(b)) character(0) else intersect(all.names(b), fn_names)
+  })
+  names(deps) <- fn_names
+
+  ## transitive closure, iterated to a fixed point (cheap: a few passes over a few hundred names)
+  repeat {
+    grown <- lapply(deps, function(d) unique(c(d, unlist(deps[d], use.names = FALSE))))
+    if (identical(lengths(grown), lengths(deps))) { deps <- grown; break }
+    deps <- grown
+  }
+
+  fingerprint <- vapply(fn_names, function(n) {
+    hash_of(paste(own[sort(unique(c(n, deps[[n]])))], collapse = "|"))
+  }, character(1))
+
+  assign(".pc_fingerprint", fingerprint, envir = globalenv())
+
+  knitr::opts_hooks$set(cache = function(options) {
+    if (is.null(options$cache) || identical(options$cache, FALSE) ||
+        identical(options$cache, 0)) return(options)
+    ids <- tryCatch(all.names(parse(text = options$code), unique = TRUE),
+                    error = function(e) character(0))
+    used <- intersect(ids, names(.pc_fingerprint))
+    if (length(used)) {
+      options$cache.extra <- c(options$cache.extra,
+                               unname(.pc_fingerprint[sort(used)]))
+    }
+    options
+  })
+})
 
 # BUILD STAMP — one line, kept deliberately (2026-09-22). Written to stderr so it lands in the deploy
 # log. On 2026-09-22 several fixes were made to files whose presence in the render was never verified,

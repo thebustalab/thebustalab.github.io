@@ -156,7 +156,7 @@
     // This page is a THIRD consumer of that shared module, in a different repo, so the escape rooms'
     // validate_assets.py VBUMP check cannot see it — bump here by hand whenever that token moves,
     // or a console edit silently serves stale to the sandbox while the rooms pick it up.
-    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=113";
+    import { WebRConsole } from "/escape_rooms/shared/webr-console.js?v=114";
 
     // Curated demo datasets (served from the lab site's sample_data). Add/trim freely.
     const DATASETS = [
@@ -474,7 +474,7 @@ buildCaption <- function() {
      * `hl-on` into the stylesheet, each re-introduce one of those two failures.
      */
     let highlightHTML = null;
-    try { ({ highlightHTML } = await import("/escape_rooms/shared/r_highlight.js?v=113")); }
+    try { ({ highlightHTML } = await import("/escape_rooms/shared/r_highlight.js?v=114")); }
     catch (e) { highlightHTML = null; }
 
     // NOTE the path: the tokenizer moved into the escape_rooms repo on 2026-09-17, because r_diagnose.js

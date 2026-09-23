@@ -14602,18 +14602,28 @@
                                         df <- filter(df, distance != 0)
                                         clustering <- df
 
+                                        ## WITH A SINGLE columns_w_sample_ID_info, THAT COLUMN NO LONGER EXISTS.
+                                        ## The pre-processing above (~line 14316) RENAMES a lone ID column to
+                                        ## "sample_unique_ID" rather than adding one, so asking for
+                                        ## c("lake", "sample_unique_ID") matched NA and the subset blew up with an
+                                        ## error naming neither the argument nor the reason. Two or more ID columns
+                                        ## survive as themselves and a new sample_unique_ID is pasted together, which
+                                        ## is why the 2-column call worked and the 1-column call did not (found in
+                                        ## WebR, 2026-09-23). Take only the ID columns that actually survived.
+                                        dist_id_cols <- unique(c(
+                                            intersect(columns_w_sample_ID_info, colnames(data_wide)),
+                                            "sample_unique_ID"
+                                        ))
+                                        dist_id_frame <- data_wide[, match(dist_id_cols, colnames(data_wide)), drop = FALSE]
+
                                         clustering <- right_join(
-                                          data_wide[,match(
-                                            c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                            colnames(data_wide))
-                                          ], clustering, by = c("sample_unique_ID" = "sample_1"), suffix = c("sample_1", "sample_2")
+                                          dist_id_frame, clustering,
+                                          by = c("sample_unique_ID" = "sample_1"), suffix = c("_sample_1", "_sample_2")
                                         )
 
                                         clustering <- right_join(
-                                          data_wide[,match(
-                                            c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                            colnames(data_wide))
-                                          ], clustering, by = c("sample_unique_ID" = "sample_2"), suffix = c("_sample_1", "_sample_2")
+                                          dist_id_frame, clustering,
+                                          by = c("sample_unique_ID" = "sample_2"), suffix = c("_sample_1", "_sample_2")
                                         )
 
                                         colnames(clustering)[colnames(clustering) == "sample_unique_ID"] <- "sample_unique_ID_sample_1"

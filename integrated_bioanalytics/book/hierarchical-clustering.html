@@ -14,14 +14,14 @@
     })();
   </script><title>hierarchical clustering | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="“Which of my samples are most closely related?”   clustering So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how...">
+<meta name="description" content="Figure 2.10: Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="hierarchical clustering | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="“Which of my samples are most closely related?”   clustering So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how...">
+<meta property="og:description" content="Figure 2.10: Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hierarchical clustering | Integrated Bioanalytics">
-<meta name="twitter:description" content="“Which of my samples are most closely related?”   clustering So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how...">
+<meta name="twitter:description" content="Figure 2.10: Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -105,9 +105,17 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="hierarchical-clustering" class="section level1 unnumbered">
 <h1>hierarchical clustering<a class="anchor" aria-label="anchor" href="#hierarchical-clustering"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-285"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit together in stands rather than being scattered at random. The image is decorative, but it stands in for the question this chapter answers: given a set of samples described by many measurements, which of them belong together?" width="100%"><p class="caption">
+Figure 2.10: Chapter opening illustration. A watercolor of a mixed forest stand along a lake shore, in which individual trees differ in height, form and color, and trees of similar form sit together in stands rather than being scattered at random. The image is decorative, but it stands in for the question this chapter answers: given a set of samples described by many measurements, which of them belong together?
+</p>
+</div>
 <p>“Which of my samples are most closely related?”</p>
-<div id="section-8" class="section level2 unnumbered">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
+</script><div id="section-8" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="clustering" class="section level2 unnumbered">
@@ -163,7 +171,12 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-287-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-287"></span>
+<img src="index_files/figure-html/unnamed-chunk-287-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
+Figure 2.11: A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+</p>
+</div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -176,7 +189,12 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.8</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-288-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-288"></span>
+<img src="index_files/figure-html/unnamed-chunk-288-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
+Figure 2.12: The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+</p>
+</div>
 <p>Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:</p>
 <div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -201,7 +219,39 @@
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0.85</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-289-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-289"></span>
+<img src="index_files/figure-html/unnamed-chunk-289-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
+Figure 2.13: The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+</p>
+</div>
+<div id="concept-check-23" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-23"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the tree_method that builds the tree by step-by-step merging. Press Run. This one takes a few seconds, and the object it makes is used again later in the chapter.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_tree &lt;- runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "hclust",
+  scale_variance = TRUE,
+  tree_method = "____",
+  agglomeration_method = "ward.D2",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+)
+nrow(AK_tree)
+sum(AK_tree$isTip)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Neighbor joining is a tree-building rule borrowed from phylogenetics. It does not merge groups one pair at a time, so there is no such thing as a distance-to-a-group for it to compute, and it ignores agglomeration_method completely. The colleague compared two runs that used the same rule, so of course they matched.">
+<p class="scq">
+Self-check: a colleague repeats this run with tree_method = “neighbor_joining”, once with ward.D2 and once with single, and reports that the agglomeration method made no difference at all. What went wrong?
+</p>
+<p><label><input type="radio"> Nothing; neighbor joining and linkage clustering are two names for the same procedure</label>
+<label><input type="radio"> Neighbor joining builds the tree by a different rule and ignores agglomeration_method entirely, so neither run ever used single linkage</label>
+<label><input type="radio"> The agglomeration method only has an effect once the variables have been scaled</label></p>
+</div>
+<hr>
+</div>
 </div>
 <div id="how-the-tree-is-built" class="section level2 unnumbered">
 <h2>how the tree is built<a class="anchor" aria-label="anchor" href="#how-the-tree-is-built"><i class="fas fa-link"></i></a>
@@ -214,6 +264,32 @@
 </ol>
 <p>Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.</p>
 <p>Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the <strong>agglomeration method</strong>, or <strong>linkage</strong>, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)</p>
+<div id="concept-check-24" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-24"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the column to sort by, so that the closest pair of lakes comes to the top. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "dist",
+  output_format = "long",
+  scale_variance = TRUE,
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+) %&gt;%
+  arrange(____) %&gt;%
+  head(2)</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="At step 1 every group holds exactly one sample, so the distance between two groups is just the distance between two samples, read straight out of the table. The linkage rule only starts to matter at the second merge, once at least one group holds more than one member. That is why the first join is the one thing all four methods have in common.">
+<p class="scq">
+Self-check: the pair at the top of that table is the first merge the algorithm makes, and it is the same first merge under single, complete, average and Ward linkage. Why do all four agree here?
+</p>
+<p><label><input type="radio"> Because Ward’s method runs first and the other three copy its opening move</label>
+<label><input type="radio"> Because the two lakes sit in the same national park</label>
+<label><input type="radio"> Because every group still holds a single sample, so distance-to-a-group is just distance-between-samples and the linkage rule has nothing to choose between yet</label></p>
+</div>
+<hr>
+</div>
 <div id="single-versus-complete-linkage" class="section level3 unnumbered">
 <h3>single versus complete linkage<a class="anchor" aria-label="anchor" href="#single-versus-complete-linkage"><i class="fas fa-link"></i></a>
 </h3>
@@ -257,7 +333,6 @@
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">category</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"single linkage"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">complete_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">solvents_complete</span><span class="op">)</span> <span class="op">+</span></span>
@@ -265,14 +340,46 @@
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">category</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"complete linkage"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">single_plot</span>, <span class="va">complete_plot</span>, nrow <span class="op">=</span> <span class="fl">1</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">single_plot</span>, <span class="va">complete_plot</span>, nrow <span class="op">=</span> <span class="fl">1</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.3</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-291"></span>
+<img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%"><p class="caption">
+Figure 2.14: Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties.
+</p>
+</div>
 <p>The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.</p>
 <p>Why the difference? Solvent properties don’t fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called <strong>chaining</strong>, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until <em>all</em> of their members are close, so it cuts the same continuum into compact chunks.</p>
 <p>Notice also the colors, which show the dataset’s <code>category</code> column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.</p>
+<div id="concept-check-25" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-25"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the function that returns the smallest value, so that each solvent is paired with the distance to its nearest neighbor. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+  data = solvents,
+  analysis = "dist",
+  output_format = "long",
+  scale_variance = TRUE,
+  columns_w_values_for_single_analyte = solvent_properties,
+  columns_w_sample_ID_info = c("solvent", "category")
+) %&gt;%
+  group_by(solvent_sample_1) %&gt;%
+  summarize(nearest_neighbor = ____(distance)) %&gt;%
+  arrange(desc(nearest_neighbor)) %&gt;%
+  head(4)</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="Single linkage merges two groups as soon as any one member of the first is close to any one member of the second. Every solvent except those three has some near neighbor, so the merges run along a chain of near neighbors and sweep almost the whole set into one group. Carbon disulfide, acetic acid and water are stranded precisely because nothing is close to them, so no chain reaches them until the end.">
+<p class="scq">
+Self-check: carbon disulfide, acetic acid and water top that table, and under single linkage they are also the last three solvents to join. What does single linkage do with the other twenty-nine?
+</p>
+<p><label><input type="radio"> Chains them into one large group, because each of them has some close neighbor and single linkage merges on the closest pair of members</label>
+<label><input type="radio"> Splits them into four compact groups, one for each solvent category in the dataset</label>
+<label><input type="radio"> Leaves them unassigned until a cut height is chosen</label></p>
+</div>
+<hr>
+</div>
 </div>
 <div id="when-does-the-choice-matter" class="section level3 unnumbered">
 <h3>when does the choice matter?<a class="anchor" aria-label="anchor" href="#when-does-the-choice-matter"><i class="fas fa-link"></i></a>
@@ -290,10 +397,36 @@
 </ul>
 <p>The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the “groups” in any one tree should be treated with caution.</p>
 <p>Between the two extremes sit two widely used methods. <strong>Average linkage</strong> (<code>"average"</code>, also called UPGMA) uses the average of all the distances between the members of the two groups. <strong>Ward’s method</strong> (<code>"ward.D2"</code>), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.</p>
+<div id="concept-check-26" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-26"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the column to tally, so the pairwise distances are counted one band at a time. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+  data = solvents,
+  analysis = "dist",
+  output_format = "long",
+  scale_variance = TRUE,
+  columns_w_values_for_single_analyte = solvent_properties,
+  columns_w_sample_ID_info = c("solvent", "category")
+) %&gt;%
+  mutate(band = cut(distance, breaks = seq(0, 8, by = 1))) %&gt;%
+  count(____)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Well-separated groups leave a signature in the distances themselves: many small within-group distances, many large between-group ones, and an empty stretch in the middle. The solvents show no such gap, which is another way of saying they form a continuum. There is no natural place to cut, so each linkage rule cuts somewhere different, which is exactly what the two trees showed.">
+<p class="scq">
+Self-check: every band in that tally is occupied, with no empty stretch between a set of small distances and a set of large ones. What does that say about how much the choice of linkage matters for the solvents?
+</p>
+<p><label><input type="radio"> Very little; a smooth spread of distances means all the methods will agree</label>
+<label><input type="radio"> A great deal; there is no natural gap for the methods to agree on, so each linkage rule cuts the continuum in a different place</label>
+<label><input type="radio"> Nothing; the spread of pairwise distances is unrelated to the choice of linkage</label></p>
+</div>
+<hr>
+</div>
 </div>
 </div>
 <div id="annotating-trees" class="section level2 unnumbered">
-<h2>Annotating trees<a class="anchor" aria-label="anchor" href="#annotating-trees"><i class="fas fa-link"></i></a>
+<h2>annotating trees<a class="anchor" aria-label="anchor" href="#annotating-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>Overlaying sample traits on a ggtree-based plot is straightforward when we combine <code>ggtree</code> with <code>ggplot2</code>. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.</p>
 <div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
@@ -316,7 +449,12 @@
 <span><span class="co">## Scale for y is already present.</span></span>
 <span><span class="co">## Adding another scale for y, which will replace the existing scale.</span></span>
 <span><span class="va">tree_plot</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-293"></span>
+<img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%"><p class="caption">
+Figure 2.15: A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
+</p>
+</div>
 <p>Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the <code>y</code> coordinate supplied by <code>ggtree</code>, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.</p>
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">heat_plot</span> <span class="op">&lt;-</span> <span class="va">hclust_out</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -328,18 +466,57 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">heat_plot</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-294-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-294"></span>
+<img src="index_files/figure-html/unnamed-chunk-294-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure 2.16: Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+</p>
+</div>
 <p>With matching y scales, <code>plot_grid()</code> can align the tree and the heat map so the tiles line up with the corresponding samples. Using <code>align = "h"</code> snaps them together horizontally, and <code>axis = "tb"</code> keeps the panel heights consistent.</p>
 <div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">tree_plot</span>, <span class="va">heat_plot</span>, axis <span class="op">=</span> <span class="st">"tb"</span>, align <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">tree_plot</span>, <span class="va">heat_plot</span>, axis <span class="op">=</span> <span class="st">"tb"</span>, align <span class="op">=</span> <span class="st">"h"</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-295"></span>
+<img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure 2.17: The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+</p>
+</div>
 <p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
 <div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_blooms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, names_to <span class="op">=</span> <span class="st">"chemical"</span>, values_to <span class="op">=</span> <span class="st">"abundance"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">chemical</span>, y <span class="op">=</span> <span class="va">label</span>, fill <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-296-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-296"></span>
+<img src="index_files/figure-html/unnamed-chunk-296-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure 2.18: What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+</p>
+</div>
+<div id="concept-check-27" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-27"><i class="fas fa-link"></i></a>
+</h4>
+<p>Using AK_tree from the first concept check, fill in the blank with the coordinate that puts the tiles in the tree’s own tip order. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_tree %&gt;%
+  filter(isTip) %&gt;%
+  select(lake, y, Ca, Mg, Na, K) %&gt;%
+  pivot_longer(cols = c(Ca, Mg, Na, K), names_to = "element", values_to = "mg_per_L") %&gt;%
+  ggplot(aes(x = element, y = ____, fill = mg_per_L)) +
+  geom_tile()</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="The y column is the vertical position ggtree assigned to each tip when it laid the tree out, so reusing it is what guarantees row one of the heat map is tip one of the tree. A lake name is just a label; mapping it to y sorts the rows alphabetically, and alphabetical order has nothing to do with chemistry.">
+<p class="scq">
+Self-check: mapping y to lake instead of to y also draws a perfectly good-looking heat map. Why is that version wrong?
+</p>
+<p><label><input type="radio"> Because lake names are text, and geom_tile needs a numeric axis</label>
+<label><input type="radio"> Because the lake column is dropped when the clustering is run</label>
+<label><input type="radio"> Because it orders the rows alphabetically, which has nothing to do with the order ggtree placed the tips in, so the tiles no longer line up with the tree</label></p>
+</div>
+<hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+</div>
 </div>
 <div id="further-reading-4" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
@@ -366,7 +543,7 @@
 <li><a class="nav-link" href="#when-does-the-choice-matter">when does the choice matter?</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#annotating-trees">Annotating trees</a></li>
+<li><a class="nav-link" href="#annotating-trees">annotating trees</a></li>
 <li><a class="nav-link" href="#further-reading-4">further reading</a></li>
 </ul>
 

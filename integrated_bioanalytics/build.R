@@ -57,7 +57,21 @@ local({
 # a library edit but by a render in which ch3 re-sourced the PUBLISHED library over the local one, so
 # the cache entry was NEWER than the library and a library-only mtime check would have waved it
 # through. `_common.R` is where the loading logic lives, so touching it invalidates the cache too.
+#
+# SELF-DISABLING (2026-09-23). `_common.R` now keys each chunk's cache on the fingerprints of the
+# library functions THAT chunk calls (transitive closure), so a library edit invalidates exactly the
+# affected chunks and leaves the rest cached. Where that is live, this blunt mtime guard would only
+# force needless cold rebuilds -- so it stands down. If the hook ever fails to install,
+# `.pc_fingerprint` is absent and the blunt guard comes back automatically. Fail safe, not silent.
 local({
+  fp <- get0(".pc_fingerprint", envir = globalenv())
+  if (!is.null(fp) && length(fp) > 0) {
+    message("[build] per-chunk library fingerprints active (", length(fp),
+            " functions) — blunt stale-cache guard stood down")
+    return(invisible(NULL))
+  }
+  message("[build] WARNING: per-chunk library fingerprints NOT active — falling back to the ",
+          "mtime guard. Check _common.R.")
   lib <- c(file.path("..", "phylochemistry", "phylochemistry.R"), "_common.R")
   lib <- lib[file.exists(lib)]
   cache_files <- list.files("_bookdown_files", recursive = TRUE, full.names = TRUE,
