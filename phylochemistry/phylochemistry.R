@@ -14101,6 +14101,90 @@
             #' @export
             #' runMatrixAnalysis 
 
+            #' geom_cut
+            #'
+            #' Draw the cut on a dendrogram, in the right place, from the plot's own data.
+            #'
+            #' WHY THIS EXISTS (2026-09-23). A cut IS a vertical line across the tree, and saying so
+            #' with `geom_vline(xintercept = 5)` is wrong twice over: `ape::as.phylo()` HALVES an
+            #' hclust's merge heights, and `ggtree` then measures x from the ROOT, so the tips sit at
+            #' `max(height)/2` and a cut at height 5 actually belongs at `max(x) - 5/2`. Drawn the naive
+            #' way the line lands out past the tip labels. `geom_cut()` does that conversion, so the
+            #' student writes the same height they cut at and the picture agrees with the `cluster`
+            #' column.
+            #'
+            #' It reads only `x`, which ggtree always maps, so nothing extra has to be threaded into
+            #' the layer. Tips are the rightmost nodes, so everything left of `max(x)` is a join.
+            #'
+            #' @param height Cut height, the same value passed to `parameters = c(height = ...)`.
+            #' @param k Number of groups, the same value passed to `parameters = c(k)`. The line is
+            #'   drawn midway between the two joins that bracket that number of groups.
+            #' @examples
+            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(height = 5)
+            #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(k = 4)
+            #' @export
+            StatCut <- ggplot2::ggproto("StatCut", ggplot2::Stat,
+                required_aes = "x",
+                compute_panel = function(data, scales, height = NULL, k = NULL) {
+
+                    if (is.null(height) && is.null(k)) {
+                        stop("geom_cut() needs either the height the tree was cut at -- geom_cut(height = 5) -- or the number of groups -- geom_cut(k = 4).")
+                    }
+                    if (!is.null(height) && !is.null(k)) {
+                        stop("geom_cut() takes height OR k, not both.")
+                    }
+
+                    tip_x <- max(data$x, na.rm = TRUE)
+
+                    if (!is.null(height)) {
+                        ## The tips sit at max(height)/2, so a merge at `height` is that far back.
+                        return(data.frame(xintercept = tip_x - height / 2))
+                    }
+
+                    ## k groups means k-1 joins have been severed, so the line sits between the
+                    ## (k-1)th and kth join counting in from the root. Tips share max(x); anything
+                    ## to the left of that is a join.
+                    joins <- sort(data$x[data$x < tip_x])
+                    k <- as.integer(k)
+                    if (is.na(k) || k < 1) stop("geom_cut(k = ) needs a positive number of groups.")
+                    if (k == 1)               return(data.frame(xintercept = min(joins) - 0.01))
+                    if (k > length(joins) + 1) stop(paste0("This tree cannot be cut into ", k, " groups."))
+                    lo <- joins[k - 1]
+                    hi <- if (k <= length(joins)) joins[k] else tip_x
+                    data.frame(xintercept = (lo + hi) / 2)
+                }
+            )
+
+            geom_cut <- function(height = NULL, k = NULL, linetype = "dashed",
+                                 colour = "grey40", ...) {
+
+                ## Validate HERE, not in the Stat. ggplot2 turns a Stat error into a WARNING and
+                ## draws the plot anyway, so a mistyped call would quietly produce a tree with no
+                ## line on it -- the one failure a student would not notice. Checking at call time
+                ## makes it a real error. (The "k is larger than this tree" case still has to wait
+                ## for the data, so it stays a warning.)
+                if (is.null(height) && is.null(k)) {
+                    stop("geom_cut() needs either the height the tree was cut at -- geom_cut(height = 5) -- or the number of groups -- geom_cut(k = 4).")
+                }
+                if (!is.null(height) && !is.null(k)) {
+                    stop("geom_cut() takes height OR k, not both.")
+                }
+                if (!is.null(height) && (!is.numeric(height) || is.na(height[1]) || height[1] <= 0)) {
+                    stop("geom_cut(height = ) needs a positive height.")
+                }
+                if (!is.null(k) && (!is.numeric(k) || is.na(k[1]) || k[1] < 1)) {
+                    stop("geom_cut(k = ) needs a positive number of groups.")
+                }
+
+                ggplot2::layer(
+                    stat = StatCut, geom = ggplot2::GeomVline,
+                    data = NULL, mapping = NULL, position = "identity",
+                    show.legend = FALSE, inherit.aes = TRUE,
+                    params = list(height = height, k = k, linetype = linetype,
+                                  colour = colour, na.rm = TRUE, ...)
+                )
+            }
+
                 runMatrixAnalysis <-    function(
                                             data,
                                             analysis = c(
@@ -14525,6 +14609,82 @@
                                     }
                                     clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
                                 }
+
+                                ## CUTTING THE TREE (2026-09-23). `parameters` cuts the dendrogram
+                                ## into groups and returns them as a `cluster` column, deliberately the
+                                ## SAME shape k-means already returns -- one column, values "cluster_1",
+                                ## "cluster_2", ... -- so that chapters 8 and 10 rhyme instead of
+                                ## diverging. Without it there is no course-native way to cut a tree at
+                                ## all: the hclust branch returns ggtree coordinates, not an hclust
+                                ## object, so stats::cutree() on the output fails with "invalid 'tree'
+                                ## ('merge' component)" and the student has to drop to base R -- which
+                                ## is exactly the move the book tells them not to make.
+                                ##
+                                ## TWO WAYS TO ASK, because they are different questions:
+                                ##   parameters = c(4)            -- cut into 4 groups (k)
+                                ##   parameters = c(k = 4)        -- the same, said explicitly
+                                ##   parameters = c(height = 5)   -- cut ACROSS the tree at height 5,
+                                ##                                   and however many groups that
+                                ##                                   leaves is the answer
+                                ## The height form is the one the canyon scenario's flood-gate escape
+                                ## re-poses on the world (water level = cut height), and it is the only
+                                ## form that can answer "how many groups are there at this height" --
+                                ## with k the count is an input, so "there is no fourth group" cannot
+                                ## be expressed. Bare/`k =` is kept as the default because k-means
+                                ## already reads a bare number that way.
+                                ##
+                                ## Internal nodes get NA, like `bootstrap` does for tips: only tips are
+                                ## samples, and only samples belong to a group.
+                                if ( length(parameters) > 0 ) {
+
+                                    if (tree_method[1] != "linkage_dendrogram") {
+                                        stop(paste0(
+                                            "Cutting a tree into groups needs tree_method = ",
+                                            "\"linkage_dendrogram\". Neighbour joining does not build ",
+                                            "the tree by merging groups, so there are no merge heights ",
+                                            "to cut at."
+                                        ))
+                                    }
+
+                                    param_name <- names(parameters)[1]
+                                    if (is.null(param_name)) { param_name <- "" }
+                                    if (is.na(param_name)) { param_name <- "" }
+
+                                    if (param_name %in% c("h", "height")) {
+
+                                        cut_height <- as.numeric(parameters[1])
+                                        if (is.na(cut_height) || cut_height <= 0) {
+                                            stop("parameters = c(height = ...) needs a positive height to cut the tree at.")
+                                        }
+                                        cut_groups <- stats::cutree(bclust$hclust, h = cut_height)
+
+                                    } else if (param_name %in% c("", "k")) {
+
+                                        n_groups <- as.integer(parameters[1])
+                                        if (is.na(n_groups) || n_groups < 1) {
+                                            stop("parameters must be the number of groups to cut the tree into, e.g. parameters = c(3), or a height, e.g. parameters = c(height = 5).")
+                                        }
+                                        if (n_groups > nrow(scaled_matrix)) {
+                                            stop(paste0(
+                                                "Cannot cut ", nrow(scaled_matrix), " samples into ",
+                                                n_groups, " groups."
+                                            ))
+                                        }
+                                        cut_groups <- stats::cutree(bclust$hclust, k = n_groups)
+
+                                    } else {
+                                        stop(paste0(
+                                            "parameters was named \"", param_name, "\". For a tree it must be ",
+                                            "either a number of groups -- parameters = c(3) or c(k = 3) -- ",
+                                            "or a height to cut at -- parameters = c(height = 5)."
+                                        ))
+                                    }
+
+                                    clustering$cluster <- NA_character_
+                                    hit <- match(clustering$label, names(cut_groups))
+                                    clustering$cluster[!is.na(hit)] <-
+                                        paste0("cluster_", cut_groups[hit[!is.na(hit)]])
+                                }
                             }
 
                             if (analysis == "hclust_cat") {
@@ -14812,6 +14972,13 @@
 
                             ## Add back annotations to the output
 
+                                ## The empty branch is LOAD-BEARING, not dead code. With exactly one
+                                ## columns_w_sample_ID_info the pre-processing above RENAMED that column to
+                                ## sample_unique_ID, so it is no longer in data_wide and there is nothing to
+                                ## join back -- the annotation is already there. Do not "tidy" this into an
+                                ## unconditional join: that is the same mistake the dist/long branch made
+                                ## (~line 14605), which threw an NA-subscript error naming neither the
+                                ## argument nor the reason. Regression test: test_runMatrixAnalysis_dist.R
                                 if( length(columns_w_sample_ID_info) == 1 ) {
                                 } else {
                                 clustering <-   right_join(

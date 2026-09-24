@@ -154,6 +154,45 @@ Fill in the blank with the column to sort by, so that the closest pair of lakes 
 
 <hr>
 
+### reading a dendrogram {-}
+
+Two questions come up almost every time one of these plots appears, and they have short answers.
+
+**Read across, not down.** All of the information is in the horizontal direction. Each join sits at the distance at which its two groups merged, so the horizontal distance from the tips back to a join says how far apart those groups were. Joins close to the tips are groups that merged early because they were alike; joins far out toward the root merged late, because whatever they brought together was not alike at all.
+
+**Compare joins; do not try to measure one.** These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every *comparison* read off the picture is exactly right — which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips. What the picture will not give is the raw number itself, and nothing a dendrogram is for depends on having it: every question in this chapter is answered by comparing joins, or by cutting the tree, and both are comparisons. When an actual distance is wanted, it is in the distance matrix.
+
+**The vertical direction means nothing at all.** The tips are spread evenly down the page for one reason: so the labels fit and can be read. There is no quantity on that axis. Worse, the order itself is arbitrary — at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still say exactly what it said before.
+
+The consequence is the single most common misreading: **two tips sitting next to each other are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are neighbors on the page too, and they sit 7.57 apart — nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. Two pairs, printed identically, meaning opposite things.
+
+So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
+
+#### concept check {-}
+
+Fill in the blank with the lake that sits next to White Fish Lake on the tree. Press Run, and compare the two distances that come back — both pairs are neighbors on the page.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "dist",
+  output_format = "long",
+  scale_variance = TRUE,
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+) %>%
+  filter((lake_sample_1 == "Lake_Kangilipak" & lake_sample_2 == "Okoklik_Lake") |
+         (lake_sample_1 == "White_Fish_Lake" & lake_sample_2 == "____")) %>%
+  select(lake_sample_1, lake_sample_2, distance)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Nothing on the vertical axis is a quantity — the tips are spread evenly so their labels can be read, and at every join either branch may be drawn on top. Both drawings are the same tree. Lake Kangilipak and Okoklik Lake are neighbors and 0.78 apart, the closest pair in the data; White Fish Lake and Wild Lake are neighbors too and 7.57 apart, in the most distant fifth of all pairs. Printed adjacency says nothing, so the only way to judge two tips is to trace left from both and find where they meet.">
+<p class="scq">Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and White Fish Lake sits next to Wild Lake. Both pairs are neighbors on the page. What does that tell you about the two pairs?</p>
+<label><input type="radio"> Both pairs are similar, because neighboring tips are always each other's closest match</label>
+<label><input type="radio"> Nothing — vertical position carries no quantity, and these two pairs are in fact the most similar and the least similar in the data</label>
+<label><input type="radio"> The first pair is similar and the second is not, which can be read from how far apart they are printed</label>
+</div>
+
+<hr>
+
 ### single versus complete linkage {-}
 
 The two extremes are the easiest to understand:
@@ -275,6 +314,151 @@ Fill in the blank with the column to tally, so the pairwise distances are counte
 <label><input type="radio"> Very little; a smooth spread of distances means all the methods will agree</label>
 <label><input type="radio"> A great deal; there is no natural gap for the methods to agree on, so each linkage rule cuts the continuum in a different place</label>
 <label><input type="radio"> Nothing; the spread of pairwise distances is unrelated to the choice of linkage</label>
+</div>
+
+<hr>
+
+## cutting the tree into groups {-}
+
+A dendrogram shows how everything in a data set relates to everything else, but it does not, by itself, say which samples belong to which group. Getting groups out of a tree means **cutting across it at a chosen height**. Every join below the cut has already happened, so the samples under it stay together; every join above the cut is severed, so the branches it would have merged stay apart. The height is the real control, and the number of groups is what falls out of it: cut low, near the tips, and there are many small groups; cut high, near the root, and there are a few large ones.
+
+`runMatrixAnalysis()` cuts the tree when it is given a `parameters` argument — the same argument k-means takes in the next chapter — and adds a `cluster` column to the output, one label per sample. Asking for a height looks like this:
+
+```{r, message = FALSE}
+solvents_cut <- runMatrixAnalysis(
+    data = solvents,
+    analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "complete",
+    parameters = c(height = 5),
+    columns_w_values_for_single_analyte = solvent_properties,
+    columns_w_sample_ID_info = c("solvent", "category")
+)
+
+solvents_cut %>%
+  filter(isTip) %>%
+  group_by(cluster) %>%
+  summarize(n_solvents = n())
+```
+
+Cutting at 5 leaves four groups, of 13, 8, 7 and 4 solvents. Note that `cluster` is filled in for the tips only: the internal nodes of a tree are joins, not samples, so they have no group to belong to and are left as `NA`. This is the same convention the `bootstrap` column follows in the other direction, where it is the tips that are `NA`.
+
+Coloring the tips by that column shows what the cut actually did:
+
+```{r, fig.height = 7, fig.width = 7, fig.align = "center", fig.cap = "The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage."}
+ggtree(solvents_cut) +
+    geom_tiplab(aes(label = solvent), offset = 0.1, size = 3) +
+    geom_tippoint(shape = 21, aes(fill = cluster), size = 3) +
+    geom_cut(height = 5) +
+    scale_x_continuous(limits = c(0, 6)) +
+    scale_fill_brewer(palette = "Set2") +
+    theme(legend.position = c(0.15, 0.85))
+```
+
+The dashed line drawn by `geom_cut()` is the cut. Everything to its right has already merged, so each color is one unbroken piece of the tree; the three joins to its left were severed, which is what left four groups rather than one. Count them on the figure: severing three joins always leaves four pieces. The groups here are the compact families complete linkage found — the dense chlorinated solvents on their own, the polar protic solvents together, and so on.
+
+`geom_cut()` is worth a word, because the obvious thing to reach for does not work. The horizontal axis `ggtree` draws is **not** the cut height: it measures distance from the root, and runs to only half the height of the tree, so `geom_vline(xintercept = 5)` puts the line nowhere near the cut. `geom_cut()` does that conversion, which is why it takes the same height that was passed to `parameters` — write the height once, and the picture and the `cluster` column are guaranteed to agree. When the tree was cut by number of groups instead, `geom_cut(k = 4)` draws the line in the matching place.
+
+#### concept check {-}
+
+Fill in the blank with the column that says whether a row of the output is a sample rather than a join. Press Run, and compare the two counts.
+
+<div class="webr-cell"><textarea class="webr-code">cut_tree <- runMatrixAnalysis(
+  data = solvents,
+  analysis = "hclust",
+  scale_variance = TRUE,
+  tree_method = "linkage_dendrogram",
+  agglomeration_method = "complete",
+  parameters = c(height = 5),
+  columns_w_values_for_single_analyte = solvent_properties,
+  columns_w_sample_ID_info = c("solvent", "category")
+)
+
+nrow(cut_tree)
+sum(cut_tree$____)
+sum(is.na(cut_tree$cluster))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The output holds a row for every node in the tree, not just the samples: 32 tips plus the 31 joins that built them. A join is a merge of two groups, so it is not a member of any group and its cluster is NA. This is why every summary of a cut starts by keeping the tips — without that, half the rows counted are not samples at all.">
+<p class="scq">Self-check: the table has 63 rows, 32 of which are tips, and exactly 31 have an NA cluster. Why?</p>
+<label><input type="radio"> The 31 non-tip rows are joins rather than samples, so they belong to no group</label>
+<label><input type="radio"> 31 solvents were too far from the others to be placed in any group at this height</label>
+<label><input type="radio"> The clustering failed for 31 solvents because they contain missing measurements</label>
+</div>
+
+<hr>
+
+### choosing where to cut {-}
+
+Moving the cut changes the answer, and the whole point of cutting by height is that **the number of groups is something the data hands back, not something chosen in advance**:
+
+```{r, message = FALSE}
+n_groups_at <- function(cut_at) {
+  runMatrixAnalysis(
+      data = solvents,
+      analysis = c("hclust"),
+      scale_variance = TRUE,
+      tree_method = "linkage_dendrogram",
+      agglomeration_method = "complete",
+      parameters = c(height = cut_at),
+      columns_w_values_for_single_analyte = solvent_properties,
+      columns_w_sample_ID_info = c("solvent", "category")
+  ) %>%
+    filter(isTip) %>%
+    pull(cluster) %>%
+    unique() %>%
+    length()
+}
+
+data.frame(height = c(2, 3, 4, 5, 6)) %>%
+  mutate(n_groups = sapply(height, n_groups_at))
+```
+
+Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the answer is **stable over a wide stretch**: anywhere from about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.
+
+When the number of groups is already known — because the chemistry says so, or because a downstream step needs a fixed number — it can be asked for directly instead, and `runMatrixAnalysis()` finds the height that delivers it:
+
+```{r, message = FALSE}
+runMatrixAnalysis(
+    data = solvents,
+    analysis = c("hclust"),
+    scale_variance = TRUE,
+    tree_method = "linkage_dendrogram",
+    agglomeration_method = "complete",
+    parameters = c(4),
+    columns_w_values_for_single_analyte = solvent_properties,
+    columns_w_sample_ID_info = c("solvent", "category")
+) %>%
+  filter(isTip) %>%
+  group_by(cluster) %>%
+  summarize(n_solvents = n())
+```
+
+The same four groups, because a height of 5 and a request for four groups are two ways of describing one cut. The difference is which one is the assumption. Asking for four groups will always return four, even from data with no group structure at all; cutting at a height can return one group, or twenty, and that is information. The next chapter takes up the question of how to choose a number of groups when there is no tree to read a height off.
+
+#### concept check {-}
+
+Fill in the blank with the height that leaves only two groups. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+  data = solvents,
+  analysis = "hclust",
+  scale_variance = TRUE,
+  tree_method = "linkage_dendrogram",
+  agglomeration_method = "complete",
+  parameters = c(height = ____),
+  columns_w_values_for_single_analyte = solvent_properties,
+  columns_w_sample_ID_info = c("solvent", "category")
+) %>%
+  filter(isTip) %>%
+  group_by(cluster) %>%
+  summarize(n_solvents = n())</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Raising the cut can only sever fewer joins, so groups can only merge as the height goes up, never split. Going from 5 to 6 merged three of the four groups into one of 28 and left the chlorinated group of 4 alone. This is also why a cut is not the same as re-running the clustering: the tree never changes, only where it is read.">
+<p class="scq">Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 and 4. What does raising the cut do?</p>
+<label><input type="radio"> It re-runs the clustering with different settings, so every solvent may be reassigned</label>
+<label><input type="radio"> It splits the larger groups into smaller ones, because a higher cut crosses more joins</label>
+<label><input type="radio"> It can only merge groups, never split them — three of the four joined into one group of 28, and the group of 4 was left untouched</label>
 </div>
 
 <hr>
