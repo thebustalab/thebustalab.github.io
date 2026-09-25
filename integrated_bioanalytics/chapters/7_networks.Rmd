@@ -246,6 +246,38 @@ ggplot() +
 
 Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to *why* — and to when it is the wrong thing to do — under "directed and undirected", below.
 
+**The nodes are whatever is in the rows.** Everything above put one lake per row and thirteen analytes per column, so the network joins lakes. Nothing about the method requires that, and often it is the *measured variables* we want a network of rather than the samples: which analytes track each other across the lakes, which genes are switched on together across a set of samples. To get that network, put the variables in the rows instead — pivot on the sample name rather than on the variable name — and the same pipeline returns edges between variables.
+
+Two things change when you do, and both will bite. First, `scale_variance` scales **columns**, and the columns are now the samples, so it no longer puts the variables on an equal footing — which is usually exactly what you wanted it for. Scale each variable *before* pivoting instead, and then ask for `scale_variance = FALSE`. Second, with a single `columns_w_sample_ID_info`, the long output names its two node columns `sample_unique_ID_sample_1` and `sample_unique_ID_sample_2` rather than after your ID column, so rename them if you want the edge list to read.
+
+```{r}
+alaska_lake_data %>%
+  select(lake, element, mg_per_L) %>%
+  group_by(element) %>%
+  mutate(mg_per_L = as.numeric(scale(mg_per_L))) %>%
+  ungroup() %>%
+  pivot_wider(names_from = "lake", values_from = "mg_per_L") -> elements_wide
+
+element_edges <- runMatrixAnalysis(
+    data = elements_wide,
+    analysis = "dist",
+    output_format = "long",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(elements_wide)[2:21],
+    columns_w_sample_ID_info = c("element")
+) %>%
+  # dplyr:: is required here, not decoration: S4Vectors (pulled in by the Bioconductor
+  # packages phylochemistry attaches) exports its own rename(), it wins on the search
+  # path, and it evaluates its arguments — so a bare rename() fails with
+  # "object 'sample_unique_ID_sample_1' not found" rather than renaming anything.
+  dplyr::rename(element_1 = sample_unique_ID_sample_1, element_2 = sample_unique_ID_sample_2) %>%
+  mutate(similarity = 1 / (1 + distance) * 100)
+
+head(arrange(element_edges, desc(similarity)), 4)
+```
+
+The two analytes that track each other most closely across the twenty lakes are chloride and sodium, with chloride and bromide just behind — which is a reassuring thing to find, because it is salt, and it is a result about the analytes that the lake network could not have told us.
+
 #### concept check {-}
 
 Fill in the blank so that a large distance turns into a small similarity. Press Run.
@@ -546,8 +578,8 @@ cat('
 <a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/cover.png" alt="The Faintest Line cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Faintest Line</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Networks &middot; correlation networks, modules + degree</div>
-<div style="margin-top:8px;font-size:13px;line-height:1.4;">A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Correlate the gene readings into a network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Networks &middot; similarity networks, modules + degree</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Turn the gene readings into a similarity network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.</div>
 </div>
 </div>
 </div>

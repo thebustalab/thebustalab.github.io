@@ -525,6 +525,41 @@ Figure 2.6: The same similarity network drawn at four similarity thresholds. Eac
 </p>
 </div>
 <p>Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. <code>buildNetwork()</code> spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to <em>why</em> — and to when it is the wrong thing to do — under “directed and undirected”, below.</p>
+<p><strong>The nodes are whatever is in the rows.</strong> Everything above put one lake per row and thirteen analytes per column, so the network joins lakes. Nothing about the method requires that, and often it is the <em>measured variables</em> we want a network of rather than the samples: which analytes track each other across the lakes, which genes are switched on together across a set of samples. To get that network, put the variables in the rows instead — pivot on the sample name rather than on the variable name — and the same pipeline returns edges between variables.</p>
+<p>Two things change when you do, and both will bite. First, <code>scale_variance</code> scales <strong>columns</strong>, and the columns are now the samples, so it no longer puts the variables on an equal footing — which is usually exactly what you wanted it for. Scale each variable <em>before</em> pivoting instead, and then ask for <code>scale_variance = FALSE</code>. Second, with a single <code>columns_w_sample_ID_info</code>, the long output names its two node columns <code>sample_unique_ID_sample_1</code> and <code>sample_unique_ID_sample_2</code> rather than after your ID column, so rename them if you want the edge list to read.</p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">lake</span>, <span class="va">element</span>, <span class="va">mg_per_L</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>mg_per_L <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"lake"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">elements_wide</span></span>
+<span></span>
+<span><span class="va">element_edges</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">elements_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">elements_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">21</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"element"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="co"># dplyr:: is required here, not decoration: S4Vectors (pulled in by the Bioconductor</span></span>
+<span>  <span class="co"># packages phylochemistry attaches) exports its own rename(), it wins on the search</span></span>
+<span>  <span class="co"># path, and it evaluates its arguments — so a bare rename() fails with</span></span>
+<span>  <span class="co"># "object 'sample_unique_ID_sample_1' not found" rather than renaming anything.</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>element_1 <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, element_2 <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>similarity <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">distance</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">arrange</span><span class="op">(</span><span class="va">element_edges</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">similarity</span><span class="op">)</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 4 × 4</span></span>
+<span><span class="co">##   element_1 element_2 distance similarity</span></span>
+<span><span class="co">##   &lt;chr&gt;     &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Cl        Na           0.168       85.6</span></span>
+<span><span class="co">## 2 Na        Cl           0.168       85.6</span></span>
+<span><span class="co">## 3 Cl        Br           0.201       83.3</span></span>
+<span><span class="co">## 4 Br        Cl           0.201       83.3</span></span></code></pre></div>
+<p>The two analytes that track each other most closely across the twenty lakes are chloride and sodium, with chloride and bromide just behind — which is a reassuring thing to find, because it is salt, and it is a result about the analytes that the lake network could not have told us.</p>
 <div id="concept-check-17" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-17"><i class="fas fa-link"></i></a>
 </h4>
@@ -552,7 +587,7 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <p><strong>Weight as a count.</strong> An edge can document how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.</p>
 <p><strong>Structure.</strong> Because the edges are facts rather than resemblances, questions about the shape of the graph become meaningful: how many separate pieces are there, which nodes hold them together, and what breaks if a node is removed. In a similarity network every node is joined to every other until we impose a threshold, as we saw above, so the shape of that graph is mostly a consequence of the number we picked. In an interaction network, the shape is a property of the world.</p>
 <p>On the operational end of things, <code>buildNetwork()</code> already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for these sorts of data sets. Let’s look at an example. We will use two data sets that come with <code>phylochemistry</code>: <code>passenger_flows</code>, a ledger of how many passengers flew between pairs of US airports, and <code>us_airports</code>, which tells us something about each airport.</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">us_airports</span></span>
 <span><span class="co">## # A tibble: 29 × 7</span></span>
 <span><span class="co">##    airport name        city  state region latitude longitude</span></span>
@@ -584,7 +619,7 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <span><span class="co">## 10 ATL    DFW              75820</span></span>
 <span><span class="co">## # ℹ 182 more rows</span></span></code></pre></div>
 <p>Note that <code>passenger_flows</code> is already an edge list: two columns naming the nodes, and a third carrying the weight. That is all <code>buildNetwork()</code> needs. Because each row is a directed fact (passengers who flew <em>from</em> the origin <em>to</em> the destination), we pass <code>directed = TRUE</code>.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">air_net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="va">passenger_flows</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="va">us_airports</span>,</span>
@@ -617,8 +652,8 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-253"></span>
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-254"></span>
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.7: An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
@@ -676,7 +711,7 @@ Self-check: the two rows carry almost the same number of passengers. What should
 <h3>node summaries<a class="anchor" aria-label="anchor" href="#node-summaries"><i class="fas fa-link"></i></a>
 </h3>
 <p>The simplest node-level summary is <strong>degree</strong> — how many other nodes a node connects to. For an edge list, this is just counting how many times each node is listed, which is <code>group_by()</code> and <code>summarize()</code> from the wrangling chapter applied to a network. In a directed network, degree splits in two: <strong>out-degree</strong> (how many places can be reached <em>from</em> here) and <strong>in-degree</strong> (how many places reach here), so we count each column separately and join the results. Note the <code>airport = origin</code> inside <code>group_by()</code>: that names the grouping column as it is created, which saves renaming it afterwards and means both tables come out with a column of the same name to join on.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span>airport <span class="op">=</span> <span class="va">origin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>out_degree <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">out_degree</span></span>
@@ -702,7 +737,7 @@ Self-check: the two rows carry almost the same number of passengers. What should
 <span><span class="co">## 10 PHX              8         8</span></span>
 <span><span class="co">## # ℹ 19 more rows</span></span></code></pre></div>
 <p>If the edges carry counts, we can also ask for <strong>strength</strong>, or total volume: the same grouping, but summing the passengers instead of counting the rows. Notice that degree and strength do not have to agree, and that neither of them is the same question as “which airport matters most”. That last one turns out to need a different approach altogether (see below).</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span>airport <span class="op">=</span> <span class="va">origin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>passengers_out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">passengers</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">passengers_out</span></span>
@@ -753,14 +788,14 @@ Self-check: what is the difference between a node’s degree and its strength?
 <h3>node removal<a class="anchor" aria-label="anchor" href="#node-removal"><i class="fas fa-link"></i></a>
 </h3>
 <p>Degree and strength both answer “how much?”, but neither answers “does this node matter?”. The cheapest way to ask the second question is to delete a node and see what happens to everything else. Deleting a node just means dropping every edge that touches it, which is a single <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. Let’s do it twice: once for the busiest airport in the network, and once for one of the lowest-traffic airports.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">origin</span> <span class="op">!=</span> <span class="st">"ATL"</span>, <span class="va">destination</span> <span class="op">!=</span> <span class="st">"ATL"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">flows_no_atlanta</span></span>
 <span></span>
 <span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">origin</span> <span class="op">!=</span> <span class="st">"KTN"</span>, <span class="va">destination</span> <span class="op">!=</span> <span class="st">"KTN"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">flows_no_ketchikan</span></span></code></pre></div>
 <p>Now we rebuild and plot each one, in exactly the same way we compared thresholds earlier:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net_no_atlanta</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="va">flows_no_atlanta</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="va">us_airports</span>,</span>
@@ -779,7 +814,7 @@ Self-check: what is the difference between a node’s degree and its strength?
 <span></span>
 <span><span class="va">removal_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_no_atlanta</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_no_ketchikan</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
 <span><span class="va">removal_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_no_atlanta</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_no_ketchikan</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">removal_edges</span>,</span>
@@ -802,8 +837,8 @@ Self-check: what is the difference between a node’s degree and its strength?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-258"></span>
-<img src="index_files/figure-html/unnamed-chunk-258-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-259"></span>
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.8: What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
@@ -883,10 +918,10 @@ You are the warden of a chain of beacon towers in the Harrows, and the meltwater
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/networks/subway/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Faintest Line</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">
-Networks · correlation networks, modules + degree
+Networks · similarity networks, modules + degree
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
-A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Correlate the gene readings into a network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.
+A shift on the derelict railway beneath a dye district, and a lichen that used to make the colour. Turn the gene readings into a similarity network and find the regulator that abundance alone will never point you at, then ride all five lines and file the two stations that appear on no map.
 </div>
 </div>
 </div>
@@ -944,7 +979,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
