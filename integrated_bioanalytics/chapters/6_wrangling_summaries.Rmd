@@ -103,6 +103,36 @@ pivot_longer(
 
 Brilliant! Now we have a long-style table that can be used with ggplot.
 
+Occasionally you need to go the other way. Some functions — particularly the clustering and
+dimensional-reduction ones we meet later in the book — want a **numeric matrix**: one row per sample,
+one column per measured variable. That is a wide table again, and `pivot_wider()` is how you get back
+to one. It is the exact inverse of `pivot_longer()`, and it takes the mirror-image arguments: instead
+of saying which columns to gather up and what to *name* the two new variables, you say which existing
+variable holds the names that should become column headers (`names_from`) and which one holds the
+values that should fill the matrix (`values_from`).
+
+Let's take the long table we just made and fold it back up. We'll save the long version first so we
+have something to hand to `pivot_wider()`:
+
+```{r}
+fadb_long <- pivot_longer(
+  data = fadb_sample,
+  cols = 2:11,
+  names_to = "plant_species",
+  values_to = "relative_abundance"
+)
+
+pivot_wider(
+  data = fadb_long,
+  names_from = "plant_species",
+  values_from = "relative_abundance"
+)
+```
+
+That should look familiar — it is `fadb_sample` again. Any column you do *not* name in `names_from` or
+`values_from` is left alone and used to identify the rows, which is why `fatty_acid` comes back as the
+first column without our having to mention it.
+
 #### concept check {-}
 
 `fadb_sample` is wide: one column per plant species. Fill in the blank to name the new column that will hold those species names. Press Run.

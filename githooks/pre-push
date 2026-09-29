@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# pre-push — credential / private-path content scan for the public website repo.
+#
+# Sibling of escape_rooms/githooks/pre-push's job 3 (same scan_diff.py, same wiring). Added
+# 2026-09-26 as a deterministic BACKSTOP to the prose pre-commit checklist in this folder's
+# AGENTS.md ("Critical: Public Repository") — that checklist is still the first line of defence;
+# this catches the case where someone forgets to run it before a push. Scans the OUTGOING DIFF
+# for credential-shaped strings (API keys, tokens, PEM blocks, `export *_API_KEY=`,
+# `ACCESS_TOKEN = "..."`) and private paths/hostnames (/home/bustalab, /Users/bust0037, the lab's
+# internal hostnames and IP range) — see githooks/scan_diff.py for the exact patterns.
+#
+# This repo has no oversize-blob check or grading gate (those are escape_rooms-specific, nested
+# inside this repo but pushed from its own separate .git); this hook is content-scan only.
+#
+# Install (Mac, from the repo root):
+#     ln -sf ../../githooks/pre-push .git/hooks/pre-push
+#
+# Override for a one-off push you have thought about:
+#     SKIP_SECRET_SCAN=1 git push
+
+set -uo pipefail
+
+status=0
+
+REFS_TMP=$(mktemp)
+trap 'rm -f "$REFS_TMP"' EXIT
+cat >"$REFS_TMP"
+
+if [ "${SKIP_SECRET_SCAN:-}" = "1" ]; then
+    echo "pre-push: secret scan skipped (SKIP_SECRET_SCAN=1)" >&2
+else
+    SCANNER="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/githooks/scan_diff.py"
+    ZERO=0000000000000000000000000000000000000000
+    EMPTY_TREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+    if [ -f "$SCANNER" ]; then
+        while read -r local_ref local_sha remote_ref remote_sha; do
+            [ -z "${local_sha:-}" ] && continue
+            [ "$local_sha" = "$ZERO" ] && continue          # deleting a ref
+
+            base="${remote_sha:-$ZERO}"
+            if [ "$base" = "$ZERO" ]; then
+                base="$EMPTY_TREE"   # new branch — diff the whole thing as additions
+            fi
+
+            if ! git diff --unified=0 "$base" "$local_sha" 2>/dev/null | python3 "$SCANNER"; then
+                status=1
+            fi
+        done < "$REFS_TMP"
+    fi
+fi
+
+exit $status

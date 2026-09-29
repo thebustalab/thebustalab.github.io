@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-09-25"
+date: "2026-09-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1192,6 +1192,52 @@ pivot_longer(
 
 Brilliant! Now we have a long-style table that can be used with ggplot.
 
+Occasionally you need to go the other way. Some functions — particularly the clustering and
+dimensional-reduction ones we meet later in the book — want a **numeric matrix**: one row per sample,
+one column per measured variable. That is a wide table again, and `pivot_wider()` is how you get back
+to one. It is the exact inverse of `pivot_longer()`, and it takes the mirror-image arguments: instead
+of saying which columns to gather up and what to *name* the two new variables, you say which existing
+variable holds the names that should become column headers (`names_from`) and which one holds the
+values that should fill the matrix (`values_from`).
+
+Let's take the long table we just made and fold it back up. We'll save the long version first so we
+have something to hand to `pivot_wider()`:
+
+
+``` r
+fadb_long <- pivot_longer(
+  data = fadb_sample,
+  cols = 2:11,
+  names_to = "plant_species",
+  values_to = "relative_abundance"
+)
+
+pivot_wider(
+  data = fadb_long,
+  names_from = "plant_species",
+  values_from = "relative_abundance"
+)
+## # A tibble: 7 × 11
+##   fatty_acid      Agonandra_brasiliensis Agonandra_silvatica
+##   <chr>                            <dbl>               <dbl>
+## 1 Hexadecanoic a…                    3.4                 1  
+## 2 Octadecanoic a…                    6.2                 0.1
+## 3 Eicosanoic acid                    4.7                 3.5
+## 4 Docosanoic acid                   77.4                 0.4
+## 5 Tetracosanoic …                    1.4                 1  
+## 6 Hexacosanoic a…                    1.9                12.6
+## 7 Octacosanoic a…                    5                  81.4
+## # ℹ 8 more variables: Agonandra_excelsa <dbl>,
+## #   Heisteria_silvianii <dbl>, Malania_oleifera <dbl>,
+## #   Ximenia_americana <dbl>, Ongokea_gore <dbl>,
+## #   Comandra_pallida <dbl>, Buckleya_distichophylla <dbl>,
+## #   Nuytsia_floribunda <dbl>
+```
+
+That should look familiar — it is `fadb_sample` again. Any column you do *not* name in `names_from` or
+`values_from` is left alone and used to identify the rows, which is why `fatty_acid` comes back as the
+first column without our having to mention it.
+
 #### concept check {-}
 
 `fadb_sample` is wide: one column per plant species. Fill in the blank to name the new column that will hold those species names. Press Run.
@@ -1221,7 +1267,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1232,7 +1278,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1392,7 +1438,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1442,7 +1488,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-195-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-196-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1480,7 +1526,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-196-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-197-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1745,7 +1791,7 @@ To build a network from a set of observations, we first need to calculate how si
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-238)How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples.</p>
+<p class="caption">(\#fig:unnamed-chunk-240)How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples.</p>
 </div>
 
 First, we need our data set in wide format:
@@ -1900,8 +1946,8 @@ plot1
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-242)Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-244)Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 
@@ -1935,8 +1981,8 @@ alaska_lake_data %>% filter(element == "Cl") %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-244)Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-246)Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Yes, chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
@@ -1983,8 +2029,8 @@ plot_grid(plot1, plot2, ncol = 1, labels = c("A", "B"))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-246)The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-248)The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -2113,8 +2159,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-249)A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-251)A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:
@@ -2181,8 +2227,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-251)The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-253)The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to *why* — and to when it is the wrong thing to do — under "directed and undirected", below.
@@ -2208,11 +2254,7 @@ element_edges <- runMatrixAnalysis(
     columns_w_values_for_single_analyte = colnames(elements_wide)[2:21],
     columns_w_sample_ID_info = c("element")
 ) %>%
-  # dplyr:: is required here, not decoration: S4Vectors (pulled in by the Bioconductor
-  # packages phylochemistry attaches) exports its own rename(), it wins on the search
-  # path, and it evaluates its arguments — so a bare rename() fails with
-  # "object 'sample_unique_ID_sample_1' not found" rather than renaming anything.
-  dplyr::rename(element_1 = sample_unique_ID_sample_1, element_2 = sample_unique_ID_sample_2) %>%
+  select(element_1 = sample_unique_ID_sample_1, element_2 = sample_unique_ID_sample_2, distance) %>%
   mutate(similarity = 1 / (1 + distance) * 100)
 ## Replacing NAs in your data with mean
 
@@ -2329,8 +2371,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-254)An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-256)An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -2525,8 +2567,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-259)What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-261)What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
 </div>
 
 Based on the above, we can say the following: take the busiest airport out and the picture barely changes: everything that is left can still be reached from everything else. Take Ketchikan out and the network falls into two clearly separate clumps, with the Alaskan airports floating free of the rest of the country. A node whose removal breaks a network into more pieces than it was in before is called an **articulation point**, and in this data set Ketchikan is the only one.
@@ -2620,8 +2662,6 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-"Which of my samples are most closely related?"
-
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
@@ -2629,9 +2669,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 
 ## {-}
 
-## clustering {-}
+## linkage dendrograms {-}
 
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
+So far we have been looking at how to plot raw data, wrangle and summarize data, and work with edgelist data. In this chapter we will continue to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
 
 
 ``` r
@@ -2666,12 +2706,6 @@ AK_lakes_clustered
 ## #   K <dbl>, Ca <dbl>, Mg <dbl>
 ```
 
-Three of those arguments are worth a closer look:
-
-- `scale_variance = TRUE` scales every variable before the distances are computed, for exactly the reasons we covered in the networks chapter. For clustering, `runMatrixAnalysis()` does **not** scale unless asked to, so don't leave this out.
-- `tree_method = "linkage_dendrogram"` builds the tree by hierarchical clustering proper: the step-by-step merging described below. The other option, `"neighbor_joining"`, is a tree-building method borrowed from phylogenetics, and it ignores the agglomeration method entirely.
-- `agglomeration_method` decides how groups of samples are merged as the tree is built. It is the subject of the second half of this chapter. For now we use Ward's method, `"ward.D2"`.
-
 It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though with the output of the `runMatrixAnalysis()` function, these two (`data` and `tr`) can be treated the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
 
 Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
@@ -2688,8 +2722,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-289-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-289)A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-291)A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 Cool! Though that plot could use some tweaking... let's try:
@@ -2709,8 +2743,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-290-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-290)The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-292-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-292)The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
@@ -2742,8 +2776,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-291)The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-293)The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 #### concept check {-}
@@ -2769,22 +2803,6 @@ sum(AK_tree$isTip)</textarea></div>
 <label><input type="radio"> The agglomeration method only has an effect once the variables have been scaled</label>
 </div>
 
-<hr>
-
-## how the tree is built {-}
-
-Hierarchical clustering builds its tree from the bottom up, by a very simple procedure:
-
-1. Start with every sample in a group of its own.
-2. Find the two groups that are closest to each other, and merge them into one group.
-3. Repeat step 2 until everything is in a single group.
-
-Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
-
-Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings.)
-
-#### concept check {-}
-
 Fill in the blank with the column to sort by, so that the closest pair of lakes comes to the top. Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
@@ -2807,48 +2825,17 @@ Fill in the blank with the column to sort by, so that the closest pair of lakes 
 
 <hr>
 
-### reading a dendrogram {-}
+## agglomeration methods {-}
 
-Two questions come up almost every time one of these plots appears, and they have short answers.
+Hierarchical clustering builds its tree from the bottom up, by a very simple procedure:
 
-**Read across, not down.** All of the information is in the horizontal direction. Each join sits at the distance at which its two groups merged, so the horizontal distance from the tips back to a join says how far apart those groups were. Joins close to the tips are groups that merged early because they were alike; joins far out toward the root merged late, because whatever they brought together was not alike at all.
+1. Start with every sample in a group of its own.
+2. Find the two groups that are closest to each other, and merge them into one group.
+3. Repeat step 2 until everything is in a single group.
 
-**Compare joins; do not try to measure one.** These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every *comparison* read off the picture is exactly right — which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips. What the picture will not give is the raw number itself, and nothing a dendrogram is for depends on having it: every question in this chapter is answered by comparing joins, or by cutting the tree, and both are comparisons. When an actual distance is wanted, it is in the distance matrix.
+Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
 
-**The vertical direction means nothing at all.** The tips are spread evenly down the page for one reason: so the labels fit and can be read. There is no quantity on that axis. Worse, the order itself is arbitrary — at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still say exactly what it said before.
-
-The consequence is the single most common misreading: **two tips sitting next to each other are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are neighbors on the page too, and they sit 7.57 apart — nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. Two pairs, printed identically, meaning opposite things.
-
-So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
-
-#### concept check {-}
-
-Fill in the blank with the lake that sits next to White Fish Lake on the tree. Press Run, and compare the two distances that come back — both pairs are neighbors on the page.
-
-<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
-  data = alaska_lake_data_wide,
-  analysis = "dist",
-  output_format = "long",
-  scale_variance = TRUE,
-  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
-  columns_w_sample_ID_info = c("lake", "park")
-) %>%
-  filter((lake_sample_1 == "Lake_Kangilipak" & lake_sample_2 == "Okoklik_Lake") |
-         (lake_sample_1 == "White_Fish_Lake" & lake_sample_2 == "____")) %>%
-  select(lake_sample_1, lake_sample_2, distance)</textarea></div>
-
-<div class="selfcheck" data-answer="1" data-explain="Nothing on the vertical axis is a quantity — the tips are spread evenly so their labels can be read, and at every join either branch may be drawn on top. Both drawings are the same tree. Lake Kangilipak and Okoklik Lake are neighbors and 0.78 apart, the closest pair in the data; White Fish Lake and Wild Lake are neighbors too and 7.57 apart, in the most distant fifth of all pairs. Printed adjacency says nothing, so the only way to judge two tips is to trace left from both and find where they meet.">
-<p class="scq">Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and White Fish Lake sits next to Wild Lake. Both pairs are neighbors on the page. What does that tell you about the two pairs?</p>
-<label><input type="radio"> Both pairs are similar, because neighboring tips are always each other's closest match</label>
-<label><input type="radio"> Nothing — vertical position carries no quantity, and these two pairs are in fact the most similar and the least similar in the data</label>
-<label><input type="radio"> The first pair is similar and the second is not, which can be read from how far apart they are printed</label>
-</div>
-
-<hr>
-
-### single versus complete linkage {-}
-
-The two extremes are the easiest to understand:
+Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings). Either way, the two extremes are the easiest to understand:
 
 - **Single linkage**: the distance between two groups is the distance between their *closest* members. Two groups merge as soon as any one sample in the first is near any one sample in the second.
 - **Complete linkage**: the distance between two groups is the distance between their *furthest* members. Two groups only merge once every sample in the first is reasonably close to every sample in the second.
@@ -2905,8 +2892,8 @@ plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3), labels =
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-293)Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties.</p>
+<img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-295)Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties.</p>
 </div>
 
 The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
@@ -2914,6 +2901,17 @@ The two trees were built from identical distances, but they tell very different 
 Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
 
 Notice also the colors, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
+
+Single and complete linkage give the most different trees when:
+
+- **the samples form a continuum rather than distinct groups.** Single linkage chains along the gradient, giving a lopsided tree. Complete linkage chops it into compact pieces, giving a more balanced one. This is what happened with the solvents.
+- **a few intermediate samples bridge two real groups.** Single linkage uses the bridge to join the two groups early. Complete linkage keeps them apart until late, because their furthest members are still far apart.
+- **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
+- **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
+
+The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
+
+Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.
 
 #### concept check {-}
 
@@ -2939,23 +2937,6 @@ Fill in the blank with the function that returns the smallest value, so that eac
 <label><input type="radio"> Leaves them unassigned until a cut height is chosen</label>
 </div>
 
-<hr>
-
-### when does the choice matter? {-}
-
-Single and complete linkage give the most different trees when:
-
-- **the samples form a continuum rather than distinct groups.** Single linkage chains along the gradient, giving a lopsided tree. Complete linkage chops it into compact pieces, giving a more balanced one. This is what happened with the solvents.
-- **a few intermediate samples bridge two real groups.** Single linkage uses the bridge to join the two groups early. Complete linkage keeps them apart until late, because their furthest members are still far apart.
-- **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
-- **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
-
-The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
-
-Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.
-
-#### concept check {-}
-
 Fill in the blank with the column to tally, so the pairwise distances are counted one band at a time. Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
@@ -2978,7 +2959,46 @@ Fill in the blank with the column to tally, so the pairwise distances are counte
 
 <hr>
 
-## cutting the tree into groups {-}
+## dendrogram interpretation {-}
+
+Two questions come up almost every time one of these plots appears, and they have short answers.
+
+**Read across, not down.** All of the information is in the horizontal direction. Each join sits at the distance at which its two groups merged, so the horizontal distance from the tips back to a join says how far apart those groups were. Joins close to the tips are groups that merged early because they were alike; joins far out toward the root merged late, because whatever they brought together was not alike at all.
+
+**Compare joins; do not try to measure one.** These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every *comparison* read off the picture is exactly right — which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips. What the picture will not give is the raw number itself, and nothing a dendrogram is for depends on having it: every question in this chapter is answered by comparing joins, or by cutting the tree, and both are comparisons. When an actual distance is wanted, it is in the distance matrix.
+
+**The vertical direction means nothing at all.** The tips are spread evenly down the page for one reason: so the labels fit and can be read. There is no quantity on that axis. Worse, the order itself is arbitrary — at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still say exactly what it said before.
+
+The consequence is the single most common misreading: **two tips sitting next to each other are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are neighbors on the page too, and they sit 7.57 apart — nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. Two pairs, printed identically, meaning opposite things.
+
+So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
+
+#### concept check {-}
+
+Fill in the blank with the lake that sits next to White Fish Lake on the tree. Press Run, and compare the two distances that come back — both pairs are neighbors on the page.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "dist",
+  output_format = "long",
+  scale_variance = TRUE,
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+) %>%
+  filter((lake_sample_1 == "Lake_Kangilipak" & lake_sample_2 == "Okoklik_Lake") |
+         (lake_sample_1 == "White_Fish_Lake" & lake_sample_2 == "____")) %>%
+  select(lake_sample_1, lake_sample_2, distance)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Nothing on the vertical axis is a quantity — the tips are spread evenly so their labels can be read, and at every join either branch may be drawn on top. Both drawings are the same tree. Lake Kangilipak and Okoklik Lake are neighbors and 0.78 apart, the closest pair in the data; White Fish Lake and Wild Lake are neighbors too and 7.57 apart, in the most distant fifth of all pairs. Printed adjacency says nothing, so the only way to judge two tips is to trace left from both and find where they meet.">
+<p class="scq">Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and White Fish Lake sits next to Wild Lake. Both pairs are neighbors on the page. What does that tell you about the two pairs?</p>
+<label><input type="radio"> Both pairs are similar, because neighboring tips are always each other's closest match</label>
+<label><input type="radio"> Nothing — vertical position carries no quantity, and these two pairs are in fact the most similar and the least similar in the data</label>
+<label><input type="radio"> The first pair is similar and the second is not, which can be read from how far apart they are printed</label>
+</div>
+
+<hr>
+
+## cutting a dendrogram {-}
 
 A dendrogram shows how everything in a data set relates to everything else, but it does not, by itself, say which samples belong to which group. Getting groups out of a tree means **cutting across it at a chosen height**. Every join below the cut has already happened, so the samples under it stay together; every join above the cut is severed, so the branches it would have merged stay apart. The height is the real control, and the number of groups is what falls out of it: cut low, near the tips, and there are many small groups; cut high, near the root, and there are a few large ones.
 
@@ -3026,43 +3046,13 @@ ggtree(solvents_cut) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-295-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-295)The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-297-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-297)The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
 </div>
 
 The dashed line drawn by `geom_cut()` is the cut. Everything to its right has already merged, so each color is one unbroken piece of the tree; the three joins to its left were severed, which is what left four groups rather than one. Count them on the figure: severing three joins always leaves four pieces. The groups here are the compact families complete linkage found — the dense chlorinated solvents on their own, the polar protic solvents together, and so on.
 
 `geom_cut()` is worth a word, because the obvious thing to reach for does not work. The horizontal axis `ggtree` draws is **not** the cut height: it measures distance from the root, and runs to only half the height of the tree, so `geom_vline(xintercept = 5)` puts the line nowhere near the cut. `geom_cut()` does that conversion, which is why it takes the same height that was passed to `parameters` — write the height once, and the picture and the `cluster` column are guaranteed to agree. When the tree was cut by number of groups instead, `geom_cut(k = 4)` draws the line in the matching place.
-
-#### concept check {-}
-
-Fill in the blank with the column that says whether a row of the output is a sample rather than a join. Press Run, and compare the two counts.
-
-<div class="webr-cell"><textarea class="webr-code">cut_tree <- runMatrixAnalysis(
-  data = solvents,
-  analysis = "hclust",
-  scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
-  agglomeration_method = "complete",
-  parameters = c(height = 5),
-  columns_w_values_for_single_analyte = solvent_properties,
-  columns_w_sample_ID_info = c("solvent", "category")
-)
-
-nrow(cut_tree)
-sum(cut_tree$____)
-sum(is.na(cut_tree$cluster))</textarea></div>
-
-<div class="selfcheck" data-answer="0" data-explain="The output holds a row for every node in the tree, not just the samples: 32 tips plus the 31 joins that built them. A join is a merge of two groups, so it is not a member of any group and its cluster is NA. This is why every summary of a cut starts by keeping the tips — without that, half the rows counted are not samples at all.">
-<p class="scq">Self-check: the table has 63 rows, 32 of which are tips, and exactly 31 have an NA cluster. Why?</p>
-<label><input type="radio"> The 31 non-tip rows are joins rather than samples, so they belong to no group</label>
-<label><input type="radio"> 31 solvents were too far from the others to be placed in any group at this height</label>
-<label><input type="radio"> The clustering failed for 31 solvents because they contain missing measurements</label>
-</div>
-
-<hr>
-
-### choosing where to cut {-}
 
 Moving the cut changes the answer, and the whole point of cutting by height is that **the number of groups is something the data hands back, not something chosen in advance**:
 
@@ -3085,15 +3075,12 @@ n_groups_at <- function(cut_at) {
     length()
 }
 
-data.frame(height = c(2, 3, 4, 5, 6)) %>%
-  mutate(n_groups = sapply(height, n_groups_at))
-##   height n_groups
-## 1      2       15
-## 2      3        9
-## 3      4        6
-## 4      5        4
-## 5      6        2
+data.frame(height = seq(2,6,0.1)) %>%
+  mutate(n_groups = sapply(height, n_groups_at)) %>%
+  ggplot(aes(x = height, y = n_groups)) + geom_point() + geom_line()
 ```
+
+<img src="index_files/figure-html/unnamed-chunk-298-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the answer is **stable over a wide stretch**: anywhere from about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.
 
@@ -3127,6 +3114,32 @@ The same four groups, because a height of 5 and a request for four groups are tw
 
 #### concept check {-}
 
+Fill in the blank with the column that says whether a row of the output is a sample rather than a join. Press Run, and compare the two counts.
+
+<div class="webr-cell"><textarea class="webr-code">cut_tree <- runMatrixAnalysis(
+  data = solvents,
+  analysis = "hclust",
+  scale_variance = TRUE,
+  tree_method = "linkage_dendrogram",
+  agglomeration_method = "complete",
+  parameters = c(height = 5),
+  columns_w_values_for_single_analyte = solvent_properties,
+  columns_w_sample_ID_info = c("solvent", "category")
+)
+
+nrow(cut_tree)
+sum(cut_tree$____)
+sum(is.na(cut_tree$cluster))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The output holds a row for every node in the tree, not just the samples: 32 tips plus the 31 joins that built them. A join is a merge of two groups, so it is not a member of any group and its cluster is NA. This is why every summary of a cut starts by keeping the tips — without that, half the rows counted are not samples at all.">
+<p class="scq">Self-check: the table has 63 rows, 32 of which are tips, and exactly 31 have an NA cluster. Why?</p>
+<label><input type="radio"> The 31 non-tip rows are joins rather than samples, so they belong to no group</label>
+<label><input type="radio"> 31 solvents were too far from the others to be placed in any group at this height</label>
+<label><input type="radio"> The clustering failed for 31 solvents because they contain missing measurements</label>
+</div>
+
+<hr>
+
 Fill in the blank with the height that leaves only two groups. Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
@@ -3152,7 +3165,7 @@ Fill in the blank with the height that leaves only two groups. Press Run.
 
 <hr>
 
-## annotating trees {-}
+## annotating dendrograms {-}
 
 Overlaying sample traits on a ggtree-based plot is straightforward when we combine `ggtree` with `ggplot2`. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.
 
@@ -3184,8 +3197,8 @@ tree_plot
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-299-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-299)A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-301)A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.</p>
 </div>
 
 Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
@@ -3204,8 +3217,8 @@ heat_plot
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-300-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-300)Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-302-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-302)Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
@@ -3216,8 +3229,8 @@ plot_grid(tree_plot, heat_plot, axis = "tb", align = "h", labels = c("A", "B"))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-301)The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-303-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-303)The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
@@ -3232,8 +3245,8 @@ chemical_blooms %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-302-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-302)What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-304-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-304)What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -3323,7 +3336,7 @@ PCA looks at all the variance in a high dimensional data set and chooses new axe
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-323)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
+<p class="caption">(\#fig:unnamed-chunk-325)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
 </div>
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
@@ -3393,8 +3406,8 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-325-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-325)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
+<img src="index_files/figure-html/unnamed-chunk-327-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-327)PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.</p>
 </div>
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
@@ -3449,8 +3462,8 @@ ggplot(AK_lakes_pca_ord) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-327-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-327)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
+<img src="index_files/figure-html/unnamed-chunk-329-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-329)Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.</p>
 </div>
 
 Great! Here is how to read the ordination plot:
@@ -3500,8 +3513,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-328-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-328)PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
+<img src="index_files/figure-html/unnamed-chunk-330-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-330)PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.</p>
 </div>
 
 Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
@@ -3516,8 +3529,8 @@ AK_lakes_pca_ord %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-329-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-329)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
+<img src="index_files/figure-html/unnamed-chunk-331-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-331)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
 </div>
 
 ### principal components {-}
@@ -3553,8 +3566,8 @@ ggplot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-330-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-330)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
+<img src="index_files/figure-html/unnamed-chunk-332-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-332)Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.</p>
 </div>
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding `coord_fixed()` to a ggplot.
@@ -3565,7 +3578,7 @@ Static plots are great for reporting, but exploring PCA interactively can make i
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-331)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
+<p class="caption">(\#fig:unnamed-chunk-333)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
 </div>
 
 The function takes three key arguments:
@@ -3629,8 +3642,8 @@ wq %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-334-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-334)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
+<img src="index_files/figure-html/unnamed-chunk-336-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-336)PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.</p>
 </div>
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
@@ -3655,8 +3668,8 @@ runMatrixAnalysis(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-335)UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
+<img src="index_files/figure-html/unnamed-chunk-337-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-337)UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.</p>
 </div>
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
@@ -3755,7 +3768,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-357-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-359-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -3799,7 +3812,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-359-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-361-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -3870,7 +3883,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-360-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-362-1.png" alt="" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -4057,7 +4070,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-387-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-389-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -4105,7 +4118,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-388-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-390-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether
 the distribution is skewed, and whether any group is bimodal. All three change which test to
@@ -4133,7 +4146,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-389-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-391-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## test selection {-}
 
@@ -4196,7 +4209,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-392-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-394-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -4209,7 +4222,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-393-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-395-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -4298,7 +4311,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-398-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-400-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -4312,7 +4325,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-399-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-401-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -4422,7 +4435,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-405-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-407-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -4492,7 +4505,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-408-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-410-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -4507,7 +4520,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-409-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-411-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -4527,7 +4540,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 1.06e- 5
+##  4 Cl      aquifer_3    values       0.750 3.19e- 6
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -4657,7 +4670,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-414-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-416-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -4746,7 +4759,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-449-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-451-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
@@ -4847,7 +4860,7 @@ plot1 <- ggplot() +
 plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-455-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-457-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -4859,7 +4872,7 @@ ggplot(predictions_from_basic_linear_model) +
   geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-456-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-458-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -4880,7 +4893,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-458-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -4892,7 +4905,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -4956,7 +4969,7 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -5108,7 +5121,7 @@ plot3 <- ggplot(model_comparison_data) + geom_point(aes(
 plot_grid(plot1, plot2, plot3, nrow = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-465-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -5179,7 +5192,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-466-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -5255,7 +5268,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-467-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-469-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -5282,7 +5295,7 @@ ggplot() +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-468-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -5334,7 +5347,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-472-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5565,15 +5578,15 @@ select(search_results, term, title)
 ##    <chr>                      <chr>                         
 ##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
 ##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
-##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…
+##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Genome Mining and Gene Expres…
+##  5 friedelin synthase         Genome Mining and Gene Expres…
+##  6 friedelin synthase         The Methionine 549 and Leucin…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
-## 10 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
-## 11 cuticular wax biosynthesis Regulatory mechanisms underly…
+## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
+## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
 ## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
 ```
 
@@ -5609,7 +5622,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-504-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-506-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -5634,7 +5647,7 @@ search_results_embedded[1:3,1:10]
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
 ## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
 ## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
-## 3            3 beta… 2026-01-27 Phytoc… β-Am… 10.1… Siberia…
+## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -5659,7 +5672,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-506-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-508-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -5683,7 +5696,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-507-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-509-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -5723,7 +5736,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-508-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-510-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -5757,16 +5770,16 @@ select(search_results, title, generation)
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… "# Classi…
 ##  2 β-Amyrin synthase from Conyza blinii expresse… "# Classi…
-##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… "# Classi…
-##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Tags\n…
-##  5 Friedelin Synthase from Maytenus ilicifolia: … "oxidosqu…
-##  6 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
-##  7 Current status and prospects of herbicide-res… "Herbicid…
-##  8 Sorghum (Sorghum bicolor).                     "# Tags\n…
+##  3 β-Amyrin biosynthesis: catalytic mechanism an… "# Classi…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … "# Classi…
+##  5 Genome Mining and Gene Expression Reveal Mayt… "# Tags\n…
+##  6 The Methionine 549 and Leucine 552 Residues o… "# Tags\n…
+##  7 Current status and prospects of herbicide-res… "weed man…
+##  8 Sorghum (Sorghum bicolor).                     "# Classi…
 ##  9 Potential food applications of sorghum (Sorgh… "# Tags\n…
-## 10 Cuticular wax in wheat: biosynthesis, genetic… "Plant Cu…
-## 11 Regulatory mechanisms underlying cuticular wa… "# Tags:\…
-## 12 Update on Cuticular Wax Biosynthesis and Its … "# Classi…
+## 10 Regulatory mechanisms underlying cuticular wa… "Plant cu…
+## 11 Cuticular wax in wheat: biosynthesis, genetic… "# Classi…
+## 12 Update on Cuticular Wax Biosynthesis and Its … "Plant cu…
 ```
 
 ## {-}
@@ -5908,7 +5921,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -6152,7 +6165,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-560-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-562-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -6180,7 +6193,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-561-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-563-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
@@ -6225,7 +6238,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-563-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-565-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -6241,7 +6254,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-564-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-566-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -6250,7 +6263,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-565-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-567-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
@@ -6321,7 +6334,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-567-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-569-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -6341,7 +6354,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-568-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-570-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -6419,7 +6432,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-573-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-575-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -6454,7 +6467,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-574-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-576-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -6676,7 +6689,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-596-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -7337,7 +7350,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-622-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-624-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -7527,7 +7540,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-642-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-644-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -7550,7 +7563,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-643-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-645-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -7575,7 +7588,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-644-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-646-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -7648,7 +7661,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-649-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-651-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -7660,7 +7673,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-650-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-652-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -7676,7 +7689,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-651-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-653-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -7691,7 +7704,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-652-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-654-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -7720,7 +7733,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-653-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-655-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -7745,7 +7758,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-654-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-656-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -7792,7 +7805,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-655-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-657-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -7813,7 +7826,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-656-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-658-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## {-}
@@ -8150,7 +8163,10 @@ runMatrixAnalysis(
   ),
   unknown_sample_ID_info = NULL,
   components_to_return = 2, # how many principal components to return
-  scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
+  scale_variance = NULL, # default = TRUE for EVERY analysis: centers each column and divides it by
+                         # its standard deviation, so no single large-valued variable dominates the
+                         # distances. Pass FALSE for compositional data (every column a share of the
+                         # same whole), where the columns are already on one scale.
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
   output_format = c("wide", "long"), # default = "wide". For analysis = "dist" this chooses the
                                      # RETURN TYPE: "wide" gives a base R `dist` object, "long"

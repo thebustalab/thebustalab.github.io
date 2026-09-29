@@ -14091,7 +14091,10 @@
             #' @param unknown_sample_ID_info Sample IDs to treat as unknowns for nearest-neighbour
             #'   matching against the rest (used by the GC-MS workflows).
             #' @param components_to_return How many components to return. Default 2.
-            #' @param scale_variance Default TRUE, except for "hclust" where the default is FALSE.
+            #' @param scale_variance Center each column and divide it by its standard deviation
+            #'   before computing distances. Default TRUE for every analysis (including "hclust",
+            #'   which defaulted to FALSE until 2026-09-28). Pass FALSE for compositional data --
+            #'   where every column is a share of the same whole and is already on one scale.
             #' @param na_replacement "mean" (default), "none", "zero" or "drop".
             #' @param output_format "wide" (default) or "long". For analysis = "dist" this chooses
             #'   the RETURN TYPE: "wide" gives a base R `dist` object, "long" gives one row per pair
@@ -14225,7 +14228,7 @@
                                             ),
                                             unknown_sample_ID_info = NULL,
                                             components_to_return = 2,
-                                            scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
+                                            scale_variance = NULL, ## default = TRUE for every analysis; pass FALSE for compositional data
                                             na_replacement = c("mean", "none", "zero", "drop"),
                                             output_format = c("wide", "long"),
                                             ...
@@ -14531,8 +14534,20 @@
 
                         # Scale data, unless not requested
 
+                            ## Default TRUE for EVERY analysis, hclust included (2026-09-28).
+                            ## hclust used to default to FALSE, alone among the analyses. That was a
+                            ## silent footgun: unscaled euclidean distance is dominated by whichever
+                            ## column is reported in the largest numbers, so the Alaska lakes tree
+                            ## was really a chloride tree and looked entirely reasonable. Worse, it
+                            ## meant pca and hclust on the SAME table used different geometry for no
+                            ## visible reason. Book ch.8 already passed scale_variance = TRUE on
+                            ## every call precisely because the old default defeated the lesson.
+                            ## Callers that genuinely want unscaled distances -- compositional data,
+                            ## where every column is a percentage of the same whole and scaling just
+                            ## inflates the near-constant minor components -- must now pass
+                            ## scale_variance = FALSE explicitly.
                             if ( is.null(scale_variance) ) {
-                                if (analysis != "hclust") {scale_variance <- TRUE} else {scale_variance <- FALSE}
+                                scale_variance <- TRUE
                             }
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
@@ -14549,6 +14564,33 @@
                             if( scale_variance == FALSE ) {
                                 scaled_matrix <- matrix
                             }
+
+                        ## FORTIFY, WITHOUT THE LIBRARY CHATTER (2026-09-28).
+                        ## Newer tidytree (the version WebR installs; desktop 0.4.6 does NOT do
+                        ## this, which is why it never showed up in testing here) emits
+                        ##   "Invaild edge matrix for <phylo>. A <tbl_df> is returned."
+                        ## -- its own typo -- from as_tibble.phylo when its edge-matrix validity
+                        ## check is unhappy. Lucas hit it mid-exercise in canyon, TWICE per call,
+                        ## on top of a perfectly correct answer.
+                        ## It is harmless HERE and only here: everything below reads plain
+                        ## columns (label, x, y, isTip), so tbl_df vs tbl_tree makes no
+                        ## difference, and the browser smoke test proves ggtree() still plots the
+                        ## frame. So muffle THAT message only -- matched on its text -- rather
+                        ## than wrapping the call in a blanket suppressMessages(), which would
+                        ## also swallow a genuine complaint from somewhere else in the chain.
+                        .rma_quiet_fortify <- function(tr) {
+                            withCallingHandlers(
+                                ggtree::fortify(tr),
+                                message = function(m) {
+                                    if (grepl("edge matrix", conditionMessage(m), fixed = TRUE))
+                                        invokeRestart("muffleMessage")
+                                },
+                                warning = function(w) {
+                                    if (grepl("edge matrix", conditionMessage(w), fixed = TRUE))
+                                        invokeRestart("muffleWarning")
+                                }
+                            )
+                        }
 
                         ## HCLUST, HCLUST_PHYLO ##
 
@@ -14590,7 +14632,7 @@
                                     return(phylo)
                                     stop("Returning hclust_phylo.")
                                 }
-                                clustering <- ggtree::fortify(phylo)
+                                clustering <- .rma_quiet_fortify(phylo)
                                 clustering$sample_unique_ID <- clustering$label
                                 clustering$bootstrap <- NA
 
@@ -14697,7 +14739,7 @@
                                     b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
                                     phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
 
-                                    clustering <- ggtree::fortify(phylo)
+                                    clustering <- .rma_quiet_fortify(phylo)
                                     clustering$sample_unique_ID <- clustering$label
                                     clustering$bootstrap <- NA
 

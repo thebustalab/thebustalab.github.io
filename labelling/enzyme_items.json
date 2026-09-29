@@ -574,5 +574,77 @@
     },
     "source_topic": "osc",
     "discovered": "2026-09-22"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_58e42ce5bef0",
+    "title": "Functional Characterization of the β‐Amyrin Synthase Gene Contributing to Cuticular Wax Variation Between Two Blueberry Types",
+    "authors": "Jia Li; Yiduo Wu; Jiayuan Cai; Kai Xu; Yunxiang Zang; Weiwei Zheng",
+    "journal": "Physiologia Plantarum",
+    "year": 2026,
+    "doi": "10.1111/ppl.71116",
+    "link": "https://doi.org/10.1111/ppl.71116",
+    "abstract": "Cuticular wax plays a critical role in preserving fruit quality and providing structural protection against external stresses in plants. Rabbiteye blueberry and southern highbush blueberry are the main types of cultivated blueberries grown in southern China, exhibiting substantial differences in fruit ripening, management requirements, and stress resistance. In this study, rabbiteye blueberry cv. Titan and southern highbush blueberry cv. Emerald were examined to assess variation in cuticular wax and to functionally characterize candidate genes involved in β-amyrin synthesis. The wax matrix of both types comprised fatty acids, alkanes, primary alcohols, ketones, esters, and triterpenes, with triterpenes constituting a major functional component. β-amyrin was the predominant triterpenoid, accounting for 63.1% and 86.1% of total triterpenes in Titan and Emerald, respectively. A comprehensive analysis of β-amyrin synthase genes (BASs) was conducted, and their phylogenetic relationships, gene structures, and chromosomal localization were studied. RNA-seq profiling identified VaBAS355 as a key candidate gene, and its expression pattern and subcellular localization were subsequently evaluated. The heterologous and homologous transient expression of VaBAS355 resulted in increased β-amyrin accumulation in tobacco and blueberry. Taken together, our results provide a foundation for elucidating the functional roles of BASs and their regulatory mechanisms, especially in the processes of fruit development and resistance to environmental stresses.",
+    "prefill": {
+      "enzyme_name": "VaBAS355",
+      "product": "β-amyrin",
+      "doi": "doi:10.1111/ppl.71116"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-09-29"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_f4c019bc9910",
+    "title": "Genome-Wide Identification of the Chalcone Synthase Gene Family in Phoebe zhennan and Its Association with Golden-Thread Wood Color Formation and Drought Response",
+    "authors": "Kui Yan; Shuai He; Jian Peng; Jianghong Qian; Yunjie Gu; Hongying Guo; Suyuan Zhang; Yulin Wei; Ruiqi Wang; Zhou Yu; Hanbo Yang",
+    "journal": "Genes",
+    "year": 2026,
+    "doi": "10.3390/genes17091027",
+    "link": "https://doi.org/10.3390/genes17091027",
+    "abstract": "Chalcone synthase (CHS) is a key enzyme in flavonoid biosynthesis, and its activity strongly influences the efficiency of flavonoid production in plants. By controlling the biosynthesis of secondary metabolites, CHS contributes to plant adaptation to diverse environmental stresses. Here, we identified CHS members across the Phoebe zhennan genome and systematically examined their gene structures, phylogenetic relationships, and potential roles in golden-thread wood color formation and drought response. Genome-wide screening resolved 11 putatively functional PzCHSs, which were unevenly distributed across six chromosomes. Physicochemical analyses indicated that most PzCHS proteins were hydrophilic. Phylogenetic reconstruction divided the PzCHS family into three groups, whose members generally shared similar gene structures. One tandem duplication event and five segmental duplication events were detected. Synteny analysis revealed extensive collinearity between the CHS families of P. zhennan, Phoebe bournei and Cinnamomum camphora, consistent with their close evolutionary relationships. Promoter regions of PzCHS genes were enriched for phytohormone-responsive and growth-related cis-elements, suggesting roles in development and hormonal regulation. Transcriptome profiling showed that PzCHS6 was upregulated in the transition zone of wood and under drought stress, suggesting that this gene may be associated with both golden-thread wood color formation and drought response. These results provide a framework for functional dissection of the CHS members and offer candidate genes for golden-thread wood color improvement and drought response breeding.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3390/genes17091027"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-29"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_770a41d2e334",
+    "title": "Effects of Photoperiod and Light Quality on Phlorotannin Accumulation and Multi-Omics Responses in Sargassum muticum",
+    "authors": "Fang Lü; Yan Li; Dongmei Zhan; Haiyi Wu",
+    "journal": "Marine Drugs",
+    "year": 2026,
+    "doi": "10.3390/md24090330",
+    "link": "https://doi.org/10.3390/md24090330",
+    "abstract": "Brown algae contain phlorotannins with recognized biological and ecological functions, but the responses of phenolic metabolism to different light environments remain incompletely understood. In this study, Sargassum muticum was cultivated for 15 days under different photoperiods (12L:12D, 16L:8D, and 20L:4D) and light qualities (white, blue, and red light). Growth, photosynthetic performance, oxidative stress indicators, and phlorotannin content were examined, together with transcriptomic and untargeted metabolomic responses. Extended photoperiods were associated with increased growth and a transient increase in phlorotannin content, whereas blue light reduced growth but maintained relatively high chlorophyll a content and photosynthetic efficiency. Transcriptomic analysis identified 10,322, 3790, and 9301 differentially expressed genes under long-photoperiod, blue-light, and red-light treatments, respectively, including 388 genes shared among the three comparisons. Seven transcripts were putatively annotated as polyketide synthases, including four candidate type III polyketide synthase transcripts, and 26 transcripts were annotated as candidate acetyl-CoA carboxylase-related sequences. Untargeted LC–MS analysis yielded 949 putatively annotated metabolites, among which features annotated as salicylic acid and γ-glutamylcysteine showed increased relative abundance under the three light treatments. A feature putatively annotated as phloroglucinol did not differ significantly among treatments. Correlation analysis indicated coordinated, but non-causal, associations between light-responsive transcripts and changes in amino acid, carbohydrate, and lipid metabolism. These results characterize the physiological and multi-omics responses of S. muticum to altered light regimes and provide candidate molecular targets for future functional and targeted chemical validation.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3390/md24090330"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-29"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_48627173561b",
+    "title": "Integrated Analysis of Grapevine Responses to Winter Pruning Reveals Temperature‐Associated, Polyphenol‐Rich Xylem Occlusions",
+    "authors": "Marilou Camboué; Mónica Galar-Martínez; Grégoire Loupit; Petros Charalambous; Enric Zehraoui; Joseph Tran; Josep Valls; Luis Gonzaga Santesteban; Notburga Gierlinger; Sarah Jane Cookson",
+    "journal": "Plant Cell & Environment",
+    "year": 2026,
+    "doi": "10.1111/pce.70921",
+    "link": "https://doi.org/10.1111/pce.70921",
+    "abstract": "Perennial crops are continually wounded throughout cultivation. To limit pathogen infection and tissue dehydration, plants have evolved a range of wound responses that protect damaged tissues. These responses include changes in gene expression and the synthesis of protective compounds such as polyphenols. In addition, plants occlude damaged xylem vessels following wounding and pathogen infection, forming structures such as gels, gums, and tyloses. We explored grapevine responses to pruning. First, we examined the dynamics of xylem vessel occlusion formation at different time points and depths from the wound surface. Second, we characterised transcriptional changes and polyphenol accumulation in response to pruning. Finally, we used Raman microscopy to resolve the spatial chemical composition of xylem vessel occlusions. We found that the winter xylem vessel occlusion response is strongly associated with air temperature. Furthermore, Raman microscopy demonstrated that these occlusions were gel- or gum-like structures enriched in stilbenoids and flavonoids. The accumulation of polyphenols within the occlusions was associated with the up-regulation of stilbene synthase genes and the accumulation and oligomerization of stilbenes. Overall, this study provides an integrated characterisation of perennial woody tissue responses to winter pruning, combining histological, metabolomic, transcriptomic, and spectroscopic approaches, and highlights a potential regulatory role for temperature in xylem vessel occlusion formation and dynamics.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1111/pce.70921"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-09-29"
   }
 ]

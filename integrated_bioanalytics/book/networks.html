@@ -123,13 +123,13 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 </h2>
 <p>To build a network from a set of observations, we first need to calculate how similar each pair of samples are. For this, we use a distance matrix:</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-238"></span>
+<span style="display:block;" id="fig:unnamed-chunk-240"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples." width="100%"><p class="caption">
 Figure 2.1: How a distance matrix is built. Each sample is described by several measured variables, and every pair of samples is compared across all of those variables to give a single number, the distance, that summarizes how different the two samples are. Small distances mean similar samples.
 </p>
 </div>
 <p>First, we need our data set in wide format:</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
@@ -146,7 +146,7 @@ Figure 2.1: How a distance matrix is built. Each sample is described by several 
 <span><span class="co">## # ℹ 7 more variables: S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
 <p>Now, we need a distance matrix. Here is the traditional way:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">##             1          2          3          4          5</span></span>
 <span><span class="co">## 2   17.249885                                            </span></span>
@@ -229,7 +229,7 @@ Figure 2.1: How a distance matrix is built. Each sample is described by several 
 <span><span class="co">## 19  16.910716  16.591947  14.272415           </span></span>
 <span><span class="co">## 20   7.593005   9.322022   2.664249  12.413960</span></span></code></pre></div>
 <p>We can also get distances directly from <code>runMatrixAnalysis()</code>, this course’s matrix-analysis function, by specifying <code>analysis = "dist"</code>. One argument matters here (well, and a few others, below): <code>output_format = "long"</code> asks for the distances as a <strong>long table</strong>, one row per pair of lakes, rather than as the compact triangle <code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> printed above. The long shape is the one we want, because in a moment we are going to turn each of those rows into an edge.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
@@ -255,7 +255,7 @@ Figure 2.1: How a distance matrix is built. Each sample is described by several 
 <span><span class="co">## #   park_sample_1 &lt;chr&gt;, lake_sample_2 &lt;chr&gt;,</span></span>
 <span><span class="co">## #   park_sample_2 &lt;chr&gt;</span></span></code></pre></div>
 <p>Let’s look at those distances. Why is North Killeak Lake so distant from everyone? Wasn’t that lake the one with such high chloride?</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">alaska_dist_long</span>,</span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, y <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span>, fill <span class="op">=</span> <span class="va">distance</span><span class="op">)</span></span>
@@ -264,12 +264,12 @@ Figure 2.1: How a distance matrix is built. Each sample is described by several 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">plot1</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-242"></span>
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-244"></span>
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.2: Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span></span>
@@ -290,17 +290,17 @@ Figure 2.2: Pairwise distances between Alaskan lakes, computed on unscaled data.
 <span><span class="co">##  9 Na            12.6       37.1    </span></span>
 <span><span class="co">## 10 P              0.0006     0.00135</span></span>
 <span><span class="co">## 11 S              5.21       7.03</span></span></code></pre></div>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"Cl"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mg_per_L</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-244"></span>
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-246"></span>
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.3: Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Yes, chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to <strong>scale</strong> each variable before computing distances: subtract the column’s mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R’s <code><a href="https://rdrr.io/r/base/scale.html">scale()</a></code> does it like this:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">alaska_scaled</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##      water_temp    pH     C     N     P    Cl     S     F</span></span>
@@ -318,7 +318,7 @@ Figure 2.3: Chloride abundance across Alaskan lakes. A bar chart showing the con
 <span><span class="co">## [5,]  3.94  4.03  3.90  0.71  3.55</span></span>
 <span><span class="co">## [6,]  1.00  1.12  1.32  0.03  1.05</span></span></code></pre></div>
 <p>We can do that directly in <code>runMatrixAnalysis()</code>, which saves a bit of time, using <code>scale_variance</code> (see below). Importantly, note that scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. But whenever the columns are in different units, scale first.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
@@ -335,8 +335,8 @@ Figure 2.3: Chloride abundance across Alaskan lakes. A bar chart showing the con
 <span></span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-246"></span>
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-248"></span>
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.4: The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -367,7 +367,7 @@ Self-check: why does scaling change which lakes come out looking similar?
 </h2>
 <p>Once we have a distance matrix (scaled or unscaled), we can build networks. However, networks are built from an <strong>edge list</strong>: a table that lists one row per connection in the network. So, we need to turn the distances into rows of <code>from</code>, <code>to</code>, and <code>weight</code>. Fortunately, our long-style distance matrix makes this easy. There is just one trick: <strong>distance and similarity are the opposite of one another.</strong> A <em>small</em> distance means two samples are <em>alike</em>. But an edge weight is drawn thick when it is <em>large</em>. Feeding raw distance in as the edge weight draws the most <strong>dissimilar</strong> pairs as the most strongly connected: rarely what is intended. That is what <code>similarity = 1 / (1 + distance) * 100</code> is for: it inverts distance into similarity. Whenever a network is built from distances, it is worth stopping to check which direction the metric runs in.</p>
 <p>The similarity function above has a few parts that are perhaps not immediately obvious. Think about it like this: distance ranges, conceivably, from 0 to infinity. We would like similarity values derived from those distances that range from 0 to 100 (0% similar to 100% similar). If a distance is zero (100% similarity), then in our formula we get (1/(1+0)<em>100) = 100. If distance is really large, say, 10000, then the similarity is small (1/(1+10000)</em>100) = 0.01% similar. Minor notes: (i) adding the +1 means a distance of zero (identical items) is allowed, and (ii) if the distances are all very large or very small relative to 1, a scale factor can be added: 1 / (1 + d/k), where k is a “typical” distance to be mapped to 50%.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
@@ -398,7 +398,7 @@ Self-check: why does scaling change which lakes come out looking similar?
 <span><span class="co">## 10 Devil_Mountain_Lake Nutavukti_Lake          22.5 </span></span>
 <span><span class="co">## # ℹ 370 more rows</span></span></code></pre></div>
 <p>With the edgelist in hand, we can build a network easily with <code>buildNetwork()</code>:</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="va">alaska_edges</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
@@ -435,7 +435,7 @@ Self-check: why does scaling change which lakes come out looking similar?
 <span><span class="co">## 5 1.0000000    White_Fish_Lake  13.719374</span></span>
 <span><span class="co">## 6 0.5350723       Iniakuk_Lake  19.539621</span></span></code></pre></div>
 <p>These outputs are easy to plot with! <code>buildNetwork()</code> returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment()</a></code>, nodes with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>. For <code>buildNetwork()</code>, the <code>edgelist</code> should have node names in columns 1 and 2 (<code>lake_sample_1</code>, <code>lake_sample_2</code> here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. <code>node_attributes</code> is joined onto the nodes so they can be colored by something already known about the samples.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">edges</span>,</span>
@@ -457,13 +457,13 @@ Self-check: why does scaling change which lakes come out looking similar?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-249"></span>
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-251"></span>
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.5: A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the ‘hairball’ seen here. Node positions carry no information. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net_10</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_edges</span>, <span class="va">similarity</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data_wide</span>, <span class="va">lake</span>, <span class="va">park</span><span class="op">)</span></span>
@@ -496,7 +496,7 @@ Figure 2.5: A similarity network of Alaskan lakes drawn with no threshold. Each 
 <span></span>
 <span><span class="va">net</span><span class="op">$</span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_10</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_20</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_25</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_30</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
 <span><span class="va">net</span><span class="op">$</span><span class="va">edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_10</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_20</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_25</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_30</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">net</span><span class="op">$</span><span class="va">edges</span>,</span>
@@ -519,15 +519,15 @@ Figure 2.5: A similarity network of Alaskan lakes drawn with no threshold. Each 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-251"></span>
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-253"></span>
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.6: The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. <code>buildNetwork()</code> spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to <em>why</em> — and to when it is the wrong thing to do — under “directed and undirected”, below.</p>
 <p><strong>The nodes are whatever is in the rows.</strong> Everything above put one lake per row and thirteen analytes per column, so the network joins lakes. Nothing about the method requires that, and often it is the <em>measured variables</em> we want a network of rather than the samples: which analytes track each other across the lakes, which genes are switched on together across a set of samples. To get that network, put the variables in the rows instead — pivot on the sample name rather than on the variable name — and the same pipeline returns edges between variables.</p>
 <p>Two things change when you do, and both will bite. First, <code>scale_variance</code> scales <strong>columns</strong>, and the columns are now the samples, so it no longer puts the variables on an equal footing — which is usually exactly what you wanted it for. Scale each variable <em>before</em> pivoting instead, and then ask for <code>scale_variance = FALSE</code>. Second, with a single <code>columns_w_sample_ID_info</code>, the long output names its two node columns <code>sample_unique_ID_sample_1</code> and <code>sample_unique_ID_sample_2</code> rather than after your ID column, so rename them if you want the edge list to read.</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">lake</span>, <span class="va">element</span>, <span class="va">mg_per_L</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -543,11 +543,7 @@ Figure 2.6: The same similarity network drawn at four similarity thresholds. Eac
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">elements_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">21</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"element"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="co"># dplyr:: is required here, not decoration: S4Vectors (pulled in by the Bioconductor</span></span>
-<span>  <span class="co"># packages phylochemistry attaches) exports its own rename(), it wins on the search</span></span>
-<span>  <span class="co"># path, and it evaluates its arguments — so a bare rename() fails with</span></span>
-<span>  <span class="co"># "object 'sample_unique_ID_sample_1' not found" rather than renaming anything.</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>element_1 <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, element_2 <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span>element_1 <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, element_2 <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span>, <span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>similarity <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">distance</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span>
 <span></span>
@@ -587,7 +583,7 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <p><strong>Weight as a count.</strong> An edge can document how many times the thing happened, which is a real quantity in the world, not a transformation of a distance.</p>
 <p><strong>Structure.</strong> Because the edges are facts rather than resemblances, questions about the shape of the graph become meaningful: how many separate pieces are there, which nodes hold them together, and what breaks if a node is removed. In a similarity network every node is joined to every other until we impose a threshold, as we saw above, so the shape of that graph is mostly a consequence of the number we picked. In an interaction network, the shape is a property of the world.</p>
 <p>On the operational end of things, <code>buildNetwork()</code> already accepts a bare two-column edge list, with weights optional, so no new tooling is needed for these sorts of data sets. Let’s look at an example. We will use two data sets that come with <code>phylochemistry</code>: <code>passenger_flows</code>, a ledger of how many passengers flew between pairs of US airports, and <code>us_airports</code>, which tells us something about each airport.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">us_airports</span></span>
 <span><span class="co">## # A tibble: 29 × 7</span></span>
 <span><span class="co">##    airport name        city  state region latitude longitude</span></span>
@@ -619,7 +615,7 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <span><span class="co">## 10 ATL    DFW              75820</span></span>
 <span><span class="co">## # ℹ 182 more rows</span></span></code></pre></div>
 <p>Note that <code>passenger_flows</code> is already an edge list: two columns naming the nodes, and a third carrying the weight. That is all <code>buildNetwork()</code> needs. Because each row is a directed fact (passengers who flew <em>from</em> the origin <em>to</em> the destination), we pass <code>directed = TRUE</code>.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">air_net</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="va">passenger_flows</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="va">us_airports</span>,</span>
@@ -652,8 +648,8 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-254"></span>
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-256"></span>
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.7: An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
@@ -711,7 +707,7 @@ Self-check: the two rows carry almost the same number of passengers. What should
 <h3>node summaries<a class="anchor" aria-label="anchor" href="#node-summaries"><i class="fas fa-link"></i></a>
 </h3>
 <p>The simplest node-level summary is <strong>degree</strong> — how many other nodes a node connects to. For an edge list, this is just counting how many times each node is listed, which is <code>group_by()</code> and <code>summarize()</code> from the wrangling chapter applied to a network. In a directed network, degree splits in two: <strong>out-degree</strong> (how many places can be reached <em>from</em> here) and <strong>in-degree</strong> (how many places reach here), so we count each column separately and join the results. Note the <code>airport = origin</code> inside <code>group_by()</code>: that names the grouping column as it is created, which saves renaming it afterwards and means both tables come out with a column of the same name to join on.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span>airport <span class="op">=</span> <span class="va">origin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>out_degree <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">out_degree</span></span>
@@ -737,7 +733,7 @@ Self-check: the two rows carry almost the same number of passengers. What should
 <span><span class="co">## 10 PHX              8         8</span></span>
 <span><span class="co">## # ℹ 19 more rows</span></span></code></pre></div>
 <p>If the edges carry counts, we can also ask for <strong>strength</strong>, or total volume: the same grouping, but summing the passengers instead of counting the rows. Notice that degree and strength do not have to agree, and that neither of them is the same question as “which airport matters most”. That last one turns out to need a different approach altogether (see below).</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span>airport <span class="op">=</span> <span class="va">origin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>passengers_out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">passengers</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">passengers_out</span></span>
@@ -788,14 +784,14 @@ Self-check: what is the difference between a node’s degree and its strength?
 <h3>node removal<a class="anchor" aria-label="anchor" href="#node-removal"><i class="fas fa-link"></i></a>
 </h3>
 <p>Degree and strength both answer “how much?”, but neither answers “does this node matter?”. The cheapest way to ask the second question is to delete a node and see what happens to everything else. Deleting a node just means dropping every edge that touches it, which is a single <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. Let’s do it twice: once for the busiest airport in the network, and once for one of the lowest-traffic airports.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">origin</span> <span class="op">!=</span> <span class="st">"ATL"</span>, <span class="va">destination</span> <span class="op">!=</span> <span class="st">"ATL"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">flows_no_atlanta</span></span>
 <span></span>
 <span><span class="va">passenger_flows</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">origin</span> <span class="op">!=</span> <span class="st">"KTN"</span>, <span class="va">destination</span> <span class="op">!=</span> <span class="st">"KTN"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">flows_no_ketchikan</span></span></code></pre></div>
 <p>Now we rebuild and plot each one, in exactly the same way we compared thresholds earlier:</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">net_no_atlanta</span> <span class="op">&lt;-</span> <span class="fu">buildNetwork</span><span class="op">(</span></span>
 <span>  edgelist <span class="op">=</span> <span class="va">flows_no_atlanta</span>,</span>
 <span>  node_attributes <span class="op">=</span> <span class="va">us_airports</span>,</span>
@@ -814,7 +810,7 @@ Self-check: what is the difference between a node’s degree and its strength?
 <span></span>
 <span><span class="va">removal_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_no_atlanta</span><span class="op">$</span><span class="va">nodes</span>, <span class="va">net_no_ketchikan</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span></span>
 <span><span class="va">removal_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">net_no_atlanta</span><span class="op">$</span><span class="va">edges</span>, <span class="va">net_no_ketchikan</span><span class="op">$</span><span class="va">edges</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">removal_edges</span>,</span>
@@ -837,8 +833,8 @@ Self-check: what is the difference between a node’s degree and its strength?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-259"></span>
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-261"></span>
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.8: What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
@@ -979,7 +975,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-25.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

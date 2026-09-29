@@ -975,7 +975,10 @@ runMatrixAnalysis(
   ),
   unknown_sample_ID_info = NULL,
   components_to_return = 2, # how many principal components to return
-  scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
+  scale_variance = NULL, # default = TRUE for EVERY analysis: centers each column and divides it by
+                         # its standard deviation, so no single large-valued variable dominates the
+                         # distances. Pass FALSE for compositional data (every column a share of the
+                         # same whole), where the columns are already on one scale.
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
   output_format = c("wide", "long"), # default = "wide". For analysis = "dist" this chooses the
                                      # RETURN TYPE: "wide" gives a base R `dist` object, "long"

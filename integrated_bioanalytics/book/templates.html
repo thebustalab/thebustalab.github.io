@@ -118,7 +118,7 @@ it was retired in September 2026 — calling it now returns a message telling yo
 </h3>
 <p>A <strong>wide</strong> data frame has one row per sample and one column per analyte. <code>chemical_blooms</code> is exactly
 that shape: a <code>label</code> column naming each plant, and then one column for each compound class.</p>
-<div class="sourceCode" id="cb242"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb243"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
@@ -151,7 +151,7 @@ stays the same.</p>
 <h3>
 <span class="header-section-number">3.1.2</span> full template<a class="anchor" aria-label="anchor" href="#full-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb243"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb244"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># data to use for analysis</span></span>
@@ -188,7 +188,10 @@ stays the same.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  unknown_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  components_to_return <span class="op">=</span> <span class="fl">2</span>, <span class="co"># how many principal components to return</span></span>
-<span>  scale_variance <span class="op">=</span> <span class="cn">NULL</span>, <span class="co">## default = TRUE, except for hclust, then default = FALSE</span></span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># default = TRUE for EVERY analysis: centers each column and divides it by</span></span>
+<span>                         <span class="co"># its standard deviation, so no single large-valued variable dominates the</span></span>
+<span>                         <span class="co"># distances. Pass FALSE for compositional data (every column a share of the</span></span>
+<span>                         <span class="co"># same whole), where the columns are already on one scale.</span></span>
 <span>  na_replacement <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"none"</span>, <span class="st">"zero"</span>, <span class="st">"drop"</span><span class="op">)</span>, <span class="co"># default = "mean", this chooses what to do with missing values</span></span>
 <span>  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wide"</span>, <span class="st">"long"</span><span class="op">)</span>, <span class="co"># default = "wide". For analysis = "dist" this chooses the</span></span>
 <span>                                     <span class="co"># RETURN TYPE: "wide" gives a base R `dist` object, "long"</span></span>
@@ -228,7 +231,7 @@ stays the same.</p>
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-25.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-09-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

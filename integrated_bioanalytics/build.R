@@ -107,4 +107,41 @@ local({
   }
 })
 
+# RECORD WHEN THE RENDER STARTED, so the prune below can tell this build's output from leftovers.
+.render_started <- Sys.time()
+
 bookdown::render_book("index.Rmd")
+
+# PRUNE ORPHANED CHAPTER PAGES (2026-09-29).
+#
+# WHY THEY ACCUMULATE. bookdown derives each chapter's output filename from the TEXT of its first
+# heading: `# wrangling and summaries` becomes `book/wrangling-and-summaries.html`. Rename the
+# heading and you get a NEW file; nothing removes the old one, because `output_dir` is never cleaned.
+# So every heading Lucas has ever reworded is still sitting in `book/`, fully rendered, reachable by
+# URL, and cross-linked from the other leftovers. By 2026-09-29 that was 54 stale pages against 29
+# real ones -- including three different wrangling chapters ("data wrangling", "data wrangling and
+# summaries", "wrangling and summaries"), each a different vintage of the same material. A student
+# who lands on one from a search engine or an old bookmark reads the wrong book and gets no signal
+# that anything is amiss.
+#
+# THE TEST IS MTIME, NOT A NAME LIST. render_book() rewrites every page it owns, so anything in
+# `book/` older than the moment this render started is by definition not part of this book. That
+# also rescues the `part-*.html` divider pages, which bs4_book emits but the TOC does not href --
+# a link-reachability check would have deleted them.
+#
+# ARCHIVED, NEVER DELETED, per the repo convention: they move to a dated `z_archive/` directory.
+local({
+  pages <- list.files("book", pattern = "\\.html$", full.names = TRUE)
+  if (length(pages) == 0) return(invisible(NULL))
+  stale <- pages[file.info(pages)$mtime < .render_started]
+  if (length(stale) == 0) {
+    message("[build] no orphaned pages in book/")
+    return(invisible(NULL))
+  }
+  dest <- file.path("z_archive", format(Sys.Date(), "stale_book_pages_%Y%m%d"))
+  dir.create(dest, recursive = TRUE, showWarnings = FALSE)
+  ok <- file.rename(stale, file.path(dest, basename(stale)))
+  message("[build] archived ", sum(ok), " orphaned page(s) to ", dest, ":\n         ",
+          paste(basename(stale)[ok], collapse = ", "))
+  if (any(!ok)) warning("[build] could not move: ", paste(basename(stale)[!ok], collapse = ", "))
+})

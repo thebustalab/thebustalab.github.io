@@ -266,11 +266,7 @@ element_edges <- runMatrixAnalysis(
     columns_w_values_for_single_analyte = colnames(elements_wide)[2:21],
     columns_w_sample_ID_info = c("element")
 ) %>%
-  # dplyr:: is required here, not decoration: S4Vectors (pulled in by the Bioconductor
-  # packages phylochemistry attaches) exports its own rename(), it wins on the search
-  # path, and it evaluates its arguments — so a bare rename() fails with
-  # "object 'sample_unique_ID_sample_1' not found" rather than renaming anything.
-  dplyr::rename(element_1 = sample_unique_ID_sample_1, element_2 = sample_unique_ID_sample_2) %>%
+  select(element_1 = sample_unique_ID_sample_1, element_2 = sample_unique_ID_sample_2, distance) %>%
   mutate(similarity = 1 / (1 + distance) * 100)
 
 head(arrange(element_edges, desc(similarity)), 4)
