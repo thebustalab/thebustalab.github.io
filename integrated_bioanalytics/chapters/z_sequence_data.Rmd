@@ -51,8 +51,8 @@ With your nanopore reads stored on a suitable machine, you can analyze them with
 ```{r, eval = FALSE}
 qc_data <- fastxQC(
     paths_to_fastxs = c(
-        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
-        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
+        "path/to/example.fastq",
+        "path/to/example2.fastq"
     ),
     type = "fasta",
     mode = "slow",
@@ -257,8 +257,8 @@ Canu will take some time to run. As it goes along, you can both check on its pro
 
 ```{r, eval = FALSE}
 canuHistogramToKmerTable(
-  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
-  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
+  file_in_path = "path/to/n_frust3assemblyB.ms22.histogram",
+  file_out_path = "path/to/n_frust3assemblyB.ms22.histogram_table"
 )
 ```
 
@@ -402,7 +402,7 @@ Let's look at some examples. For these example, we will use some fasta files sto
 ```{r}
 # reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
 
-# # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
+# # post <- readFasta("path/to/ragtag.scaffold.fasta")
 # n_chroms <- 18
 
 # pb <- progress::progress_bar$new(total = n_chroms)

@@ -51,8 +51,8 @@ Once some sequences are in hand, we can embed them with the function `embedAmino
 ```{r, cache = TRUE, eval = FALSE}
 all_sequences_embedded <- embedAminoAcids(
   amino_acid_stringset = all_sequences,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
-  nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
+  biolm_api_key = readLines("path/to/biolm_api_key.txt"),
+  nvidia_api_key = readLines("path/to/nvidia_api_key.txt"),
   platform = "nvidia"
 )
 all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
@@ -135,7 +135,7 @@ synthases <- searchNCBI("beta-amyrin synthase", retmax = 20)
 
 embedded_OSCs <- embedAminoAcids(
   amino_acid_stringset = synthases,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt")
+  biolm_api_key = readLines("path/to/biolm_api_key.txt")
 )
 
 embedded_OSCs

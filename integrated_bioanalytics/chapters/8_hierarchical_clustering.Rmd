@@ -20,7 +20,6 @@ AK_lakes_clustered <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("hclust"),
     scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
     agglomeration_method = "ward.D2",
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -68,7 +67,6 @@ runMatrixAnalysis(
     data = alaska_lake_data_wide_filtered,
     analysis = c("hclust"),
     scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
     agglomeration_method = "ward.D2",
     columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
     columns_w_sample_ID_info = c("lake", "park")
@@ -87,13 +85,12 @@ ggtree() +
 
 #### concept check {-}
 
-Fill in the blank with the tree_method that builds the tree by step-by-step merging. Press Run. This one takes a few seconds, and the object it makes is used again later in the chapter.
+Fill in the blank with the analysis that builds a tree by step-by-step merging. Press Run. This one takes a few seconds, and the object it makes is used again later in the chapter.
 
 <div class="webr-cell"><textarea class="webr-code">AK_tree <- runMatrixAnalysis(
   data = alaska_lake_data_wide,
-  analysis = "hclust",
+  analysis = "____",
   scale_variance = TRUE,
-  tree_method = "____",
   agglomeration_method = "ward.D2",
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
   columns_w_sample_ID_info = c("lake", "park")
@@ -101,11 +98,11 @@ Fill in the blank with the tree_method that builds the tree by step-by-step merg
 nrow(AK_tree)
 sum(AK_tree$isTip)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="Neighbor joining is a tree-building rule borrowed from phylogenetics. It does not merge groups one pair at a time, so there is no such thing as a distance-to-a-group for it to compute, and it ignores agglomeration_method completely. The colleague compared two runs that used the same rule, so of course they matched.">
-<p class="scq">Self-check: a colleague repeats this run with tree_method = "neighbor_joining", once with ward.D2 and once with single, and reports that the agglomeration method made no difference at all. What went wrong?</p>
-<label><input type="radio"> Nothing; neighbor joining and linkage clustering are two names for the same procedure</label>
-<label><input type="radio"> Neighbor joining builds the tree by a different rule and ignores agglomeration_method entirely, so neither run ever used single linkage</label>
-<label><input type="radio"> The agglomeration method only has an effect once the variables have been scaled</label>
+<div class="selfcheck" data-answer="1" data-explain="Every linkage rule reads the same distance matrix. What differs is how each one turns distances between samples into a distance between groups, and that changes which pair is closest at every step after the first. Change the merge order and you change the tree, without a single distance having moved.">
+<p class="scq">Self-check: a colleague re-runs this clustering with agglomeration_method = "single" instead of "ward.D2" and gets a visibly different tree, from the same data and the same distances. How is that possible?</p>
+<label><input type="radio"> It is not; a different tree means the distances must have been recomputed differently</label>
+<label><input type="radio"> The two rules measure the distance to a group differently, so they merge the same distance matrix in a different order</label>
+<label><input type="radio"> Single linkage discards samples that sit too far from any group, which changes the shape of the tree</label>
 </div>
 
 Fill in the blank with the column to sort by, so that the closest pair of lakes comes to the top. Press Run.
@@ -140,6 +137,8 @@ Hierarchical clustering builds its tree from the bottom up, by a very simple pro
 
 Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
 
+This merging procedure is what `runMatrixAnalysis()` does by default, and it is the only tree-building rule we use in this chapter. (For completeness: the function also takes a `tree_method` argument, which defaults to `"linkage_dendrogram"` — the procedure just described. Its one alternative, `"neighbor_joining"`, is a tree-building rule borrowed from phylogenetics that does not merge groups a pair at a time, and so ignores `agglomeration_method` entirely. We meet it properly in the phylogenies chapter.)
+
 Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings). Either way, the two extremes are the easiest to understand:
 
 - **Single linkage**: the distance between two groups is the distance between their *closest* members. Two groups merge as soon as any one sample in the first is near any one sample in the second.
@@ -157,7 +156,6 @@ solvents_single <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
     agglomeration_method = "single",
     columns_w_values_for_single_analyte = solvent_properties,
     columns_w_sample_ID_info = c("solvent", "category")
@@ -166,8 +164,7 @@ solvents_single <- runMatrixAnalysis(
 solvents_complete <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
-    scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
+    scale_variance = TRUE, 
     agglomeration_method = "complete",
     columns_w_values_for_single_analyte = solvent_properties,
     columns_w_sample_ID_info = c("solvent", "category")
@@ -307,7 +304,6 @@ solvents_cut <- runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
     agglomeration_method = "complete",
     parameters = c(height = 5),
     columns_w_values_for_single_analyte = solvent_properties,
@@ -346,7 +342,6 @@ n_groups_at <- function(cut_at) {
       data = solvents,
       analysis = c("hclust"),
       scale_variance = TRUE,
-      tree_method = "linkage_dendrogram",
       agglomeration_method = "complete",
       parameters = c(height = cut_at),
       columns_w_values_for_single_analyte = solvent_properties,
@@ -372,7 +367,6 @@ runMatrixAnalysis(
     data = solvents,
     analysis = c("hclust"),
     scale_variance = TRUE,
-    tree_method = "linkage_dendrogram",
     agglomeration_method = "complete",
     parameters = c(4),
     columns_w_values_for_single_analyte = solvent_properties,
@@ -393,7 +387,6 @@ Fill in the blank with the column that says whether a row of the output is a sam
   data = solvents,
   analysis = "hclust",
   scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
   agglomeration_method = "complete",
   parameters = c(height = 5),
   columns_w_values_for_single_analyte = solvent_properties,
@@ -419,7 +412,6 @@ Fill in the blank with the height that leaves only two groups. Press Run.
   data = solvents,
   analysis = "hclust",
   scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
   agglomeration_method = "complete",
   parameters = c(height = ____),
   columns_w_values_for_single_analyte = solvent_properties,
@@ -447,7 +439,6 @@ hclust_out <- runMatrixAnalysis(
   data = chemical_blooms,
   analysis = c("hclust"),
   scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
   agglomeration_method = "ward.D2",
   columns_w_values_for_single_analyte = colnames(chemical_blooms)[2:10],
   columns_w_sample_ID_info = "label"

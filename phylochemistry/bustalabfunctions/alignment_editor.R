@@ -7,7 +7,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   # output$alignment_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
-    data <- readAlignment("/Users/bust0037/Desktop/Kalanchoe_ITS_1.fa", type = "DNA")
+    data <- readAlignment("path/to/Kalanchoe_ITS_1.fa", type = "DNA")
     data <- pivot_wider(data, names_from = "position", values_from = "state")
     rownames(data) <- data$name
     data <- as.matrix(data[,-c(1)])

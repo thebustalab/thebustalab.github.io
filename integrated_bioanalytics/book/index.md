@@ -5605,9 +5605,35 @@ Below, we generate sentence-level GloVe embeddings for the PubMed titles retriev
 search_results_glove <- embedText(
   search_results,
   column_name = "title",
-  path_to_glove_file = "/Users/bust0037/Documents/Websites/glove.6B.50d.txt"
+  path_to_glove_file = "path/to/glove.6B.50d.txt"
 )
-##   |                                                          |                                                  |   0%  |                                                          |====                                              |   8%  |                                                          |========                                          |  17%  |                                                          |============                                      |  25%  |                                                          |=================                                 |  33%  |                                                          |=====================                             |  42%  |                                                          |=========================                         |  50%  |                                                          |=============================                     |  58%  |                                                          |=================================                 |  67%  |                                                          |======================================            |  75%  |                                                          |==========================================        |  83%  |                                                          |==============================================    |  92%  |                                                          |==================================================| 100%
+## 
+  |                                                        
+  |                                                  |   0%
+  |                                                        
+  |====                                              |   8%
+  |                                                        
+  |========                                          |  17%
+  |                                                        
+  |============                                      |  25%
+  |                                                        
+  |=================                                 |  33%
+  |                                                        
+  |=====================                             |  42%
+  |                                                        
+  |=========================                         |  50%
+  |                                                        
+  |=============================                     |  58%
+  |                                                        
+  |=================================                 |  67%
+  |                                                        
+  |======================================            |  75%
+  |                                                        
+  |==========================================        |  83%
+  |                                                        
+  |==============================================    |  92%
+  |                                                        
+  |==================================================| 100%
 
 runMatrixAnalysis(
   data = search_results_glove,
@@ -5640,7 +5666,11 @@ search_results_embedded <- embedText(
   df = search_results,
   column_name = "title"
 )
-##   |                                                          |                                                  |   0%  |                                                          |==================================================| 100%
+## 
+  |                                                        
+  |                                                  |   0%
+  |                                                        
+  |==================================================| 100%
 search_results_embedded[1:3,1:10]
 ## # A tibble: 3 × 10
 ##   entry_number term  date       journal title doi   abstract
@@ -5712,7 +5742,13 @@ odor <- data.frame(
 out <- embedText(
   odor, column_name = "odor"
 )
-##   |                                                          |                                                  |   0%  |                                                          |=========================                         |  50%  |                                                          |==================================================| 100%
+## 
+  |                                                        
+  |                                                  |   0%
+  |                                                        
+  |=========================                         |  50%
+  |                                                        
+  |==================================================| 100%
 
 runMatrixAnalysis(
   data = out,
@@ -5889,8 +5925,8 @@ Once some sequences are in hand, we can embed them with the function `embedAmino
 ``` r
 all_sequences_embedded <- embedAminoAcids(
   amino_acid_stringset = all_sequences,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
-  nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
+  biolm_api_key = readLines("path/to/biolm_api_key.txt"),
+  nvidia_api_key = readLines("path/to/nvidia_api_key.txt"),
   platform = "nvidia"
 )
 all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
@@ -7739,7 +7775,7 @@ Now we could add some data. The next few examples use a dataset of per- and poly
 
 
 ``` r
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Tools/websites/private_data/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("path/to/pfas_data_private.csv")
 lake_superior_PFAS %>%
   group_by(site, lon, lat) %>%
   summarize(total = sum(abundance)) -> lake_superior_PFAS_summarized
@@ -7765,7 +7801,7 @@ Or we could do something more sophisticated like add pie charts at each point:
 
 
 ``` r
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Tools/websites/private_data/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("path/to/pfas_data_private.csv")
 
 grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
 site_less_than_90lon <- filter(grouped_by_site, lon <= -90)
