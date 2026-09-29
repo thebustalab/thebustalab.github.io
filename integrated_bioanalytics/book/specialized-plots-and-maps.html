@@ -105,8 +105,8 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="specialized-plots-and-maps" class="section level1 unnumbered">
 <h1>specialized plots and maps<a class="anchor" aria-label="anchor" href="#specialized-plots-and-maps"><i class="fas fa-link"></i></a>
 </h1>
-<div id="section-21" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-21"><i class="fas fa-link"></i></a></h2>
+<div id="section-22" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-22"><i class="fas fa-link"></i></a></h2>
 <p>This appendix collects plot types that are useful but specialized. None of them is part of the main
 sequence of the book — each is a self-contained recipe you can come back to when your data happens to
 have the shape it fits. Three of them (3D scatter, Venn, ternary) are unusual chart forms; the fourth,
@@ -197,7 +197,7 @@ comparing-means chapter, and what remained is here.</em></p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-644-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-646-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="venn-diagrams" class="section level3 unnumbered">
 <h3>venn diagrams<a class="anchor" aria-label="anchor" href="#venn-diagrams"><i class="fas fa-link"></i></a>
@@ -218,7 +218,7 @@ comparing-means chapter, and what remained is here.</em></p>
 <span>    <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-645-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-647-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="ternary-plots" class="section level3 unnumbered">
 <h3>ternary plots<a class="anchor" aria-label="anchor" href="#ternary-plots"><i class="fas fa-link"></i></a>
@@ -239,7 +239,7 @@ side effect.</p>
 <span>    size <span class="op">=</span> <span class="va">pH</span></span>
 <span>    <span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-646-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-648-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
 <div id="map-data" class="section level2 unnumbered">
@@ -296,14 +296,14 @@ a decision with consequences, not a default.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-651-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-653-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that we can use <code><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map()</a></code> to do some pretty cool things!</p>
 <div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/map_data.html">map_data</a></span><span class="op">(</span><span class="st">"world"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span>projection <span class="op">=</span> <span class="st">"albers"</span>, lat0 <span class="op">=</span> <span class="fl">39</span>, lat1 <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-652-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-654-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can use filtering to produce maps of specific regions.</p>
 <div class="sourceCode" id="cb226"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -314,7 +314,7 @@ a decision with consequences, not a default.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-653-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-655-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="maps-with-plots" class="section level3 unnumbered">
 <h3>maps with plots<a class="anchor" aria-label="anchor" href="#maps-with-plots"><i class="fas fa-link"></i></a>
@@ -326,7 +326,7 @@ a decision with consequences, not a default.</p>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-654-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-656-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:</p>
 <div class="sourceCode" id="cb228"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1: Filter and prepare your data for Lake Superior (though yes, that includes Michigan and Huron)</span></span>
@@ -350,10 +350,10 @@ a decision with consequences, not a default.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-655-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-657-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. <strong>Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.</strong> We could do something simple like plot total abundances as the size of a point:</p>
 <div class="sourceCode" id="cb229"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lake_superior_PFAS</span> <span class="op">&lt;-</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"path/to/pfas_data_private.csv"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lake_superior_PFAS</span> <span class="op">&lt;-</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"PFAS_DATA"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">lake_superior_PFAS</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">site</span>, <span class="va">lon</span>, <span class="va">lat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">lake_superior_PFAS_summarized</span></span>
@@ -370,10 +370,10 @@ a decision with consequences, not a default.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_cowplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-656-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-658-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Or we could do something more sophisticated like add pie charts at each point:</p>
 <div class="sourceCode" id="cb230"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lake_superior_PFAS</span> <span class="op">&lt;-</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"path/to/pfas_data_private.csv"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lake_superior_PFAS</span> <span class="op">&lt;-</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"PFAS_DATA"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">grouped_by_site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">lake_superior_PFAS</span>, <span class="va">component</span> <span class="op">==</span> <span class="st">"PFBA"</span><span class="op">)</span></span>
 <span><span class="va">site_less_than_90lon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">grouped_by_site</span>, <span class="va">lon</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">90</span><span class="op">)</span></span>
@@ -411,7 +411,7 @@ a decision with consequences, not a default.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_label</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">site_more_than_90lon</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lon</span>, y <span class="op">=</span> <span class="va">lat</span>, label <span class="op">=</span> <span class="va">site</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_map.html">coord_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_cowplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-657-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-659-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as <code>lake_superior_shoreline</code>:</p>
 <div class="sourceCode" id="cb231"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">shore</span> <span class="op">&lt;-</span> <span class="va">lake_superior_shoreline</span></span>
@@ -427,11 +427,11 @@ a decision with consequences, not a default.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    </span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">wide_view</span>, <span class="va">zoom_view</span>, nrow <span class="op">=</span> <span class="fl">1</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-658-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-660-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
-<div id="section-22" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-22"><i class="fas fa-link"></i></a></h2>
+<div id="section-23" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-23"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="further-reading-12" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-12"><i class="fas fa-link"></i></a>
@@ -459,7 +459,7 @@ a decision with consequences, not a default.</p>
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#specialized-plots-and-maps">specialized plots and maps</a></li>
-<li><a class="nav-link" href="#section-21"></a></li>
+<li><a class="nav-link" href="#section-22"></a></li>
 <li>
 <a class="nav-link" href="#specialized-plots">specialized plots</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#d-scatter-plots">3D scatter plots</a></li>
@@ -473,7 +473,7 @@ a decision with consequences, not a default.</p>
 <li><a class="nav-link" href="#maps-with-plots">maps with plots</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#section-22"></a></li>
+<li><a class="nav-link" href="#section-23"></a></li>
 <li><a class="nav-link" href="#further-reading-12">further reading</a></li>
 </ul>
 

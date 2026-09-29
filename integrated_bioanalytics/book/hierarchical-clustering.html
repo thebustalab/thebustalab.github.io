@@ -121,7 +121,6 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"ward.D2"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
@@ -189,7 +188,6 @@ Figure 2.10: The same dendrogram, with lake names as tip labels and park identit
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide_filtered</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"ward.D2"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide_filtered</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
@@ -213,13 +211,12 @@ Figure 2.11: The Alaskan lakes re-clustered with the two most distinctive lakes 
 <div id="concept-check-23" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-23"><i class="fas fa-link"></i></a>
 </h4>
-<p>Fill in the blank with the tree_method that builds the tree by step-by-step merging. Press Run. This one takes a few seconds, and the object it makes is used again later in the chapter.</p>
+<p>Fill in the blank with the analysis that builds a tree by step-by-step merging. Press Run. This one takes a few seconds, and the object it makes is used again later in the chapter.</p>
 <div class="webr-cell">
 <textarea class="webr-code">AK_tree &lt;- runMatrixAnalysis(
   data = alaska_lake_data_wide,
-  analysis = "hclust",
+  analysis = "____",
   scale_variance = TRUE,
-  tree_method = "____",
   agglomeration_method = "ward.D2",
   columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
   columns_w_sample_ID_info = c("lake", "park")
@@ -227,13 +224,13 @@ Figure 2.11: The Alaskan lakes re-clustered with the two most distinctive lakes 
 nrow(AK_tree)
 sum(AK_tree$isTip)</textarea>
 </div>
-<div class="selfcheck" data-answer="1" data-explain="Neighbor joining is a tree-building rule borrowed from phylogenetics. It does not merge groups one pair at a time, so there is no such thing as a distance-to-a-group for it to compute, and it ignores agglomeration_method completely. The colleague compared two runs that used the same rule, so of course they matched.">
+<div class="selfcheck" data-answer="1" data-explain="Every linkage rule reads the same distance matrix. What differs is how each one turns distances between samples into a distance between groups, and that changes which pair is closest at every step after the first. Change the merge order and you change the tree, without a single distance having moved.">
 <p class="scq">
-Self-check: a colleague repeats this run with tree_method = “neighbor_joining”, once with ward.D2 and once with single, and reports that the agglomeration method made no difference at all. What went wrong?
+Self-check: a colleague re-runs this clustering with agglomeration_method = “single” instead of “ward.D2” and gets a visibly different tree, from the same data and the same distances. How is that possible?
 </p>
-<p><label><input type="radio"> Nothing; neighbor joining and linkage clustering are two names for the same procedure</label>
-<label><input type="radio"> Neighbor joining builds the tree by a different rule and ignores agglomeration_method entirely, so neither run ever used single linkage</label>
-<label><input type="radio"> The agglomeration method only has an effect once the variables have been scaled</label></p>
+<p><label><input type="radio"> It is not; a different tree means the distances must have been recomputed differently</label>
+<label><input type="radio"> The two rules measure the distance to a group differently, so they merge the same distance matrix in a different order</label>
+<label><input type="radio"> Single linkage discards samples that sit too far from any group, which changes the shape of the tree</label></p>
 </div>
 <p>Fill in the blank with the column to sort by, so that the closest pair of lakes comes to the top. Press Run.</p>
 <div class="webr-cell">
@@ -269,6 +266,7 @@ Self-check: the pair at the top of that table is the first merge the algorithm m
 <li>Repeat step 2 until everything is in a single group.</li>
 </ol>
 <p>Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.</p>
+<p>This merging procedure is what <code>runMatrixAnalysis()</code> does by default, and it is the only tree-building rule we use in this chapter. (For completeness: the function also takes a <code>tree_method</code> argument, which defaults to <code>"linkage_dendrogram"</code> — the procedure just described. Its one alternative, <code>"neighbor_joining"</code>, is a tree-building rule borrowed from phylogenetics that does not merge groups a pair at a time, and so ignores <code>agglomeration_method</code> entirely. We meet it properly in the phylogenies chapter.)</p>
 <p>Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the <strong>agglomeration method</strong>, or <strong>linkage</strong>, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings). Either way, the two extremes are the easiest to understand:</p>
 <ul>
 <li>
@@ -287,7 +285,6 @@ Self-check: the pair at the top of that table is the first merge the algorithm m
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"single"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"solvent"</span>, <span class="st">"category"</span><span class="op">)</span></span>
@@ -296,8 +293,7 @@ Self-check: the pair at the top of that table is the first merge the algorithm m
 <span><span class="va">solvents_complete</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
-<span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"complete"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"solvent"</span>, <span class="st">"category"</span><span class="op">)</span></span>
@@ -340,7 +336,7 @@ Figure 2.12: Single and complete linkage build very different trees from identic
 <strong>there are outliers.</strong> Under complete linkage, one extreme sample drags a group’s furthest-member distance upwards and delays that group’s merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.</li>
 </ul>
 <p>The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the “groups” in any one tree should be treated with caution.</p>
-<p>Between the two extremes sit two widely used methods. <strong>Average linkage</strong> (<code>"average"</code>, also called UPGMA) uses the average of all the distances between the members of the two groups. <strong>Ward’s method</strong> (<code>"ward.D2"</code>), which we used for the Alaska lakes, merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.</p>
+<p>Between the two extremes sit two widely used methods. <strong>Average linkage</strong> (<code>"average"</code>, also called UPGMA) uses the average of all the distances between the members of the two groups. <strong>Ward’s method</strong> (<code>"ward.D2"</code>), which merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.</p>
 <div id="concept-check-24" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-24"><i class="fas fa-link"></i></a>
 </h4>
@@ -438,7 +434,6 @@ Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and Wh
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"complete"</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
@@ -481,7 +476,6 @@ Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in whic
 <span>      data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>      analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>      scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>      agglomeration_method <span class="op">=</span> <span class="st">"complete"</span>,</span>
 <span>      parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>height <span class="op">=</span> <span class="va">cut_at</span><span class="op">)</span>,</span>
 <span>      columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
@@ -496,7 +490,12 @@ Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in whic
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">6</span>,<span class="fl">0.1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>n_groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">height</span>, <span class="va">n_groups_at</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">height</span>, y <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-298-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-298"></span>
+<img src="index_files/figure-html/unnamed-chunk-298-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
+Figure 2.14: The number of groups is not something chosen in advance – it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
+</p>
+</div>
 <p>Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the answer is <strong>stable over a wide stretch</strong>: anywhere from about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.</p>
 <p>When the number of groups is already known — because the chemistry says so, or because a downstream step needs a fixed number — it can be asked for directly instead, and <code>runMatrixAnalysis()</code> finds the height that delivers it:</p>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
@@ -504,7 +503,6 @@ Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in whic
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"complete"</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
@@ -530,7 +528,6 @@ Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in whic
   data = solvents,
   analysis = "hclust",
   scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
   agglomeration_method = "complete",
   parameters = c(height = 5),
   columns_w_values_for_single_analyte = solvent_properties,
@@ -556,7 +553,6 @@ Self-check: the table has 63 rows, 32 of which are tips, and exactly 31 have an 
   data = solvents,
   analysis = "hclust",
   scale_variance = TRUE,
-  tree_method = "linkage_dendrogram",
   agglomeration_method = "complete",
   parameters = c(height = ____),
   columns_w_values_for_single_analyte = solvent_properties,
@@ -586,7 +582,6 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tree_method <span class="op">=</span> <span class="st">"linkage_dendrogram"</span>,</span>
 <span>  agglomeration_method <span class="op">=</span> <span class="st">"ward.D2"</span>,</span>
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="st">"label"</span></span>
@@ -604,7 +599,7 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-301"></span>
 <img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%"><p class="caption">
-Figure 2.14: A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
+Figure 2.15: A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
 </p>
 </div>
 <p>Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the <code>y</code> coordinate supplied by <code>ggtree</code>, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.</p>
@@ -621,7 +616,7 @@ Figure 2.14: A dendrogram of the chemical bloom samples, drawn on a deliberately
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-302"></span>
 <img src="index_files/figure-html/unnamed-chunk-302-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure 2.15: Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+Figure 2.16: Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>With matching y scales, <code>plot_grid()</code> can align the tree and the heat map so the tiles line up with the corresponding samples. Using <code>align = "h"</code> snaps them together horizontally, and <code>axis = "tb"</code> keeps the panel heights consistent.</p>
@@ -630,7 +625,7 @@ Figure 2.15: Compound abundances for the same samples, in the tree’s own tip o
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-303"></span>
 <img src="index_files/figure-html/unnamed-chunk-303-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure 2.16: The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+Figure 2.17: The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
@@ -643,7 +638,7 @@ Figure 2.16: The dendrogram and the heat map aligned. A two-panel figure combini
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-304"></span>
 <img src="index_files/figure-html/unnamed-chunk-304-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure 2.17: What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+Figure 2.18: What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-27" class="section level4 unnumbered">
@@ -670,6 +665,39 @@ Self-check: mapping y to lake instead of to y also draws a perfectly good-lookin
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="exercises-4" class="section level2 unnumbered">
+<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
+</h2>
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/canyon/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/canyon/cover.png" alt="The Confluence cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/canyon/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Confluence</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">
+Hierarchical clustering · merge heights + cutting the tree + group summaries
+</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">
+You came down into the red canyon to survey its springs, and the flood season has come early. Climb the ladder to the high springs to learn which waters are kin, noting the height of every confluence as you pass, then come back down and read the shape of the land itself before the water climbs to meet you.
+</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/temple/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/temple/cover.png" alt="The Register of the Gods cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/hierarchical_clustering/temple/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Register of the Gods</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">
+Hierarchical clustering · distances + cutting the tree + group summaries
+</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">
+The keeper of the temple is dead, and two registers died with him: which offering each shrine takes, and which god each shrine serves. Rebuild them both from the residues left in the vessels before the sun reaches its zenith, light the ring of fires at the altar, and cross the canopy bridge to carry the word.
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="section-9" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="further-reading-4" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
 </h2>
@@ -693,6 +721,8 @@ Self-check: mapping y to lake instead of to y also draws a perfectly good-lookin
 <li><a class="nav-link" href="#dendrogram-interpretation">dendrogram interpretation</a></li>
 <li><a class="nav-link" href="#cutting-a-dendrogram">cutting a dendrogram</a></li>
 <li><a class="nav-link" href="#annotating-dendrograms">annotating dendrograms</a></li>
+<li><a class="nav-link" href="#exercises-4">exercises</a></li>
+<li><a class="nav-link" href="#section-9"></a></li>
 <li><a class="nav-link" href="#further-reading-4">further reading</a></li>
 </ul>
 

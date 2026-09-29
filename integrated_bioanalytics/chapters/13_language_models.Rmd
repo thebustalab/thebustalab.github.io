@@ -80,13 +80,13 @@ GloVe (Global Vectors) embeddings represent words as fixed numeric vectors based
 
 At the word level, each token is replaced by its corresponding vector from the GloVe table. At the sentence level, these word vectors are combined into a single vector that represents the whole sentence. A simple approach is to average the word vectors across the sentence (other approaches include weighted averages or more complex pooling).
 
-Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from https://nlp.stanford.edu/projects/glove/ and update the path to the file on the local machine.
+Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from https://nlp.stanford.edu/projects/glove/, then record where you put it in your `.Renviron` file as `GLOVE_FILE`, alongside the tokens you stored at the start of this chapter. The code below reads that setting with `Sys.getenv()`, so the file itself can live anywhere on your machine.
 
 ```{r}
 search_results_glove <- embedText(
   search_results,
   column_name = "title",
-  path_to_glove_file = "path/to/glove.6B.50d.txt"
+  path_to_glove_file = Sys.getenv("GLOVE_FILE")
 )
 
 runMatrixAnalysis(
