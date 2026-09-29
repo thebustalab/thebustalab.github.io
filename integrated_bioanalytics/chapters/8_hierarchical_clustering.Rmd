@@ -4,6 +4,8 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
 ```
 
+So far we have been looking at how to plot raw data, wrangle and summarize data, and work with edgelist data. This chapter continues the search for relationships between the samples in a data set, but now by sorting those samples into a branching tree of nested groups, and then deciding where to cut it.
+
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
@@ -13,7 +15,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 
 ## linkage dendrograms {-}
 
-So far we have been looking at how to plot raw data, wrangle and summarize data, and work with edgelist data. In this chapter we will continue to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
+Consider the Alaska lakes dataset: which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
 
 ```{r, message = FALSE}
 AK_lakes_clustered <- runMatrixAnalysis(
@@ -403,8 +405,6 @@ sum(is.na(cut_tree$cluster))</textarea></div>
 <label><input type="radio"> 31 solvents were too far from the others to be placed in any group at this height</label>
 <label><input type="radio"> The clustering failed for 31 solvents because they contain missing measurements</label>
 </div>
-
-<hr>
 
 Fill in the blank with the height that leaves only two groups. Press Run.
 
