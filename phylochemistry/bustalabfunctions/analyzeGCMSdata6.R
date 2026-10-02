@@ -365,8 +365,30 @@
             ## 0.0429..0.9136 (the m/z colourbar, and the y-tick label width, both
             ## move with the view). Keying on size alone meant whichever view was
             ## brushed first at a given window size poisoned every other one.
-            panel_fraction <- function(p, px_w, px_h, res = 72, view_key = NULL, n_facets = NA) {
-                key <- paste0(px_w, "x", px_h, "|", if (is.null(view_key)) "" else view_key, "|", n_facets)
+            ## `window` (the DRAWN x and y limits) is part of the cache key as
+            ## well, and has to be: the cached object carries $x_range / $y_range /
+            ## $panels$y_data_*, which ARE the window. Keying on size + view + facet
+            ## count alone meant the first zoom was read against the right window
+            ## and every later one against the FIRST window, because the key had not
+            ## changed. Field log, host1 2026-10-02: after zooming to 905..2222 the
+            ## next brush still printed "drawn x 150.311-4878.66" -- the expansion of
+            ## the full 365..4664 view -- and so jumped to a region the user never
+            ## selected. The x-tick label widths move the panel edges too, so this is
+            ## not only about the ranges.
+            ## `facet_sig` likewise: the cached $panels$facet is how a mapping-less
+            ## brush recovers WHICH SAMPLE it was drawn on, so it is page-specific.
+            ## With samples_per_page = 20 and 100 samples, every page draws 20
+            ## facets at the same size in the same view -- so paging was a cache
+            ## HIT and Shift+A would have written the brushed peak against page
+            ## one's sample names.
+            panel_fraction <- function(p, px_w, px_h, res = 72, view_key = NULL, n_facets = NA,
+                                       window = NULL, facet_sig = NULL) {
+                win_tag <- if (is.null(window) || !length(window)) "" else
+                    paste(signif(as.numeric(window), 10), collapse = ",")
+                fct_tag <- if (is.null(facet_sig) || !length(facet_sig)) "" else
+                    paste(as.character(facet_sig), collapse = "\u001f")
+                key <- paste0(px_w, "x", px_h, "|", if (is.null(view_key)) "" else view_key,
+                              "|", n_facets, "|", win_tag, "|", fct_tag)
                 if (!is.null(.panel_cache[[key]])) return(.panel_cache[[key]])
                 tf <- tempfile(fileext = ".png")
                 grDevices::png(tf, width = px_w, height = px_h, res = res)
@@ -496,12 +518,30 @@
 
             ## Honour a stored y-zoom only in the view it was taken in; otherwise
             ## fall back to the range the data itself occupies.
-            y_limits_for <- function(key, fallback) {
-                if (!is.null(y_zoom) && length(y_zoom) == 2 &&
-                    !is.null(y_zoom_key) && identical(y_zoom_key, key)) {
-                    return(y_zoom)
+            ##
+            ## zero_floor pins the BOTTOM of an abundance axis at 0 (Lucas,
+            ## 2026-10-02: "y minimum is always zero"). A chromatogram read against
+            ## a floating baseline is unreadable -- peak heights stop being
+            ## comparable between views and a y-brush that lands low in the panel
+            ## used to crop the baseline off the bottom of the picture. Only the
+            ## TOP of a y-zoom survives, so a y-brush now means "show me up to
+            ## here", which is the only thing anyone wants from it.
+            ##
+            ## NOT applied to the ion map (y is m/z, where 0 is meaningless and
+            ## would waste nine tenths of the panel) nor to log10 scaling (where
+            ## the drawn values are logs and 0 is a real interior value).
+            y_limits_for <- function(key, fallback, zero_floor = FALSE) {
+                lim <- if (!is.null(y_zoom) && length(y_zoom) == 2 &&
+                           !is.null(y_zoom_key) && identical(y_zoom_key, key)) {
+                    y_zoom
+                } else {
+                    fallback
                 }
-                fallback
+                if (isTRUE(zero_floor) && length(lim) == 2 && all(is.finite(lim))) {
+                    top <- max(lim)
+                    if (top > 0) lim <- c(0, top)
+                }
+                lim
             }
 
             ## The brushed y range, in the data units of whatever was last drawn.
@@ -542,7 +582,8 @@
                 }
 
                 pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
-                                     view_key = last_brush_key, n_facets = last_brush_facets)
+                                     view_key = last_brush_key, n_facets = last_brush_facets,
+                                     window = last_brush_window, facet_sig = last_brush_facet_sig)
                 if (is.null(pf)) {
                     cat("  y-zoom skipped (panel bounds unknown).\n")
                     return(NULL)
@@ -649,7 +690,8 @@
                     if (!is.null(last_ms_plot) && length(last_ms_size) == 2 &&
                         all(is.finite(last_ms_size)) && all(last_ms_size > 0)) {
                         pfm <- panel_fraction(last_ms_plot, last_ms_size[1], last_ms_size[2],
-                                              view_key = "massSpectra_1", n_facets = 1)
+                                              view_key = "massSpectra_1", n_facets = 1,
+                                              window = last_ms_window)
                     }
                     if (!is.null(pfm)) {
                         fr <- pmin(pmax((fr - pfm$x[1]) / (pfm$x[2] - pfm$x[1]), 0), 1)
@@ -687,6 +729,36 @@
                 if (is.null(brush$mapping) || is.null(xv)) {
                     cat(paste0("Brush has no plot mapping. Fields present: ",
                                paste(names(brush), collapse = ", "), "\n"))
+                    ## RAW PAYLOAD DUMP. The y convention in this fallback is still
+                    ## only inferred -- x fractions were read off the field, y was
+                    ## assumed to follow the same rule, and the host1 log of
+                    ## 2026-10-02 contradicts it: a drag in the bottom facet came
+                    ## back ymin/ymax 0.013-0.030, which is below the bottom panel's
+                    ## own extent (0.047) whichever end of the image you measure
+                    ## from, so it clamped to a degenerate range and the facet
+                    ## always resolved to the bottom panel. coords_css / coords_img
+                    ## are in PIXELS with a known origin, so they settle it outright
+                    ## -- print them rather than guess again (canon: never ship an
+                    ## unverified coordinate convention).
+                    dump_xy <- function(tag, v) {
+                        if (is.null(v)) return(invisible(NULL))
+                        v <- unlist(v)
+                        if (!length(v)) return(invisible(NULL))
+                        cat(paste0("    ", tag, ": ",
+                                   paste(names(v), signif(suppressWarnings(as.numeric(v)), 6),
+                                         sep = "=", collapse = " "), "\n"))
+                    }
+                    cat(paste0("  RAW brush: xmin=", signif(brush$xmin, 6), " xmax=", signif(brush$xmax, 6),
+                               " ymin=", signif(brush$ymin, 6), " ymax=", signif(brush$ymax, 6),
+                               " direction=", if (is.null(brush$direction)) "NA" else brush$direction, "\n"))
+                    dump_xy("coords_css", brush$coords_css)
+                    dump_xy("coords_img", brush$coords_img)
+                    dump_xy("img_css_ratio", brush$img_css_ratio)
+                    dump_xy("domain", brush$domain)
+                    dump_xy("range", brush$range)
+                    cat(paste0("    rendered css size (w,h): ",
+                               paste(signif(last_brush_size, 6), collapse = ", "),
+                               "; facets drawn: ", last_brush_facets, "\n"))
                 }
                 xv_mapped <- if (!is.null(xv) && xv %in% names(df)) xv else NULL
                 if (is.null(xv) || !(xv %in% names(df))) xv <- "rt_rt_offset"
@@ -734,7 +806,8 @@
                         if (!is.null(last_brush_plot) && length(last_brush_size) == 2 &&
                             all(is.finite(last_brush_size)) && all(last_brush_size > 0)) {
                             pfull <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
-                                                    view_key = last_brush_key, n_facets = last_brush_facets)
+                                                    view_key = last_brush_key, n_facets = last_brush_facets,
+                                                    window = last_brush_window, facet_sig = last_brush_facet_sig)
                             if (!is.null(pfull)) pf <- pfull$x
                         }
                         if (!is.null(pf)) {
@@ -792,10 +865,27 @@
                     nrow(pfull$panels) > 1 && !is.null(brush$ymin) && !is.null(brush$ymax) &&
                     is.finite(brush$ymin) && is.finite(brush$ymax) &&
                     brush$ymin > -0.5 && brush$ymax < 1.5) {
-                    pidx <- panel_at_bottom_fraction(pfull, mean(c(brush$ymin, brush$ymax)))
+                    ycentre <- mean(c(brush$ymin, brush$ymax))
+                    pidx <- panel_at_bottom_fraction(pfull, ycentre)
                     if (!is.null(pidx) && !is.na(pfull$panels$facet[pidx])) {
                         panel_value <- pfull$panels$facet[pidx]
                         panel_source <- paste0("panel ", pidx, "/", nrow(pfull$panels), " by y position")
+                        ## panel_at_bottom_fraction() SNAPS to the nearest panel when the
+                        ## centre lands in a gutter, which is right for a drag that
+                        ## overshoots -- and indistinguishable, silently, from a y
+                        ## convention that is simply wrong. The host1 log of 2026-10-02
+                        ## showed a 5-facet page where every brush reported y 0.01-0.03,
+                        ## outside the whole stack, and so always snapped to the bottom
+                        ## panel. Say so, instead of reporting a guess as a reading.
+                        p_lo <- 1 - pfull$panels$y_hi[pidx]
+                        p_hi <- 1 - pfull$panels$y_lo[pidx]
+                        if (ycentre < p_lo || ycentre > p_hi) {
+                            cat(paste0("  WARNING: the brush's y centre (", signif(ycentre, 4),
+                                       ") is OUTSIDE every panel; panel ", pidx,
+                                       " (", signif(p_lo, 4), "-", signif(p_hi, 4),
+                                       " from the bottom) is only the nearest one. Treat the facet",
+                                       " and the y-zoom as unreliable.\n"))
+                        }
                     }
                 }
                 if (!is.null(pv) && pv %in% names(df) && !is.null(panel_value)) {
@@ -1281,9 +1371,19 @@
                 ## How many facets the last render actually drew. Part of the
                 ## panel-geometry cache key, because panel heights move with it.
                 last_brush_facets <- NA_integer_
+                ## The DRAWN window of the last render (x limits then y limits).
+                ## Part of the panel-geometry cache key -- see panel_fraction().
+                ## Deliberately NOT folded into last_brush_key, which is the
+                ## y-zoom VIEW key and must stay window-independent or every
+                ## x-zoom would silently discard the y-zoom with it.
+                last_brush_window <- NULL
+                ## The facet NAMES the last render drew, in display order -- the
+                ## rest of the panel-geometry cache key. See panel_fraction().
+                last_brush_facet_sig <- NULL
                 ## Same pair for the mass-spectrum plot, used by brushed_ms().
                 last_ms_plot <- NULL
                 last_ms_size <- c(NA_real_, NA_real_)
+                last_ms_window <- NULL
 
                 ## Everything the handlers reach for with `<<-` is declared HERE, so
                 ## the assignment binds in this function's frame. Without a local
@@ -2210,7 +2310,9 @@
                                                 ## and one taken on the ion map gave the TIC a y-axis in
                                                 ## m/z. They now only ever hold raw counts.
                                                 if (is.null(y_zoom_key) || grepl("^tic/", y_zoom_key)) {
-                                                    y_axis_start <<- ysel[1]
+                                                    ## Bottom pinned at 0 -- see y_limits_for()'s
+                                                    ## zero_floor. The y-brush contributes its TOP only.
+                                                    y_axis_start <<- 0
                                                     y_axis_end   <<- ysel[2]
                                                 } else {
                                                     cat(paste0("  y-zoom stored for ", y_zoom_key,
@@ -2219,7 +2321,7 @@
                                             } else {
                                                 y_zoom <<- NULL
                                                 y_zoom_key <<- NULL
-                                                y_axis_start <<- min(peak_points$abundance)
+                                                y_axis_start <<- 0
                                                 y_axis_end <<- max(peak_points$abundance)
                                             }
                                         } else {
@@ -2655,6 +2757,16 @@
                             ## drawn_yrange is what the panel spans when no zoom applies, and is
                             ## also what a later brush's y fractions get measured against.
                                 view_key <- paste(mode_display, mode_scale, sep = "/")
+                                ## Pin the bottom of the y axis at 0 wherever y is an
+                                ## abundance. The ion map's y is m/z, and log10 scaling
+                                ## draws logs -- 0 is an interior value there, not a floor.
+                                zero_floor_y <- if (mode_display == "ion_map") {
+                                    FALSE
+                                } else if (mode_display == "all_ions") {
+                                    !identical(mode_scale, "log")
+                                } else {
+                                    TRUE
+                                }
                                 drawn_yrange <- if (mode_display == "ion_map" && !is.null(allion)) {
                                     range(allion$mz, na.rm = TRUE)
                                 } else if (mode_display == "all_ions" && !is.null(allion)) {
@@ -2681,7 +2793,8 @@
                                         scale_colour_viridis_c(name = "m/z", trans = "log10") +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
                                         scale_y_continuous(name = allion_y_label(mode_scale),
-                                                           limits = y_limits_for(view_key, drawn_yrange),
+                                                           limits = y_limits_for(view_key, drawn_yrange,
+                                                                                 zero_floor = zero_floor_y),
                                                            oob = scales::squish) +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
@@ -2715,7 +2828,8 @@
                                         ## tiles have width and height, so a tile straddling either
                                         ## edge should be clipped, not dropped.
                                         coord_cartesian(xlim = c(xs, xe),
-                                                        ylim = y_limits_for(view_key, drawn_yrange)) +
+                                                        ylim = y_limits_for(view_key, drawn_yrange,
+                                                                            zero_floor = zero_floor_y)) +
                                         scale_x_continuous(name = "Retention (Scan number)") +
                                         scale_y_continuous(name = "m/z") +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
@@ -2729,7 +2843,8 @@
                                             mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
                                         ) +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
-                                        scale_y_continuous(limits = y_limits_for(view_key, c(ys, ye)),
+                                        scale_y_continuous(limits = y_limits_for(view_key, c(ys, ye),
+                                                                                 zero_floor = zero_floor_y),
                                                            name = "Abundance (counts)", oob = scales::squish) +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
@@ -2836,12 +2951,16 @@
                                     session$clientData$output_chromatograms_width,
                                     session$clientData$output_chromatograms_height)))
                                 last_brush_key    <<- view_key
-                                last_brush_facets <<- if (mode_display %in% c("all_ions", "ion_map") && !is.null(allion)) {
-                                    length(unique(as.character(allion$path_to_cdf_csv)))
+                                last_brush_facet_sig <<- if (mode_display %in% c("all_ions", "ion_map") && !is.null(allion)) {
+                                    sort(unique(as.character(allion$path_to_cdf_csv)))
                                 } else {
-                                    length(unique(as.character(cuf$path_to_cdf_csv)))
+                                    sort(unique(as.character(cuf$path_to_cdf_csv)))
                                 }
-                                last_brush_yrange <<- y_limits_for(view_key, drawn_yrange)
+                                last_brush_facets <<- length(last_brush_facet_sig)
+                                last_brush_yrange <<- y_limits_for(view_key, drawn_yrange,
+                                                                   zero_floor = zero_floor_y)
+                                last_brush_window <<- suppressWarnings(as.numeric(
+                                    c(xs, xe, last_brush_yrange)))
 
                             chromatogram_plot
                         })
@@ -3281,6 +3400,12 @@
                                             last_ms_size <<- suppressWarnings(as.numeric(c(
                                                 session$clientData$output_massSpectra_1_width,
                                                 session$clientData$output_massSpectra_1_height)))
+                                            ## The m/z window changes from peak to peak, and the
+                                            ## cached panel geometry carries it -- so it belongs in
+                                            ## the cache key, or every spectrum after the first is
+                                            ## read against the first one's axis.
+                                            last_ms_window <<- suppressWarnings(as.numeric(
+                                                c(MS1_low_x_limit, MS1_high_x_limit)))
                                             ms1_plot
                                         })
                                 }
