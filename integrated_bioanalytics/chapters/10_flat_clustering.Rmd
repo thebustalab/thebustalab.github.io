@@ -14,7 +14,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
 
-Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We can set `analysis = "kmeans"`. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the `parameters` argument:
+Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We set `analysis = "kmeans"` and hand the number of clusters we want to the `parameters` argument. Below we ask for five; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.)
 
 
 ```{r, message = FALSE}
@@ -56,6 +56,46 @@ ggplot() +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
   scale_fill_manual(values = discrete_palette) 
+```
+
+## choosing k {-}
+
+Above we simply asserted that five clusters was the right number. How would we know? This is what the elbow method, illustrated at the top of this chapter, is for, and we can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
+
+```{r, message = FALSE}
+alaska_lake_elbow <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("kmeans"),
+    parameters = "elbow",
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
+
+alaska_lake_elbow
+```
+
+This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters — in the limit, where every sample is its own cluster, there is no within-cluster variance left at all — so the smallest value is never the answer. What we are after is the bend:
+
+```{r, fig.width = 5, fig.height = 4}
+ggplot(alaska_lake_elbow, aes(x = k, y = within_cluster_variance)) +
+  geom_line() +
+  geom_point(size = 3) +
+  theme_classic() +
+  labs(x = "number of clusters (k)", y = "within-cluster variance")
+```
+
+Reading left to right: the first few clusters each buy us a large reduction in within-cluster variance, and then the returns collapse. Here the line has clearly flattened by about five clusters — which is where the five we used above came from. Note that this is a judgement call, not a calculation: four would also be defensible for these data, and part of the skill is recognising when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely your choice).
+
+By default `runMatrixAnalysis` tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:
+
+```{r, eval = FALSE}
+runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("kmeans"),
+    parameters = c("elbow", 6),
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
 ```
 
 ## dbscan {-}

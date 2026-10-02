@@ -131,15 +131,13 @@ Fill in the blank with the column to sort by, so that the closest pair of lakes 
 
 ## agglomeration methods {-}
 
-Hierarchical clustering builds its tree from the bottom up, by a very simple procedure:
+Hierarchical clustering builds its tree from the leaves to the root using a very simple procedure:
 
 1. Start with every sample in a group of its own.
 2. Find the two groups that are closest to each other, and merge them into one group.
 3. Repeat step 2 until everything is in a single group.
 
-Each merge becomes a join in the tree, and the position of the join records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different.
-
-This merging procedure is what `runMatrixAnalysis()` does by default, and it is the only tree-building rule we use in this chapter. (For completeness: the function also takes a `tree_method` argument, which defaults to `"linkage_dendrogram"` — the procedure just described. Its one alternative, `"neighbor_joining"`, is a tree-building rule borrowed from phylogenetics that does not merge groups a pair at a time, and so ignores `agglomeration_method` entirely. We meet it properly in the phylogenies chapter.)
+Each merge becomes a join in the tree, and the position of the join (a node in the tree) records how far apart the two groups were when they merged. Branches that join close to the tips were very similar. Branches that only join near the root were very different. This merging procedure is what `runMatrixAnalysis()` does by default, and it is the only tree-building rule we use in this chapter. (For completeness: the function also takes a `tree_method` argument, which defaults to `"linkage_dendrogram"` — the procedure just described. Its one alternative, `"neighbor_joining"`, is a tree-building rule borrowed from phylogenetics that does not merge groups a pair at a time, and so ignores `agglomeration_method` entirely. We meet it properly in the phylogenies chapter.)
 
 Step 2 hides a question, though. At the start, every group is a single sample, so the distance between two groups is simply the distance between two samples, read straight from the distance matrix. But after the first merge, how far is a group of two samples from a third sample? Or from a group of five? There is no single right answer. The rule chosen is called the **agglomeration method**, or **linkage**, and different rules build different trees from exactly the same distance matrix. In practice, the choice of linkage often changes the tree more than the choice of distance measure does. (We will meet other ways of measuring distance when we get to embeddings). Either way, the two extremes are the easiest to understand:
 
@@ -193,11 +191,11 @@ complete_plot <- ggtree(solvents_complete) +
 plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3), labels = c("A", "B"))
 ```
 
-The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
+The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid, and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
 
-Why the difference? Solvent properties don't fall into neat, separate boxes. They shade gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
+Why do we observe those differences? The reason is that solvent properties don't fall into neat, separate boxes. They vary gradually from one solvent to the next. Single linkage follows chains of near neighbors: if A is close to B, and B is close to C, then A and C end up in the same group even if A and C are very different. This is called **chaining**, and on data that form a continuum it strings nearly everything into one long group. Complete linkage refuses to merge two groups until *all* of their members are close, so it cuts the same continuum into compact chunks.
 
-Notice also the colors, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties. Chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
+Notice also the colors, which show the dataset's `category` column. Neither tree reproduces those categories, and that is not a failure. The categories record functional groups, but we clustered on physical properties, for example, chlorobenzene behaves like the other aromatics, not like dichloromethane, so that is where it lands.
 
 Single and complete linkage give the most different trees when:
 
@@ -206,9 +204,9 @@ Single and complete linkage give the most different trees when:
 - **one large, spread-out group sits next to tight ones.** Complete linkage tends to split the big group into pieces the size of the tight ones. Single linkage follows its actual shape.
 - **there are outliers.** Under complete linkage, one extreme sample drags a group's furthest-member distance upwards and delays that group's merges. Single linkage simply leaves the outlier on a long branch of its own that joins at the end.
 
-The flip side is just as useful. When the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on the result: if they agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution.
+Single and complete linkage are two extremes, and there are actually two widely used methods sit between those extremes: **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size.
 
-Between the two extremes sit two widely used methods. **Average linkage** (`"average"`, also called UPGMA) uses the average of all the distances between the members of the two groups. **Ward's method** (`"ward.D2"`), which merges whichever pair of groups adds the least to the spread within groups. It behaves like a stricter version of complete linkage, with a strong preference for compact groups of similar size. It is a sensible default, but it is still a choice, and one worth stating whenever a tree is reported.
+Last, and importantly: when the groups in the data are compact and well separated, every method gives essentially the same tree. So running two methods is a check on a result: if the trees from two different methods agree, the grouping is robust; if they disagree, the data are more of a continuum than a set of clusters, and the "groups" in any one tree should be treated with caution. No matter what, when presenting a figure that contains a tree, it is essential to state which agglomeration method was used, and, ideally, the results from multiple agglomeration methods and whether they agree.
 
 #### concept check {-}
 
@@ -228,47 +226,23 @@ Fill in the blank with the function that returns the smallest value, so that eac
   head(4)</textarea></div>
 
 <div class="selfcheck" data-answer="0" data-explain="Single linkage merges two groups as soon as any one member of the first is close to any one member of the second. Every solvent except those three has some near neighbor, so the merges run along a chain of near neighbors and sweep almost the whole set into one group. Carbon disulfide, acetic acid and water are stranded precisely because nothing is close to them, so no chain reaches them until the end.">
-<p class="scq">Self-check: carbon disulfide, acetic acid and water top that table, and under single linkage they are also the last three solvents to join. What does single linkage do with the other twenty-nine?</p>
+<p class="scq">Self-check: carbon disulfide, acetic acid, and water top that table, and under single linkage they are also the last three solvents to join. What does single linkage do with the other twenty-nine?</p>
 <label><input type="radio"> Chains them into one large group, because each of them has some close neighbor and single linkage merges on the closest pair of members</label>
 <label><input type="radio"> Splits them into four compact groups, one for each solvent category in the dataset</label>
 <label><input type="radio"> Leaves them unassigned until a cut height is chosen</label>
-</div>
-
-Fill in the blank with the column to tally, so the pairwise distances are counted one band at a time. Press Run.
-
-<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
-  data = solvents,
-  analysis = "dist",
-  output_format = "long",
-  scale_variance = TRUE,
-  columns_w_values_for_single_analyte = solvent_properties,
-  columns_w_sample_ID_info = c("solvent", "category")
-) %>%
-  mutate(band = cut(distance, breaks = seq(0, 8, by = 1))) %>%
-  count(____)</textarea></div>
-
-<div class="selfcheck" data-answer="1" data-explain="Well-separated groups leave a signature in the distances themselves: many small within-group distances, many large between-group ones, and an empty stretch in the middle. The solvents show no such gap, which is another way of saying they form a continuum. There is no natural place to cut, so each linkage rule cuts somewhere different, which is exactly what the two trees showed.">
-<p class="scq">Self-check: every band in that tally is occupied, with no empty stretch between a set of small distances and a set of large ones. What does that say about how much the choice of linkage matters for the solvents?</p>
-<label><input type="radio"> Very little; a smooth spread of distances means all the methods will agree</label>
-<label><input type="radio"> A great deal; there is no natural gap for the methods to agree on, so each linkage rule cuts the continuum in a different place</label>
-<label><input type="radio"> Nothing; the spread of pairwise distances is unrelated to the choice of linkage</label>
 </div>
 
 <hr>
 
 ## dendrogram interpretation {-}
 
-Two questions come up almost every time one of these plots appears, and they have short answers.
+**Read across, not down.** (assuming root->leaves goes left to right or right to left) All of the information is in the horizontal direction. Each node/join sits at the distance at which its two groups merged, so the horizontal distance from the tips back to a node/join indicates how far apart those groups were. Joins close to the tips are groups that merged early because they were alike; joins far out toward the root merged late, because whatever those nodes brought together was not so alike.
 
-**Read across, not down.** All of the information is in the horizontal direction. Each join sits at the distance at which its two groups merged, so the horizontal distance from the tips back to a join says how far apart those groups were. Joins close to the tips are groups that merged early because they were alike; joins far out toward the root merged late, because whatever they brought together was not alike at all.
+**Compare branch lengths, rather that interpreting absolute branch lengths.** These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every *comparison* read off the picture is exactly right: which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips.
 
-**Compare joins; do not try to measure one.** These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every *comparison* read off the picture is exactly right — which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips. What the picture will not give is the raw number itself, and nothing a dendrogram is for depends on having it: every question in this chapter is answered by comparing joins, or by cutting the tree, and both are comparisons. When an actual distance is wanted, it is in the distance matrix.
+**The vertical direction means nothing at all.** (again, assuming root->leaves goes left to right or right to left) The tips are spread evenly down the page so the labels fit in the allocated space and can be read. There is no quantity on the y-axis. Worse, the order itself is arbitrary: at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still mean exactly what it meant before.
 
-**The vertical direction means nothing at all.** The tips are spread evenly down the page for one reason: so the labels fit and can be read. There is no quantity on that axis. Worse, the order itself is arbitrary — at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still say exactly what it said before.
-
-The consequence is the single most common misreading: **two tips sitting next to each other are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are neighbors on the page too, and they sit 7.57 apart — nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. Two pairs, printed identically, meaning opposite things.
-
-So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
+**Two tips sitting next to each other vertically are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are also neighbors on the page too, and they sit 7.57 apart: nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
 
 #### concept check {-}
 
@@ -297,9 +271,7 @@ Fill in the blank with the lake that sits next to White Fish Lake on the tree. P
 
 ## cutting a dendrogram {-}
 
-A dendrogram shows how everything in a data set relates to everything else, but it does not, by itself, say which samples belong to which group. Getting groups out of a tree means **cutting across it at a chosen height**. Every join below the cut has already happened, so the samples under it stay together; every join above the cut is severed, so the branches it would have merged stay apart. The height is the real control, and the number of groups is what falls out of it: cut low, near the tips, and there are many small groups; cut high, near the root, and there are a few large ones.
-
-`runMatrixAnalysis()` cuts the tree when it is given a `parameters` argument — the same argument k-means takes in the next chapter — and adds a `cluster` column to the output, one label per sample. Asking for a height looks like this:
+A dendrogram shows how everything in a data set relates to everything else, but it does not, by itself, say which samples belong to which group. Getting groups out of a tree means **cutting across it at a chosen position** (often called a "height", which I think is confusing since trees are often drawn with root on the left and tips on the right, but anyway...) Every join "below" the cut has already happened, so the samples under it stay together; every join above the cut is severed, so the branches it would have merged stay apart. The height is the real control, and the number of groups is what falls out of it: cut low, near the tips, and there are many small groups; cut high, near the root, and there are a few large ones. `runMatrixAnalysis()` cuts the tree when it is given a `parameters` argument — the same argument k-means takes in the next chapter — and adds a `cluster` column to the output, one label per sample. Asking for a height looks like this:
 
 ```{r, message = FALSE}
 solvents_cut <- runMatrixAnalysis(
@@ -318,9 +290,7 @@ solvents_cut %>%
   summarize(n_solvents = n())
 ```
 
-Cutting at 5 leaves four groups, of 13, 8, 7 and 4 solvents. Note that `cluster` is filled in for the tips only: the internal nodes of a tree are joins, not samples, so they have no group to belong to and are left as `NA`. This is the same convention the `bootstrap` column follows in the other direction, where it is the tips that are `NA`.
-
-Coloring the tips by that column shows what the cut actually did:
+Cutting at 5 leaves four groups, of 13, 8, 7 and 4 solvents. Note that `cluster` is filled in for the tips only: the internal nodes of a tree are joins, not samples, so they have no group to belong to and are left as `NA`. This is the same convention the `bootstrap` column follows in the other direction, where it is the tips that are `NA`. Coloring the tips by that column shows what the cut actually did:
 
 ```{r, fig.height = 7, fig.width = 7, fig.align = "center", fig.cap = "The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage."}
 ggtree(solvents_cut) +
@@ -360,9 +330,9 @@ data.frame(height = seq(2,6,0.1)) %>%
   ggplot(aes(x = height, y = n_groups)) + geom_point() + geom_line()
 ```
 
-Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the answer is **stable over a wide stretch**: anywhere from about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.
+Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the our number of groups at four is **stable over a wide stretch**: anywhere from a height of about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.
 
-When the number of groups is already known — because the chemistry says so, or because a downstream step needs a fixed number — it can be asked for directly instead, and `runMatrixAnalysis()` finds the height that delivers it:
+When the number of groups is already known (for example, because the data are clearly telling us so, or because a downstream step needs a fixed number), that number can be asked for directly instead, and `runMatrixAnalysis()` finds the height that delivers it:
 
 ```{r, message = FALSE}
 runMatrixAnalysis(
@@ -382,29 +352,6 @@ runMatrixAnalysis(
 The same four groups, because a height of 5 and a request for four groups are two ways of describing one cut. The difference is which one is the assumption. Asking for four groups will always return four, even from data with no group structure at all; cutting at a height can return one group, or twenty, and that is information. The next chapter takes up the question of how to choose a number of groups when there is no tree to read a height off.
 
 #### concept check {-}
-
-Fill in the blank with the column that says whether a row of the output is a sample rather than a join. Press Run, and compare the two counts.
-
-<div class="webr-cell"><textarea class="webr-code">cut_tree <- runMatrixAnalysis(
-  data = solvents,
-  analysis = "hclust",
-  scale_variance = TRUE,
-  agglomeration_method = "complete",
-  parameters = c(height = 5),
-  columns_w_values_for_single_analyte = solvent_properties,
-  columns_w_sample_ID_info = c("solvent", "category")
-)
-
-nrow(cut_tree)
-sum(cut_tree$____)
-sum(is.na(cut_tree$cluster))</textarea></div>
-
-<div class="selfcheck" data-answer="0" data-explain="The output holds a row for every node in the tree, not just the samples: 32 tips plus the 31 joins that built them. A join is a merge of two groups, so it is not a member of any group and its cluster is NA. This is why every summary of a cut starts by keeping the tips — without that, half the rows counted are not samples at all.">
-<p class="scq">Self-check: the table has 63 rows, 32 of which are tips, and exactly 31 have an NA cluster. Why?</p>
-<label><input type="radio"> The 31 non-tip rows are joins rather than samples, so they belong to no group</label>
-<label><input type="radio"> 31 solvents were too far from the others to be placed in any group at this height</label>
-<label><input type="radio"> The clustering failed for 31 solvents because they contain missing measurements</label>
-</div>
 
 Fill in the blank with the height that leaves only two groups. Press Run.
 

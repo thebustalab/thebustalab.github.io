@@ -133,6 +133,50 @@
         ## zoomed window to ~1 s.
 
             .allion_cache <- new.env(parent = emptyenv())
+            .allion_cache_order <- character(0)   # least-recently-used first
+            .allion_cache_max <- 40L
+
+            ## ---- cache stamping -------------------------------------------------
+            ## Every derived file in this folder used to be keyed on its source's
+            ## NAME alone, which made replacing an acquisition invisible: drop a new
+            ## run in under the same filename and the app kept plotting and
+            ## integrating the OLD one, because <file>.CDF.csv already existed so it
+            ## was never rebuilt and chromatograms.csv still held its rows. Deleting
+            ## the .CDF.csv by hand did not help either, since chromatograms.csv was
+            ## the copy actually being read. Each derived file now carries a .stamp
+            ## sidecar holding its source's mtime and size.
+            file_stamp <- function(path) {
+                fi <- file.info(path)
+                if (is.na(fi$size)) return(NA_character_)
+                paste0(format(as.numeric(fi$mtime), digits = 17), ":", fi$size)
+            }
+            stamp_path <- function(derived) paste0(derived, ".stamp")
+            stamp_is_current <- function(derived, source) {
+                if (!file.exists(derived)) return(FALSE)
+                want <- file_stamp(source)
+                if (is.na(want)) return(TRUE)     # source gone: keep what we have
+                sp <- stamp_path(derived)
+                if (!file.exists(sp)) return(FALSE)
+                identical(readLines(sp, warn = FALSE)[1], want)
+            }
+            write_stamp <- function(derived, source) {
+                want <- file_stamp(source)
+                if (!is.na(want)) writeLines(want, stamp_path(derived))
+                invisible(NULL)
+            }
+
+            ## Write through a temp file in the same directory, then rename. An
+            ## interrupted fwrite straight to the destination left a TRUNCATED file
+            ## behind, which file.exists() then accepted for ever.
+            fwrite_atomic <- function(x, path) {
+                tmp <- paste0(path, ".tmp", Sys.getpid())
+                data.table::fwrite(x, tmp)
+                if (!file.rename(tmp, path)) {
+                    file.copy(tmp, path, overwrite = TRUE)
+                    unlink(tmp)
+                }
+                invisible(path)
+            }
 
             allion_store_path <- function(cdf_csv) paste0(cdf_csv, ".allions.csv")
 
@@ -141,26 +185,55 @@
             ## deliberately NOT folded into chromatograms.csv: that file is
             ## shared by every sample, and appending the full cube to it would
             ## turn a small index into hundreds of megabytes.
-            build_allion_store <- function(cdf_csv) {
+            build_allion_store <- function(cdf_csv, force = FALSE) {
                 out <- allion_store_path(cdf_csv)
-                if (file.exists(out)) return(invisible(out))
+                if (!force && stamp_is_current(out, cdf_csv)) return(invisible(out))
                 framed <- data.table::as.data.table(data.table::fread(cdf_csv))
                 framed[, mz := round(as.numeric(mz))]
                 framed <- framed[!is.na(mz) & !is.na(rt) & !is.na(intensity)]
                 agg <- framed[, .(abundance = sum(intensity)), by = .(rt, mz)]
-                agg <- agg[abundance > 0]
+                ## Keep every single-detector scan. Dropping non-positive rows is the
+                ## right sparsity win for MS counts (an empty m/z cell carries nothing),
+                ## but TCD/FID/ECD ordinate values are SIGNED and routinely sit below
+                ## zero between peaks -- pruning them punched holes in the store, so
+                ## geom_line drew chords across the gaps and peak_ion_area summed only
+                ## the positive part of each peak.
+                agg <- agg[mz == 0 | abundance > 0]
                 data.table::setorder(agg, rt, mz)
-                data.table::fwrite(agg, out)
+                fwrite_atomic(agg, out)
+                write_stamp(out, cdf_csv)
                 invisible(out)
             }
 
+            ## In-memory cache: validity is checked against the store's stamp, so a
+            ## rebuilt store is not shadowed by the copy already in RAM, and the
+            ## cache is bounded rather than growing one m/z cube per sample opened
+            ## for the life of the session.
+            allion_cache_touch <- function(cdf_csv) {
+                .allion_cache_order <<- c(setdiff(.allion_cache_order, cdf_csv), cdf_csv)
+                while (length(.allion_cache_order) > .allion_cache_max) {
+                    drop <- .allion_cache_order[1]
+                    .allion_cache_order <<- .allion_cache_order[-1]
+                    if (!is.null(.allion_cache[[drop]])) rm(list = drop, envir = .allion_cache)
+                }
+                invisible(NULL)
+            }
+
             load_allions <- function(cdf_csv) {
-                if (!is.null(.allion_cache[[cdf_csv]])) return(.allion_cache[[cdf_csv]])
                 p <- allion_store_path(cdf_csv)
-                if (!file.exists(p)) build_allion_store(cdf_csv)
+                fresh <- stamp_is_current(p, cdf_csv)
+                if (!fresh) {
+                    if (!is.null(.allion_cache[[cdf_csv]])) rm(list = cdf_csv, envir = .allion_cache)
+                    build_allion_store(cdf_csv, force = TRUE)
+                }
+                if (!is.null(.allion_cache[[cdf_csv]])) {
+                    allion_cache_touch(cdf_csv)
+                    return(.allion_cache[[cdf_csv]])
+                }
                 d <- data.table::as.data.table(data.table::fread(p))
                 data.table::setkey(d, rt)
                 assign(cdf_csv, d, envir = .allion_cache)
+                allion_cache_touch(cdf_csv)
                 d
             }
 
@@ -172,7 +245,13 @@
             ## corrected ion in the window, so it means the same thing whether
             ## the window holds the base peak or a trace one.
             ## Returns NULL when nothing clears the threshold.
-            allion_window <- function(cdf_csv, xs, xe, threshold, max_points) {
+            ## `rt_shift` is this sample's rt_offset. The decimation grid is built in
+            ## OFFSET-CORRECTED space and then shifted back, so every sample on the page
+            ## snaps to the SAME centres. Without it the "one x grid" rule held only
+            ## within a sample: the union across samples was as dense as the raw data,
+            ## which made the ion map's tile width (computed from that union) several
+            ## times too narrow and drew the map as thin stripes with white gaps.
+            allion_window <- function(cdf_csv, xs, xe, threshold, max_points, rt_shift = 0) {
                 d <- load_allions(cdf_csv)
                 w <- d[rt >= xs & rt <= xe]
                 if (nrow(w) == 0) return(NULL)
@@ -184,7 +263,13 @@
                 w <- w[mz %in% keep]
                 if (nrow(w) == 0) return(NULL)
                 if (is.finite(max_points) && data.table::uniqueN(w$rt) > max_points) {
-                    br <- seq(min(w$rt), max(w$rt), length.out = as.integer(max_points) + 1L)
+                    ## Grid spans the REQUESTED window in shifted space, not this
+                    ## sample's own min/max, so the centres are identical for every
+                    ## sample regardless of where its data starts or what its offset is.
+                    br <- seq(xs + rt_shift, xe + rt_shift, length.out = as.integer(max_points) + 1L) - rt_shift
+                    if (!all(is.finite(br)) || length(br) < 2L || br[length(br)] <= br[1]) {
+                        br <- seq(min(w$rt), max(w$rt), length.out = as.integer(max_points) + 1L)
+                    }
                     w[, bin := findInterval(rt, br, rightmost.closed = TRUE)]
                     w <- w[w[, .I[which.max(net)], by = .(mz, bin)]$V1]
                     ## Snap to the bin centre so every ion shares ONE x grid.
@@ -265,13 +350,30 @@
             ## because building a second grob is not free on a million-row plot.
             .panel_cache <- new.env(parent = emptyenv())
 
-            panel_fraction <- function(p, px_w, px_h, res = 72) {
-                key <- paste0(px_w, "x", px_h)
+            ## Read a panel_params range whichever way this ggplot2 stores it.
+            pp_range <- function(pp, axis) {
+                v <- pp[[paste0(axis, ".range")]]
+                if (is.null(v)) v <- tryCatch(pp[[axis]]$continuous_range, error = function(e) NULL)
+                if (is.null(v)) v <- tryCatch(pp[[axis]]$dimension(), error = function(e) NULL)
+                if (length(v) == 2 && all(is.finite(v)) && v[2] > v[1]) v else NULL
+            }
+
+            ## view_key and n_facets are part of the CACHE KEY, not decoration: the
+            ## margins depend on the plot, not only on the image size. Measured at
+            ## 960x600 with this same function -- TIC-like panel x spans
+            ## 0.0585..0.9240, all-ions 0.0460..0.9136, all-ions/normalised
+            ## 0.0429..0.9136 (the m/z colourbar, and the y-tick label width, both
+            ## move with the view). Keying on size alone meant whichever view was
+            ## brushed first at a given window size poisoned every other one.
+            panel_fraction <- function(p, px_w, px_h, res = 72, view_key = NULL, n_facets = NA) {
+                key <- paste0(px_w, "x", px_h, "|", if (is.null(view_key)) "" else view_key, "|", n_facets)
                 if (!is.null(.panel_cache[[key]])) return(.panel_cache[[key]])
                 tf <- tempfile(fileext = ".png")
                 grDevices::png(tf, width = px_w, height = px_h, res = res)
                 out <- tryCatch({
-                    gt <- ggplot2::ggplotGrob(p)
+                    ## One build, used for both the gtable and the panel ranges.
+                    built <- ggplot2::ggplot_build(p)
+                    gt <- ggplot2::ggplot_gtable(built)
                     grid::grid.draw(gt)
                     ws <- gt$widths
                     n <- length(ws)
@@ -305,7 +407,66 @@
                     trow <- min(gt$layout$t[ip]); brow <- max(gt$layout$b[ip])
                     yf <- c(if (trow > 1) hcum[trow - 1] else 0, hcum[brow]) / total_h_in
 
-                    list(x = xf, y = yf)
+                    ## PER-PANEL extents. yf above is the bounding box of ALL
+                    ## panels, which is right for x (one panel column, shared
+                    ## axis) and wrong for y: with facet_grid(path ~ .) and
+                    ## samples_per_page = 20 it spans all twenty stacked panels
+                    ## while the brush was drawn inside exactly one of them.
+                    ## Measured on a 20-facet page at 960x2200: the stack spans
+                    ## 0.0025..0.9849 and each panel is 0.0468 of the image tall,
+                    ## so the same in-facet gesture in panel 1 and in panel 20
+                    ## mapped to completely different zooms.
+                    lay <- gt$layout[ip, , drop = FALSE]
+                    lay <- lay[order(lay$t, lay$l), , drop = FALSE]
+                    panels <- data.frame(
+                        y_lo = vapply(lay$t, function(k) (if (k > 1) hcum[k - 1] else 0) / total_h_in, numeric(1)),
+                        y_hi = vapply(lay$b, function(k) hcum[k] / total_h_in, numeric(1)),
+                        x_lo = vapply(lay$l, function(k) (if (k > 1) cum[k - 1] else 0) / total_in, numeric(1)),
+                        x_hi = vapply(lay$r, function(k) cum[k] / total_in, numeric(1)),
+                        stringsAsFactors = FALSE
+                    )
+
+                    ## Which facet each panel holds. The gtable's panels, ordered
+                    ## top-to-bottom then left-to-right, line up with the build
+                    ## layout ordered by ROW then COL -- that is how the gtable is
+                    ## assembled. This is what lets a mapping-less brush recover
+                    ## the sample it was drawn on; the fallback's own
+                    ## brush$mapping$panelvar1 is always NULL, by definition.
+                    bl <- built$layout$layout
+                    meta <- c("PANEL", "ROW", "COL", "SCALE_X", "SCALE_Y", "COORD", "AXIS_X", "AXIS_Y")
+                    facet_cols <- setdiff(names(bl), meta)
+                    bl <- bl[order(bl$ROW, bl$COL), , drop = FALSE]
+                    if (length(facet_cols) >= 1 && nrow(bl) == nrow(panels)) {
+                        panels$facet <- as.character(bl[[facet_cols[1]]])
+                        facet_var <- facet_cols[1]
+                    } else {
+                        panels$facet <- NA_character_
+                        facet_var <- NA_character_
+                    }
+
+                    ## Each panel's own drawn data range, in the same display order.
+                    ## Every v6 view sets explicit y limits (scale limits, or
+                    ## coord_cartesian for the ion map), so scales = "free_y" is
+                    ## overridden and these all agree -- but reading them per panel
+                    ## means the conversion stays correct if that ever changes.
+                    pps <- built$layout$panel_params
+                    if (nrow(bl) == nrow(panels) && !is.null(bl$PANEL)) {
+                        pidx <- as.integer(bl$PANEL)
+                        panels$y_data_lo <- vapply(pidx, function(k) { v <- pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[1] }, numeric(1))
+                        panels$y_data_hi <- vapply(pidx, function(k) { v <- pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[2] }, numeric(1))
+                    } else {
+                        panels$y_data_lo <- NA_real_
+                        panels$y_data_hi <- NA_real_
+                    }
+
+                    ## The panel does NOT span the scale limits: ggplot expands a
+                    ## continuous axis by 5% each side, so limits c(200, 3200) draw
+                    ## a panel running 50..3350. Read the truth off the built plot
+                    ## rather than re-deriving it from the window, or every fraction
+                    ## is out by 5% of the window, worst at the panel edges.
+                    pp <- built$layout$panel_params[[1]]
+                    list(x = xf, y = yf, panels = panels, facet_var = facet_var,
+                         x_range = pp_range(pp, "x"), y_range = pp_range(pp, "y"))
                 }, error = function(e) NULL)
                 grDevices::dev.off(); unlink(tf)
                 ok <- function(v) length(v) == 2 && all(is.finite(v)) && v[2] > v[1]
@@ -316,11 +477,28 @@
                 NULL
             }
 
+            ## Which panel (1 = top) a from-the-bottom image fraction falls in.
+            ## Returns NULL when the geometry is unknown; a fraction in a gutter or
+            ## just off the stack snaps to the nearest panel, because a drag that
+            ## overshoots the panel edge is the normal gesture, not an error.
+            panel_at_bottom_fraction <- function(pf, frac_from_bottom) {
+                if (is.null(pf) || is.null(pf$panels) || nrow(pf$panels) == 0) return(NULL)
+                if (!is.finite(frac_from_bottom)) return(NULL)
+                lo <- 1 - pf$panels$y_hi          # panels carry fractions from the TOP
+                hi <- 1 - pf$panels$y_lo
+                hit <- which(frac_from_bottom >= lo & frac_from_bottom <= hi)
+                if (length(hit) >= 1) {
+                    return(hit[which.min(abs(frac_from_bottom - (lo[hit] + hi[hit]) / 2))])
+                }
+                near <- which.min(pmin(abs(frac_from_bottom - lo), abs(frac_from_bottom - hi)))
+                if (length(near) == 1) near else NULL
+            }
+
             ## Honour a stored y-zoom only in the view it was taken in; otherwise
             ## fall back to the range the data itself occupies.
             y_limits_for <- function(key, fallback) {
-                if (exists("y_zoom") && !is.null(y_zoom) && length(y_zoom) == 2 &&
-                    exists("y_zoom_key") && !is.null(y_zoom_key) && identical(y_zoom_key, key)) {
+                if (!is.null(y_zoom) && length(y_zoom) == 2 &&
+                    !is.null(y_zoom_key) && identical(y_zoom_key, key)) {
                     return(y_zoom)
                 }
                 fallback
@@ -345,12 +523,12 @@
                 if (!is.null(yv)) return(sort(c(brush$ymin, brush$ymax)))   # already data units
 
                 why <- NULL
-                if (!exists("last_brush_yrange") || length(last_brush_yrange) != 2 ||
+                if (length(last_brush_yrange) != 2 ||
                     !all(is.finite(last_brush_yrange)) || last_brush_yrange[2] <= last_brush_yrange[1]) {
                     why <- "the y range of the last render is not known"
-                } else if (!exists("last_brush_plot") || is.null(last_brush_plot)) {
+                } else if (is.null(last_brush_plot)) {
                     why <- "no plot recorded from the last render"
-                } else if (!exists("last_brush_size") || length(last_brush_size) != 2 ||
+                } else if (length(last_brush_size) != 2 ||
                            !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) {
                     why <- "the rendered plot size is not known"
                 } else if (!is.finite(brush$ymin) || !is.finite(brush$ymax) ||
@@ -363,7 +541,8 @@
                     return(NULL)
                 }
 
-                pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
+                pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
+                                     view_key = last_brush_key, n_facets = last_brush_facets)
                 if (is.null(pf)) {
                     cat("  y-zoom skipped (panel bounds unknown).\n")
                     return(NULL)
@@ -383,17 +562,109 @@
                 ## 200-0 zoomed to 600-400, a clean reflection about the axis
                 ## midpoint. A selection near the middle looked almost right under
                 ## either reading, which is why it first appeared to "mostly" work.
-                panel_lo <- 1 - pf$y[2]        # panel bottom, from the image bottom
-                panel_hi <- 1 - pf$y[1]        # panel top
+                ## ...and it has to be rescaled inside the ONE panel the gesture
+                ## was made in, not across the whole stack. With a single facet the
+                ## two are identical, which is the case the field evidence above
+                ## validated; with twenty, the stack is ~21x the panel, so an
+                ## in-facet drag in panel 1 and the same drag in panel 20 used to
+                ## produce completely different zooms.
+                centre <- mean(c(brush$ymin, brush$ymax))
+                idx <- if (!is.null(pf$panels) && nrow(pf$panels) > 1) panel_at_bottom_fraction(pf, centre) else NULL
+                if (!is.null(idx)) {
+                    panel_lo <- 1 - pf$panels$y_hi[idx]
+                    panel_hi <- 1 - pf$panels$y_lo[idx]
+                    where <- paste0("panel ", idx, "/", nrow(pf$panels),
+                                    if (!is.na(pf$panels$facet[idx])) paste0(" ", pf$panels$facet[idx]) else "")
+                } else {
+                    panel_lo <- 1 - pf$y[2]        # panel bottom, from the image bottom
+                    panel_hi <- 1 - pf$y[1]        # panel top
+                    where <- "whole panel stack"
+                }
                 fr <- pmin(pmax((c(brush$ymin, brush$ymax) - panel_lo) / (panel_hi - panel_lo), 0), 1)
-                lo <- last_brush_yrange[1]; hi <- last_brush_yrange[2]
+
+                ## The panel spans its DRAWN range, which carries ggplot's 5% axis
+                ## expansion -- limits c(0, 1000) draw a panel running -50..1050.
+                ## Read it off the built plot; fall back to the limits recorded at
+                ## render time only when the build did not report one.
+                drawn <- if (!is.null(idx) && !is.na(pf$panels$y_data_lo[idx]) && !is.na(pf$panels$y_data_hi[idx])) {
+                    c(pf$panels$y_data_lo[idx], pf$panels$y_data_hi[idx])
+                } else if (!is.null(pf$y_range)) {
+                    pf$y_range
+                } else {
+                    last_brush_yrange
+                }
+                lo <- drawn[1]; hi <- drawn[2]
                 vals <- sort(lo + fr * (hi - lo))
                 cat(paste0("  y-zoom: raw ", signif(brush$ymin, 4), "-", signif(brush$ymax, 4),
-                           " of panel ", signif(panel_lo, 4), "-", signif(panel_hi, 4), " (from bottom)",
+                           " in ", where,
+                           ", panel ", signif(panel_lo, 4), "-", signif(panel_hi, 4), " (from bottom)",
                            ", against drawn y ", signif(lo, 6), "-", signif(hi, 6),
                            " -> ", signif(vals[1], 6), " to ", signif(vals[2], 6), "\n"))
                 if (!all(is.finite(vals)) || vals[2] <= vals[1]) return(NULL)
                 vals
+            }
+
+            ## A peak add or a spectrum extraction belongs to ONE sample. When the
+            ## facet cannot be recovered the selection spans every panel on the page,
+            ## and taking $path_to_cdf_csv[1] silently attributes it to the first
+            ## sample in table order rather than the brushed one -- a wrong peak
+            ## written against a wrong sample, with an area summed over all twenty.
+            ## Refuse and say so; the diagnostics above name what was resolved.
+            ## (Shift+G is exempt by design: it writes the same window to every
+            ## sample on purpose.)
+            single_sample <- function(pp, what) {
+                if (is.null(pp) || nrow(pp) == 0) return(NULL)
+                s <- unique(as.character(pp$path_to_cdf_csv))
+                if (length(s) == 1) return(s)
+                cat(paste0(what, " needs a brush inside ONE sample's panel, but this selection covers ",
+                           length(s), " samples (", paste(utils::head(s, 3), collapse = ", "),
+                           if (length(s) > 3) ", ..." else "", "). Nothing written.\n"))
+                NULL
+            }
+
+            ## The mass-spectrum plots have the chromatogram's coordmap problem too,
+            ## and a worse symptom: with an empty mapping a bare brushedPoints()
+            ## ERRORS ("not able to automatically infer `xvar`") rather than
+            ## misreading, which took the whole Shift+1/2/3 block down with it --
+            ## including the re-plot the user was trying to get back to. Same
+            ## conversion as brushed_chromatogram, one axis, no facets.
+            brushed_ms <- function(df, brush, xcol = "mz") {
+                empty <- if (is.null(df)) NULL else df[0, , drop = FALSE]
+                if (is.null(brush) || is.null(df) || nrow(df) == 0 || !(xcol %in% names(df))) return(empty)
+
+                xv <- if (!is.null(brush$mapping)) brush$mapping$x else NULL
+                yv <- if (!is.null(brush$mapping)) brush$mapping$y else NULL
+                if (!is.null(xv) && !is.null(yv) && xv %in% names(df) && yv %in% names(df)) {
+                    return(tryCatch(shiny::brushedPoints(df, brush),
+                                    error = function(e) { cat(paste0("MS brush could not be read (", conditionMessage(e), ").\n")); empty }))
+                }
+                if (is.null(brush$xmin) || is.null(brush$xmax) ||
+                    !is.finite(brush$xmin) || !is.finite(brush$xmax)) return(empty)
+
+                rng <- range(df[[xcol]], na.rm = TRUE)
+                bxmin <- brush$xmin; bxmax <- brush$xmax
+                if (bxmin >= 0 && bxmax <= 1 && rng[2] > 1) {
+                    fr <- c(bxmin, bxmax)
+                    pfm <- NULL
+                    if (!is.null(last_ms_plot) && length(last_ms_size) == 2 &&
+                        all(is.finite(last_ms_size)) && all(last_ms_size > 0)) {
+                        pfm <- panel_fraction(last_ms_plot, last_ms_size[1], last_ms_size[2],
+                                              view_key = "massSpectra_1", n_facets = 1)
+                    }
+                    if (!is.null(pfm)) {
+                        fr <- pmin(pmax((fr - pfm$x[1]) / (pfm$x[2] - pfm$x[1]), 0), 1)
+                        lo <- if (!is.null(pfm$x_range)) pfm$x_range[1] else rng[1]
+                        hi <- if (!is.null(pfm$x_range)) pfm$x_range[2] else rng[2]
+                    } else {
+                        cat("  (mass-spectrum panel bounds unknown - using the uncorrected image fraction, expect an offset)\n")
+                        lo <- rng[1]; hi <- rng[2]
+                    }
+                    bxmin <- lo + fr[1] * (hi - lo)
+                    bxmax <- lo + fr[2] * (hi - lo)
+                    cat(paste0("MS brush read as ", signif(bxmin, 6), " to ", signif(bxmax, 6), " ", xcol, ".\n"))
+                }
+                if (!is.finite(bxmin) || !is.finite(bxmax) || bxmax <= bxmin) return(empty)
+                df[!is.na(df[[xcol]]) & df[[xcol]] >= bxmin & df[[xcol]] <= bxmax, , drop = FALSE]
             }
 
             brushed_chromatogram <- function(df, brush) {
@@ -434,6 +705,7 @@
                 }
                 rng <- range(df[[xv]], na.rm = TRUE)
                 bxmin <- brush$xmin; bxmax <- brush$xmax
+                pfull <- NULL        # panel geometry, filled in by the fallback below
 
                 ## Field evidence (host1, 2026-09-14): when Shiny's ggplot coordmap
                 ## extraction fails it still sends a brush, but with an EMPTY
@@ -449,8 +721,8 @@
                 ## times in seconds, and the check means real data coordinates are
                 ## never reinterpreted by mistake.
                 if (is.null(xv_mapped) && bxmin >= 0 && bxmax <= 1 && rng[1] > 1) {
-                    win_lo <- if (exists("x_axis_start") && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
-                    win_hi <- if (exists("x_axis_end")   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
+                    win_lo <- if (!is.null(x_axis_start) && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
+                    win_hi <- if (!is.null(x_axis_end)   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
                     if (win_hi > win_lo) {
                         fr <- c(brush$xmin, brush$xmax)
 
@@ -459,11 +731,11 @@
                         ## is unknown, in which case the old uncorrected reading
                         ## is used -- offset, but better than nothing.
                         pf <- NULL
-                        if (exists("last_brush_plot") && !is.null(last_brush_plot) &&
-                            exists("last_brush_size") && length(last_brush_size) == 2 &&
+                        if (!is.null(last_brush_plot) && length(last_brush_size) == 2 &&
                             all(is.finite(last_brush_size)) && all(last_brush_size > 0)) {
-                            pf <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2])
-                            if (!is.null(pf)) pf <- pf$x
+                            pfull <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
+                                                    view_key = last_brush_key, n_facets = last_brush_facets)
+                            if (!is.null(pfull)) pf <- pfull$x
                         }
                         if (!is.null(pf)) {
                             fr <- pmin(pmax((fr - pf[1]) / (pf[2] - pf[1]), 0), 1)
@@ -471,11 +743,23 @@
                             cat("  (panel bounds unknown - using the uncorrected image fraction, expect an offset)\n")
                         }
 
+                        ## The panel spans its DRAWN x range, not the axis window:
+                        ## scale_x_continuous(limits = c(200, 3200)) draws a panel
+                        ## running 50..3350, because ggplot expands a continuous
+                        ## axis by 5% each side. Fraction 0 is rt 50, and reading it
+                        ## as 200 is a 5%-of-window error, worst at the panel edges
+                        ## and zero in the middle -- the same signature as the
+                        ## y-flip bug, which is why it could hide behind it.
+                        if (!is.null(pfull) && !is.null(pfull$x_range)) {
+                            win_lo <- pfull$x_range[1]; win_hi <- pfull$x_range[2]
+                        }
+
                         bxmin <- win_lo + fr[1] * (win_hi - win_lo)
                         bxmax <- win_lo + fr[2] * (win_hi - win_lo)
                         cat(paste0("Brush came back as image fractions (", signif(brush$xmin, 4), "-",
                                    signif(brush$xmax, 4), ")",
                                    if (!is.null(pf)) paste0(", panel spans ", signif(pf[1], 4), "-", signif(pf[2], 4)) else "",
+                                   ", drawn x ", signif(win_lo, 6), "-", signif(win_hi, 6),
                                    "; reading as ", signif(bxmin, 8), " to ", signif(bxmax, 8), ".\n"))
                     }
                 }
@@ -488,9 +772,37 @@
                 }
 
                 keep <- !is.na(df[[xv]]) & df[[xv]] >= bxmin & df[[xv]] <= bxmax
+
+                ## WHICH FACET was brushed, in descending order of trust:
+                ##   1. brush$mapping$panelvar1 + brush$panelvar1 - the coordmap survived;
+                ##   2. brush$panelvar1 on its own - Shiny sometimes sends the panel
+                ##      value at top level even when the mapping came back empty;
+                ##   3. the panel the brush's y centre falls in, from the per-panel
+                ##      extents measured off the built plot.
+                ## Route 1 was the only one there before, and it read the variable
+                ## NAME out of brush$mapping -- whose emptiness is precisely what puts
+                ## us in this fallback. So it was dead code: the selection ran across
+                ## every facet on the page, and Shift+A then took $path_to_cdf_csv[1],
+                ## the first sample in table order rather than the brushed one.
                 pv <- if (!is.null(brush$mapping)) brush$mapping$panelvar1 else NULL
-                if (!is.null(pv) && pv %in% names(df) && !is.null(brush$panelvar1)) {
-                    keep <- keep & as.character(df[[pv]]) == as.character(brush$panelvar1)
+                if (is.null(pv) && !is.null(pfull) && !is.na(pfull$facet_var)) pv <- pfull$facet_var
+                panel_value <- if (!is.null(brush$panelvar1)) as.character(brush$panelvar1) else NULL
+                panel_source <- if (!is.null(panel_value)) "brush$panelvar1" else NULL
+                if (is.null(panel_value) && !is.null(pfull) && !is.null(pfull$panels) &&
+                    nrow(pfull$panels) > 1 && !is.null(brush$ymin) && !is.null(brush$ymax) &&
+                    is.finite(brush$ymin) && is.finite(brush$ymax) &&
+                    brush$ymin > -0.5 && brush$ymax < 1.5) {
+                    pidx <- panel_at_bottom_fraction(pfull, mean(c(brush$ymin, brush$ymax)))
+                    if (!is.null(pidx) && !is.na(pfull$panels$facet[pidx])) {
+                        panel_value <- pfull$panels$facet[pidx]
+                        panel_source <- paste0("panel ", pidx, "/", nrow(pfull$panels), " by y position")
+                    }
+                }
+                if (!is.null(pv) && pv %in% names(df) && !is.null(panel_value)) {
+                    keep <- keep & as.character(df[[pv]]) == panel_value
+                    cat(paste0("Brush resolved to facet ", panel_value, " (", panel_source, ").\n"))
+                } else if (!is.null(pfull) && !is.null(pfull$panels) && nrow(pfull$panels) > 1) {
+                    cat("Brush facet could not be resolved - the selection spans every panel on the page.\n")
                 }
                 out <- df[which(keep), , drop = FALSE]
                 if (nrow(out) == 0) {
@@ -506,15 +818,124 @@
 
             ## Area over the ions a peak actually generates. v5 integrates the
             ## TIC, which charges the peak for whatever co-elutes beneath it.
-            ## Restricting the sum to ions that rise across the peak window
+            ## Restricting the sum to ions that genuinely belong to the peak
             ## removes that contribution. No decimation here -- this is a number,
             ## not a picture, so every scan counts.
-            peak_ion_area <- function(cdf_csv, start_rt, end_rt, threshold) {
-                w <- try(allion_window(cdf_csv, start_rt, end_rt, threshold, Inf), silent = TRUE)
-                if (inherits(w, "try-error") || is.null(w) || nrow(w) == 0) {
-                    return(list(area = NA_real_, ions = NA_character_))
-                }
-                list(area = sum(w$net), ions = paste(sort(unique(w$mz)), collapse = ";"))
+            ##
+            ## Rewritten 2026-09-30. The first version reused allion_window(),
+            ## which was built for DRAWING, and it was wrong here in two ways:
+            ##
+            ##   * Its per-ion baseline is the 10th percentile INSIDE the
+            ##     window. For a correctly-bounded peak the peak fills its own
+            ##     window, so that percentile sits well up the flank and the
+            ##     peak eats its own baseline. Measured on a clean Gaussian:
+            ##     bounds at +/-3 sigma recovered 94% of the true area, +/-2
+            ##     sigma 64%, +/-1.5 sigma 39%. The number therefore swung ~2x
+            ##     with nothing but how tightly the bounds were drawn.
+            ##     => the baseline is now taken from the FLANKS, OUTSIDE
+            ##        [start, end], and interpolated across the peak, which is
+            ##        what the TIC path already does.
+            ##
+            ##   * It selected ions by in-window AMPLITUDE. A co-eluting second
+            ##     compound's ions are tall inside that window, so they cleared
+            ##     the cut and were summed straight back in -- i.e. the column
+            ##     did not do the one thing it exists to do.
+            ##     => selection is now a SHAPE test: an ion is kept only if it
+            ##        apexes with the peak and tracks its profile.
+            ##
+            ## Returns NA (not 0) when there is nothing dependable to integrate,
+            ## so a failure reads as "no number" rather than "no signal".
+            peak_ion_area <- function(cdf_csv, start_rt, end_rt, threshold,
+                                      flank_frac = 1.0, apex_tol_sigmas = 0.5,
+                                      min_cor = 0.8) {
+
+                na_out <- list(area = NA_real_, ions = NA_character_)
+                if (!is.finite(start_rt) || !is.finite(end_rt) || end_rt <= start_rt) return(na_out)
+
+                d <- try(load_allions(cdf_csv), silent = TRUE)
+                if (inherits(d, "try-error") || is.null(d) || nrow(d) == 0) return(na_out)
+
+                ## Single-detector data (GC-TCD/FID/ECD) carries the mz = 0
+                ## sentinel and has no spectral dimension, so an ion-restricted
+                ## area is meaningless. Short-circuit, as Shift+1 and Shift+4 do.
+                if (all(d$mz == 0)) return(na_out)
+
+                width  <- end_rt - start_rt
+                pad_lo <- start_rt - flank_frac * width
+                pad_hi <- end_rt   + flank_frac * width
+                padded <- d[rt >= pad_lo & rt <= pad_hi]
+                if (nrow(padded) == 0) return(na_out)
+
+                inside <- padded[rt >= start_rt & rt <= end_rt]
+                if (nrow(inside) == 0 || data.table::uniqueN(inside$rt) < 3) return(na_out)
+
+                ## Per-ion baseline from the flanks, interpolated across the peak.
+                ## Median rather than mean so a neighbouring peak intruding into
+                ## a flank does not drag the level up. Falls back to whichever
+                ## flank exists, then to the in-window minimum when the peak sits
+                ## against the start or end of the run.
+                left  <- padded[rt <  start_rt]
+                right <- padded[rt >  end_rt]
+                lsum <- if (nrow(left))  left[,  .(bl = stats::median(abundance), rtl = stats::median(rt)), by = mz] else NULL
+                rsum <- if (nrow(right)) right[, .(br = stats::median(abundance), rtr = stats::median(rt)), by = mz] else NULL
+
+                w <- inside
+                if (!is.null(lsum)) w <- merge(w, lsum, by = "mz", all.x = TRUE)
+                if (!is.null(rsum)) w <- merge(w, rsum, by = "mz", all.x = TRUE)
+                if (is.null(lsum)) { w[, bl := NA_real_]; w[, rtl := NA_real_] }
+                if (is.null(rsum)) { w[, br := NA_real_]; w[, rtr := NA_real_] }
+
+                w[, floor_mz := min(abundance), by = mz]
+                w[, base := data.table::fifelse(
+                        !is.na(bl) & !is.na(br) & is.finite(rtr - rtl) & (rtr - rtl) != 0,
+                        bl + (br - bl) * (rt - rtl) / (rtr - rtl),
+                    data.table::fifelse(!is.na(bl), bl,
+                    data.table::fifelse(!is.na(br), br, floor_mz)))]
+                w[, net := pmax(abundance - base, 0)]
+
+                ## Reference = the BASE ION, not the summed profile. The sum is
+                ## a blend when something co-elutes, and its apex sits between
+                ## the two compounds, which is exactly the case we are trying to
+                ## resolve. The single strongest ion belongs unambiguously to one
+                ## compound, so it is the honest model peak.
+                tops <- w[, .(top = max(net), ion_apex = rt[which.max(net)]), by = mz]
+                if (nrow(tops) == 0 || max(tops$top) <= 0) return(na_out)
+                base_mz <- tops$mz[which.max(tops$top)]
+
+                ref <- w[mz == base_mz, .(rt, ref = net)]
+                data.table::setorder(ref, rt)
+                if (nrow(ref) < 3 || max(ref$ref) <= 0) return(na_out)
+                apex_rt <- ref$rt[which.max(ref$ref)]
+
+                ## Peak width from the base ion's full width at half maximum.
+                ## The apex tolerance has to be in units of the PEAK, not of the
+                ## integration window: a window twice as wide does not make two
+                ## compounds twice as resolvable. Falls back to a quarter of the
+                ## window when the peak is too sparsely sampled to measure.
+                half  <- ref$rt[ref$ref >= max(ref$ref) / 2]
+                sigma_est <- if (length(half) >= 2) (max(half) - min(half)) / 2.355 else width / 4
+                if (!is.finite(sigma_est) || sigma_est <= 0) sigma_est <- width / 4
+
+                w <- merge(w, ref, by = "rt")
+                prof <- w[, .(
+                        top      = max(net),
+                        ion_apex = rt[which.max(net)],
+                        r        = suppressWarnings(stats::cor(net, ref))
+                    ), by = mz]
+
+                keep <- prof[
+                    top > threshold * max(prof$top) &                              # amplitude floor
+                    abs(ion_apex - apex_rt) <= apex_tol_sigmas * sigma_est &       # co-apexes with the base ion
+                    !is.na(r) & r >= min_cor,                                      # and tracks its profile
+                    mz]
+
+                ## A real peak's base ion defines `ref`, so it passes by
+                ## construction; if nothing does, the window is not a peak.
+                ## Keep the strongest ion rather than silently reporting 0.
+                if (length(keep) == 0) keep <- prof$mz[which.max(prof$top)]
+
+                kept <- w[mz %in% keep]
+                list(area = sum(kept$net), ions = paste(sort(unique(kept$mz)), collapse = ";"))
             }
 
         setwd(CDF_directory_path)
@@ -562,11 +983,21 @@
                 }
                 chromatograms_to_add <- list()
 
-                for (file in 1:length(paths_to_cdfs)) {
+                for (file in seq_along(paths_to_cdfs)) {
 
-                    ## If the cdf.csv doesn't exist for this cdf, create it.
+                    ## If the cdf.csv doesn't exist for this cdf -- or is stale
+                    ## against it -- create it. Stale means the .CDF has a different
+                    ## mtime/size from the one the .csv was built from, i.e. the
+                    ## acquisition was replaced under the same filename. Before the
+                    ## stamp, that case silently kept serving the previous run.
 
-                        if ( !file.exists(paths_to_cdf_csvs[file]) ) {
+                        cdf_csv_stale <- !stamp_is_current(paths_to_cdf_csvs[file], paths_to_cdfs[file])
+
+                        if ( cdf_csv_stale ) {
+
+                            if ( file.exists(paths_to_cdf_csvs[file]) ) {
+                                cat(paste0(paths_to_cdfs[file], " has changed since its CSV was built - rebuilding it and everything derived from it.\n"))
+                            }
 
                             cdf_type_this <- detect_cdf_type(paths_to_cdfs[file])
 
@@ -590,7 +1021,7 @@
                                     scanindex <- rawDataFile$scanindex
 
                                     filteredRawDataFile <- list()
-                                    for ( i in 1:(length(rt)-1) ) {
+                                    for ( i in seq_len(max(0L, length(rt) - 1L)) ) {
                                         filteredRawDataFile[[i]] <- data.frame(
                                             mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
                                             intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
@@ -612,6 +1043,28 @@
 
                             }
 
+                            ## Stamp the new CSV, then drop everything derived from
+                            ## the old one: the all-ion store, its in-memory copy,
+                            ## and this sample's rows in chromatograms.csv (which is
+                            ## the table actually plotted, so leaving them there is
+                            ## exactly how a replaced acquisition stayed invisible).
+                            write_stamp(paths_to_cdf_csvs[file], paths_to_cdfs[file])
+                            unlink(c(allion_store_path(paths_to_cdf_csvs[file]),
+                                     stamp_path(allion_store_path(paths_to_cdf_csvs[file]))))
+                            if (!is.null(.allion_cache[[paths_to_cdf_csvs[file]]])) {
+                                rm(list = paths_to_cdf_csvs[file], envir = .allion_cache)
+                            }
+                            if (is.data.frame(chromatograms) && nrow(chromatograms) > 0) {
+                                chromatograms <- chromatograms[chromatograms$path_to_cdf_csv != paths_to_cdf_csvs[file], , drop = FALSE]
+                            }
+                            if (file.exists("chromatograms.csv")) {
+                                stale_rows <- readMonolist("chromatograms.csv")
+                                writeMonolist(
+                                    monolist = stale_rows[stale_rows$path_to_cdf_csv != paths_to_cdf_csvs[file], , drop = FALSE],
+                                    monolist_out_path = "chromatograms.csv"
+                                )
+                            }
+
                         }
 
                     ## Build the nominal-mass all-ion store for this sample.
@@ -619,17 +1072,34 @@
                     ## lands during ingest, where there is already a progress
                     ## log, instead of freezing the first redraw.
 
-                        if ( isTRUE(all_ion_view) && !file.exists(allion_store_path(paths_to_cdf_csvs[file])) ) {
+                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file]) ) {
                             cat(paste("   Building all-ion store for ", paths_to_cdf_csvs[file], "\n", sep = ""))
                             build_allion_store(paths_to_cdf_csvs[file])
                         }
 
                     ## If any chromatograms (tic and ion) are not present for this csv, extract them
 
-                        if ( file.exists("chromatograms.csv") ) {
+                        ## Which ions this sample already has, read from the IN-MEMORY
+                        ## tables rather than by re-reading chromatograms.csv from disk
+                        ## once per sample. That read (plus the matching write below) is
+                        ## what made folder loading O(N^2) in bytes: at 152 samples the
+                        ## whole table was read and rewritten 152 times.
+                        ## Both sides are compared as character, because the on-disk
+                        ## column mixes "0" with "baseline" while `ions` is numeric.
+                        ions_for_this_cdf_csv <- character(0)
+                        if (is.data.frame(chromatograms) && nrow(chromatograms) > 0) {
+                            ions_for_this_cdf_csv <- c(ions_for_this_cdf_csv,
+                                as.character(chromatograms$ion[chromatograms$path_to_cdf_csv == paths_to_cdf_csvs[file]]))
+                        }
+                        if (is.data.frame(chromatograms_to_add) && nrow(chromatograms_to_add) > 0) {
+                            ions_for_this_cdf_csv <- c(ions_for_this_cdf_csv,
+                                as.character(chromatograms_to_add$ion[chromatograms_to_add$path_to_cdf_csv == paths_to_cdf_csvs[file]]))
+                        }
+                        ions_for_this_cdf_csv <- unique(ions_for_this_cdf_csv)
 
-                            ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
-                            missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv])) ## Here as numeric mess with TIC
+                        if ( length(ions_for_this_cdf_csv) > 0 ) {
+
+                            missing_ions <- as.numeric(as.character(ions[!as.character(ions) %in% ions_for_this_cdf_csv]))
                             missing_ions <- dropNA(missing_ions)
 
                         } else {
@@ -663,7 +1133,7 @@
                                 if ( length(ions[ions != 0]) > 0 ) {
 
                                     numeric_ions <- as.numeric(as.character(ions[ions != 0]))
-                                    for ( ion in 1:length(numeric_ions) ){
+                                    for ( ion in seq_along(numeric_ions) ){
                                         framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                         framedDataFile %>% 
                                             group_by(rt) %>% 
@@ -686,23 +1156,40 @@
                                 }
                         }
 
-                    ## If the chromatograms file already exists, append to it and re-write out, else create it
+                }   ## end for each file
 
-                        if ( file.exists("chromatograms.csv") ) {
-                            
-                            # print("writing it")
+                ## ONE write, after the loop. This used to sit INSIDE it, so the whole
+                ## table was rebuilt and rewritten once per sample -- and
+                ## unconditionally, so even a fully-cached relaunch with nothing new to
+                ## extract rewrote it N times for no reason. Now a cached relaunch
+                ## writes nothing at all unless there are stale rows to prune.
+                ##
+                ## Prune on the way out: rows for CDFs no longer in the folder were
+                ## dropped from the in-memory copy but written back regardless, so a
+                ## deleted acquisition stayed in chromatograms.csv for ever.
+                    added_any <- is.data.frame(chromatograms_to_add) && nrow(chromatograms_to_add) > 0
+                    had_any   <- is.data.frame(chromatograms) && nrow(chromatograms) > 0
 
-                            writeMonolist(
-                                monolist = rbind( chromatograms, chromatograms_to_add ),
-                                monolist_out_path = "chromatograms.csv"
-                            )
+                    if ( added_any ) {
 
-                        } else {
+                        to_write <- if (had_any) rbind(chromatograms, chromatograms_to_add) else chromatograms_to_add
+                        to_write <- to_write[to_write$path_to_cdf_csv %in% paths_to_cdf_csvs, , drop = FALSE]
+                        writeMonolist(monolist = to_write, monolist_out_path = "chromatograms.csv")
 
-                            writeMonolist(chromatograms_to_add, "chromatograms.csv")
+                    } else if ( had_any ) {
 
+                        pruned <- chromatograms[chromatograms$path_to_cdf_csv %in% paths_to_cdf_csvs, , drop = FALSE]
+                        if (nrow(pruned) != nrow(chromatograms)) {
+                            cat(paste0("Dropping ", nrow(chromatograms) - nrow(pruned),
+                                       " chromatogram rows for CDFs no longer in this folder.\n"))
+                            writeMonolist(monolist = pruned, monolist_out_path = "chromatograms.csv")
                         }
-                }
+
+                    } else if ( !file.exists("chromatograms.csv") ) {
+
+                        writeMonolist(chromatograms_to_add, "chromatograms.csv")
+
+                    }
 
                 print("done")
             }
@@ -713,12 +1200,22 @@
                         
             ## Set up new samples monolist
 
+                ## ONE derivation for Sample_ID, used by both the create and the
+                ## append path below. They used to disagree: the first write stored
+                ## the full `foo.CDF.csv`, while later appends ran
+                ## gsub("\\..*$", "", ...) -- truncating at the FIRST dot, so
+                ## `WT.rep2.CDF` and `WT.rep3.CDF` both collapsed to `WT`. Strip only
+                ## the .CDF.csv suffix (and any directory), as the facet labels do.
+                sample_id_from_path <- function(x) {
+                    gsub("\\.CDF\\.csv$", "", gsub(".*/", "", x), ignore.case = TRUE)
+                }
+
                 ## If it doesn't exist, create it
                 
                     if ( !file.exists("samples_monolist.csv") ) {
 
                         samples_monolist <- data.frame(
-                            Sample_ID = unique(chromatograms$path_to_cdf_csv),
+                            Sample_ID = sample_id_from_path(unique(chromatograms$path_to_cdf_csv)),
                             rt_offset = 0,
                             baseline_window = baseline_window,
                             path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
@@ -742,7 +1239,7 @@
                         if ( length(missing_from_samples_monolist) > 0 ) {
 
                             samples_monolist_additions <- data.frame(
-                                Sample_ID = gsub("\\..*$", "", gsub(".*/", "", missing_from_samples_monolist)),
+                                Sample_ID = sample_id_from_path(missing_from_samples_monolist),
                                 rt_offset = 0,
                                 baseline_window = baseline_window,
                                 path_to_cdf_csv = missing_from_samples_monolist
@@ -756,6 +1253,10 @@
                                 sep = ",",
                                 append = TRUE
                             )
+
+                            ## Re-read: the rows above went to the FILE, and the
+                            ## in-memory copy was left one acquisition behind.
+                            samples_monolist <- readMonolist("samples_monolist.csv")
                         }
                     }
 
@@ -777,10 +1278,54 @@
                 last_brush_size <- c(NA_real_, NA_real_)
                 last_brush_key <- NULL
                 last_brush_yrange <- c(NA_real_, NA_real_)
+                ## How many facets the last render actually drew. Part of the
+                ## panel-geometry cache key, because panel heights move with it.
+                last_brush_facets <- NA_integer_
+                ## Same pair for the mass-spectrum plot, used by brushed_ms().
+                last_ms_plot <- NULL
+                last_ms_size <- c(NA_real_, NA_real_)
+
+                ## Everything the handlers reach for with `<<-` is declared HERE, so
+                ## the assignment binds in this function's frame. Without a local
+                ## binding, `<<-` walks all the way out and writes to globalenv() --
+                ## and nothing clears globalenv() when the app quits. Open folder A,
+                ## quit, open folder B in the same R session and the panel showed
+                ## folder A's traces, while Shift+6's guard passed on the stale
+                ## object and wrote folder A's peaks into folder B's
+                ## peaks_monolist.csv. Every guard on these names must therefore be
+                ## is.null(), NOT exists(): once declared they always exist.
+                chromatograms_updated <- NULL
+                x_axis_start <- NULL
+                x_axis_end <- NULL
+                y_axis_start <- NULL
+                y_axis_end <- NULL
+                MS_out_1 <- NULL
+                MS_ret_start_line <- NULL
+                MS_ret_end_line <- NULL
+                framedDataFile_to_subtract <- NULL
+                ## What the editable peak table was last rendered FROM. Shift+Z writes
+                ## the browser's copy straight back, so if the file moved on since, that
+                ## write silently reverts it. See render_peak_table() / Shift+Z.
+                peak_table_snapshot <- NULL
+                ms_wide <- NULL
+                predictions <- NULL
                 ## Bounded: never draw more than one page of facets at once, so the
                 ## render can't blow up the graphics device on large sample sets.
                 plot_height <- 200 + 100*min(samples_per_page, length(unique(chromatograms$path_to_cdf_csv)))
-                
+
+                ## x-axis defaults are resolved HERE, not in the Shift+Q handler, so
+                ## they are never NULL by the time a key handler can fire. The pan/zoom
+                ## keys (F/D/V/C) do `x_axis_start_default <<- x_axis_start_default + rate`;
+                ## NULL + rate is numeric(0), which is NOT NULL, so the Shift+Q
+                ## initialiser's is.null() check would skip it and the renderer's
+                ## dplyr::filter() would then die on a length-0 predicate.
+                if ( is.null(x_axis_start_default) || length(x_axis_start_default) == 0 || !is.finite(x_axis_start_default) ) {
+                    x_axis_start_default <- if (nrow(chromatograms) > 0) min(chromatograms$rt, na.rm = TRUE) else 0
+                }
+                if ( is.null(x_axis_end_default) || length(x_axis_end_default) == 0 || !is.finite(x_axis_end_default) ) {
+                    x_axis_end_default <- if (nrow(chromatograms) > 0) max(chromatograms$rt, na.rm = TRUE) else 1
+                }
+
             ## Set up new peak monolist if it doesn't exist
             
             if ( !file.exists("peaks_monolist.csv") ) {
@@ -923,7 +1468,7 @@
                             "allion_max_points", "Max x-points per ion (render cost)",
                             min = 200, max = 4000, value = all_ion_max_points, step = 100
                         ),
-                        helpText("A pure peak draws as a tight bundle; a splayed bundle means two compounds. Changes take effect on the next Shift+Q."),
+                        helpText("A pure peak draws as a tight bundle; a splayed bundle means two compounds. Display and Y scaling apply immediately; the two sliders apply on the next Shift+Q."),
 
                         verbatimTextOutput("key", placeholder = TRUE),
 
@@ -967,8 +1512,8 @@
                                     ## samples at a time and step through pages.
                                     fluidRow(
                                         column(12,
-                                            actionButton("prev_page", "◀ Prev 20"),
-                                            actionButton("next_page", "Next 20 ▶"),
+                                            actionButton("prev_page", paste0("\u25c0 Prev ", samples_per_page)),
+                                            actionButton("next_page", paste0("Next ", samples_per_page, " \u25b6")),
                                             tags$span(
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
@@ -1138,16 +1683,51 @@
                           guides(fill = "none")
                     })
 
+                ## ONE way to render the editable peak table. Shift+G used to render it
+                ## as DT::renderDataTable while every other handler used rhandsontable --
+                ## and `input$peak_table` from a DT output carries nothing hot_to_r() can
+                ## read, so Shift+Z silently did nothing for the rest of the session.
+                ## Each render also records what it rendered FROM, so Shift+Z can tell
+                ## an edit from a revert.
+                    render_peak_table <- function() {
+                        current <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv") else NULL
+                        peak_table_snapshot <<- current
+                        output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
+                            current
+                        }))
+                        invisible(NULL)
+                    }
+
                 ## Save manual changes to table on "Z" (90) keystroke
 
                     observeEvent(input$keypress, {
                         if (input$keypress == 90 ) {
                             ## Write out any modifications to peak table (i.e. sample IDs)
                                 hot = isolate(input$peak_table)
-                                if (!is.null(hot)) {
-                                    writeMonolist(rhandsontable::hot_to_r(input$peak_table), "peaks_monolist.csv")
-                                    cat("Peak list saved!\n")
+                                if (is.null(hot)) {
+                                    cat("Shift+Z: no editable peak table in the browser yet - press Shift+Q first.\n")
+                                    return()
                                 }
+                                edited <- rhandsontable::hot_to_r(hot)
+
+                                ## The browser holds a SNAPSHOT from the last render. If the file
+                                ## has moved on since (a Shift+A, a Shift+6, another Shift+Q), then
+                                ## writing that snapshot back reverts everything added in between.
+                                ## Refuse rather than guess: a cell-level merge would need a stable
+                                ## row key, and this table has none that the user cannot also edit.
+                                on_disk <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv") else NULL
+                                moved_on <- !is.null(peak_table_snapshot) && !is.null(on_disk) &&
+                                            !identical(dim(peak_table_snapshot), dim(on_disk))
+                                if (moved_on) {
+                                    cat(paste0("Shift+Z: peaks_monolist.csv has changed since the table was drawn (",
+                                               nrow(peak_table_snapshot), " rows then, ", nrow(on_disk),
+                                               " now). Saving would discard the difference - press Shift+Q to refresh the table, then re-make your edits.\n"))
+                                    return()
+                                }
+
+                                writeMonolist(edited, "peaks_monolist.csv")
+                                peak_table_snapshot <<- edited
+                                cat("Peak list saved!\n")
                         }
                     })
 
@@ -1222,7 +1802,7 @@
                         )
 
                         # 3) Ensure chromatograms_updated exists
-                        if (!exists("chromatograms_updated")) {
+                        if (is.null(chromatograms_updated)) {
                           cat("No chromatogram data loaded yet. Press Q first to update.\n")
                           return()
                         }
@@ -1342,7 +1922,11 @@
 
                         # 7) Append the new peaks to existing, write out
                             if (nrow(peak_data_new) > 0) {
-                              peak_data_combined <- rbind(peak_data_existing, peak_data_new)
+                              # bind_rows, not rbind: once a Shift+Q has run, the on-disk table carries extra
+                              # columns (peak_number_within_sample, rt_offset, area_peak_ions, ...) that
+                              # peak_data_new does not, and rbind errors on the mismatch. The new rows
+                              # get NA in those columns; the next Shift+Q recomputes them.
+                              peak_data_combined <- dplyr::bind_rows(peak_data_existing, peak_data_new)
                               write.table(
                                 peak_data_combined,
                                 file = "peaks_monolist.csv",
@@ -1373,7 +1957,7 @@
                             all_peaks_data <- list()
 
                             # Make sure we have 'chromatograms_updated' loaded
-                            if (!exists("chromatograms_updated")) {
+                            if (is.null(chromatograms_updated)) {
                               cat("No chromatograms_updated found. Press Q to update.\n")
                               return()
                             }
@@ -1471,17 +2055,31 @@
 
                                 baselined_chromatograms <- list()
 
-                                for ( chrom in 1:length(unique(chromatograms_updated$path_to_cdf_csv)) ) {
+                                for ( chrom in seq_along(unique(chromatograms_updated$path_to_cdf_csv)) ) {
                           
                                     chromatogram <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == unique(chromatograms_updated$path_to_cdf_csv)[chrom])
                                     tic <- filter(chromatogram, ion == 0)
 
                                     prelim_baseline_window <- samples_monolist$baseline_window[match(chromatogram$path_to_cdf_csv[1], samples_monolist$path_to_cdf_csv)]
 
-                                    n_prelim_baseline_windows <- floor(length(tic$rt)/prelim_baseline_window)
+                                    ## A sample with fewer scans than baseline_window (a short TCD run,
+                                    ## a narrow SIM method) gives floor(...) == 0; `1:0` then negative-indexes
+                                    ## to numeric(0), min() returns Inf and data.frame() throws
+                                    ## "arguments imply differing number of rows: 0, 1" with no hint that
+                                    ## baseline_window is the knob. Clamp to at least one window, iterate with
+                                    ## seq_len(), and clamp the slice so the last window cannot over-run.
+                                    n_scans_in_tic <- length(tic$rt)
+                                    n_prelim_baseline_windows <- max(1L, floor(n_scans_in_tic/prelim_baseline_window))
+                                    if ( n_scans_in_tic < prelim_baseline_window ) {
+                                        cat(paste0("Sample ", chromatogram$path_to_cdf_csv[1], " has ", n_scans_in_tic,
+                                                   " scans, fewer than baseline_window (", prelim_baseline_window,
+                                                   "); using one window over the whole trace. Lower baseline_window in samples_monolist.csv for a finer baseline.\n"))
+                                    }
                                     prelim_baseline <- list()
-                                    for ( i in 1:n_prelim_baseline_windows ) {
-                                        abundances_in_window <- tic$abundance[((prelim_baseline_window*(i-1))+1):(prelim_baseline_window*i)]
+                                    for ( i in seq_len(n_prelim_baseline_windows) ) {
+                                        window_lo <- (prelim_baseline_window*(i-1))+1
+                                        window_hi <- min(prelim_baseline_window*i, n_scans_in_tic)
+                                        abundances_in_window <- tic$abundance[window_lo:window_hi]
                                         prelim_baseline[[i]] <- data.frame(
                                             rt = tic$rt[(which.min(abundances_in_window)+((i-1)*prelim_baseline_window))],
                                             min = min(abundances_in_window)
@@ -1525,7 +2123,11 @@
                                 }
 
                                 baselined_chromatograms <- do.call(rbind, baselined_chromatograms)
-                                chromatograms_updated <- rbind(chromatograms, baselined_chromatograms)
+                                ## rbind onto chromatograms_updated (the SUBSET), not the unfiltered
+                                ## `chromatograms` — rebuilding from the latter re-admitted every excluded
+                                ## sample with no ion == "baseline" rows and rt_offset = NA, which killed
+                                ## the render as soon as one of them landed on the visible page with a peak.
+                                chromatograms_updated <- rbind(chromatograms_updated, baselined_chromatograms)
 
                             ## Add rt offset information for all chromatograms
 
@@ -1573,12 +2175,19 @@
                                         ## then stays wedged until it is restarted -- there is no
                                         ## brush you can draw to recover. Keep a usable view instead
                                         ## and say what happened.
+                                        ## rt_rt_offset, not rt: the renderer filters the page on
+                                        ## rt_rt_offset, so setting the limits from native rt is wrong
+                                        ## by exactly rt_offset as soon as retention-time alignment is
+                                        ## used -- and if the offset exceeds the brush width the window
+                                        ## contains no points at all, so a brush drawn on a visible peak
+                                        ## yields the "no points in range" placeholder.
+                                        brush_x_col <- if ("rt_rt_offset" %in% names(peak_points)) "rt_rt_offset" else "rt"
                                         brush_ok <- nrow(peak_points) > 0 &&
-                                            is.finite(min(peak_points$rt)) && is.finite(max(peak_points$rt))
+                                            is.finite(min(peak_points[[brush_x_col]])) && is.finite(max(peak_points[[brush_x_col]]))
 
                                         if (brush_ok) {
-                                            x_axis_start <<- min(peak_points$rt)
-                                            x_axis_end <<- max(peak_points$rt)
+                                            x_axis_start <<- min(peak_points[[brush_x_col]])
+                                            x_axis_end <<- max(peak_points[[brush_x_col]])
 
                                             ## y follows the brush box itself, not the x-slice's
                                             ## full extent. Stored with a key naming the view it
@@ -1590,9 +2199,23 @@
                                             ysel <- brush_y_range(input$chromatogram_brush)
                                             if (!is.null(ysel) && ysel[2] > ysel[1]) {
                                                 y_zoom <<- ysel
-                                                y_zoom_key <<- if (exists("last_brush_key")) last_brush_key else NULL
-                                                y_axis_start <<- ysel[1]
-                                                y_axis_end   <<- ysel[2]
+                                                y_zoom_key <<- last_brush_key
+                                                ## y_axis_start/end are the UNKEYED pair, and the renderer
+                                                ## hands them to y_limits_for() as its FALLBACK. Writing a
+                                                ## sqrt / log / per-ion-normalised / m-z range into them
+                                                ## leaked that zoom into every other view: the key check
+                                                ## correctly rejected the foreign y_zoom and then fell
+                                                ## straight back to the same numbers, so a brush taken in
+                                                ## all-ions/sqrt flattened the TIC through oob = squish,
+                                                ## and one taken on the ion map gave the TIC a y-axis in
+                                                ## m/z. They now only ever hold raw counts.
+                                                if (is.null(y_zoom_key) || grepl("^tic/", y_zoom_key)) {
+                                                    y_axis_start <<- ysel[1]
+                                                    y_axis_end   <<- ysel[2]
+                                                } else {
+                                                    cat(paste0("  y-zoom stored for ", y_zoom_key,
+                                                               " only; the raw-count axis is left as it was.\n"))
+                                                }
                                             } else {
                                                 y_zoom <<- NULL
                                                 y_zoom_key <<- NULL
@@ -1603,10 +2226,10 @@
                                             cat("Brush selected no chromatogram points - keeping the current view.\n")
                                             cat("  Re-brush on a drawn trace and press Shift+Q again, or press Shift+Q with no brush to reset.\n")
                                             logMessage("Brush selected no points; view left unchanged.")
-                                            if (!exists("x_axis_start") || length(x_axis_start) == 0 || !is.finite(x_axis_start)) x_axis_start <<- x_axis_start_default
-                                            if (!exists("x_axis_end")   || length(x_axis_end)   == 0 || !is.finite(x_axis_end))   x_axis_end   <<- x_axis_end_default
-                                            if (!exists("y_axis_start") || length(y_axis_start) == 0 || !is.finite(y_axis_start)) y_axis_start <<- 0
-                                            if (!exists("y_axis_end")   || length(y_axis_end)   == 0 || !is.finite(y_axis_end))   y_axis_end   <<- max(chromatograms$abundance)
+                                            if (is.null(x_axis_start) || length(x_axis_start) == 0 || !is.finite(x_axis_start)) x_axis_start <<- x_axis_start_default
+                                            if (is.null(x_axis_end)   || length(x_axis_end)   == 0 || !is.finite(x_axis_end))   x_axis_end   <<- x_axis_end_default
+                                            if (is.null(y_axis_start) || length(y_axis_start) == 0 || !is.finite(y_axis_start)) y_axis_start <<- 0
+                                            if (is.null(y_axis_end)   || length(y_axis_end)   == 0 || !is.finite(y_axis_end))   y_axis_end   <<- max(chromatograms$abundance)
                                         }
                                     }
                                 
@@ -1622,43 +2245,14 @@
                                         if (is.null(y_zoom)) "auto" else paste0(signif(y_zoom[1], 6), " to ", signif(y_zoom[2], 6)),
                                         "\n"))
 
-                                ## Filter chromatogram
-                                    
-                                    chromatograms_updated_filtered <- dplyr::filter(
-                                        chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end
-                                    )
-
-                            ## Plot
-                                    
-                                ## === LEGACY / UNUSED (v5) ==============================
-                                ## The plot assembly from here (base plot + peak overlay + TIC
-                                ## line) is SUPERSEDED by the reactive, paginated
-                                ## output$chromatograms defined just after this handler. It still
-                                ## runs and builds `chromatogram_plot`, which is then discarded,
-                                ## so Shift+Q does some redundant work. Left intact for this pass
-                                ## (no R available here to re-test a deletion); flagged for removal
-                                ## in the perf cleanup (phase 2).
-                                ## ======================================================
-                                facet_labels <- gsub("\\.CDF\\.csv$", "", gsub(".*/", "", chromatograms_updated_filtered$path_to_cdf_csv), ignore.case = TRUE)
-                                names(facet_labels) <- chromatograms_updated_filtered$path_to_cdf_csv
-
-                                chromatogram_plot <- ggplot() +
-                                    geom_line(
-                                        data = filter(chromatograms_updated_filtered, ion == "baseline"),
-                                        mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
-                                    ) +
-                                    # geom_line(
-                                    #     data = filter(chromatograms_updated_filtered, ion != "baseline"),
-                                    #     mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
-                                    #     alpha = 0.8
-                                    # ) +
-                                    scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
-                                    scale_y_continuous(limits = c(y_axis_start, y_axis_end), name = "Abundance (counts)", oob = scales::squish) +
-                                    facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
-                                    theme_classic() +
-                                    guides(fill = "none") +
-                                    scale_fill_continuous(type = "viridis") +
-                                    scale_color_manual(values = discrete_palette)
+                            ## No plot is assembled here. Shift+Q computes and writes; the
+                            ## paginated output$chromatograms below draws. v5 moved the drawing
+                            ## out but left v4's assembly in place, where it went on building a
+                            ## chromatogram_plot that was immediately discarded -- two gsub passes
+                            ## and a named-vector build over ONE element per row (~1-2M rows at
+                            ## 152 samples), plus a full copy of the table attached to the dead
+                            ## plot, on every single Shift+Q. Deleted 2026-10-01; nothing
+                            ## downstream read chromatograms_updated_filtered or the plot.
 
                             ## Add peaks, if any
                                 
@@ -1668,20 +2262,26 @@
 
                                     ## Filter out duplicate peaks and NA peaks
                                         
-                                        peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_start))
-                                        peak_table <- as.data.frame(peak_table)
-                                        peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
-                                        peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_end))
+                                        ## Dedupe on the (start, end) PAIR. It used to run two
+                                        ## independent passes -- one on peak_start, one on peak_end --
+                                        ## so two genuinely distinct peaks that happened to share an
+                                        ## end bound had the second silently dropped and committed to
+                                        ## disk. Sorted by peak_start first, so "first wins" means the
+                                        ## earlier peak rather than whichever row was appended first.
+                                        peak_table <- peak_table[!is.na(peak_table$peak_start),]
+                                        peak_table <- peak_table[order(peak_table$path_to_cdf_csv, peak_table$peak_start, peak_table$peak_end),]
+                                        peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>%
+                                            mutate(duplicated = duplicated(paste(peak_start, peak_end, sep = "_")))
                                         peak_table <- as.data.frame(peak_table)
                                         peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
                                         peak_table <- peak_table[,!colnames(peak_table) == "duplicated"]
-                                        peak_table <- peak_table[!is.na(peak_table$peak_start),]
 
                                     ## Update with peak_number_within_sample
                                         
                                         peak_table_updated <- list()
-                                        for (sample_number in 1:length(unique(peak_table$path_to_cdf_csv))) {
-                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == unique(peak_table$path_to_cdf_csv)[sample_number],]
+                                        samples_with_peaks <- unique(as.character(peak_table$path_to_cdf_csv))
+                                        for (sample_number in seq_along(samples_with_peaks)) {
+                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_with_peaks[sample_number],]
                                           peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start),]
                                           peaks_in_this_sample$peak_number_within_sample <- seq(1,length(peaks_in_this_sample$path_to_cdf_csv),1)
                                           peak_table_updated[[sample_number]] <- peaks_in_this_sample
@@ -1717,26 +2317,56 @@
                                             if (is.null(peak_table$peak_ions))      peak_table$peak_ions      <- NA_character_
                                         }
 
-                                        for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
+                                        ## Iterate over the UNIQUE sample list, and index into that
+                                        ## same vector. The bound used to be length(unique(...)) while
+                                        ## the index went into the raw column, so one duplicated row in
+                                        ## samples_monolist.csv made the loop visit an early sample
+                                        ## twice and never reach the last one -- whose areas then kept
+                                        ## their stale values with no error anywhere.
+                                        samples_for_area <- unique(as.character(samples_monolist$path_to_cdf_csv))
+                                        for (sample_number in seq_along(samples_for_area)) {
+
+                                          this_sample <- samples_for_area[sample_number]
+                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == this_sample,]
                                           
-                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
-                                          
-                                          areas <- vector()
-                                          for (peak in 1:length(peaks_in_this_sample$peak_number_within_sample)) {
-                                            areas <- append(areas, 
-                                              sum(dplyr::filter(
-                                                chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
-                                                rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak],
-                                                ion == 0)$abundance
-                                              ) - 
-                                              sum(dplyr::filter(
-                                                chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
-                                                rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$baseline
-                                              )
+                                          ## Area = TIC sum over the peak window, minus the
+                                          ## interpolated baseline over the same window.
+                                          ##
+                                          ## Fixed 2026-09-30. The baseline lives as ROWS tagged
+                                          ## ion == "baseline" carrying their value in `abundance`
+                                          ## (long format). It is NOT a `baseline` COLUMN -- that
+                                          ## is the WIDE layout of modules/gcms.R, from which this
+                                          ## block was copied verbatim. v4 changed the table to
+                                          ## long form and adapted only the first sum; the second
+                                          ## kept asking for $baseline, which returns NULL, and
+                                          ## sum(NULL) is 0. So from v4 until now the subtraction
+                                          ## was a silent no-op and every `area` ever written was
+                                          ## a raw, un-baseline-corrected TIC sum. The old form
+                                          ## also had no ion == 0 restriction on the baseline sum,
+                                          ## so it would have summed across the TIC, the baseline
+                                          ## and every extracted-ion row.
+                                          ##
+                                          ## seq_len, not 1:length(): a sample with no peaks yet
+                                          ## gave 1:0 == c(1, 0), and the zero index handed
+                                          ## dplyr::filter() a length-0 predicate, which errors.
+                                          ## That is the normal state of a part-annotated folder,
+                                          ## so Shift+Q died on the first un-annotated sample.
+                                          areas <- numeric(nrow(peaks_in_this_sample))
+                                          for (peak in seq_len(nrow(peaks_in_this_sample))) {
+                                            rows_for_peak <- chromatograms_updated[
+                                                chromatograms_updated$path_to_cdf_csv ==
+                                                    as.character(peaks_in_this_sample$path_to_cdf_csv[peak]), ]
+                                            in_window <- dplyr::filter(
+                                                rows_for_peak,
+                                                rt >= peaks_in_this_sample$peak_start[peak],
+                                                rt <= peaks_in_this_sample$peak_end[peak]
                                             )
+                                            areas[peak] <-
+                                                sum(in_window$abundance[in_window$ion == 0]) -
+                                                sum(in_window$abundance[in_window$ion == "baseline"])
                                           }
 
-                                          peak_table$area[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- areas
+                                          peak_table$area[peak_table$path_to_cdf_csv == this_sample] <- areas
 
                                           ## v6: the same area restricted to the ions the peak
                                           ## actually generates. The TIC area above charges a peak
@@ -1748,17 +2378,21 @@
                                           if (isTRUE(integrate_peak_ions) && nrow(peaks_in_this_sample) > 0) {
                                             ion_areas <- numeric(nrow(peaks_in_this_sample))
                                             ion_lists <- character(nrow(peaks_in_this_sample))
-                                            for (peak in 1:nrow(peaks_in_this_sample)) {
+                                            for (peak in seq_len(nrow(peaks_in_this_sample))) {
                                               res <- peak_ion_area(
                                                 as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),
                                                 peaks_in_this_sample$peak_start[peak],
                                                 peaks_in_this_sample$peak_end[peak],
-                                                all_ion_threshold
+                                                ## The LIVE control, not the startup argument. These
+                                                ## two diverge the moment the slider is touched, so
+                                                ## the ion set you tune on screen was not the one
+                                                ## that produced area_peak_ions.
+                                                if (is.null(input$allion_threshold)) all_ion_threshold else input$allion_threshold
                                               )
                                               ion_areas[peak] <- res$area
                                               ion_lists[peak] <- res$ions
                                             }
-                                            rows <- peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])
+                                            rows <- peak_table$path_to_cdf_csv == this_sample
                                             peak_table$area_peak_ions[rows] <- ion_areas
                                             peak_table$peak_ions[rows]      <- ion_lists
                                           }
@@ -1773,117 +2407,17 @@
                             
                                         write.table(peak_table, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
 
-                                        output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
-                                            peak_table2 <- read.csv("peaks_monolist.csv")
-                                            peak_table2
-                                        }))
+                                        render_peak_table()
 
-                                    ## Add peaks
-
-                                        print(x_axis_start)
-                                        print(x_axis_end)
-                                        if (length(x_axis_start) == 0) {x_axis_start <<- min(chromatograms$rt)}
-                                        if (length(x_axis_end) == 0) {x_axis_end <<- max(chromatograms$rt)}
-                                        print(x_axis_start)
-                                        print(x_axis_end)
-
-                                        peak_table <- dplyr::filter(peak_table, peak_start_rt_offset > x_axis_start & peak_end_rt_offset < x_axis_end)
-                                        # print("filter passed")
-
-                                        # 1. Make empty containers
-                                        all_ribbons <- list()
-                                        all_vlines  <- list()
-                                        all_labels  <- list()
-
-
-                                        # 2. Loop over peaks, but only assemble data frames
-                                        if (nrow(peak_table) > 0) {
-                                            for (peak in 1:nrow(peak_table)) {
-                                                # Filter chromatogram data for this peak
-                                                signal_for_this_peak <- dplyr::filter(
-                                                    chromatograms_updated,
-                                                    path_to_cdf_csv == peak_table[peak, ]$path_to_cdf_csv,
-                                                    rt_rt_offset > peak_table[peak, ]$peak_start_rt_offset,
-                                                    rt_rt_offset < peak_table[peak, ]$peak_end_rt_offset
-                                                )
-
-                                                # Only proceed if there is valid data
-                                                if (nrow(signal_for_this_peak) > 0) {
-                                                    # Assign peak number
-                                                    signal_for_this_peak$peak_number_within_sample <- 
-                                                        peak_table$peak_number_within_sample[peak]
-
-                                                    # Extract ribbon data
-                                                    ribbon <- dplyr::filter(signal_for_this_peak, ion == 0)
-                                                    ribbon$baseline <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
-
-                                                    # Store data in lists
-                                                    all_ribbons[[peak]] <- ribbon
-                                                    all_vlines[[peak]]  <- signal_for_this_peak[1, ]
-
-                                                    # Create label data
-                                                    label_df <- dplyr::filter(signal_for_this_peak, ion == 0) %>%
-                                                        dplyr::summarize(
-                                                            peak_number_within_sample = peak_number_within_sample[1],
-                                                            x = median(rt_rt_offset),
-                                                            y = max(abundance),
-                                                            path_to_cdf_csv = path_to_cdf_csv[1]
-                                                        )
-                                                    all_labels[[peak]] <- label_df
-                                                }
-                                            }
-                                        
-                                            # 3. Combine all stored data frames
-                                            all_ribbons <- dplyr::bind_rows(all_ribbons)
-                                            all_vlines  <- dplyr::bind_rows(all_vlines)
-                                            all_labels  <- dplyr::bind_rows(all_labels)
-
-                                            # 4. Add a single set of ggplot layers
-                                            chromatogram_plot <- chromatogram_plot +
-                                                geom_vline(
-                                                    data = all_vlines, 
-                                                    mapping = aes(xintercept = rt_rt_offset), 
-                                                    alpha = 0.3
-                                                ) +
-                                                geom_ribbon(
-                                                    data = all_ribbons,
-                                                    mapping = aes(
-                                                        x = rt_rt_offset, 
-                                                        ymax = abundance, 
-                                                        ymin = baseline, 
-                                                        fill = peak_number_within_sample,
-                                                        group = peak_number_within_sample
-                                                    ),
-                                                    alpha = 0.8
-                                                ) +
-                                                geom_text(
-                                                    data = all_labels,
-                                                    mapping = aes(
-                                                        label = peak_number_within_sample, 
-                                                        x = x, 
-                                                        y = y
-                                                    ),
-                                                    color = "black"
-                                                )
-                                        }
                                 }
 
-                            ## Draw the plot and communicate
+                            ## The x-window globals must be usable before the paginated renderer
+                            ## filters on them. Hoisted out of the peak block 2026-10-01: it used
+                            ## to sit inside `if (dim(peak_table)[1] > 0)`, so on a folder with no
+                            ## peaks yet the safety net did not run at all.
+                                if (length(x_axis_start) == 0) {x_axis_start <<- min(chromatograms$rt)}
+                                if (length(x_axis_end) == 0) {x_axis_end <<- max(chromatograms$rt)}
 
-                                chromatogram_plot <- chromatogram_plot +
-                                    # geom_line(
-                                    #     data = filter(chromatograms_updated, ion == "baseline"),
-                                    #     mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
-                                    # ) +
-                                    geom_line(
-                                        data = filter(chromatograms_updated, ion != "baseline"),
-                                        mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
-                                        alpha = 0.8
-                                    )
-                                #     scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
-                                #     scale_y_continuous(name = "Abundance (counts)") +
-                                #     facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels))
-                                
                                 ## Drawing moved out of Shift+Q: the chromatogram is now drawn by
                                 ## the reactive output$chromatograms defined just below this handler,
                                 ## which renders only the current PAGE of samples (see pagination
@@ -1908,16 +2442,24 @@
 
                     ## Which samples exist, and the current page's slice
                         page_bounds <- function() {
-                            if (!exists("chromatograms_updated")) return(NULL)
+                            if (is.null(chromatograms_updated)) return(NULL)
                             all_samples <- sort(unique(as.character(chromatograms_updated$path_to_cdf_csv)))
                             n <- length(all_samples)
+                            ## No samples at all: return an EMPTY page rather than
+                            ## all_samples[1:0], which gives NA_character_ -- a phantom sample
+                            ## that the renderer then tried to facet on, under an indicator
+                            ## reading "samples 1-0 of 0".
+                            if (n == 0) {
+                                return(list(all_samples = character(0), n = 0L, n_pages = 1L,
+                                            pg = 1L, lo = 0L, hi = 0L, page_samples = character(0)))
+                            }
                             n_pages <- max(1, ceiling(n / samples_per_page))
                             pg <- min(max(1, current_page()), n_pages)
                             lo <- (pg - 1) * samples_per_page + 1
                             hi <- min(pg * samples_per_page, n)
                             list(all_samples = all_samples, n = n, n_pages = n_pages,
                                  pg = pg, lo = lo, hi = hi,
-                                 page_samples = all_samples[lo:hi])
+                                 page_samples = all_samples[seq(lo, hi)])
                         }
 
                     ## Page navigation buttons
@@ -1935,6 +2477,7 @@
                             redraw_trigger(); current_page()
                             b <- page_bounds()
                             if (is.null(b)) return("Press Shift+Q to load chromatograms")
+                            if (b$n == 0) return("No samples loaded")
                             paste0("Page ", b$pg, " / ", b$n_pages,
                                    "   (samples ", b$lo, "–", b$hi, " of ", b$n, ")")
                         })
@@ -1969,8 +2512,8 @@
                                 xs <- x_axis_start; xe <- x_axis_end
                                 if (length(xs) == 0 || is.null(xs)) xs <- min(chromatograms$rt)
                                 if (length(xe) == 0 || is.null(xe)) xe <- max(chromatograms$rt)
-                                ys <- if (exists("y_axis_start") && length(y_axis_start) > 0) y_axis_start else 0
-                                ye <- if (exists("y_axis_end")   && length(y_axis_end)   > 0) y_axis_end   else max(chromatograms$abundance)
+                                ys <- if (!is.null(y_axis_start) && length(y_axis_start) > 0) y_axis_start else 0
+                                ye <- if (!is.null(y_axis_end)   && length(y_axis_end)   > 0) y_axis_end   else max(chromatograms$abundance)
 
                             ## Display settings (v6). The controls may not have rendered on the
                             ## first pass, so each falls back to the function argument.
@@ -1978,18 +2521,44 @@
                                     if (isTRUE(all_ion_view)) "all_ions" else "tic"
                                 } else input$display_mode
                                 mode_scale <- if (is.null(input$allion_scaling))    all_ion_scaling    else input$allion_scaling
-                                thr        <- if (is.null(input$allion_threshold))  all_ion_threshold  else input$allion_threshold
-                                npx        <- if (is.null(input$allion_max_points)) all_ion_max_points else input$allion_max_points
+                                ## The two EXPENSIVE controls are read through isolate(), so this
+                                ## renderer does not take a reactive dependency on them. Dragging
+                                ## either slider used to queue one multi-million-segment redraw per
+                                ## intermediate value, each recomputing the ion window for the whole
+                                ## page. They now apply on the next Shift+Q, which is what the help
+                                ## text has always said. Display mode and y scaling stay live: both
+                                ## are cheap and users expect them to be instant.
+                                thr        <- isolate(if (is.null(input$allion_threshold))  all_ion_threshold  else input$allion_threshold)
+                                npx        <- isolate(if (is.null(input$allion_max_points)) all_ion_max_points else input$allion_max_points)
 
-                            ## Base data for this page only
+                            ## Base data for this page only.
+                            ## INCLUSIVE bounds, matching integration. Integration uses >= / <=
+                            ## while the overlay and this view filter used > / <, so a peak sitting
+                            ## flush against the zoom edge was integrated but vanished from the
+                            ## plot, and a ribbon excluded the two boundary scans its own area
+                            ## included.
                                 cuf <- dplyr::filter(
                                     chromatograms_updated,
                                     path_to_cdf_csv %in% page_samples,
-                                    rt_rt_offset > xs & rt_rt_offset < xe
+                                    rt_rt_offset >= xs & rt_rt_offset <= xe
                                 )
 
-                                facet_labels <- gsub("\\.CDF\\.csv$", "", gsub(".*/", "", cuf$path_to_cdf_csv), ignore.case = TRUE)
-                                names(facet_labels) <- cuf$path_to_cdf_csv
+                                ## EVERY sample on this page gets a panel, drawn or not. The facet
+                                ## column is a factor over page_samples and the facets are built
+                                ## with drop = FALSE, so a sample with nothing over the ion
+                                ## threshold shows as an empty panel rather than vanishing. It used
+                                ## to disappear entirely: a page returned 14 panels while the
+                                ## indicator still read "samples 21-40 of 152", which reads as
+                                ## "those six samples failed".
+                                as_page_facet <- function(x) factor(as.character(x), levels = page_samples)
+                                cuf$path_to_cdf_csv <- as_page_facet(cuf$path_to_cdf_csv)
+
+                                ## Per SAMPLE, not per ROW. labeller() only ever looks up one
+                                ## entry per facet, but this built a named vector as long as the
+                                ## table -- two gsub passes and a names<- over ~1-2M elements on
+                                ## every redraw, including every page flip.
+                                facet_labels <- sample_id_from_path(page_samples)
+                                names(facet_labels) <- page_samples
 
                             ## Gather the all-ion data for the page, one sample at a time.
                             ## Each sample carries its own rt offset and its own baseline, so
@@ -1999,18 +2568,53 @@
                                 allion <- NULL
                                 if (mode_display %in% c("all_ions", "ion_map")) {
                                     npx_used <- if (mode_display == "ion_map") min(npx, 600) else npx
+                                    ## Read the offsets FRESH. Shift+Q re-reads
+                                    ## samples_monolist into a handler-LOCAL variable, so this
+                                    ## renderer used to resolve the name to the startup copy:
+                                    ## editing an rt_offset moved the TIC and the peak marks
+                                    ## but not the ion lines, which in all-ions mode manufactures
+                                    ## exactly the apex shift the view exists to detect. One
+                                    ## small CSV per render is nothing beside the draw.
+                                    offsets_now <- if (file.exists("samples_monolist.csv")) {
+                                        try(read.csv("samples_monolist.csv", stringsAsFactors = FALSE), silent = TRUE)
+                                    } else NULL
+                                    if (inherits(offsets_now, "try-error") || is.null(offsets_now) ||
+                                        !all(c("rt_offset", "path_to_cdf_csv") %in% names(offsets_now))) {
+                                        offsets_now <- samples_monolist
+                                    }
                                     pieces <- list()
                                     for (s in page_samples) {
-                                        off <- samples_monolist$rt_offset[match(s, samples_monolist$path_to_cdf_csv)]
+                                        off <- offsets_now$rt_offset[match(s, offsets_now$path_to_cdf_csv)]
                                         if (length(off) == 0 || is.na(off)) off <- 0
-                                        w <- try(allion_window(s, xs - off, xe - off, thr, npx_used), silent = TRUE)
+                                        w <- try(allion_window(s, xs - off, xe - off, thr, npx_used, rt_shift = off), silent = TRUE)
                                         if (inherits(w, "try-error") || is.null(w) || nrow(w) == 0) next
                                         w <- allion_scale(w, mode_scale)
-                                        w$rt_rt_offset  <- w$rt + off
+                                        ## Round the reconstructed grid. allion_window() snaps every
+                                        ## sample to one shared set of centres in offset-corrected
+                                        ## space, but it hands them back shifted into native rt, and
+                                        ## (c - off) + off is not bit-identical to c. Those ~1e-15
+                                        ## differences make unique() see one grid per sample again,
+                                        ## which is what made the ion map's tiles too narrow. Six
+                                        ## decimals is orders of magnitude finer than any real
+                                        ## retention-time resolution.
+                                        w$rt_rt_offset  <- round(w$rt + off, 6)
                                         w$path_to_cdf_csv <- s
                                         pieces[[length(pieces) + 1L]] <- w
                                     }
                                     if (length(pieces) > 0) allion <- as.data.frame(data.table::rbindlist(pieces))
+                                    if (!is.null(allion)) allion$path_to_cdf_csv <- as_page_facet(allion$path_to_cdf_csv)
+
+                                    ## Single-detector data (GC-TCD/FID/ECD) carries the mz = 0
+                                    ## sentinel, and the all-ion views colour and position by m/z
+                                    ## on a LOG scale: log10(0) is -Inf, so every line came back
+                                    ## grey with an empty legend and the ion map's y axis collapsed
+                                    ## to c(0, 0). Fall back to the TIC, as Shift+1 and Shift+4
+                                    ## already do for the same reason.
+                                    if (!is.null(allion) && all(allion$mz == 0, na.rm = TRUE)) {
+                                        cat("All-ion view is not available for single-detector data (no m/z dimension) - showing the TIC.\n")
+                                        mode_display <- "tic"
+                                        allion <- NULL
+                                    }
                                 }
 
                                 ## Nothing to draw in the requested mode -> fall back to the TIC
@@ -2022,14 +2626,26 @@
                                 ## variables must have at least one value"), which in a renderPlot
                                 ## leaves a broken panel and no way back, so say what happened.
                                 if (nrow(cuf) == 0 && is.null(allion)) {
+                                    ## Carry a REAL x mapping over the current window. The old
+                                    ## placeholder was annotate(x = 0, y = 0) + theme_void(): a
+                                    ## degenerate 0..0 domain with no panel, which is exactly the
+                                    ## "never hand back a plot with no coordinate map" trap -- and
+                                    ## it appeared precisely when the user was trying to brush
+                                    ## their way out of a bad zoom, leaving the next brush with
+                                    ## nothing sane to convert against.
+                                    mid <- if (is.finite(xs) && is.finite(xe)) (xs + xe) / 2 else 0
                                     return(
-                                        ggplot() +
-                                            annotate("text", x = 0, y = 0, size = 5, lineheight = 1.2,
+                                        ggplot(data.frame(rt_rt_offset = c(xs, xe), abundance = c(0, 1)),
+                                               aes(x = rt_rt_offset, y = abundance)) +
+                                            geom_blank() +
+                                            annotate("text", x = mid, y = 0.5, size = 5, lineheight = 1.2,
                                                      label = paste0(
                                                          "No chromatogram points between x = ",
                                                          signif(xs, 6), " and ", signif(xe, 6), ".\n",
                                                          "Press Shift+Q with no brush to reset the view.")) +
-                                            theme_void()
+                                            scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
+                                            scale_y_continuous(name = "Abundance (counts)") +
+                                            theme_classic()
                                     )
                                 }
 
@@ -2067,7 +2683,7 @@
                                         scale_y_continuous(name = allion_y_label(mode_scale),
                                                            limits = y_limits_for(view_key, drawn_yrange),
                                                            oob = scales::squish) +
-                                        facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
+                                        facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
                                         guides(fill = "none")
 
@@ -2075,7 +2691,17 @@
 
                                     ## geom_tile rather than geom_raster: decimation can leave
                                     ## the rt grid with gaps, which geom_raster rejects.
-                                    tile_w <- (xe - xs) / max(1, length(unique(allion$rt_rt_offset)))
+                                    ## Tile width from the ACTUAL spacing of the drawn grid.
+                                    ## Dividing the window by the COUNT of unique x values was
+                                    ## several times too narrow whenever the union across samples
+                                    ## was denser than any one sample's grid -- the map rendered as
+                                    ## thin stripes with white gaps, hidden on a single-sample page.
+                                    ## It is also wrong whenever decimation does not fire at all.
+                                    ## Samples now share one grid (see allion_window's rt_shift),
+                                    ## so the median gap is the true tile width.
+                                    tile_x <- sort(unique(allion$rt_rt_offset))
+                                    tile_w <- if (length(tile_x) > 1) stats::median(diff(tile_x)) else (xe - xs)
+                                    if (!is.finite(tile_w) || tile_w <= 0) tile_w <- (xe - xs) / max(1, length(tile_x))
                                     chromatogram_plot <- ggplot() +
                                         geom_tile(
                                             data = allion,
@@ -2092,7 +2718,7 @@
                                                         ylim = y_limits_for(view_key, drawn_yrange)) +
                                         scale_x_continuous(name = "Retention (Scan number)") +
                                         scale_y_continuous(name = "m/z") +
-                                        facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
+                                        facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic()
 
                                 } else {
@@ -2105,7 +2731,7 @@
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
                                         scale_y_continuous(limits = y_limits_for(view_key, c(ys, ye)),
                                                            name = "Abundance (counts)", oob = scales::squish) +
-                                        facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
+                                        facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic() +
                                         guides(fill = "none") +
                                         scale_fill_continuous(type = "viridis") +
@@ -2124,21 +2750,33 @@
                                         peak_table <- dplyr::filter(
                                             peak_table,
                                             path_to_cdf_csv %in% page_samples,
-                                            peak_start_rt_offset > xs & peak_end_rt_offset < xe
+                                            peak_start_rt_offset >= xs & peak_end_rt_offset <= xe
                                         )
                                         all_ribbons <- list(); all_vlines <- list(); all_labels <- list()
                                         if (nrow(peak_table) > 0) {
-                                            for (peak in 1:nrow(peak_table)) {
+                                            for (peak in seq_len(nrow(peak_table))) {
                                                 signal_for_this_peak <- dplyr::filter(
                                                     chromatograms_updated,
                                                     path_to_cdf_csv == peak_table[peak, ]$path_to_cdf_csv,
-                                                    rt_rt_offset > peak_table[peak, ]$peak_start_rt_offset,
-                                                    rt_rt_offset < peak_table[peak, ]$peak_end_rt_offset
+                                                    rt_rt_offset >= peak_table[peak, ]$peak_start_rt_offset,
+                                                    rt_rt_offset <= peak_table[peak, ]$peak_end_rt_offset
                                                 )
                                                 if (nrow(signal_for_this_peak) > 0) {
                                                     signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
                                                     ribbon <- dplyr::filter(signal_for_this_peak, ion == 0)
-                                                    ribbon$baseline <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
+                                                    ## Length-mismatch guard: if this sample carries no ion == "baseline"
+                                                    ## rows, the filter returns a length-0 vector and assigning it into an
+                                                    ## n-row frame kills the entire render with no way back. Skip this
+                                                    ## peak's shading with a message instead.
+                                                    baseline_for_this_peak <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
+                                                    if (nrow(ribbon) == 0 || length(baseline_for_this_peak) != nrow(ribbon)) {
+                                                        cat(paste0("Skipping peak overlay for ", peak_table[peak, ]$path_to_cdf_csv,
+                                                                   ", peak ", peak_table$peak_number_within_sample[peak], ": ",
+                                                                   nrow(ribbon), " TIC rows vs ", length(baseline_for_this_peak),
+                                                                   " baseline rows. Press Shift+Q to rebuild the baseline.\n"))
+                                                        next
+                                                    }
+                                                    ribbon$baseline <- baseline_for_this_peak
                                                     all_ribbons[[peak]] <- ribbon
                                                     all_vlines[[peak]]  <- signal_for_this_peak[1, ]
                                                     all_labels[[peak]]  <- dplyr::filter(signal_for_this_peak, ion == 0) %>%
@@ -2153,6 +2791,11 @@
                                             all_ribbons <- dplyr::bind_rows(all_ribbons)
                                             all_vlines  <- dplyr::bind_rows(all_vlines)
                                             all_labels  <- dplyr::bind_rows(all_labels)
+                                            ## Same facet factor as the base layer, or these land
+                                            ## in panels of their own.
+                                            if (nrow(all_ribbons) > 0) all_ribbons$path_to_cdf_csv <- as_page_facet(all_ribbons$path_to_cdf_csv)
+                                            if (nrow(all_vlines)  > 0) all_vlines$path_to_cdf_csv  <- as_page_facet(all_vlines$path_to_cdf_csv)
+                                            if (nrow(all_labels)  > 0) all_labels$path_to_cdf_csv  <- as_page_facet(all_labels$path_to_cdf_csv)
                                             if (nrow(all_ribbons) > 0) {
                                                 if (mode_display == "tic") {
                                                     chromatogram_plot <- chromatogram_plot +
@@ -2193,6 +2836,11 @@
                                     session$clientData$output_chromatograms_width,
                                     session$clientData$output_chromatograms_height)))
                                 last_brush_key    <<- view_key
+                                last_brush_facets <<- if (mode_display %in% c("all_ions", "ion_map") && !is.null(allion)) {
+                                    length(unique(as.character(allion$path_to_cdf_csv)))
+                                } else {
+                                    length(unique(as.character(cuf$path_to_cdf_csv)))
+                                }
                                 last_brush_yrange <<- y_limits_for(view_key, drawn_yrange)
 
                             chromatogram_plot
@@ -2226,18 +2874,29 @@
                           if ( !is.null(input$chromatogram_brush )) {
 
                             peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+                            if (nrow(peak_points) == 0) {
+                                cat("Shift+E: the brush selected no points; nothing excised.\n")
+                                return()
+                            }
+                            path_to_cdf_csv <- single_sample(peak_points, "Shift+E")
+                            if (is.null(path_to_cdf_csv)) return()
                             selection_start = min(peak_points$rt)
                             selection_end   = max(peak_points$rt)
-                            path_to_cdf_csv = peak_points$path_to_cdf_csv[1]
-                            
+
                             peak_table <- read.csv("peaks_monolist.csv")
+                            if (nrow(peak_table) == 0) {
+                                cat("Shift+E: no peaks on file.\n")
+                                return()
+                            }
 
                             # Remove any peak that fully resides within [selection_start, selection_end]
-                            # for that single cdf
+                            # for that single cdf. INCLUSIVE bounds: with `>` and `<` a peak could not
+                            # be excised by the very brush that created it, because Shift+A set its
+                            # bounds to exactly this selection's min and max.
                             peak_table <- peak_table[!
                               apply(cbind(
-                                peak_table$peak_start > selection_start,
-                                peak_table$peak_end < selection_end,
+                                peak_table$peak_start >= selection_start,
+                                peak_table$peak_end <= selection_end,
                                 peak_table$path_to_cdf_csv == as.character(path_to_cdf_csv)
                               ), 1, all)
                             ,]
@@ -2265,17 +2924,46 @@
                           if ( !is.null(input$chromatogram_brush )) {
 
                             peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
-                            selection_start = min(peak_points$rt)
-                            selection_end   = max(peak_points$rt)
+                            if (nrow(peak_points) == 0) {
+                                cat("Shift+R: the brush selected no points; nothing removed.\n")
+                                return()
+                            }
 
                             # read peak table
                             peak_table <- read.csv("peaks_monolist.csv")
+                            if (nrow(peak_table) == 0) {
+                                cat("Shift+R: no peaks on file.\n")
+                                return()
+                            }
 
-                            # remove ANY peak in ANY file that fully resides in [start, end]
+                            # A GLOBAL removal has to compare like with like. The brush is in the
+                            # brushed sample's NATIVE rt, while every other sample's peak bounds are
+                            # in its own native rt -- so comparing the two across samples is wrong by
+                            # each sample's rt_offset. Use the offset-corrected pair on both sides
+                            # when the table carries it (it does after any Shift+Q), and fall back to
+                            # native rt only on a table that has never been through one.
+                            aligned <- all(c("peak_start_rt_offset", "peak_end_rt_offset") %in% names(peak_table)) &&
+                                       "rt_rt_offset" %in% names(peak_points) &&
+                                       !any(is.na(peak_table$peak_start_rt_offset))
+                            if (aligned) {
+                                selection_start <- min(peak_points$rt_rt_offset)
+                                selection_end   <- max(peak_points$rt_rt_offset)
+                                starts <- peak_table$peak_start_rt_offset
+                                ends   <- peak_table$peak_end_rt_offset
+                            } else {
+                                selection_start <- min(peak_points$rt)
+                                selection_end   <- max(peak_points$rt)
+                                starts <- peak_table$peak_start
+                                ends   <- peak_table$peak_end
+                                cat("  (no rt_offset columns yet - comparing native rt; press Shift+Q first if samples are aligned)\n")
+                            }
+
+                            # remove ANY peak in ANY file that fully resides in [start, end];
+                            # inclusive, for the same reason as Shift+E
                             peak_table <- peak_table[!
                               apply(cbind(
-                                peak_table$peak_start > selection_start,
-                                peak_table$peak_end < selection_end
+                                starts >= selection_start,
+                                ends <= selection_end
                               ), 1, all)
                             ,]
 
@@ -2306,13 +2994,36 @@
                         # If selection and "a" is pressed, add the selection to the peak table
                             if( input$keypress == 65 ) {
                             
+                                ## Evaluate the brush ONCE. It was called four times here,
+                                ## each re-running the whole coordinate conversion and printing
+                                ## its own diagnostic line.
+                                pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+
+                                ## An empty selection must not be written. brushed_chromatogram()
+                                ## returns a 0-row frame on several paths (brush outside the data,
+                                ## unusable x range, nothing matched), and min/max of nothing give
+                                ## Inf/-Inf -- which used to be appended to peaks_monolist.csv as
+                                ## a permanent poison row that the Shift+Q dedupe does not drop.
+                                if (nrow(pp) == 0) {
+                                    cat("Shift+A: the brush selected no points; no peak added.\n")
+                                    return()
+                                }
+                                pp_sample <- single_sample(pp, "Shift+A")
+                                if (is.null(pp_sample)) return()
+
+                                ## area = TIC minus baseline, both read out of the LONG format
+                                ## (rows tagged ion == 0 / ion == "baseline", value in `abundance`).
+                                ## Fixed 2026-09-30: this asked for $tic and $baseline, which are
+                                ## columns of modules/gcms.R's WIDE table, not of this one. Both
+                                ## were NULL, sum(NULL) is 0, so every hand-added peak was written
+                                ## with area = 0.
                                 write.table(
                                     x = data.frame(
-                                            peak_start = min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
-                                            peak_end = max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
+                                            peak_start = min(pp$rt),
+                                            peak_end = max(pp$rt),
                                             peak_ID = "unknown",
-                                            path_to_cdf_csv = brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1],
-                                            area = sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                            path_to_cdf_csv = pp_sample,
+                                            area = sum(pp$abundance[pp$ion == 0]) - sum(pp$abundance[pp$ion == "baseline"])
                                         ),
                                     file = "peaks_monolist.csv",
                                     append = TRUE,
@@ -2321,10 +3032,7 @@
                                     sep = ","
                                 )
 
-                                output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
-                                    peak_table2 <- read.csv("peaks_monolist.csv")
-                                    peak_table2
-                                }))
+                                render_peak_table()
                                 cat("Added peak.\n")
                             }
                     })
@@ -2341,13 +3049,38 @@
                         # If selection and "G" is pressed, add the selection to the peak table
                             if( input$keypress == 71 ) {
                             
+                                ## Evaluate the brush once (see Shift+A) and refuse an empty one.
+                                pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+                                if (nrow(pp) == 0) {
+                                    cat("Shift+G: the brush selected no points; no peaks added.\n")
+                                    return()
+                                }
+
                                 x_peaks <-  data.frame(
-                                                peak_start = min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
-                                                peak_end = max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
+                                                peak_start = min(pp$rt_rt_offset),
+                                                peak_end = max(pp$rt_rt_offset),
                                                 peak_ID = "unknown",
                                                 path_to_cdf_csv = unique(chromatograms_updated$path_to_cdf_csv),
-                                                area = sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                                area = NA_real_
                                             )
+
+                                ## Shift+G writes the SAME window to every sample, so the area has
+                                ## to be integrated per sample rather than shared. The old code
+                                ## computed one scalar from the brushed sample and gave it to all
+                                ## of them -- and that scalar was 0 anyway, because $tic/$baseline
+                                ## are columns of modules/gcms.R's wide table, not of this one.
+                                ## Fixed 2026-09-30.
+                                for (row_i in seq_len(nrow(x_peaks))) {
+                                    win <- dplyr::filter(
+                                        chromatograms_updated,
+                                        path_to_cdf_csv == x_peaks$path_to_cdf_csv[row_i],
+                                        rt_rt_offset >= x_peaks$peak_start[row_i],
+                                        rt_rt_offset <= x_peaks$peak_end[row_i]
+                                    )
+                                    x_peaks$area[row_i] <-
+                                        sum(win$abundance[win$ion == 0]) -
+                                        sum(win$abundance[win$ion == "baseline"])
+                                }
 
                                 x_peaks$peak_start <- x_peaks$peak_start - chromatograms_updated$rt_offset[match(x_peaks$path_to_cdf_csv, chromatograms_updated$path_to_cdf_csv)]
                                 x_peaks$peak_end <- x_peaks$peak_end - chromatograms_updated$rt_offset[match(x_peaks$path_to_cdf_csv, chromatograms_updated$path_to_cdf_csv)]
@@ -2361,10 +3094,7 @@
                                     sep = ","
                                 )
 
-                                output$peak_table <- DT::renderDataTable(DT::datatable({
-                                    peak_table <- read.csv("peaks_monolist.csv")
-                                    peak_table
-                                }))
+                                render_peak_table()
                                 cat("Added global peak.\n")
                             }
                     })
@@ -2377,9 +3107,19 @@
                             
                             if( input$keypress == 33 ) {
 
-                                ret_start_MS <- min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
-                                ret_end_MS <- max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
-                                sample_name_MS <- as.character(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+                                ## Evaluate the brush once (it was converted three times here),
+                                ## refuse an empty one, and refuse a selection that spans more than
+                                ## one sample rather than extracting the spectrum from whichever
+                                ## sample happens to sort first.
+                                ms_pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+                                if (is.null(ms_pp) || nrow(ms_pp) == 0) {
+                                    cat("Shift+1: the brush selected no points; no spectrum extracted.\n")
+                                    return()
+                                }
+                                sample_name_MS <- single_sample(ms_pp, "Shift+1")
+                                if (is.null(sample_name_MS)) return()
+                                ret_start_MS <- min(ms_pp$rt)
+                                ret_end_MS <- max(ms_pp$rt)
 
                                 chromatogram_updated_MS <- filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
 
@@ -2393,8 +3133,14 @@
 
                                 if (.Platform$OS.type == "unix") {
                                     
-                                    system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
-                                    system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
+                                    ## shQuote every path: CDF_directory_path is caller-supplied and
+                                    ## a space in it used to split the command, so `head`/`sed` wrote
+                                    ## temp_MS.csv somewhere else entirely and the read below picked
+                                    ## up the PREVIOUS peak's spectrum with no error.
+                                    ms_src <- shQuote(file.path(CDF_directory_path, sample_name_MS))
+                                    ms_tmp <- shQuote(file.path(CDF_directory_path, "temp_MS.csv"))
+                                    system(paste0("head -1 ", ms_src, " > ", ms_tmp))
+                                    system(paste0("sed -n ", MS_ret_start_line, ",", MS_ret_end_line, "p ", shQuote(sample_name_MS), " >> ", ms_tmp))
                                     framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))
                                 
                                 }
@@ -2421,20 +3167,27 @@
 
                             if ( input$keypress == 35 ) {
 
-                                if (!exists("MS_out_1")) {
+                                if (is.null(MS_out_1)) {
                                     cat("No mass spectrum extracted yet.\n")
                                     return()
                                 } else {
                                 
+                                    ## Same again: one conversion, and the subtraction has to come
+                                    ## from a single sample's panel.
+                                    sub_pp <- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
+                                    if (is.null(sub_pp) || nrow(sub_pp) == 0) {
+                                        cat("Shift+3: the brush selected no points; nothing subtracted.\n")
+                                        return()
+                                    }
+                                    sub_sample <- single_sample(sub_pp, "Shift+3")
+                                    if (is.null(sub_sample)) return()
                                     framedDataFile_to_subtract <- isolate(as.data.frame(
-                                                        data.table::fread(as.character(
-                                                            brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                        ))
+                                                        data.table::fread(sub_sample)
                                     ))
                                     framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                                            framedDataFile_to_subtract, 
-                                                            rt > min(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                            rt < max(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)$rt)
+                                                            framedDataFile_to_subtract,
+                                                            rt > min(sub_pp$rt),
+                                                            rt < max(sub_pp$rt)
                                                         ))
                                     framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
                                     framedDataFile_to_subtract <- framedDataFile_to_subtract %>% group_by(mz) %>% summarize(intensity = sum(intensity))
@@ -2451,10 +3204,10 @@
 
                             if ( input$keypress == 33 | input$keypress == 64 | input$keypress == 35 ) {
 
-                                if (!exists("MS_out_1")) {
+                                if (is.null(MS_out_1)) {
                                     cat("No mass spectrum extracted yet.\n")
                                     return()
-                                } else if (is.null(MS_out_1) || nrow(MS_out_1) == 0 || (nrow(MS_out_1) == 1 && all(MS_out_1$mz == 0))) {
+                                } else if (nrow(MS_out_1) == 0 || (nrow(MS_out_1) == 1 && all(MS_out_1$mz == 0))) {
                                     # Single-detector data (e.g. GC-TCD): no mass spectrum exists.
                                     output$massSpectra_1 <- renderPlot({
                                         ggplot() +
@@ -2474,9 +3227,18 @@
                                         if (isolate(is.null(input$massSpectra_1_brush))) {
                                             MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
                                         } else {
-                                            MS1_low_x_limit <- isolate(min(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
-                                            MS1_high_x_limit <- isolate(max(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
-                                            MS1_high_y_limit <- max(dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity) + 8
+                                            ## One conversion, not two, and through brushed_ms() so an
+                                            ## empty coordmap cannot error the whole block away.
+                                            ms1_sel <- isolate(brushed_ms(MS_out_1, input$massSpectra_1_brush))
+                                            if (is.null(ms1_sel) || nrow(ms1_sel) == 0) {
+                                                cat("MS brush selected no peaks - showing the full spectrum.\n")
+                                                MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
+                                            } else {
+                                                MS1_low_x_limit <- min(ms1_sel$mz)
+                                                MS1_high_x_limit <- max(ms1_sel$mz)
+                                                in_win <- dplyr::filter(MS_out_1, mz >= MS1_low_x_limit & mz <= MS1_high_x_limit)$intensity
+                                                MS1_high_y_limit <- if (length(in_win) > 0) max(in_win) + 8 else 110
+                                            }
                                         }
                                         if (MS1_low_x_limit %in% c(Inf, -Inf) | MS1_high_x_limit %in% c(Inf, -Inf) | MS1_high_y_limit %in% c(Inf, -Inf)) {
                                             MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
@@ -2486,7 +3248,7 @@
 
                                         output$massSpectra_1 <- renderPlot({
 
-                                            ggplot() + 
+                                            ms1_plot <- ggplot() +
                                                 geom_bar(
                                                     data = MS_out_1,
                                                     mapping = aes(x = mz, y = intensity),
@@ -2511,6 +3273,15 @@
                                                         },
                                                     mapping = aes(x = mz, y = intensity + 5, label = mz)
                                                 )
+
+                                            ## Kept so a mapping-less brush on this plot can be
+                                            ## re-expressed against the panel's real bounds, exactly
+                                            ## as the chromatogram's is.
+                                            last_ms_plot <<- ms1_plot
+                                            last_ms_size <<- suppressWarnings(as.numeric(c(
+                                                session$clientData$output_massSpectra_1_width,
+                                                session$clientData$output_massSpectra_1_height)))
+                                            ms1_plot
                                         })
                                 }
                             }
@@ -2689,7 +3460,7 @@
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){
-                                        cat("No peaks available.", type = "error")
+                                        cat("No peaks available.\n")
                                         return()
                                     }
 
@@ -2697,16 +3468,29 @@
                                 ### also all predicted peaks ID should be prefixed with "prediction"
                                 ### perhaps it should only output predictions on things labelled "unknown"?
 
-                                # Loop over each detected peak
+                                # Loop over each detected peak.
+                                #
+                                # The framed CSV is read once per RUN of peaks from the same sample,
+                                # not once per peak. It used to be fread() inside this loop, so a
+                                # sample with 40 peaks read its whole m/z cube 40 times -- the single
+                                # dominant cost of Shift+4. Shift+Q now writes peaks_monolist.csv
+                                # sorted by (sample, peak_start), so in practice that is one read per
+                                # sample. Deliberately NOT re-sorted here: `predictions` is still
+                                # matched to peak_table POSITIONALLY (finding A4, deferred), so
+                                # changing the visiting order would change which peak gets which
+                                # label. One cube is held at a time either way.
                                     ms_list <- list()
-                                    for(i in 1:nrow(peak_table)){
+                                    loaded_file <- NULL; df <- NULL
+                                    for(i in seq_len(nrow(peak_table))){
                                         # message(paste0("\n*getting spectrum for peak ", i))
                                         peak <- peak_table[i, ]
                                         # Get the corresponding .CDF.csv file
                                         cdf_file <- as.character(peak$path_to_cdf_csv)
                                         if(file.exists(cdf_file)){
-                                            # Read the CSV file (using data.table::fread for speed)
-                                            df <- data.table::fread(cdf_file)
+                                            if (is.null(loaded_file) || !identical(loaded_file, cdf_file)) {
+                                                df <- data.table::fread(cdf_file)
+                                                loaded_file <- cdf_file
+                                            }
                                             # Filter rows that fall within the peak’s retention time window
                                             df_subset <- df[df$rt >= peak$peak_start & df$rt <= peak$peak_end, ]
                                             if(nrow(df_subset) > 0){

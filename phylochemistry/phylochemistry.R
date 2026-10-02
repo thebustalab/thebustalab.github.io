@@ -14261,6 +14261,24 @@
                             ))
                         ) {stop("One of your argument names is misspelled, please double check spelling.")}
 
+                    # parameters = "elbow" is a k-means-only request
+
+                        ## Caught HERE, at the top, rather than in the k-means branch, because every
+                        ## other analysis returns long before that branch is reached -- so without
+                        ## this check, asking a pca for an elbow would quietly hand back a pca. The
+                        ## branch itself (and the reasoning for the whole feature) is further down,
+                        ## under "## k-means".
+                        if (
+                            length(parameters) > 0 &&
+                            identical(tolower(as.character(parameters[1])), "elbow") &&
+                            analysis[1] != "kmeans"
+                        ) {
+                            stop(paste0(
+                                "parameters = \"elbow\" only makes sense with analysis = \"kmeans\". ",
+                                "You asked for analysis = \"", analysis[1], "\"."
+                            ))
+                        }
+
                     # Check that column names are spelled correctly
 
                         if( any(
@@ -14972,6 +14990,92 @@
                             ## k-means
 
                                 if (analysis == "kmeans") {
+
+                                    ## parameters = "elbow" -- return the ELBOW DATA, not a clustering.
+                                    ##
+                                    ## WHY THIS EXISTS (2026-09-30). Choosing k by the elbow is a taught
+                                    ## step -- book ch.10 explains it with a figure and then says to find
+                                    ## the bend -- but the only tool that ever DREW the elbow was the
+                                    ## Shiny picker inside findClusterParameters(), which needs desktop R.
+                                    ## So on every WebR surface (the escape rooms, the book's cells, the
+                                    ## sandbox) the course taught the idea and then withheld the
+                                    ## instrument, leaving a student to hand-roll
+                                    ##     sapply(1:6, function(k) kmeans(m, k, nstart = 25)$tot.withinss)
+                                    ## which runMatrixAnalysis() has no way to express and the book never
+                                    ## shows. This returns exactly that table, ready to pipe to ggplot:
+                                    ##
+                                    ##     runMatrixAnalysis(..., analysis = "kmeans", parameters = "elbow") %>%
+                                    ##       ggplot(aes(x = k, y = within_cluster_variance)) + geom_line() + geom_point()
+                                    ##
+                                    ## SHAPE. One row per candidate k; columns `k` and
+                                    ## `within_cluster_variance` (the total within-cluster sum of squares
+                                    ## -- the quantity ch.10 calls the within-group variance, and the same
+                                    ## quantity the retired picker plotted). It is a TERMINAL return: an
+                                    ## elbow table has no samples in it, so none of the annotation/join
+                                    ## machinery below applies. `pca_dim` returns early for the same reason.
+                                    ##
+                                    ## RANGE. 1..10 by default, capped at nrow - 1 (at k = n every point
+                                    ## is its own cluster, the spread is exactly zero, and the row carries
+                                    ## no information). Override the maximum with a second element:
+                                    ## parameters = c("elbow", 6).
+                                    ##
+                                    ## MATRIX. Deliberately the SAME `matrix` the clustering call below
+                                    ## uses, NOT `scaled_matrix` -- otherwise the elbow a student reads
+                                    ## would belong to a different geometry than the clusters they then
+                                    ## ask for, which is the worst possible failure here because it is
+                                    ## invisible. If the k-means branch is ever moved onto scaled_matrix,
+                                    ## MOVE THIS WITH IT.
+                                    if (
+                                        length(parameters) > 0 &&
+                                        identical(tolower(as.character(parameters[1])), "elbow")
+                                    ) {
+
+                                        if ( length(parameters) > 1 ) {
+                                            max_k <- suppressWarnings(as.integer(parameters[2]))
+                                            if (is.na(max_k) || max_k < 2) {
+                                                stop(paste0(
+                                                    "parameters = c(\"elbow\", n): n is the largest number of ",
+                                                    "clusters to try and must be a whole number of at least 2."
+                                                ))
+                                            }
+                                        } else {
+                                            max_k <- 10L
+                                        }
+
+                                        max_k <- min(max_k, nrow(matrix) - 1L)
+
+                                        if (is.na(max_k) || max_k < 2) {
+                                            stop(paste0(
+                                                "An elbow plot needs at least three samples to be worth ",
+                                                "drawing; this data has ", nrow(matrix), "."
+                                            ))
+                                        }
+
+                                        ## `tibble::as_tibble`, QUALIFIED -- unlike the bare `as_tibble`
+                                        ## twenty lines below. The surrounding code assumes dplyr is
+                                        ## attached, which is true on the desktop toolkit and true in a
+                                        ## room whose scenario `setup` attaches it. This branch is the
+                                        ## one a student may reach from a bare WebR sandbox or a book
+                                        ## cell with no setup, and "could not find function as_tibble"
+                                        ## in a timed room is not a failure worth risking for the sake
+                                        ## of matching the line below. tibble is installed on every
+                                        ## surface (BASE_PACKAGES).
+                                        elbow <- tibble::as_tibble(data.frame(
+                                            k = seq_len(max_k),
+                                            within_cluster_variance = vapply(
+                                                seq_len(max_k),
+                                                function(i) stats::kmeans(
+                                                    x = matrix, centers = i,
+                                                    nstart = 25, iter.max = 1000
+                                                )$tot.withinss,
+                                                numeric(1)
+                                            )
+                                        ))
+
+                                        return(elbow)
+                                        stop("Returning elbow data.")
+
+                                    }
 
                                     if ( length(parameters) > 0 ) {
                                         n_clusters <- parameters[1]
