@@ -14120,8 +14120,9 @@
             #' the layer. Tips are the rightmost nodes, so everything left of `max(x)` is a join.
             #'
             #' @param height Cut height, the same value passed to `parameters = c(height = ...)`.
-            #' @param k Number of groups, the same value passed to `parameters = c(k)`. The line is
-            #'   drawn midway between the two joins that bracket that number of groups.
+            #' @param k Number of groups, the same value passed to `parameters = c(n_clusters = k)`
+            #'   (or the older `c(k)` / `c(k = k)`). The line is drawn midway between the two joins
+            #'   that bracket that number of groups.
             #' @examples
             #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(height = 5)
             #'   ggtree(out) + geom_tippoint(aes(fill = cluster)) + geom_cut(k = 4)
@@ -14681,17 +14682,23 @@
                                 ## is exactly the move the book tells them not to make.
                                 ##
                                 ## TWO WAYS TO ASK, because they are different questions:
-                                ##   parameters = c(4)            -- cut into 4 groups (k)
-                                ##   parameters = c(k = 4)        -- the same, said explicitly
-                                ##   parameters = c(height = 5)   -- cut ACROSS the tree at height 5,
-                                ##                                   and however many groups that
-                                ##                                   leaves is the answer
+                                ##   parameters = c(n_clusters = 4) -- cut into 4 groups, named
+                                ##                                     explicitly (preferred -- symmetric
+                                ##                                     with the height form below)
+                                ##   parameters = c(4)              -- the same, bare (kept working: the
+                                ##                                     escape rooms' graded hints use it,
+                                ##                                     and k-means already reads a bare
+                                ##                                     number this way)
+                                ##   parameters = c(k = 4)          -- the same, the older explicit name
+                                ##                                     (also kept working)
+                                ##   parameters = c(height = 5)     -- cut ACROSS the tree at height 5,
+                                ##                                     and however many groups that
+                                ##                                     leaves is the answer
                                 ## The height form is the one the canyon scenario's flood-gate escape
                                 ## re-poses on the world (water level = cut height), and it is the only
                                 ## form that can answer "how many groups are there at this height" --
-                                ## with k the count is an input, so "there is no fourth group" cannot
-                                ## be expressed. Bare/`k =` is kept as the default because k-means
-                                ## already reads a bare number that way.
+                                ## with a count the number is an input, so "there is no fourth group"
+                                ## cannot be expressed.
                                 ##
                                 ## Internal nodes get NA, like `bootstrap` does for tips: only tips are
                                 ## samples, and only samples belong to a group.
@@ -14718,11 +14725,11 @@
                                         }
                                         cut_groups <- stats::cutree(bclust$hclust, h = cut_height)
 
-                                    } else if (param_name %in% c("", "k")) {
+                                    } else if (param_name %in% c("", "k", "n_clusters")) {
 
                                         n_groups <- as.integer(parameters[1])
                                         if (is.na(n_groups) || n_groups < 1) {
-                                            stop("parameters must be the number of groups to cut the tree into, e.g. parameters = c(3), or a height, e.g. parameters = c(height = 5).")
+                                            stop("parameters must be the number of groups to cut the tree into, e.g. parameters = c(n_clusters = 3) (or c(3) / c(k = 3)), or a height, e.g. parameters = c(height = 5).")
                                         }
                                         if (n_groups > nrow(scaled_matrix)) {
                                             stop(paste0(
@@ -14735,8 +14742,9 @@
                                     } else {
                                         stop(paste0(
                                             "parameters was named \"", param_name, "\". For a tree it must be ",
-                                            "either a number of groups -- parameters = c(3) or c(k = 3) -- ",
-                                            "or a height to cut at -- parameters = c(height = 5)."
+                                            "either a number of groups -- parameters = c(n_clusters = 3) ",
+                                            "(or c(3) / c(k = 3)) -- or a height to cut at -- ",
+                                            "parameters = c(height = 5)."
                                         ))
                                     }
 

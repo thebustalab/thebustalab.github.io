@@ -18,6 +18,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 Consider the Alaska lakes dataset: which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using `analysis = "hclust"`:
 
 ```{r, message = FALSE}
+alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')
+
 AK_lakes_clustered <- runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("hclust"),
@@ -244,6 +246,45 @@ Fill in the blank with the function that returns the smallest value, so that eac
 
 **Two tips sitting next to each other vertically are not necessarily similar.** In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are also neighbors on the page too, and they sit 7.57 apart: nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.
 
+One way to deploy these interpretation methods is to use a dendrogram to make a statement about an unknown sample. For example, suppose that we had a measurements from an unknown lake:
+
+```{r}
+unknown_lake <- data.frame(
+  lake = "unknown_lake", park = "unknown_park",
+  water_temp = 8.00, pH = 7.55, C = 2.2, N = 0.000, P = 0.001, Cl = 0.65, S = 0.35, F = 0.00,
+  Br = 0.00, Na = 0.92, K = 0.14, Ca = 1.65, Mg = 0.23
+)
+unknown_lake
+```
+
+... and maybe we want to know "which lake in our Alaska Lakes data set is most similar to the unknown lake?". One method of course would be a distance matrix, but we can also visualize the answer with a dendrogram. For this, we do need an important function: `rbind()`, which binds data together, row-wise. It only works if the items being bound all have the same set of columns. Like this:
+
+```{r}
+rbind(unknown_lake, alaska_lake_data_wide)
+```
+
+Then we can run the hierarchical clustering analysis (below). Nice! Looks like the unknown lake is most simlar to Kuzitrin Lake.
+
+```{r}
+runMatrixAnalysis(
+    data = rbind(unknown_lake, alaska_lake_data_wide),
+    analysis = c("hclust"),
+    scale_variance = TRUE,
+    agglomeration_method = "ward.D2",
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 0.2, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,9)) +
+    scale_fill_brewer(palette = "Set1") +
+    theme(
+      legend.position = c(0.1,0.85)
+    )
+
+```
+
 #### concept check {-}
 
 Fill in the blank with the lake that sits next to White Fish Lake on the tree. Press Run, and compare the two distances that come back — both pairs are neighbors on the page.
@@ -340,7 +381,7 @@ runMatrixAnalysis(
     analysis = c("hclust"),
     scale_variance = TRUE,
     agglomeration_method = "complete",
-    parameters = c(4),
+    parameters = c(n_clusters = 4),
     columns_w_values_for_single_analyte = solvent_properties,
     columns_w_sample_ID_info = c("solvent", "category")
 ) %>%

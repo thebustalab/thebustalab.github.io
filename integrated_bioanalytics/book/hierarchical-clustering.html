@@ -118,7 +118,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 </h2>
 <p>Consider the Alaska lakes dataset: which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did for networks, and then building a tree from those distances. We can do it all in one step by using <code>analysis = "hclust"</code>:</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data_wide</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="op">-</span><span class="va">element_type</span><span class="op">)</span>, names_from <span class="op">=</span> <span class="st">'element'</span>, values_from <span class="op">=</span> <span class="st">'mg_per_L'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -373,6 +375,107 @@ Self-check: carbon disulfide, acetic acid, and water top that table, and under s
 <p><strong>Compare branch lengths, rather that interpreting absolute branch lengths.</strong> These plots are drawn without a numeric axis, and that is deliberate rather than an omission. The horizontal spacing is a faithful rescaling of the distances, so every <em>comparison</em> read off the picture is exactly right: which of two joins is deeper, and by what factor. One group merging at twice the distance of another really does look twice as far out from the tips.</p>
 <p><strong>The vertical direction means nothing at all.</strong> (again, assuming root-&gt;leaves goes left to right or right to left) The tips are spread evenly down the page so the labels fit in the allocated space and can be read. There is no quantity on the y-axis. Worse, the order itself is arbitrary: at every join, either branch may be drawn above the other, and both drawings are the same tree. A dendrogram can be flipped at any of its joins and still mean exactly what it meant before.</p>
 <p><strong>Two tips sitting next to each other vertically are not necessarily similar.</strong> In the Alaska tree above, Lake Kangilipak and Okoklik Lake are neighbors on the page, and they are indeed the closest pair in the whole data set, 0.78 apart. But White Fish Lake and Wild Lake are also neighbors on the page too, and they sit 7.57 apart: nearly ten times as far, and in the most distant fifth of all the pairs in the data. Their lines do not meet until the very last join in the tree. So to judge how related two tips are, ignore how close together they are printed. Trace left from each of them until the two paths meet. That meeting point is their join, and how far out it sits is the answer.</p>
+<p>One way to deploy these interpretation methods is to use a dendrogram to make a statement about an unknown sample. For example, suppose that we had a measurements from an unknown lake:</p>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">unknown_lake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  lake <span class="op">=</span> <span class="st">"unknown_lake"</span>, park <span class="op">=</span> <span class="st">"unknown_park"</span>,</span>
+<span>  water_temp <span class="op">=</span> <span class="fl">8.00</span>, pH <span class="op">=</span> <span class="fl">7.55</span>, C <span class="op">=</span> <span class="fl">2.2</span>, N <span class="op">=</span> <span class="fl">0.000</span>, P <span class="op">=</span> <span class="fl">0.001</span>, Cl <span class="op">=</span> <span class="fl">0.65</span>, S <span class="op">=</span> <span class="fl">0.35</span>, F <span class="op">=</span> <span class="fl">0.00</span>,</span>
+<span>  Br <span class="op">=</span> <span class="fl">0.00</span>, Na <span class="op">=</span> <span class="fl">0.92</span>, K <span class="op">=</span> <span class="fl">0.14</span>, Ca <span class="op">=</span> <span class="fl">1.65</span>, Mg <span class="op">=</span> <span class="fl">0.23</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">unknown_lake</span></span>
+<span><span class="co">##           lake         park water_temp   pH   C N     P</span></span>
+<span><span class="co">## 1 unknown_lake unknown_park          8 7.55 2.2 0 0.001</span></span>
+<span><span class="co">##     Cl    S F Br   Na    K   Ca   Mg</span></span>
+<span><span class="co">## 1 0.65 0.35 0  0 0.92 0.14 1.65 0.23</span></span></code></pre></div>
+<p>… and maybe we want to know “which lake in our Alaska Lakes data set is most similar to the unknown lake?”. One method of course would be a distance matrix, but we can also visualize the answer with a dendrogram. For this, we do need an important function: <code><a href="https://rdrr.io/r/base/cbind.html">rbind()</a></code>, which binds data together, row-wise. It only works if the items being bound all have the same set of columns. Like this:</p>
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">unknown_lake</span>, <span class="va">alaska_lake_data_wide</span><span class="op">)</span></span>
+<span><span class="co">##                   lake         park water_temp   pH    C</span></span>
+<span><span class="co">## 1         unknown_lake unknown_park       8.00 7.55  2.2</span></span>
+<span><span class="co">## 2  Devil_Mountain_Lake         BELA       6.46 7.69  3.4</span></span>
+<span><span class="co">## 3          Imuruk_Lake         BELA      17.38 6.44  4.7</span></span>
+<span><span class="co">## 4        Kuzitrin_Lake         BELA       8.06 7.45  2.0</span></span>
+<span><span class="co">## 5            Lava_Lake         BELA      20.18 7.42  8.3</span></span>
+<span><span class="co">## 6   North_Killeak_Lake         BELA      11.34 8.04  4.3</span></span>
+<span><span class="co">## 7      White_Fish_Lake         BELA      12.05 7.82 12.3</span></span>
+<span><span class="co">## 8         Iniakuk_Lake         GAAR       9.10 7.01  3.3</span></span>
+<span><span class="co">## 9          Kurupa_Lake         GAAR       9.30 7.03  2.1</span></span>
+<span><span class="co">## 10      Lake_Matcharak         GAAR      10.20 6.95  5.1</span></span>
+<span><span class="co">## 11          Lake_Selby         GAAR      15.10 7.15  4.2</span></span>
+<span><span class="co">## 12      Nutavukti_Lake         GAAR      17.60 6.88  4.5</span></span>
+<span><span class="co">## 13         Summit_Lake         GAAR      11.90 6.45  2.4</span></span>
+<span><span class="co">## 14       Takahula_Lake         GAAR       9.90 6.88  2.7</span></span>
+<span><span class="co">## 15         Walker_Lake         GAAR      15.30 7.22  1.3</span></span>
+<span><span class="co">## 16           Wild_Lake         GAAR       5.50 6.98  6.5</span></span>
+<span><span class="co">## 17    Desperation_Lake         NOAT       2.95 6.34  2.1</span></span>
+<span><span class="co">## 18         Feniak_Lake         NOAT       4.51 7.24  1.8</span></span>
+<span><span class="co">## 19     Lake_Kangilipak         NOAT       5.36 6.56  8.5</span></span>
+<span><span class="co">## 20      Lake_Narvakrak         NOAT      18.30 7.31  5.8</span></span>
+<span><span class="co">## 21        Okoklik_Lake         NOAT       6.46 6.87  7.8</span></span>
+<span><span class="co">##        N     P     Cl     S    F   Br     Na    K    Ca</span></span>
+<span><span class="co">## 1  0.000 0.001   0.65  0.35 0.00 0.00   0.92 0.14  1.65</span></span>
+<span><span class="co">## 2  0.028 0.000  10.35  0.62 0.04 0.02   8.92 1.20  5.73</span></span>
+<span><span class="co">## 3  0.013 0.000   1.18  0.20 0.02 0.00   1.36 0.32  0.96</span></span>
+<span><span class="co">## 4  0.000 0.000   0.67  0.29 0.01 0.00   0.94 0.19  1.70</span></span>
+<span><span class="co">## 5  0.017 0.001   2.53  0.59 0.04 0.01   2.93 0.57 11.77</span></span>
+<span><span class="co">## 6  0.037 0.001 337.23  0.04 0.11 1.08 161.89 8.32 29.75</span></span>
+<span><span class="co">## 7  0.034 0.006 105.30  0.18 0.05 0.33  54.16 3.48 18.62</span></span>
+<span><span class="co">## 8  0.141 0.000   0.22 12.09 0.00 0.00   0.57 0.44 40.78</span></span>
+<span><span class="co">## 9  0.043 0.000   0.13 12.43 0.00 0.00   4.51 0.31 14.68</span></span>
+<span><span class="co">## 10 0.000 0.000   1.25 13.30 0.00 0.00   5.13 0.74 36.82</span></span>
+<span><span class="co">## 11 0.107 0.000   0.11  7.92 0.00 0.00   0.46 0.10 12.91</span></span>
+<span><span class="co">## 12 0.000 0.001   0.18  2.72 0.00 0.00   0.84 0.21 11.78</span></span>
+<span><span class="co">## 13 0.000 0.001   0.08  3.21   NA   NA   1.07 0.17  4.69</span></span>
+<span><span class="co">## 14 0.014 0.000   0.23  5.53 0.00 0.00   0.62 0.93 57.64</span></span>
+<span><span class="co">## 15 0.190 0.001   0.19  5.77 0.00 0.00   0.57 1.18 27.68</span></span>
+<span><span class="co">## 16 0.130 0.001   0.31 28.68 0.00 0.00   1.40 0.40 48.17</span></span>
+<span><span class="co">## 17 0.005 0.000   0.20  2.73 0.01 0.00   1.11 0.16  5.87</span></span>
+<span><span class="co">## 18 0.000 0.000   0.21  4.93 0.01 0.00   0.72 0.17  6.81</span></span>
+<span><span class="co">## 19 0.005 0.000   0.55  0.55 0.02 0.00   2.20 0.35  6.51</span></span>
+<span><span class="co">## 20 0.000 0.000   0.76  1.38 0.02 0.00   0.82 0.56 11.52</span></span>
+<span><span class="co">## 21 0.000 0.000   0.76  1.01 0.02 0.01   1.97 0.48  8.74</span></span>
+<span><span class="co">##       Mg</span></span>
+<span><span class="co">## 1   0.23</span></span>
+<span><span class="co">## 2   4.04</span></span>
+<span><span class="co">## 3   0.86</span></span>
+<span><span class="co">## 4   0.26</span></span>
+<span><span class="co">## 5   2.77</span></span>
+<span><span class="co">## 6  37.68</span></span>
+<span><span class="co">## 7  16.16</span></span>
+<span><span class="co">## 8  11.44</span></span>
+<span><span class="co">## 9   8.74</span></span>
+<span><span class="co">## 10  8.56</span></span>
+<span><span class="co">## 11  2.81</span></span>
+<span><span class="co">## 12  2.08</span></span>
+<span><span class="co">## 13  1.86</span></span>
+<span><span class="co">## 14  7.49</span></span>
+<span><span class="co">## 15  3.50</span></span>
+<span><span class="co">## 16 16.42</span></span>
+<span><span class="co">## 17  3.03</span></span>
+<span><span class="co">## 18  7.66</span></span>
+<span><span class="co">## 19  2.63</span></span>
+<span><span class="co">## 20  1.84</span></span>
+<span><span class="co">## 21  2.57</span></span></code></pre></div>
+<p>Then we can run the hierarchical clustering analysis (below). Nice! Looks like the unknown lake is most simlar to Kuzitrin Lake.</p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">unknown_lake</span>, <span class="va">alaska_lake_data_wide</span><span class="op">)</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    agglomeration_method <span class="op">=</span> <span class="st">"ward.D2"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">0.2</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">9</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
+<span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0.85</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-298-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div id="concept-check-25" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-25"><i class="fas fa-link"></i></a>
 </h4>
@@ -405,7 +508,7 @@ Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and Wh
 <h2>cutting a dendrogram<a class="anchor" aria-label="anchor" href="#cutting-a-dendrogram"><i class="fas fa-link"></i></a>
 </h2>
 <p>A dendrogram shows how everything in a data set relates to everything else, but it does not, by itself, say which samples belong to which group. Getting groups out of a tree means <strong>cutting across it at a chosen position</strong> (often called a “height”, which I think is confusing since trees are often drawn with root on the left and tips on the right, but anyway…) Every join “below” the cut has already happened, so the samples under it stay together; every join above the cut is severed, so the branches it would have merged stay apart. The height is the real control, and the number of groups is what falls out of it: cut low, near the tips, and there are many small groups; cut high, near the root, and there are a few large ones. <code>runMatrixAnalysis()</code> cuts the tree when it is given a <code>parameters</code> argument — the same argument k-means takes in the next chapter — and adds a <code>cluster</code> column to the output, one label per sample. Asking for a height looks like this:</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">solvents_cut</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
@@ -428,7 +531,7 @@ Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and Wh
 <span><span class="co">## 3 cluster_3         13</span></span>
 <span><span class="co">## 4 cluster_4          4</span></span></code></pre></div>
 <p>Cutting at 5 leaves four groups, of 13, 8, 7 and 4 solvents. Note that <code>cluster</code> is filled in for the tips only: the internal nodes of a tree are joins, not samples, so they have no group to belong to and are left as <code>NA</code>. This is the same convention the <code>bootstrap</code> column follows in the other direction, where it is the tips that are <code>NA</code>. Coloring the tips by that column shows what the cut actually did:</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">solvents_cut</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">solvent</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">0.1</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
@@ -437,15 +540,15 @@ Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and Wh
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.85</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-297"></span>
-<img src="index_files/figure-html/unnamed-chunk-297-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-300"></span>
+<img src="index_files/figure-html/unnamed-chunk-300-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
 Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
 </p>
 </div>
 <p>The dashed line drawn by <code>geom_cut()</code> is the cut. Everything to its right has already merged, so each color is one unbroken piece of the tree; the three joins to its left were severed, which is what left four groups rather than one. Count them on the figure: severing three joins always leaves four pieces. The groups here are the compact families complete linkage found — the dense chlorinated solvents on their own, the polar protic solvents together, and so on.</p>
 <p><code>geom_cut()</code> is worth a word, because the obvious thing to reach for does not work. The horizontal axis <code>ggtree</code> draws is <strong>not</strong> the cut height: it measures distance from the root, and runs to only half the height of the tree, so <code>geom_vline(xintercept = 5)</code> puts the line nowhere near the cut. <code>geom_cut()</code> does that conversion, which is why it takes the same height that was passed to <code>parameters</code> — write the height once, and the picture and the <code>cluster</code> column are guaranteed to agree. When the tree was cut by number of groups instead, <code>geom_cut(k = 4)</code> draws the line in the matching place.</p>
 <p>Moving the cut changes the answer, and the whole point of cutting by height is that <strong>the number of groups is something the data hands back, not something chosen in advance</strong>:</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n_groups_at</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">cut_at</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>      data <span class="op">=</span> <span class="va">solvents</span>,</span>
@@ -466,20 +569,20 @@ Figure 2.13: The solvent dendrogram cut at a height of 5. A tree diagram in whic
 <span>  <span class="fu">mutate</span><span class="op">(</span>n_groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">height</span>, <span class="va">n_groups_at</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">height</span>, y <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-298"></span>
-<img src="index_files/figure-html/unnamed-chunk-298-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-301"></span>
+<img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
 Figure 2.14: The number of groups is not something chosen in advance – it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
 </p>
 </div>
 <p>Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the our number of groups at four is <strong>stable over a wide stretch</strong>: anywhere from a height of about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.</p>
 <p>When the number of groups is already known (for example, because the data are clearly telling us so, or because a downstream step needs a fixed number), that number can be asked for directly instead, and <code>runMatrixAnalysis()</code> finds the height that delivers it:</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">solvents</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    agglomeration_method <span class="op">=</span> <span class="st">"complete"</span>,</span>
-<span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>,</span>
+<span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>n_clusters <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">solvent_properties</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"solvent"</span>, <span class="st">"category"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -527,7 +630,7 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <h2>annotating dendrograms<a class="anchor" aria-label="anchor" href="#annotating-dendrograms"><i class="fas fa-link"></i></a>
 </h2>
 <p>Overlaying sample traits on a ggtree-based plot is straightforward when we combine <code>ggtree</code> with <code>ggplot2</code>. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hclust_out</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
@@ -537,7 +640,7 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="st">"label"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The object returned by <code>runMatrixAnalysis()</code> already contains the branch coordinates, so we can pass it directly to <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree()</a></code> and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.</p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">hclust_out</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -547,13 +650,13 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <span><span class="co">## Adding another scale for y, which will replace the existing scale.</span></span>
 <span><span class="va">tree_plot</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-301"></span>
-<img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-304"></span>
+<img src="index_files/figure-html/unnamed-chunk-304-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%"><p class="caption">
 Figure 2.15: A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
 </p>
 </div>
 <p>Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the <code>y</code> coordinate supplied by <code>ggtree</code>, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">heat_plot</span> <span class="op">&lt;-</span> <span class="va">hclust_out</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">isTip</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">parent</span>, <span class="op">-</span><span class="va">node</span>, <span class="op">-</span><span class="va">branch.length</span>, <span class="op">-</span><span class="va">label</span>, <span class="op">-</span><span class="va">isTip</span>, <span class="op">-</span><span class="va">x</span>, <span class="op">-</span><span class="va">branch</span>, <span class="op">-</span><span class="va">angle</span>, <span class="op">-</span><span class="va">bootstrap</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -564,30 +667,30 @@ Figure 2.15: A dendrogram of the chemical bloom samples, drawn on a deliberately
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">heat_plot</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-302"></span>
-<img src="index_files/figure-html/unnamed-chunk-302-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-305"></span>
+<img src="index_files/figure-html/unnamed-chunk-305-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.16: Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>With matching y scales, <code>plot_grid()</code> can align the tree and the heat map so the tiles line up with the corresponding samples. Using <code>align = "h"</code> snaps them together horizontally, and <code>axis = "tb"</code> keeps the panel heights consistent.</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">tree_plot</span>, <span class="va">heat_plot</span>, axis <span class="op">=</span> <span class="st">"tb"</span>, align <span class="op">=</span> <span class="st">"h"</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-303"></span>
-<img src="index_files/figure-html/unnamed-chunk-303-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-306"></span>
+<img src="index_files/figure-html/unnamed-chunk-306-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.17: The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_blooms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, names_to <span class="op">=</span> <span class="st">"chemical"</span>, values_to <span class="op">=</span> <span class="st">"abundance"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">chemical</span>, y <span class="op">=</span> <span class="va">label</span>, fill <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-304"></span>
-<img src="index_files/figure-html/unnamed-chunk-304-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-307"></span>
+<img src="index_files/figure-html/unnamed-chunk-307-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Figure 2.18: What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -691,7 +794,7 @@ The keeper of the temple is dead, and two registers died with him: which offerin
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-02.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
