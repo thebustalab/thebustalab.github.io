@@ -499,6 +499,55 @@
                 NULL
             }
 
+            ## Turn a fallback brush coordinate into a true fraction of the rendered
+            ## IMAGE, using the brush's OWN reported domain.
+            ##
+            ## Shiny's degenerate coordmap does NOT report 0..1, which is what this
+            ## code assumed for three weeks. The labelled probe on host1
+            ## (2026-10-02, 5 facets, 1124x700 css at a 2x pixel ratio) came back:
+            ##
+            ##   domain  left=-0.04 right=1.04 bottom=-0.04 top=1.04
+            ##   range   left=0 right=2248 bottom=1399 top=-1
+            ##   coords_img xmin=230 xmax=1222 ymin=296 ymax=364
+            ##   xmin=0.0704982 xmax=0.547082 ymin=0.758429 ymax=0.810886
+            ##
+            ## i.e. a UNIT domain carrying ggplot's own 5% expansion, mapped across
+            ## the WHOLE 2248x1400 image. Inverting Shiny's transform reproduces the
+            ## raw pixels to five decimals on both axes: 230/2248 = 0.10231 =
+            ## (0.0704982 + 0.04)/1.08. So reading xmin straight as a fraction is a
+            ## -0.04 shift plus a 1.08 stretch -- about 4% of the window, which is
+            ## why every reading was "nearly right" and why a drag inside a panel
+            ## could report a y fraction ABOVE the panel top (0.8109 vs the panel's
+            ## 0.8016) and get clamped, losing the top of the y-zoom.
+            ##
+            ## y needs no flipping: Shiny has already done it (range top=-1 < bottom
+            ## =1399), so the larger value is the higher point on the picture. That
+            ## is the "y fractions are measured from the BOTTOM" rule, confirmed.
+            ##
+            ## Returns NULL -- leaving the caller's old reading untouched -- unless
+            ## the domain really is a unit domain. A surviving coordmap reports the
+            ## domain in DATA units (365..4664 here), and those coordinates are
+            ## already data values that must never be rescaled.
+            brush_unit_fraction <- function(brush, axis = c("x", "y")) {
+                axis <- match.arg(axis)
+                d <- brush$domain
+                if (is.null(d)) return(NULL)
+                if (axis == "x") {
+                    lo <- d$left;   hi <- d$right; v <- c(brush$xmin, brush$xmax)
+                } else {
+                    lo <- d$bottom; hi <- d$top;   v <- c(brush$ymin, brush$ymax)
+                }
+                if (is.null(lo) || is.null(hi) || length(lo) != 1 || length(hi) != 1) return(NULL)
+                lo <- suppressWarnings(as.numeric(lo)); hi <- suppressWarnings(as.numeric(hi))
+                if (!is.finite(lo) || !is.finite(hi)) return(NULL)
+                span <- hi - lo
+                ## A unit domain: span ~1 (1.08 with the expansion, 1.0 without) and
+                ## an origin near 0. Anything else is a real data axis.
+                if (!is.finite(span) || span < 0.9 || span > 1.2 || abs(lo) > 0.2) return(NULL)
+                if (length(v) != 2 || !all(is.finite(v))) return(NULL)
+                (v - lo) / span
+            }
+
             ## Which panel (1 = top) a from-the-bottom image fraction falls in.
             ## Returns NULL when the geometry is unknown; a fraction in a gutter or
             ## just off the stack snaps to the nearest panel, because a drag that
@@ -575,6 +624,13 @@
                            brush$ymin < -0.5 || brush$ymax > 1.5) {
                     why <- "the y coordinates are not usable fractions"
                 }
+                ## The reported values are a UNIT DOMAIN, not 0..1 -- see
+                ## brush_unit_fraction(). Without this the top of a drag inside a
+                ## panel reads ABOVE the panel top and clamps, so a y-zoom lost its
+                ## ceiling (host1 probe 2026-10-02: 0.8109 against a panel topping
+                ## out at 0.8016, which is how "it is not getting the top y" looked).
+                fry <- brush_unit_fraction(brush, "y")
+                yfr <- if (!is.null(fry)) fry else c(brush$ymin, brush$ymax)
                 if (!is.null(why)) {
                     cat(paste0("  y-zoom skipped (", why, "); raw y ",
                                signif(brush$ymin, 4), " to ", signif(brush$ymax, 4), ".\n"))
@@ -609,7 +665,7 @@
                 ## validated; with twenty, the stack is ~21x the panel, so an
                 ## in-facet drag in panel 1 and the same drag in panel 20 used to
                 ## produce completely different zooms.
-                centre <- mean(c(brush$ymin, brush$ymax))
+                centre <- mean(yfr)
                 idx <- if (!is.null(pf$panels) && nrow(pf$panels) > 1) panel_at_bottom_fraction(pf, centre) else NULL
                 if (!is.null(idx)) {
                     panel_lo <- 1 - pf$panels$y_hi[idx]
@@ -621,7 +677,7 @@
                     panel_hi <- 1 - pf$y[1]        # panel top
                     where <- "whole panel stack"
                 }
-                fr <- pmin(pmax((c(brush$ymin, brush$ymax) - panel_lo) / (panel_hi - panel_lo), 0), 1)
+                fr <- pmin(pmax((yfr - panel_lo) / (panel_hi - panel_lo), 0), 1)
 
                 ## The panel spans its DRAWN range, which carries ggplot's 5% axis
                 ## expansion -- limits c(0, 1000) draw a panel running -50..1050.
@@ -637,6 +693,8 @@
                 lo <- drawn[1]; hi <- drawn[2]
                 vals <- sort(lo + fr * (hi - lo))
                 cat(paste0("  y-zoom: raw ", signif(brush$ymin, 4), "-", signif(brush$ymax, 4),
+                           if (!is.null(fry)) paste0(" (domain-corrected to ", signif(yfr[1], 4),
+                                                     "-", signif(yfr[2], 4), ")") else "",
                            " in ", where,
                            ", panel ", signif(panel_lo, 4), "-", signif(panel_hi, 4), " (from bottom)",
                            ", against drawn y ", signif(lo, 6), "-", signif(hi, 6),
@@ -684,8 +742,9 @@
 
                 rng <- range(df[[xcol]], na.rm = TRUE)
                 bxmin <- brush$xmin; bxmax <- brush$xmax
-                if (bxmin >= 0 && bxmax <= 1 && rng[2] > 1) {
-                    fr <- c(bxmin, bxmax)
+                frx <- brush_unit_fraction(brush, "x")
+                if ((!is.null(frx) || (bxmin >= 0 && bxmax <= 1)) && rng[2] > 1) {
+                    fr <- if (!is.null(frx)) frx else c(bxmin, bxmax)
                     pfm <- NULL
                     if (!is.null(last_ms_plot) && length(last_ms_size) == 2 &&
                         all(is.finite(last_ms_size)) && all(last_ms_size > 0)) {
@@ -792,11 +851,16 @@
                 ## data's own x range sitting clear of 0..1 -- true for retention
                 ## times in seconds, and the check means real data coordinates are
                 ## never reinterpreted by mistake.
-                if (is.null(xv_mapped) && bxmin >= 0 && bxmax <= 1 && rng[1] > 1) {
+                ## The guard widened with the domain correction: a unit domain runs
+                ## -0.04..1.04, so a drag against the left edge legitimately reports
+                ## a NEGATIVE xmin and used to fail "bxmin >= 0" and be discarded.
+                frx <- brush_unit_fraction(brush, "x")
+                if (is.null(xv_mapped) && rng[1] > 1 &&
+                    (!is.null(frx) || (bxmin >= 0 && bxmax <= 1))) {
                     win_lo <- if (!is.null(x_axis_start) && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
                     win_hi <- if (!is.null(x_axis_end)   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
                     if (win_hi > win_lo) {
-                        fr <- c(brush$xmin, brush$xmax)
+                        fr <- if (!is.null(frx)) frx else c(brush$xmin, brush$xmax)
 
                         ## Re-express image fractions as PANEL fractions. Skipped
                         ## (with a warning) if the last plot or its rendered size
@@ -831,6 +895,8 @@
                         bxmax <- win_lo + fr[2] * (win_hi - win_lo)
                         cat(paste0("Brush came back as image fractions (", signif(brush$xmin, 4), "-",
                                    signif(brush$xmax, 4), ")",
+                                   if (!is.null(frx)) paste0(", domain-corrected to ",
+                                                             signif(frx[1], 4), "-", signif(frx[2], 4)) else "",
                                    if (!is.null(pf)) paste0(", panel spans ", signif(pf[1], 4), "-", signif(pf[2], 4)) else "",
                                    ", drawn x ", signif(win_lo, 6), "-", signif(win_hi, 6),
                                    "; reading as ", signif(bxmin, 8), " to ", signif(bxmax, 8), ".\n"))
@@ -865,7 +931,12 @@
                     nrow(pfull$panels) > 1 && !is.null(brush$ymin) && !is.null(brush$ymax) &&
                     is.finite(brush$ymin) && is.finite(brush$ymax) &&
                     brush$ymin > -0.5 && brush$ymax < 1.5) {
-                    ycentre <- mean(c(brush$ymin, brush$ymax))
+                    ## Domain-corrected, like everything else: the uncorrected
+                    ## centre sat ~2% too high, which on the host1 probe put a
+                    ## gesture made in panel 4 into panel 5 and attributed the
+                    ## peak to wildtype7 instead of vector7.
+                    fry <- brush_unit_fraction(brush, "y")
+                    ycentre <- if (!is.null(fry)) mean(fry) else mean(c(brush$ymin, brush$ymax))
                     pidx <- panel_at_bottom_fraction(pfull, ycentre)
                     if (!is.null(pidx) && !is.na(pfull$panels$facet[pidx])) {
                         panel_value <- pfull$panels$facet[pidx]
@@ -1595,7 +1666,8 @@
                                     plotOutput(
                                         outputId = "massSpectra_1",
                                         brush = brushOpts(
-                                            id = "massSpectra_1_brush"
+                                            id = "massSpectra_1_brush",
+                                            resetOnNew = TRUE
                                         ),
                                         height = 150
                                     ),
@@ -1603,7 +1675,8 @@
                                     plotOutput(
                                         outputId = "massSpectra_2",
                                         brush = brushOpts(
-                                            id = "massSpectra_2_brush"
+                                            id = "massSpectra_2_brush",
+                                            resetOnNew = TRUE
                                         ),
                                         height = 150
                                     ),
@@ -1623,8 +1696,16 @@
 
                                     plotOutput(
                                         outputId = "chromatograms",
+                                        ## resetOnNew: the box is cleared whenever the plot
+                                        ## re-renders (Lucas, 2026-10-04). A brush is drawn in the
+                                        ## coordinates of the picture it was drawn ON; once Shift+Q,
+                                        ## a page change or a display switch redraws it, the same
+                                        ## box means a different region, and the next keypress used
+                                        ## to act on it anyway. The renderer does not depend on the
+                                        ## brush, so this cannot loop.
                                         brush = brushOpts(
-                                            id = "chromatogram_brush"
+                                            id = "chromatogram_brush",
+                                            resetOnNew = TRUE
                                         ),
                                       click = "chromatogram_click", 
                                       dblclick = "chromatogram_double_click",

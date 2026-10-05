@@ -14,7 +14,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
 
-Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We set `analysis = "kmeans"` and hand the number of clusters we want to the `parameters` argument. Below we ask for five; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.)
+Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We set `analysis = "kmeans"` and hand the number of clusters we want to the `parameters` argument. Below we ask for five; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.) Notice the argument `scale_variance = FALSE`. It is explained in the section on scaling below, and for now it just tells `runMatrixAnalysis` to cluster the PCA scores exactly as they are.
 
 
 ```{r, message = FALSE}
@@ -34,7 +34,8 @@ alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     analysis = c("kmeans"),
     parameters = c(5),
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
+    columns_w_sample_ID_info = "sample_unique_ID",
+    scale_variance = FALSE
 )
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca) 
@@ -68,7 +69,8 @@ alaska_lake_elbow <- runMatrixAnalysis(
     analysis = c("kmeans"),
     parameters = "elbow",
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
+    columns_w_sample_ID_info = "sample_unique_ID",
+    scale_variance = FALSE
 )
 
 alaska_lake_elbow
@@ -94,9 +96,18 @@ runMatrixAnalysis(
     analysis = c("kmeans"),
     parameters = c("elbow", 6),
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
+    columns_w_sample_ID_info = "sample_unique_ID",
+    scale_variance = FALSE
 )
 ```
+
+## scaling {-}
+
+K-means works from distances, so a column measured in large numbers has more say over the clusters than a column measured in small ones. Suppose one column of a table is in grams and another is in kilograms. Without any correction, the grams column would decide nearly every cluster by itself, simply because its numbers are a thousand times larger.
+
+For this reason `runMatrixAnalysis` centers each column and divides it by its standard deviation before it clusters, so that every column carries the same weight. This is the default for every analysis, and it is controlled by the `scale_variance` argument. For k-means, `parameters = "elbow"` follows the same setting, so the elbow you read always belongs to the clusters you then ask for.
+
+Leave `scale_variance` alone whenever your columns are in different units, or just on very different scales. Turn it off (`scale_variance = FALSE`) when the columns are already comparable and their relative sizes mean something. That is the situation in the examples above: the two PCA scores are on one scale, and the first axis is larger than the second because it explains more of the variation, which is information we want the clusters to use. Scaling would stretch the second axis to the same width as the first and quietly change the answer.
 
 ## dbscan {-}
 

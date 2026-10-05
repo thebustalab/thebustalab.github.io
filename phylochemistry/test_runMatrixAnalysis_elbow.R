@@ -109,4 +109,40 @@ stopifnot(
   all(table(km$cluster) == 4L)
 )
 
+## --- test 7: k-means (and its elbow) HONOUR scale_variance ------------------
+## Until 2026-10-04 the k-means branch clustered the UNSCALED matrix and ignored
+## scale_variance, although the docs promised a default of TRUE for every analysis. That
+## made the flat-clustering escape room's boss ("weight is in thousands, the essences in
+## tens") unreachable through the course verb: scaling on, scaling off, all gave the
+## unscaled answer. The elbow must use the same matrix as the clustering (see the comment
+## above the elbow branch in phylochemistry.R).
+##
+## k = 1 makes the check exact: the single cluster's within-cluster sum of squares is the
+## total sum of squares of the matrix it was handed -- (n - 1) * ncol for a scaled matrix,
+## the raw centred sum of squares otherwise.
+elbow_sv <- function(sv) suppressMessages(runMatrixAnalysis(
+    data = d, analysis = "kmeans", parameters = c("elbow", 3),
+    columns_w_values_for_single_analyte = vals,
+    columns_w_sample_ID_info = c("specimen"),
+    scale_variance = sv
+))$within_cluster_variance[1]
+raw_ss <- sum(sapply(vals, function(v) sum((d[[v]] - mean(d[[v]]))^2)))
+stopifnot(
+  isTRUE(all.equal(elbow_sv(TRUE),  (nrow(d) - 1) * length(vals))),
+  isTRUE(all.equal(elbow_sv(FALSE), raw_ss))
+)
+## ...and the default is scaling ON, as documented.
+stopifnot(isTRUE(all.equal(elbow_for(c("elbow", 3))$within_cluster_variance[1], elbow_sv(TRUE))))
+
+## The clustering itself: add a column in the thousands whose three levels cut ACROSS the
+## real families. Unscaled, that column dominates and the clusters follow it exactly.
+d_big <- d %>% mutate(big = rep(c(1000, 6000, 11000), times = 4) + rep(c(0, 1), each = 6))
+km_raw <- suppressMessages(runMatrixAnalysis(
+    data = d_big, analysis = "kmeans", parameters = c(3),
+    columns_w_values_for_single_analyte = c("x", "y", "big"),
+    columns_w_sample_ID_info = c("specimen"), scale_variance = FALSE
+))
+by_big <- rep(1:3, times = 4)
+stopifnot(nrow(unique(cbind(km_raw$cluster[match(d_big$specimen, km_raw$sample_unique_ID)], by_big))) == 3L)
+
 cat("test_runMatrixAnalysis_elbow.R: all checks passed\n")

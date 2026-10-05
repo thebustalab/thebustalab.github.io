@@ -15027,12 +15027,15 @@
                                     ## no information). Override the maximum with a second element:
                                     ## parameters = c("elbow", 6).
                                     ##
-                                    ## MATRIX. Deliberately the SAME `matrix` the clustering call below
-                                    ## uses, NOT `scaled_matrix` -- otherwise the elbow a student reads
-                                    ## would belong to a different geometry than the clusters they then
-                                    ## ask for, which is the worst possible failure here because it is
-                                    ## invisible. If the k-means branch is ever moved onto scaled_matrix,
-                                    ## MOVE THIS WITH IT.
+                                    ## MATRIX. Deliberately the SAME `scaled_matrix` the clustering call
+                                    ## below uses -- otherwise the elbow a student reads would belong to
+                                    ## a different geometry than the clusters they then ask for, which is
+                                    ## the worst possible failure here because it is invisible. Both
+                                    ## honour `scale_variance` (default TRUE, as for every analysis); if
+                                    ## the clustering call is ever moved to another matrix, MOVE THIS
+                                    ## WITH IT. (Until 2026-10-04 both used the UNSCALED `matrix` and
+                                    ## silently ignored scale_variance, though the docs said the default
+                                    ## applied to every analysis.)
                                     if (
                                         length(parameters) > 0 &&
                                         identical(tolower(as.character(parameters[1])), "elbow")
@@ -15073,7 +15076,7 @@
                                             within_cluster_variance = vapply(
                                                 seq_len(max_k),
                                                 function(i) stats::kmeans(
-                                                    x = matrix, centers = i,
+                                                    x = scaled_matrix, centers = i,
                                                     nstart = 25, iter.max = 1000
                                                 )$tot.withinss,
                                                 numeric(1)
@@ -15096,7 +15099,7 @@
                                     message("Using", n_clusters, "as a value for cluster_number.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = stats::kmeans(x = matrix, centers = as.numeric(n_clusters), nstart = 25, iter.max = 1000)$cluster
+                                        cluster = stats::kmeans(x = scaled_matrix, centers = as.numeric(n_clusters), nstart = 25, iter.max = 1000)$cluster
                                     ))
 
                                 }
