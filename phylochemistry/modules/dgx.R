@@ -29,6 +29,12 @@ message("Loading dgx module...")
           quant = NULL,          # 4 = nf4, 8 = int8, 16 = bf16 (full precision)
           max_tokens = 256,
           system = NULL,
+          # Opt-in token probabilities from the model's RAW distribution (before temperature or
+          # top_p). 1 = log-probability of each generated token; 2 or 3 = that plus the 1-2 most
+          # likely other tokens at each step (3 = chosen + next two). The result gains a
+          # `logprobs` data frame (one row per token: token, id, logprob, and for 2-3 a `top`
+          # list-column). Needs max_tokens <= 512; for classification use max_tokens of 1-4.
+          logprobs = NULL,
           server_url = Sys.getenv("DGX_GENERATE_URL", "http://127.0.0.1:9002"),
           timeout_sec = 900,     # a cold model load is ~180s; 60 would fail on every first call
           # If the dgx is too full to load the model right now (e.g. a big model while a video
@@ -42,6 +48,7 @@ message("Loading dgx module...")
           if (!is.null(model))  payload$model  <- model
           if (!is.null(quant))  payload$quant  <- as.integer(quant)
           if (!is.null(system)) payload$system <- system
+          if (!is.null(logprobs) && logprobs > 0) payload$logprobs <- as.integer(logprobs)
           waited <- 0
           repeat {
             resp <- httr::POST(
@@ -75,6 +82,7 @@ message("Loading dgx module...")
             stop("dgx said ", httr::status_code(resp), ": ",
                  substr(httr::content(resp, "text", encoding = "UTF-8"), 1, 300))
           }
+          .dgxState$last_own_call <- as.numeric(Sys.time())
           jsonlite::fromJSON(httr::content(resp, "text", encoding = "UTF-8"))
         }
 
@@ -136,6 +144,16 @@ message("Loading dgx module...")
           invisible(NULL)
         }
 
+        # When THIS R session last got an answer from the server. The server's idle_sec cannot
+        # tell whose call it was, so without this a grid started right after your own
+        # dgxGenerate() looks like "somebody else is using it" and is refused (2026-10-05).
+        .dgxState <- new.env()
+        .dgxState$last_own_call <- NA_real_
+        .dgxLastActivityWasMine <- function(idle) {
+          !is.na(.dgxState$last_own_call) &&
+            idle >= (as.numeric(Sys.time()) - .dgxState$last_own_call) - 5
+        }
+
         # Seconds since the generate server last answered anyone; NA if we cannot tell.
         .dgxServerIdle <- function(
           server_url = Sys.getenv("DGX_GENERATE_URL", "http://127.0.0.1:9002")
@@ -159,6 +177,8 @@ message("Loading dgx module...")
           } else message("Grid lock: free.")
           idle <- .dgxServerIdle()
           if (is.na(idle)) message("Server: could not reach the generate endpoint.")
+          else if (idle < dgxBusyIdleSec() && .dgxLastActivityWasMine(idle))
+            message("Server: quiet apart from your own call ", round(idle), " s ago.")
           else if (idle < dgxBusyIdleSec())
             message("Server: in use — it answered someone ", round(idle), " s ago.")
           else message("Server: quiet — idle for ", round(idle / 60), " min.")
@@ -186,10 +206,11 @@ message("Loading dgx module...")
             if (is.na(idle)) problems <- c(problems, paste0(
               "Cannot reach the generate server. Run dgxHealth() first — starting a grid\n",
               "    against a dead server just fills the CSV with errors."))
-            else if (idle < dgxBusyIdleSec()) problems <- c(problems, paste0(
+            else if (idle < dgxBusyIdleSec() && !.dgxLastActivityWasMine(idle)) problems <- c(problems, paste0(
               "The server answered somebody ", round(idle), " s ago, so it is probably in use.\n",
               "    Wait for them to finish, or check with dgxGridStatus()."))
           }
+          if (verbose) { message("Pre-flight check (same as dgxGridStatus()):"); dgxGridStatus() }
           if (!length(problems)) return(invisible(NULL))
           bar <- strrep("-", 90)
           body <- paste0("  * ", problems, collapse = "\n\n")
@@ -223,7 +244,11 @@ message("Loading dgx module...")
           labels = NULL,
           verbose = TRUE,
           force = FALSE,
-          max_consecutive_errors = as.numeric(Sys.getenv("DGX_MAX_CONSECUTIVE_ERRORS", "10"))
+          max_consecutive_errors = as.numeric(Sys.getenv("DGX_MAX_CONSECUTIVE_ERRORS", "10")),
+          # Opt-in, 1-3 (see dgxGenerate). Adds two columns: `logprobs` (a JSON string, one
+          # entry per generated token) and `first_token_logprob` (handy for one-token
+          # classification). Changing it needs a fresh out_csv, since the columns differ.
+          logprobs = NULL
         ) {
           suppressPackageStartupMessages({ library(readr); library(dplyr); library(tibble) })
           if (is.null(labels)) labels <- as.character(seq_along(prompts))
@@ -232,11 +257,15 @@ message("Loading dgx module...")
           total <- length(models) * length(quants) * length(prompts)
           .dgxPreflight(total, force, verbose)
 
+          use_lp <- !is.null(logprobs) && logprobs > 0
           # A row counts as done only if it has no error. The LAST row for a key wins, so a
           # successful retry supersedes the failure that came before it.
           done_keys <- character(0); retrying <- 0
           if (file.exists(out_csv)) {
             prev <- suppressMessages(readr::read_csv(out_csv, show_col_types = FALSE))
+            if (use_lp != ("logprobs" %in% names(prev)))
+              stop(out_csv, " has different columns than this run (logprobs on/off changes them). ",
+                   "Use a new out_csv.", call. = FALSE)
             if (nrow(prev) > 0) {
               prev <- prev %>%
                 mutate(.key = paste(model, quant, as.character(prompt_id)),
@@ -272,17 +301,24 @@ message("Loading dgx module...")
               row <- tryCatch({
                 r <- dgxGenerate(prompts[i], model = m, quant = q,
                                  max_tokens = max_tokens, system = system,
+                                 logprobs = if (use_lp) logprobs else NULL,
                                  on_wait = function() {   # keep the lock fresh while waiting
                                    lock$heartbeat <- as.numeric(Sys.time()); .dgxWriteLock(lock)
                                  })
                 tibble(model = m, quant = q, prompt_id = labels[i], prompt = prompts[i],
                        completion = r$completion, duration_sec = r$duration_sec,
-                       error = NA_character_, timestamp = format(Sys.time()))
+                       error = NA_character_, timestamp = format(Sys.time())) %>%
+                  { if (use_lp) {
+                      lp <- r$logprobs
+                      mutate(., logprobs = if (length(lp)) as.character(jsonlite::toJSON(lp, auto_unbox = TRUE)) else "[]",
+                             first_token_logprob = if (length(lp)) lp$logprob[1] else NA_real_)
+                    } else . }
               }, error = function(e) {    # one bad prompt must not kill a long run
                 failed <<- TRUE
                 tibble(model = m, quant = q, prompt_id = labels[i], prompt = prompts[i],
                        completion = NA_character_, duration_sec = NA_real_,
-                       error = substr(conditionMessage(e), 1, 300), timestamp = format(Sys.time()))
+                       error = substr(conditionMessage(e), 1, 300), timestamp = format(Sys.time())) %>%
+                  { if (use_lp) mutate(., logprobs = NA_character_, first_token_logprob = NA_real_) else . }
               })
               readr::write_csv(row, out_csv, append = file.exists(out_csv))
               n <- n + 1
