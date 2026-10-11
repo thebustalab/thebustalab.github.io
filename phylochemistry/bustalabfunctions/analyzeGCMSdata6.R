@@ -854,9 +854,16 @@
                 ## The guard widened with the domain correction: a unit domain runs
                 ## -0.04..1.04, so a drag against the left edge legitimately reports
                 ## a NEGATIVE xmin and used to fail "bxmin >= 0" and be discarded.
+                ## A unit DOMAIN (frx non-NULL) identifies the fallback on its own,
+                ## whatever the data range. The old "rng[1] > 1" guard applied to it
+                ## as well, and ANDI-Chrom traces (FID/TCD) start at rt ~0.02 s, so
+                ## every FID brush was read as raw seconds 0..1 and Shift+Q zoomed
+                ## to the first second of the run (ticks 0.25/0.5/0.75) whatever was
+                ## brushed. The range check now guards only the domain-less legacy
+                ## reading, where a 0..1 value could genuinely be a data coordinate.
                 frx <- brush_unit_fraction(brush, "x")
-                if (is.null(xv_mapped) && rng[1] > 1 &&
-                    (!is.null(frx) || (bxmin >= 0 && bxmax <= 1))) {
+                if (is.null(xv_mapped) &&
+                    (!is.null(frx) || (rng[1] > 1 && bxmin >= 0 && bxmax <= 1))) {
                     win_lo <- if (!is.null(x_axis_start) && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
                     win_hi <- if (!is.null(x_axis_end)   && length(x_axis_end)   == 1 && is.finite(x_axis_end))   x_axis_end   else rng[2]
                     if (win_hi > win_lo) {
