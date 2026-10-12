@@ -26,6 +26,11 @@ fig:unnamed-chunk-340
 fig:unnamed-chunk-341
 fig:unnamed-chunk-344
 fig:unnamed-chunk-345
+fig:unnamed-chunk-367
+fig:unnamed-chunk-369
+fig:unnamed-chunk-371
+fig:unnamed-chunk-374
+fig:unnamed-chunk-376
 fig:unnamed-chunk-28
 part-data-visualization
 part-statistical-methods

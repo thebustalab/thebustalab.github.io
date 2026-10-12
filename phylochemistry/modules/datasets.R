@@ -30,7 +30,8 @@ message("Loading datasets module...")
         c("mushrooms", "https://thebustalab.github.io/phylochemistry/sample_data/mushrooms.csv"),
         c("unknown_mushroom", "https://thebustalab.github.io/phylochemistry/sample_data/unknown_mushroom.csv"),
         c("passenger_flows", "https://thebustalab.github.io/phylochemistry/sample_data/passenger_flows.csv"),
-        c("us_airports", "https://thebustalab.github.io/phylochemistry/sample_data/us_airports.csv")
+        c("us_airports", "https://thebustalab.github.io/phylochemistry/sample_data/us_airports.csv"),
+        c("meteorite_fragments", "https://thebustalab.github.io/phylochemistry/sample_data/meteorite_fragments.csv")
     ))
 
     # pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])

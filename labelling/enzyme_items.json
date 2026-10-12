@@ -646,5 +646,149 @@
     },
     "source_topic": "pks",
     "discovered": "2026-09-29"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_570a9237697e",
+    "title": "Functional Characterization and Promoter Analysis of a MeJA-Responsive Squalene Synthase Gene CpSQS from Cyclocarya paliurus (Batal.) Iljinsk",
+    "authors": "Juan Chen; Qinghui Xia; Yulan Dong; Yuhang Pan; Quanwei Lv; Jinbo Huang; Shaopeng Zhang; Xingxing Dong; Xiaoling Chen",
+    "journal": "International Journal of Molecular Sciences",
+    "year": 2026,
+    "doi": "10.3390/ijms27188432",
+    "link": "https://doi.org/10.3390/ijms27188432",
+    "abstract": "Cyclocarya paliurus leaves are rich in bioactive triterpenoids, yet their regulatory mechanisms, particularly in response to methyl jasmonate (MeJA), remain unclear. This study aimed to characterize the spatial and temporal effects of MeJA on triterpenoid accumulation, identify MeJA-responsive genes involved in triterpenoid biosynthesis, and functionally evaluate CpSQS and its promoter regulatory regions. Upper and lower leaves were sampled at multiple time points after MeJA treatment. Six triterpenoid monomers were quantified by HPLC, and transcriptomes were analyzed at 5 and 10 days. MeJA altered triterpenoid accumulation in a time- and leaf-position-dependent manner, with stronger responses in upper leaves. Differentially expressed genes were enriched in terpenoid backbone biosynthesis, sesquiterpenoid and triterpenoid biosynthesis, plant hormone signaling, and MAPK pathways, while HMGR, FPPS, SQS, and SE were generally upregulated. CpSQS was induced by MeJA and showed a spatial expression pattern associated with triterpenoid accumulation. Heterologous overexpression of CpSQS in tobacco calli significantly increased CpSQS transcript abundance and total triterpenoid content, supporting its positive role in triterpenoid biosynthesis. Promoter deletion analysis further identified a 188 bp region from −961 to −773 bp that contributed substantially to promoter activity, with its deletion reducing GUS activity by 56%. These findings reveal the spatiotemporal regulation of triterpenoid biosynthesis by MeJA and identify CpSQS and its transcriptionally active promoter region as potential targets for further functional studies and metabolic improvement in C. paliurus.",
+    "prefill": {
+      "enzyme_name": "CpSQS",
+      "product": "squalene",
+      "doi": "doi:10.3390/ijms27188432"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_06fda01fe9e8",
+    "title": "GhSQS1 –mediated squalene accumulation coordinates cotton development and stress resilience",
+    "authors": "Yameng Xu; Zhitian Zhang; Le Liu; Shuyuan Jia; Jicheng Wei; Lili Lu; Shuya Ma; Yadi Xing; Ye Wang; Jingjing Zhan; Fuguang Li; Zuoren Yang",
+    "journal": "Journal of Experimental Botany",
+    "year": 2026,
+    "doi": "10.1093/jxb/erag424",
+    "link": "https://doi.org/10.1093/jxb/erag424",
+    "abstract": "Squalene is a high-value triterpenoid. It is increasingly recognized for its regulatory roles in plant signaling. However, the functions of squalene in cotton remain unexplored. Here, we show that exogenous squalene can promote cotton developmental traits (root elongation and ovule development) and identify GhSQS1 as the predominant functional squalene synthase. Overexpression of GhSQS1 promotes root development, along with metabolic and hormonal reprogramming, including the activation of brassinosteroid (BR)-associated signaling. Furthermore, stable overexpression of GhSQS1 markedly elevates endogenous squalene accumulation, predominantly in leaves. This metabolic enhancement is accompanied by coordinated improvements in root architecture, leaf expansion, fiber elongation, and overall plant vigor. Notably, GhSQS1-OE lines exhibited elevated lignin-associated enzyme activities and increased total lignin content. These changes were correlated with improved tolerance to drought and alkaline stress. Importantly, similar development-promoting phenotypes were recapitulated by heterologous expression of a high-activity fungal SQS (sharing only 39.2% amino acid identity with GhSQS1), confirming that enhanced squalene biosynthesis underlies these effects. Collectively, this study establishes squalene biosynthesis as a central metabolic axis coordinating hormonal reprogramming, cotton-specific development and stress adaptation, while concurrently generating squalene-enriched biomass. These findings provide a new paradigm for crop genetic improvement and tolerance enhancement.",
+    "prefill": {
+      "enzyme_name": "GhSQS1",
+      "product": "squalene",
+      "doi": "doi:10.1093/jxb/erag424"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_84b8a3e6b25f",
+    "title": "Identification of Multiple PlOSCs Involved in the Biosynthesis Pathway of Triterpenoids in Paeonia lactiflora",
+    "authors": "Yufeng Zhao; Juan Guo; Jiyu Zhang; Yi-Xiang Wang; Luqi Huang",
+    "journal": "International Journal of Molecular Sciences",
+    "year": 2026,
+    "doi": "10.3390/ijms27104410",
+    "link": "https://doi.org/10.3390/ijms27104410",
+    "abstract": "Triterpenoid saponins are important bioactive compounds synthesized through the isoprenoid pathway, in which 2,3-oxidosqualene serves as a precursor of triterpenoid saponins. In this study, we identified and characterized eight oxidosqualene cyclase (PlOSC) genes in Paeonia lactiflora using molecular cloning and bioinformatic analyses. Full-length cDNAs of PlOSCs (PlOSC1–PlOSC8) were cloned, and the protein sequences exhibited significant similarities to known cyclases, including β-amyrin synthase and cycloartenol synthase. Phylogenetic analysis revealed distinct groups of PlOSCs corresponding to lupeol, β-amyrin, and cycloartenol synthases. Sequence alignment confirmed the presence of highly conserved motifs, including the “SDCTAE” and “QW” motifs, which are crucial for cyclization and stability in PlOSCs. To determine the functional roles of PlOSCs, we conducted functional expression studies in Saccharomyces cerevisiae. The results showed that PlOSC3 and PlOSC6 are monofunctional β-amyrin synthases that produce β-amyrin in yeast culture, as confirmed through GC-MS analysis. Further investigation of PlOSC gene expression in various tissues indicated that PlOSC3 was predominantly expressed in roots, whereas PlOSC6 was highly expressed in leaves. Corresponding metabolite analyses revealed that triterpenoid accumulation was significantly higher in roots than in leaves, suggesting tissue-specific biosynthesis and accumulation patterns in triterpenoid biosynthesis. These findings contribute to our understanding of the regulation of triterpenoid biosynthesis in P. lactiflora and provide insights into the functional roles of OSCs in triterpenoid and nortriterpenoid formation.",
+    "prefill": {
+      "enzyme_name": "PlOSC3",
+      "product": "β-amyrin",
+      "doi": "doi:10.3390/ijms27104410"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_e9be3f1082c2",
+    "title": "Natural variation in IBF1 confers antimicrobial activity through altered flavonoid accumulation in rice hulls",
+    "authors": "Yoshiaki Ueda; Yoshinori Murata; Nozomu Sakurai; T. Ogata; Hiroki Saito; Juan Pariasca Tanaka; Katsuhiko Kondo; Hideki Takanashi; Takuma Ishizaki; Yasunari Fujita; Matthias Wissuwa",
+    "journal": "Journal of Experimental Botany",
+    "year": 2026,
+    "doi": "10.1093/jxb/erag461",
+    "link": "https://doi.org/10.1093/jxb/erag461",
+    "abstract": "Secondary metabolites perform diverse physiological functions, and studies have identified genes and mechanisms underlying their biosynthesis. However, the genetic basis of intraspecific variation in secondary metabolism remains poorly understood, particularly in less-studied tissues such as rice hulls. In this study, we identified variants in the F-box protein IBF1 that underlie genotypic differences in hull color and flavonoid accumulation using positional cloning. While IR64 (straw-white hull) harbors the functional IBF1, DJ123 (pigmented hull) harbors frame-shift mutations that result in the loss of a Kelch domain. Yeast two-hybrid analysis showed that all three Kelch domains of IBF1 are required for interaction with chalcone synthase 1 (CHS1). Accordingly, the DJ123 variant (IBF1DJ123) does not interact with CHS1. This finding was further supported by deep learning-based structural modeling. An IR64-based chromosomal segment substitution line (CSSL) carrying IBF1DJ123 showed increased flavonoid content and reduced expression of CAD, a gene involved in lignin synthesis, compared to IR64. Metabolites in the CSSL suppressed the growth and siderophore generation activity of Pantoea species, which can act as beneficial or pathogenic endophytes. This study highlights the impact of a single gene on diverse metabolite accumulation patterns and suggests that such variation may be exploited for defense against pathogens.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1093/jxb/erag461"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_37a056aeefa4",
+    "title": "Multi-omics integration identifies GmISO5 as a key regulator of seed isoflavone biosynthesis and implicates it in the response to soybean mosaic virus",
+    "authors": "Xinkang Feng; Daqian Sun; Hui Liu; Li Chu; JiaJia Li; Delin Li; Hao Zhang; Xueqing Wang; Tianli Ge; Haiyang Zheng; Shiyu Guo; Xiangguang Zhao; Jinyu Li; Tuanjie Zhao; Yinghui Li; Xiaobo-Wang; Lijuan Qiu",
+    "journal": "Journal of Advanced Research",
+    "year": 2026,
+    "doi": "10.1016/j.jare.2026.09.011",
+    "link": "https://doi.org/10.1016/j.jare.2026.09.011",
+    "abstract": "INTRODUCTION: Isoflavones are specialized metabolites that accumulate abundantly in soybean seeds, contributing to nutritional quality, human health benefits, and plant defense. Although the core isoflavone biosynthetic pathway has been well characterized, its upstream regulatory network and potential relationship with plant stress responses remain incompletely understood. OBJECTIVES: This study aimed to identify key regulators of seed isoflavone accumulation and to assess whether the identified regulator is associated with the soybean response to soybean mosaic virus (SMV) infection. METHODS: We integrated genome-wide and transcriptome-wide association analyses with CRISPR/Cas9-mediated knockout, transcriptome profiling, molecular interaction assays, co-expression network analysis, and population genetic analysis. RESULTS: rather than direct selection for reduced isoflavone accumulation. CONCLUSION: GmISO5 is a key regulator of soybean seed isoflavone accumulation that directly activates GmHIDH and GmCHS1. The increased SMV susceptibility of GmISO5 knockout lines further implicates GmISO5 in the soybean response to SMV infection, although whether reduced isoflavone accumulation directly causes the altered SMV phenotype remains to be established.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.jare.2026.09.011"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_df7e31531c5c",
+    "title": "Simultaneous synthesis of resveratrol by dual-compartment metabolic engineering in Saccharomyces cerevisiae",
+    "authors": "Ruilin Shi; Aihua Deng; Xueliang Wang; Haorong Chen; Laiyou Wang; Yukun Chen; Pengyu Chen; Shiyan Y Qiao; Tingyi Wen",
+    "journal": "Bioresource Technology",
+    "year": 2026,
+    "doi": "10.1016/j.biortech.2026.135806",
+    "link": "https://doi.org/10.1016/j.biortech.2026.135806",
+    "abstract": "Resveratrol, a plant-derived polyphenolic compound, is widely used in medicine, health care, and nutrition. Synthetic biology enables the microbial synthesis of resveratrol as a promising alternative to traditional plant extraction. However, an insufficient precursor supply remains a critical bottleneck limiting the overall yield. Here, for the first time, a dual-compartment engineering strategy was developed to simultaneously synthesize resveratrol in the peroxisomes and cytoplasm of Saccharomyces cerevisiae and to increase resveratrol synthesis in the presence of a sufficient supply of precursors. Heterologous tyrosine ammonia-lyase, 4-coumarate-CoA ligase, stilbene synthase and endogenous acetyl-CoA carboxylase were targeted to peroxisomes via a C-terminal signaling peptide, establishing a resveratrol synthesis pathway within this compartment. Three heterologous genes were increased to 11 copies using an efficient multilocus integration method, thereby improving the peroxisomal synthetic pathway and enhancing the resveratrol titer by 200 %. Systematic organelle engineering was further applied to efficiently increase the availability of malonyl-CoA, acetyl-CoA, and fatty acid at nodes, resulting in a 161 % increase in the resveratrol titer. Combining the cytoplasmic and peroxisomal pathways to synthesize resveratrol simultaneously in both compartments enabled the titer to 552.16 mg/L in 5-L bioreactors. 13 C metabolic flux analysis revealed that the resveratrol accumulation of the dual-compartment strain approximated the sum of that of the two single-compartment strains. Notably, the peroxisome was rewired to become an organelle factory by redirecting acetyl-CoA into the organelle compartment, establishing an important and feasible site for resveratrol synthesis. This work established a novel and generalizable dual-compartment engineering paradigm for biochemical synthesis.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "resveratrol",
+      "doi": "doi:10.1016/j.biortech.2026.135806"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_fac2d17cc673",
+    "title": "Genome‐Wide Identification and Structural Characterization of Secondary Metabolite Biosynthetic Gene Clusters in African Baobab ( Adansonia digitata )",
+    "authors": "Ahmed A. Elshikh; Ahmed Saeed Kabbashi; Imtenan M. Musa",
+    "journal": "Chemistry & Biodiversity",
+    "year": 2026,
+    "doi": "10.1002/cbdv.71794",
+    "link": "https://doi.org/10.1002/cbdv.71794",
+    "abstract": "Adansonia digitata L., known as the African Baobab, is renowned for its extraordinary longevity and its long-standing use in traditional African medicine. However, the genomic basis underlying its specialized secondary metabolism remains largely unexplored. This study aimed to computationally identify and characterize putative biosynthetic gene clusters (BGCs) within the publicly available A. digitata genome assembly (GenBank accession GCA_029448705.1) using an integrated bioinformatics pipeline. Ab initio gene structure prediction was performed with AUGUSTUS (Arabidopsis thaliana species model), functional protein domains were annotated with InterProScan, and candidate BGCs were mined using the plantiSMASH 2.0 webserver. Gene prediction yielded 52 721 protein-coding gene models genome-wide, of which 45 641 (86.6%) received at least one InterProScan domain annotation. The analysis identified 50 putative BGCs distributed across 13 scaffolds, ranging from 15.3 to 492.8 kb in size and provisionally classified into eight chemical categories, most frequently saccharide-type (n = 20) and cyclopeptide-type (n = 9) clusters. Notably, nine clusters carried a BURP-domain core gene consistent with a cyclopeptide/defense-peptide-associated pathway, including the single largest cluster identified (492.8 kb); other clusters carried core domains consistent with terpene synthase, squalene-hopene cyclase, chalcone/stilbene synthase (Chal_sti_synt_N), and dirigent-protein/lignan-associated biosynthesis. None of the 50 clusters showed a significant match to a characterized reference cluster in the MIBiG database, suggesting these represent largely uncharacterized biosynthetic loci. These results represent in silico predictions rather than experimentally confirmed metabolic functions, since no transcriptomic, metabolomic, or biochemical validation was performed as part of this study. Nonetheless, this work provides one of the first genome-wide catalogues of putative BGCs in A. digitata and offers a preliminary resource to guide future comparative genomics, expression profiling, and experimental validation of specialized metabolism in this species.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1002/cbdv.71794"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-06"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_f7eacce8d75d",
+    "title": "PmWRKY‐10 Enhances Pine Wilt Disease Resistance by Promoting Pinosylvin Monomethyl Ether Biosynthesis Through Transcriptional Activation of PmPMT2‐1",
+    "authors": "Ziyan Nie; Shan Hu; Bin Liu; Qinghua Liu; Hengfu Yin; Zhichun Zhou; Kai Gao",
+    "journal": "Molecular Plant Pathology",
+    "year": 2026,
+    "doi": "10.1111/mpp.70348",
+    "link": "https://doi.org/10.1111/mpp.70348",
+    "abstract": "Pine wilt disease (PWD), caused by the pine wood nematode (PWN, Bursaphelenchus xylophilus), poses a severe threat to global pine forests. Plants can enhance their resistance to external stresses by eliciting secondary metabolites; however, the transcriptional regulatory mechanisms governing this defence response in pines remain largely unexplored. Here, we report a novel defence regulatory module in Pinus massoniana. PmWRKY-10 may participate in PWN resistance by regulating the biosynthesis of the nematicidal metabolite pinosylvin monomethyl ether (PME). We first demonstrated that PME accumulation is closely linked to resistance in P. massoniana and provided evidence that PME exhibits direct and potent nematicidal activity against PWN in vitro. By integrating multi-omics profiling with weighted gene co-expression network analysis (WGCNA), we identified PmPMT2-1 as a key candidate associated with PME biosynthesis and accumulation, while recognizing that it is unlikely to function as the sole rate-limiting determinant. Functional analyses demonstrated that PmPMT2-1 overexpression promoted PME accumulation and enhanced resistance, whereas silencing the gene impaired both processes. Mechanistically, we identified PmWRKY-10 as an upstream transcriptional activator that directly binds to the W-box element in the PmPMT2-1 promoter, inducing its transcription. Our work delineates a complete PmWRKY-10→PmPMT2-1→PME transcriptional-metabolic pathway that is essential for stilbene-based resistance in pine. This discovery not only provides fundamental insights into the inducible defence mechanisms of conifers but also identifies key genetic targets for breeding resistant varieties and developing sustainable forest management strategies.",
+    "prefill": {
+      "enzyme_name": "PmPMT2-1",
+      "product": "pinosylvin monomethyl ether",
+      "doi": "doi:10.1111/mpp.70348"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-06"
   }
 ]

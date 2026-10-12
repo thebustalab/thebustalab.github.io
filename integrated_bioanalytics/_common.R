@@ -62,6 +62,19 @@ if (dir.exists(.pc_root) && !isTRUE(attr(get0("source", envir = globalenv()), "p
     if (is.character(file) && length(file) == 1L && grepl(.pc_url, file)) {
       .local <- file.path(.pc_root, sub(.pc_url, "", file))
       if (file.exists(.local)) file <- .local
+      # modules/datasets.R downloads every sample dataset from its LIVE url with readr::read_csv, and
+      # one 404 aborts the whole library load. deploy.sh compiles the book BEFORE it pushes the site,
+      # so a dataset added in the same change is not live yet and the compile would die
+      # ("phylochemistry.R failed to load"). Read sample_data/ from the working copy instead.
+      # Found adding meteorite_fragments for ch.10, 2026-10-06.
+      if (identical(sub(.pc_url, "", file), "modules/datasets.R") || grepl("modules/datasets\\.R$", file)) {
+        .sd <- normalizePath(file.path(.pc_root, "sample_data"), mustWork = FALSE)
+        if (dir.exists(.sd) && file.exists(file)) {
+          .txt <- gsub("https://thebustalab.github.io/phylochemistry/sample_data/", paste0(.sd, "/"),
+                       readLines(file, warn = FALSE), fixed = TRUE)
+          file <- tempfile(fileext = ".R"); writeLines(.txt, file)
+        }
+      }
     }
     base::source(file, ...)
   }

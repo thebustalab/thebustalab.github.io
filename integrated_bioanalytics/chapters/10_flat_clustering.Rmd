@@ -6,7 +6,7 @@
 
 ## kmeans {-}
 
-One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
+One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question by building trees with hierarchical clustering. Here we take a different approach, one that sorts samples straight into a set number of groups without building a tree first. It is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png', dpi = NA)
@@ -14,209 +14,214 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
 
-Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We set `analysis = "kmeans"` and hand the number of clusters we want to the `parameters` argument. Below we ask for five; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.) Notice the argument `scale_variance = FALSE`. It is explained in the section on scaling below, and for now it just tells `runMatrixAnalysis` to cluster the PCA scores exactly as they are.
+For the examples in this chapter we will use `meteorite_fragments`, which loads along with the rest of the course datasets. It describes 37 meteorite fragments recovered from four places where meteorite hunters search: the Atacama and Sahara deserts, the Nullarbor Plain in Australia, and the Antarctic ice fields. Each fragment was measured for its iron content (`iron_percent`), its density (`density_g_per_cm3`), and two more measurements we will come back to at the end of the chapter, `nickel_percent` and `silica_percent`. (These are simulated data, built with realistic values for each kind of meteorite.)
 
+```{r}
+meteorite_fragments
+```
+
+Before clustering anything, it is worth simply plotting two of the measurements against each other:
+
+```{r, fig.width = 6, fig.height = 5, fig.cap = "Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps."}
+ggplot(meteorite_fragments, aes(x = iron_percent, y = density_g_per_cm3)) +
+  geom_point(shape = 21, size = 4, fill = "grey70") +
+  theme_classic() +
+  labs(x = "iron (%)", y = "density (g/cm³)")
+```
+
+Your eye probably finds three groups right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what your eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` — the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter. Below we ask for three; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.)
 
 ```{r, message = FALSE}
-alaska_lake_data %>%
-  select(-element_type) %>%
-  pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
-
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data_wide,
-    analysis = c("pca"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
-    columns_w_sample_ID_info = c("lake", "park")
-)
-
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
+meteorite_clusters <- runMatrixAnalysis(
+    data = meteorite_fragments,
     analysis = c("kmeans"),
-    parameters = c(5),
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID",
-    scale_variance = FALSE
+    parameters = c(n_clusters = 3),
+    columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+    columns_w_sample_ID_info = c("fragment", "find_site")
 )
 
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca) 
+meteorite_clusters
 ```
 
-We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
+The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the networks chapter, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling iron would decide the clusters almost on its own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
-```{r, fig.width = 6, fig.height = 6}
-alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+```{r, fig.width = 6, fig.height = 5, fig.cap = "The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighbouring cluster."}
+meteorite_clusters$cluster <- factor(meteorite_clusters$cluster)
 ggplot() +
   geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+    data = meteorite_clusters,
+    aes(x = iron_percent, y = density_g_per_cm3, fill = cluster), shape = 21, size = 4, alpha = 0.6
   ) +
   geom_mark_ellipse(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+    data = meteorite_clusters,
+    aes(x = iron_percent, y = density_g_per_cm3, label = cluster, fill = cluster), alpha = 0.2
   ) +
   theme_classic() +
-  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette) 
+  labs(x = "iron (%)", y = "density (g/cm³)") +
+  scale_fill_manual(values = discrete_palette)
 ```
+
+The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixed through it; iron meteorites are almost solid iron-nickel metal, and so are more than twice as dense; and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. It has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
 
 ## choosing k {-}
 
-Above we simply asserted that five clusters was the right number. How would we know? This is what the elbow method, illustrated at the top of this chapter, is for, and we can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
+Above we simply asserted that three clusters was the right number. How would we know? This is what the elbow method, illustrated at the top of this chapter, is for, and we can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
 
 ```{r, message = FALSE}
-alaska_lake_elbow <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
+meteorite_elbow <- runMatrixAnalysis(
+    data = meteorite_fragments,
     analysis = c("kmeans"),
     parameters = "elbow",
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID",
-    scale_variance = FALSE
+    columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+    columns_w_sample_ID_info = c("fragment", "find_site")
 )
 
-alaska_lake_elbow
+meteorite_elbow
 ```
 
-This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters — in the limit, where every sample is its own cluster, there is no within-cluster variance left at all — so the smallest value is never the answer. What we are after is the bend:
+The elbow follows the same `scale_variance` setting as the clustering, so the elbow you read always belongs to the clusters you then ask for. This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters — in the limit, where every sample is its own cluster, there is no within-cluster variance left at all — so the smallest value is never the answer. What we are after is the bend:
 
-```{r, fig.width = 5, fig.height = 4}
-ggplot(alaska_lake_elbow, aes(x = k, y = within_cluster_variance)) +
+```{r, fig.width = 5, fig.height = 4, fig.cap = "Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters."}
+ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
   geom_line() +
   geom_point(size = 3) +
   theme_classic() +
   labs(x = "number of clusters (k)", y = "within-cluster variance")
 ```
 
-Reading left to right: the first few clusters each buy us a large reduction in within-cluster variance, and then the returns collapse. Here the line has clearly flattened by about five clusters — which is where the five we used above came from. Note that this is a judgement call, not a calculation: four would also be defensible for these data, and part of the skill is recognising when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely your choice).
+Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgement call, not a calculation. Part of the skill is recognising when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely your choice).
 
 By default `runMatrixAnalysis` tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:
 
 ```{r, eval = FALSE}
 runMatrixAnalysis(
-    data = alaska_lake_data_pca,
+    data = meteorite_fragments,
     analysis = c("kmeans"),
     parameters = c("elbow", 6),
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID",
-    scale_variance = FALSE
+    columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+    columns_w_sample_ID_info = c("fragment", "find_site")
 )
 ```
-
-## scaling {-}
-
-K-means works from distances, so a column measured in large numbers has more say over the clusters than a column measured in small ones. Suppose one column of a table is in grams and another is in kilograms. Without any correction, the grams column would decide nearly every cluster by itself, simply because its numbers are a thousand times larger.
-
-For this reason `runMatrixAnalysis` centers each column and divides it by its standard deviation before it clusters, so that every column carries the same weight. This is the default for every analysis, and it is controlled by the `scale_variance` argument. For k-means, `parameters = "elbow"` follows the same setting, so the elbow you read always belongs to the clusters you then ask for.
-
-Leave `scale_variance` alone whenever your columns are in different units, or just on very different scales. Turn it off (`scale_variance = FALSE`) when the columns are already comparable and their relative sizes mean something. That is the situation in the examples above: the two PCA scores are on one scale, and the first axis is larger than the second because it explains more of the variation, which is information we want the clusters to use. Scaling would stretch the second axis to the same width as the first and quietly change the answer.
 
 ## dbscan {-}
 
-There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters, as in k-means. dbscan grows a cluster outwards from points that have at least "k" neighbours within a "threshold" distance of them; a point that is not close enough to any cluster is left unassigned. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting these two parameters. In the context of a markdown document, simply provide "k" and "threshold" to the `parameters` argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:
 
 ```{r, message = FALSE}
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data_wide,
-    analysis = c("pca"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
-    columns_w_sample_ID_info = c("lake", "park")
-) 
-
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
+meteorite_dbscan <- runMatrixAnalysis(
+    data = meteorite_fragments,
     analysis = c("dbscan"),
-    parameters = c(4, 0.45),
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
+    parameters = c(4, 0.3),
+    columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+    columns_w_sample_ID_info = c("fragment", "find_site")
 )
-
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
 ```
+
 We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs it needs data without NAs:
 
-```{r, fig.width = 6, fig.height = 6}
-alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+```{r, fig.width = 6, fig.height = 5, fig.cap = "The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse."}
+meteorite_dbscan$cluster <- factor(meteorite_dbscan$cluster)
 ggplot() +
   geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+    data = meteorite_dbscan,
+    aes(x = iron_percent, y = density_g_per_cm3, fill = cluster), shape = 21, size = 4, alpha = 0.6
   ) +
   geom_mark_ellipse(
-    data = drop_na(alaska_lake_data_pca_clusters),
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+    data = drop_na(meteorite_dbscan),
+    aes(x = iron_percent, y = density_g_per_cm3, label = cluster, fill = cluster), alpha = 0.2
   ) +
   theme_classic() +
-  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette) 
+  labs(x = "iron (%)", y = "density (g/cm³)") +
+  scale_fill_manual(values = discrete_palette)
 ```
+
+dbscan finds the same three groups, but this time the two in-between fragments are left out, with `NA` as their cluster. For a meteorite hunter that is the more useful answer: a fragment that fits none of the known kinds is exactly the one worth a closer look.
 
 ## summarize by cluster {-}
 
-One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
+One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the `cluster` column and use `n()`, which counts the rows in each group (we met it in the wrangling chapter):
 
-```{r, fig.width = 10, fig.height = 6, message = FALSE}
-alaska_lake_data_pca <- runMatrixAnalysis(
-  data = alaska_lake_data_wide,
-  analysis = c("pca"),
-  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
-  columns_w_sample_ID_info = c("lake", "park")
-)
+```{r, message = FALSE}
+meteorite_dbscan %>%
+  group_by(cluster) %>%
+  summarize(n = n())
+```
 
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-  data = alaska_lake_data_pca,
-  analysis = c("dbscan"),
-  parameters = c(4, 0.45),
-  columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-  columns_w_sample_ID_info = "sample_unique_ID"
-) 
+Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an `NA` row. A count like this is often the question itself — which kind of meteorite turned up most often, or how big is the largest group — so it is worth reaching for first.
 
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+We can also ask how the two measurements we did *not* cluster on, nickel and silica, differ among the clusters. The clustering output only carries the columns we clustered on, so we first join the rest of the data back on:
 
-alaska_lake_data_pca_clusters %>%
-  select(cluster, S, Ca) %>%
-  pivot_longer(cols = c(2,3), names_to = "analyte", values_to = "mg_per_L") %>%
+```{r, fig.width = 10, fig.height = 5, message = FALSE, fig.cap = "Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster."}
+meteorite_dbscan <- left_join(meteorite_dbscan, meteorite_fragments)
+
+meteorite_dbscan %>%
+  select(cluster, nickel_percent, silica_percent) %>%
+  pivot_longer(cols = c(2,3), names_to = "measurement", values_to = "percent") %>%
   drop_na() %>%
-  group_by(cluster, analyte) -> alaska_lake_data_pca_clusters_clean
+  group_by(cluster, measurement) -> meteorite_dbscan_clean
 
 plot_2 <- ggplot() + 
   geom_col(
     data = summarize(
-      alaska_lake_data_pca_clusters_clean,
-      mean = mean(mg_per_L), sd = sd(mg_per_L)
+      meteorite_dbscan_clean,
+      mean = mean(percent), sd = sd(percent)
     ),
     aes(x = cluster, y = mean, fill = cluster),
     color = "black", alpha = 0.6
   ) +
   geom_errorbar(
     data = summarize(
-      alaska_lake_data_pca_clusters_clean,
-      mean = mean(mg_per_L), sd = sd(mg_per_L)
+      meteorite_dbscan_clean,
+      mean = mean(percent), sd = sd(percent)
     ),
-    aes(x = cluster, ymin = mean-sd, ymax = mean+sd, fill = cluster),
-    color = "black", alpha = 0.6, width = 0.5, size = 1
+    aes(x = cluster, ymin = mean-sd, ymax = mean+sd),
+    color = "black", width = 0.5
   ) +
-  facet_grid(.~analyte) + theme_bw() +
+  facet_grid(.~measurement, scales = "free_y") + theme_bw() +
   geom_jitter(
-    data = alaska_lake_data_pca_clusters_clean,
-    aes(x = cluster, y = mg_per_L, fill = cluster), width = 0.05,
+    data = meteorite_dbscan_clean,
+    aes(x = cluster, y = percent, fill = cluster), width = 0.05,
     shape = 21
   ) +
   scale_fill_manual(values = discrete_palette) 
 
-plot_1<- ggplot() +
+plot_1 <- ggplot() +
   geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+    data = meteorite_dbscan,
+    aes(x = iron_percent, y = density_g_per_cm3, fill = cluster), shape = 21, size = 4, alpha = 0.6
   ) +
   geom_mark_ellipse(
-    data = drop_na(alaska_lake_data_pca_clusters),
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+    data = drop_na(meteorite_dbscan),
+    aes(x = iron_percent, y = density_g_per_cm3, label = cluster, fill = cluster), alpha = 0.2
   ) +
-  theme_classic() + coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  theme_classic() +
+  labs(x = "iron (%)", y = "density (g/cm³)") +
   scale_fill_manual(values = discrete_palette)
 
 plot_1 + plot_2
 ```
- 
+
+The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artefact of the method.
+
+Finally, nothing limits clustering to two columns: list as many as you like in `columns_w_values_for_single_analyte` and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which you can try with the tools from the dimensionality reduction chapter.
+
+## exercises {-}
+
+```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
+cat('
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/waterfalls/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/waterfalls/cover.png" alt="Where the Waters Divide cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/waterfalls/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Where the Waters Divide</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Flat clustering &middot; k-means + choosing k + scaling</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">An order of alchemists bled a valley dry to feed their great sorting engine, and stole the stone that kept its springs sweet. Climb down through the failing waterworks, sort as its makers sorted to work the levers, and carry the Wellheart home before the flood closes over the engine floor.</div>
+</div>
+</div>
+</div>
+')
+```
+
 ## {-}
 
 ## further reading {-}
