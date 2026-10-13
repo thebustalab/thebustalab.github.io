@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-10-12"
+date: "2026-10-13"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3791,17 +3791,20 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when the data’s str
 
 # flat clustering {-}
 
-"Do my samples fall into definable clusters?"
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
+</script>
 
 ## {-}
 
 ## kmeans {-}
 
-One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question by building trees with hierarchical clustering. Here we take a different approach, one that sorts samples straight into a set number of groups without building a tree first. It is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" alt="" width="100%" style="display: block; margin: auto;" />
-
-One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
+K-means is the first of the two methods. It sorts samples into however many clusters we ask for, placing each sample in the cluster whose center it sits closest to.
 
 For the examples in this chapter we will use `meteorite_fragments`, which loads along with the rest of the course datasets. It describes 37 meteorite fragments recovered from four places where meteorite hunters search: the Atacama and Sahara deserts, the Nullarbor Plain in Australia, and the Antarctic ice fields. Each fragment was measured for its iron content (`iron_percent`), its density (`density_g_per_cm3`), and two more measurements we will come back to at the end of the chapter, `nickel_percent` and `silica_percent`. (These are simulated data, built with realistic values for each kind of meteorite.)
 
@@ -3841,7 +3844,7 @@ ggplot(meteorite_fragments, aes(x = iron_percent, y = density_g_per_cm3)) +
 <p class="caption">(\#fig:unnamed-chunk-367)Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps.</p>
 </div>
 
-Your eye probably finds three groups right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what your eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` — the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter. Below we ask for three; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.)
+Three groups stand out right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what the eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` (the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter). Below we ask for three clusters, and the next section shows how to arrive at that number. (With `parameters` left out altogether, desktop R opens a small application for choosing the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, the number of clusters always has to be given explicitly.)
 
 
 ``` r
@@ -3871,7 +3874,7 @@ meteorite_clusters
 ## # ℹ 1 more variable: density_g_per_cm3 <dbl>
 ```
 
-The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the networks chapter, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling iron would decide the clusters almost on its own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
+The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
 
 ``` r
@@ -3891,15 +3894,40 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-369-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighbouring cluster." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-369)The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighbouring cluster.</p>
+<img src="index_files/figure-html/unnamed-chunk-369-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-369)The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster.</p>
 </div>
 
-The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixed through it; iron meteorites are almost solid iron-nickel metal, and so are more than twice as dense; and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. It has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
+The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixedin, iron meteorites are almost solid iron-nickel metal (and so are more than twice as dense), and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. K-means has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
+
+#### concept check {-}
+
+Fill in the blank with the analysis that sorts the fragments into a set number of clusters. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_clusters <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "____",
+  parameters = c(n_clusters = 3),
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = factor(cluster))) +
+  geom_point(shape = 21, size = 4) +
+  theme_classic()</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Iron runs from about 20 to over 90 percent, while density spans only about 3 to 8 g/cm³. Without scaling, distances between fragments would be almost entirely differences in iron, so iron would decide the clusters on its own. Scaling puts both columns on an equal footing.">
+<p class="scq">Self-check: runMatrixAnalysis scales each column before k-means runs. Why does that matter for these two columns?</p>
+<label><input type="radio"> Scaling makes every cluster end up with the same number of fragments</label>
+<label><input type="radio"> Iron spans a much wider range of numbers than density, so without scaling iron would decide the clusters almost on its own</label>
+<label><input type="radio"> k-means cannot run on columns that contain decimal numbers</label>
+</div>
+
+<hr>
 
 ## choosing k {-}
 
-Above we simply asserted that three clusters was the right number. How would we know? This is what the elbow method, illustrated at the top of this chapter, is for, and we can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
+Above we simply asserted that three clusters was the right number. How would we know? Fewer clusters are generally easier to interpret, but too few leave a lot of variance inside each cluster, so the goal is a balance between the two. The elbow method, illustrated in the image at the top of this chapter, is a way of finding that balance. In that image, the same points are clustered into one, two, three, and more clusters (panel **A**), the within-cluster variance is measured for each number of clusters (**B**), and those values are plotted against the number of clusters (**C**). The best balance sits at the "elbow", the point where the line bends most sharply (the point with the smallest angle theta). The elbow point indicates the number of clusters we can use to get the smallest within-cluster variance before diminishing returns set in. We can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
 
 
 ``` r
@@ -3927,7 +3955,7 @@ meteorite_elbow
 ## 10    10                   0.118
 ```
 
-The elbow follows the same `scale_variance` setting as the clustering, so the elbow you read always belongs to the clusters you then ask for. This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters — in the limit, where every sample is its own cluster, there is no within-cluster variance left at all — so the smallest value is never the answer. What we are after is the bend:
+The elbow follows the same `scale_variance` setting as the clustering, so the elbow on the plot always belongs to the clusters that could then be requested by changing the `parameters` argument to `n_cluster = 3`, or whatever number is chosen. This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters. At the extreme, where every sample is its own cluster, there is no within-cluster variance left at all. What we are after is the bend:
 
 
 ``` r
@@ -3943,7 +3971,7 @@ ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
 <p class="caption">(\#fig:unnamed-chunk-371)Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.</p>
 </div>
 
-Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgement call, not a calculation. Part of the skill is recognising when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely your choice).
+Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice).
 
 By default `runMatrixAnalysis` tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:
 
@@ -3958,9 +3986,35 @@ runMatrixAnalysis(
 )
 ```
 
+#### concept check {-}
+
+Fill in the blank so that runMatrixAnalysis returns the within-cluster variance for each number of clusters instead of the clusters themselves. Press Run and find the bend.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_elbow <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "kmeans",
+  parameters = "____",
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
+  geom_line() +
+  geom_point(size = 3) +
+  theme_classic()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Within-cluster variance always falls as clusters are added, and reaches zero when every sample is its own cluster, so the lowest value just points at the largest k tried. The useful number is where the line bends and adding clusters stops buying much: here, three.">
+<p class="scq">Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the number of clusters to choose?</p>
+<label><input type="radio"> Because runMatrixAnalysis cannot make more than six clusters</label>
+<label><input type="radio"> Because an even number of clusters is never correct</label>
+<label><input type="radio"> Because the variance always falls as clusters are added, so the lowest value says nothing; the bend, where extra clusters stop helping much, is what to read</label>
+</div>
+
+<hr>
+
 ## dbscan {-}
 
-There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters, as in k-means. dbscan grows a cluster outwards from points that have at least "k" neighbours within a "threshold" distance of them; a point that is not close enough to any cluster is left unassigned. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting these two parameters. In the context of a markdown document, simply provide "k" and "threshold" to the `parameters` argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters. dbscan grows a cluster outwards from points that have at least "k" neighbors within a "threshold" distance of them, and a point that is not close enough to any cluster is left unassigned. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting these two parameters. In the context of a markdown document, escape room, or sandbox, simply provide "k" and "threshold" to the `parameters` argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:
 
 
 ``` r
@@ -3999,9 +4053,33 @@ ggplot() +
 
 dbscan finds the same three groups, but this time the two in-between fragments are left out, with `NA` as their cluster. For a meteorite hunter that is the more useful answer: a fragment that fits none of the known kinds is exactly the one worth a closer look.
 
+#### concept check {-}
+
+Fill in the blank with the function that tests for missing values, so that only the fragments dbscan left unassigned are kept. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "dbscan",
+  parameters = c(4, 0.3),
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+meteorite_dbscan %>%
+  filter(____(cluster))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="k-means has no way to leave a sample out: every fragment is assigned to whichever cluster center it is closest to, however poorly it fits. dbscan only grows clusters through points that have enough close neighbors, so a fragment sitting between the clumps is left as NA.">
+<p class="scq">Self-check: k-means was run on the same two fragments earlier in the chapter. What did it do with them?</p>
+<label><input type="radio"> It placed each of them in one of the three clusters anyway</label>
+<label><input type="radio"> It left them unassigned, just as dbscan did</label>
+<label><input type="radio"> It put the two of them together in a fourth cluster of their own</label>
+</div>
+
+<hr>
+
 ## summarize by cluster {-}
 
-One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the `cluster` column and use `n()`, which counts the rows in each group (we met it in the wrangling chapter):
+One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the `cluster` column and use `n()`, which counts the rows in each group:
 
 
 ``` r
@@ -4017,14 +4095,42 @@ meteorite_dbscan %>%
 ## 4 <NA>          2
 ```
 
-Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an `NA` row. A count like this is often the question itself — which kind of meteorite turned up most often, or how big is the largest group — so it is worth reaching for first.
+Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an `NA` row. A count like this is often the question itself: which kind of meteorite turned up most often, or how big is the largest group?
 
-We can also ask how the two measurements we did *not* cluster on, nickel and silica, differ among the clusters. The clustering output only carries the columns we clustered on, so we first join the rest of the data back on:
+#### concept check {-}
+
+Using meteorite_dbscan from the previous concept check, fill in the blank with the function that counts the rows in each group. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan %>%
+  group_by(cluster) %>%
+  summarize(n = ____())</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="dbscan gives the fragments it could not place a cluster of NA, and group_by treats NA as a group of its own, so the NA row counts the unassigned fragments. It is not a cluster, and it should not be read as a fourth kind of meteorite.">
+<p class="scq">Self-check: what does the row with NA in the cluster column count?</p>
+<label><input type="radio"> Fragments that were missing an iron or density measurement</label>
+<label><input type="radio"> Fragments that dbscan did not assign to any cluster</label>
+<label><input type="radio"> A fourth, smaller cluster that dbscan found</label>
+</div>
+
+<hr>
+
+### joining data {-}
+
+We can also ask how the two measurements we did *not* cluster on, nickel and silica, differ among the clusters. The clustering output only carries the ID columns and the columns we clustered on, so nickel and silica have to be brought back from `meteorite_fragments`. Combining two tables like this is called a join. `left_join(x, y, by = ...)` keeps every row of `x`, finds the row of `y` with the same value in the `by` column(s), and adds that row's other columns alongside. Each fragment has its own ID in the `fragment` column of both tables, so we match on that, and take only the two columns we need from `meteorite_fragments`:
 
 
 ``` r
-meteorite_dbscan <- left_join(meteorite_dbscan, meteorite_fragments)
+meteorite_dbscan <- left_join(
+  meteorite_dbscan,
+  select(meteorite_fragments, fragment, nickel_percent, silica_percent),
+  by = "fragment"
+)
+```
 
+Selecting first matters: any column that is in both tables but not in `by` comes back twice, renamed with `.x` and `.y` endings, and code that refers to it by its old name stops working. Naming `by` is worth it too: left out, `left_join` matches on every column the two tables share, which is not always what was intended. (The networks chapter used `full_join()`, which works the same way but also keeps rows of `y` that have no match in `x`.) With nickel and silica back in place, we can summarize them by cluster:
+
+
+``` r
 meteorite_dbscan %>%
   select(cluster, nickel_percent, silica_percent) %>%
   pivot_longer(cols = c(2,3), names_to = "measurement", values_to = "percent") %>%
@@ -4037,7 +4143,7 @@ plot_2 <- ggplot() +
       meteorite_dbscan_clean,
       mean = mean(percent), sd = sd(percent)
     ),
-    aes(x = cluster, y = mean, fill = cluster),
+    aes(x = mean, y = cluster, fill = cluster),
     color = "black", alpha = 0.6
   ) +
   geom_errorbar(
@@ -4045,15 +4151,17 @@ plot_2 <- ggplot() +
       meteorite_dbscan_clean,
       mean = mean(percent), sd = sd(percent)
     ),
-    aes(x = cluster, ymin = mean-sd, ymax = mean+sd),
-    color = "black", width = 0.5
+    aes(y = cluster, xmin = mean-sd, xmax = mean+sd),
+    color = "black", width = 0.2
   ) +
-  facet_grid(.~measurement, scales = "free_y") + theme_bw() +
+  facet_grid(.~measurement, scales = "free_x") + theme_bw() +
+  theme(panel.spacing = unit(1.5, "lines")) +
   geom_jitter(
     data = meteorite_dbscan_clean,
-    aes(x = cluster, y = percent, fill = cluster), width = 0.05,
+    aes(x = percent, y = cluster, fill = cluster), width = 0, height = 0.05,
     shape = 21
   ) +
+  labs(x = "percent") +
   scale_fill_manual(values = discrete_palette) 
 
 plot_1 <- ggplot() +
@@ -4073,13 +4181,34 @@ plot_1 + plot_2
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-376-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-376)Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.</p>
+<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-377)Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.</p>
 </div>
 
-The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artefact of the method.
+The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artifact of the method.
 
-Finally, nothing limits clustering to two columns: list as many as you like in `columns_w_values_for_single_analyte` and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which you can try with the tools from the dimensionality reduction chapter.
+
+#### concept check {-}
+
+Fill in the blank with the column that identifies a fragment in both tables, so that each fragment's nickel content is matched up with its cluster. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan %>%
+  select(fragment, cluster) %>%
+  left_join(meteorite_fragments, by = "____") %>%
+  select(fragment, cluster, nickel_percent)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The by argument names the column whose values must match for a row of one table to be paired with a row of the other. left_join keeps every row of the first table and brings across the other columns of the matching row in the second.">
+<p class="scq">Self-check: what does the by argument tell left_join?</p>
+<label><input type="radio"> Which column to use to match each row of the first table to a row of the second</label>
+<label><input type="radio"> Which columns to bring across from the second table</label>
+<label><input type="radio"> Which column to sort the joined table by</label>
+</div>
+
+<hr>
+
+Finally, nothing limits clustering to two columns: any number of columns can be listed in `columns_w_values_for_single_analyte` and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which we will look at in the next chapter.
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 ## exercises {-}
 
@@ -4099,13 +4228,15 @@ Finally, nothing limits clustering to two columns: list as many as you like in `
 
 ## further reading {-}
 
-- [DBSCAN Clustering in R](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940). STHDA's tutorial walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages.
+- [Visualizing K-Means Clustering](https://www.naftaliharris.com/blog/visualizing-k-means-clustering/). Naftali Harris's interactive page runs k-means one step at a time on a choice of point patterns, including ones where it fails, and lets the reader place the starting centers by hand to see how much the answer depends on them.
 
-- [Hierarchical and Density-Based Clustering](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/). Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach.
+- [Visualizing DBSCAN Clustering](https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/). The companion page for dbscan: set the neighbor count and the distance threshold, then watch clusters grow outwards from dense points and leave stragglers unassigned. The page invites a comparison with k-means on the same point patterns.
 
-- [Hierarchical clustering dendrogram reference](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png). A color-coded dendrogram figure from the accompanying tutorial that distills the merge sequence, making it easy to visualize where to cut the tree when defining flat clusters.
+- [Clustering](https://doi.org/10.1038/nmeth.4299). Naomi Altman and Martin Krzywinski's short *Points of Significance* column in *Nature Methods* (2017) explains clustering for life scientists, built around a warning: a clustering method will find groups in data whether they are there or not.
 
-- [DBSCAN Clustering in R Programming](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/). GeeksforGeeks' step-by-step R workflow for running DBSCAN, visualizing clusters, and understanding how adjusting `eps` and `MinPts` affects noise handling.
+- [K-means clustering with tidy data principles](https://www.tidymodels.org/learn/statistics/k-means/). A tidymodels tutorial that runs base R's `kmeans()` across a range of k and plots the total within-cluster sum of squares, the same elbow this chapter draws with `parameters = "elbow"`.
+
+- [DBSCAN: Density-Based Clustering in R](https://www.datanovia.com/learn/machine-learning/clustering/dbscan). A worked R tutorial using the `dbscan` package, showing how the two parameters (`minPts` and `eps`) control which points form clusters and which are treated as noise.
 
 
 <!-- ## exercises {-}
@@ -4280,7 +4411,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-411-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-413-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -4328,7 +4459,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-412-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-414-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether
 the distribution is skewed, and whether any group is bimodal. All three change which test to
@@ -4356,7 +4487,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-413-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-415-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## test selection {-}
 
@@ -4419,7 +4550,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-416-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-418-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -4432,7 +4563,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-417-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-419-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -4521,7 +4652,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-422-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-424-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -4535,7 +4666,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-423-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-425-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -4645,7 +4776,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-429-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-431-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -4715,7 +4846,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-432-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-434-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -4730,7 +4861,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-433-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-435-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -4880,7 +5011,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-438-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-440-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -4969,7 +5100,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-473-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-475-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
@@ -5070,7 +5201,7 @@ plot1 <- ggplot() +
 plot1
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-479-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-481-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -5082,7 +5213,7 @@ ggplot(predictions_from_basic_linear_model) +
   geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-480-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -5103,7 +5234,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -5115,7 +5246,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-483-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -5179,7 +5310,7 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-487-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -5331,7 +5462,7 @@ plot3 <- ggplot(model_comparison_data) + geom_point(aes(
 plot_grid(plot1, plot2, plot3, nrow = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-487-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-489-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -5402,7 +5533,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-488-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-490-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -5478,7 +5609,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-491-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-493-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -5505,7 +5636,7 @@ ggplot() +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-492-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-494-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -5557,7 +5688,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-494-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-496-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5795,8 +5926,8 @@ select(search_results, term, title)
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
-## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
-## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
+## 10 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
+## 11 cuticular wax biosynthesis Regulatory mechanisms underly…
 ## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
 ```
 
@@ -5832,7 +5963,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-528-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -5882,7 +6013,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -5906,7 +6037,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-531-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-533-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -5946,7 +6077,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -5981,15 +6112,15 @@ select(search_results, title, generation)
 ##  1 Ginsenosides in Panax genus and their biosynt… Ginsenosi…
 ##  2 β-Amyrin synthase from Conyza blinii expresse… Oxidosqua…
 ##  3 β-Amyrin synthase (EsBAS) and β-amyrin 28-oxi… Siberian …
-##  4 Friedelin in Maytenus ilicifolia Is Produced … Friedelin…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … Triterpen…
 ##  5 Friedelin Synthase from Maytenus ilicifolia: … Friedelin…
 ##  6 Genome Mining and Gene Expression Reveal Mayt… Maytansin…
 ##  7 Current status and prospects of herbicide-res… herbicide…
 ##  8 Sorghum (Sorghum bicolor).                     Sorghum t…
 ##  9 Potential food applications of sorghum (Sorgh… Sorghum, …
-## 10 Regulatory mechanisms underlying cuticular wa… Plant cut…
-## 11 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
-## 12 Update on Cuticular Wax Biosynthesis and Its … plant cut…
+## 10 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
+## 11 Regulatory mechanisms underlying cuticular wa… Plant cut…
+## 12 Update on Cuticular Wax Biosynthesis and Its … Plant cut…
 ```
 
 ## {-}
@@ -6131,7 +6262,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-556-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-558-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -6375,7 +6506,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-584-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-586-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -6403,7 +6534,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-585-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-587-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
@@ -6448,7 +6579,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-587-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-589-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -6464,7 +6595,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-588-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-590-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -6473,7 +6604,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-589-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-591-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
@@ -6544,7 +6675,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-591-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-593-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -6564,7 +6695,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-592-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-594-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -6642,7 +6773,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-597-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-599-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -6677,7 +6808,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -6899,7 +7030,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-620-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-622-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -7560,7 +7691,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-646-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-648-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -7750,7 +7881,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-666-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-668-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -7773,7 +7904,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-667-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-669-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -7798,7 +7929,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-668-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-670-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -7871,7 +8002,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-673-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-675-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -7883,7 +8014,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-674-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-676-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -7899,7 +8030,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-675-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-677-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -7914,7 +8045,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-676-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-678-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -7943,7 +8074,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-677-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-679-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -7968,7 +8099,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-678-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-680-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -8015,7 +8146,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-679-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-681-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -8036,7 +8167,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-680-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-682-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ## {-}

@@ -141,7 +141,7 @@
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-333"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%"><p class="caption">
-Figure 2.19: Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.
+Figure: Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.
 </p>
 </div>
 <p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
@@ -204,7 +204,7 @@ Figure 2.19: Principal component rotation illustrated. The bold axes denote the 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-335"></span>
 <img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%"><p class="caption">
-Figure 2.20: PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.
+Figure: PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.
 </p>
 </div>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
@@ -252,7 +252,7 @@ Figure 2.20: PCA scores for Alaskan lake chemistry. Points show each lake positi
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-337"></span>
 <img src="index_files/figure-html/unnamed-chunk-337-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%"><p class="caption">
-Figure 2.21: Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.
+Figure: Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.
 </p>
 </div>
 <p>Great! Here is how to read the ordination plot:</p>
@@ -299,7 +299,7 @@ Figure 2.21: Circular ordination plot for Alaskan lakes. Arrows mark analyte loa
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-338"></span>
 <img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%"><p class="caption">
-Figure 2.22: PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.
+Figure: PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.
 </p>
 </div>
 <p>Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:</p>
@@ -312,7 +312,7 @@ Figure 2.22: PCA biplot combining scores and loadings. Lakes are plotted as poin
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-339"></span>
 <img src="index_files/figure-html/unnamed-chunk-339-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%"><p class="caption">
-Figure 2.23: Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.
+Figure: Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.
 </p>
 </div>
 </div>
@@ -348,7 +348,7 @@ Figure 2.23: Analyte loadings by principal component. The dot plot re-expresses 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-340"></span>
 <img src="index_files/figure-html/unnamed-chunk-340-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%"><p class="caption">
-Figure 2.24: Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.
+Figure: Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.
 </p>
 </div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding <code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed()</a></code> to a ggplot.</p>
@@ -360,7 +360,7 @@ Figure 2.24: Variance explained by principal components. The scree curve shows h
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-341"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%"><p class="caption">
-Figure 2.25: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
+Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
 </p>
 </div>
 <p>The function takes three key arguments:</p>
@@ -419,7 +419,7 @@ Figure 2.25: Screenshot of the <code>pcaVisualizer()</code> dashboard showing th
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-344"></span>
 <img src="index_files/figure-html/unnamed-chunk-344-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%"><p class="caption">
-Figure 2.26: PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.
+Figure: PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.
 </p>
 </div>
 <p>In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.</p>
@@ -440,7 +440,7 @@ Figure 2.26: PCA projection of wine chemistry. Samples are positioned by the fir
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-345"></span>
 <img src="index_files/figure-html/unnamed-chunk-345-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%"><p class="caption">
-Figure 2.27: UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.
+Figure: UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.
 </p>
 </div>
 <p>In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.</p>
@@ -514,7 +514,7 @@ Figure 2.27: UMAP embedding of wine chemistry. The non-linear projection preserv
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-12.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

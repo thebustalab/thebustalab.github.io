@@ -1,18 +1,21 @@
 # flat clustering {-}
 
-"Do my samples fall into definable clusters?"
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png', dpi = NA)
+```
+
+Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
+</script>
 
 ## {-}
 
 ## kmeans {-}
 
-One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question by building trees with hierarchical clustering. Here we take a different approach, one that sorts samples straight into a set number of groups without building a tree first. It is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png', dpi = NA)
-```
-
-One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
+K-means is the first of the two methods. It sorts samples into however many clusters we ask for, placing each sample in the cluster whose center it sits closest to.
 
 For the examples in this chapter we will use `meteorite_fragments`, which loads along with the rest of the course datasets. It describes 37 meteorite fragments recovered from four places where meteorite hunters search: the Atacama and Sahara deserts, the Nullarbor Plain in Australia, and the Antarctic ice fields. Each fragment was measured for its iron content (`iron_percent`), its density (`density_g_per_cm3`), and two more measurements we will come back to at the end of the chapter, `nickel_percent` and `silica_percent`. (These are simulated data, built with realistic values for each kind of meteorite.)
 
@@ -29,7 +32,7 @@ ggplot(meteorite_fragments, aes(x = iron_percent, y = density_g_per_cm3)) +
   labs(x = "iron (%)", y = "density (g/cm³)")
 ```
 
-Your eye probably finds three groups right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what your eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` — the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter. Below we ask for three; the next section shows how to arrive at that number yourself. (If you leave `parameters` out altogether, desktop R will open a small application that lets you choose the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, always say what you want explicitly.)
+Three groups stand out right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what the eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` (the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter). Below we ask for three clusters, and the next section shows how to arrive at that number. (With `parameters` left out altogether, desktop R opens a small application for choosing the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, the number of clusters always has to be given explicitly.)
 
 ```{r, message = FALSE}
 meteorite_clusters <- runMatrixAnalysis(
@@ -43,9 +46,9 @@ meteorite_clusters <- runMatrixAnalysis(
 meteorite_clusters
 ```
 
-The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the networks chapter, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling iron would decide the clusters almost on its own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
+The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
-```{r, fig.width = 6, fig.height = 5, fig.cap = "The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighbouring cluster."}
+```{r, fig.width = 6, fig.height = 5, fig.cap = "The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster."}
 meteorite_clusters$cluster <- factor(meteorite_clusters$cluster)
 ggplot() +
   geom_point(
@@ -61,11 +64,36 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixed through it; iron meteorites are almost solid iron-nickel metal, and so are more than twice as dense; and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. It has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
+The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixedin, iron meteorites are almost solid iron-nickel metal (and so are more than twice as dense), and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. K-means has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
+
+#### concept check {-}
+
+Fill in the blank with the analysis that sorts the fragments into a set number of clusters. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_clusters <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "____",
+  parameters = c(n_clusters = 3),
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = factor(cluster))) +
+  geom_point(shape = 21, size = 4) +
+  theme_classic()</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Iron runs from about 20 to over 90 percent, while density spans only about 3 to 8 g/cm³. Without scaling, distances between fragments would be almost entirely differences in iron, so iron would decide the clusters on its own. Scaling puts both columns on an equal footing.">
+<p class="scq">Self-check: runMatrixAnalysis scales each column before k-means runs. Why does that matter for these two columns?</p>
+<label><input type="radio"> Scaling makes every cluster end up with the same number of fragments</label>
+<label><input type="radio"> Iron spans a much wider range of numbers than density, so without scaling iron would decide the clusters almost on its own</label>
+<label><input type="radio"> k-means cannot run on columns that contain decimal numbers</label>
+</div>
+
+<hr>
 
 ## choosing k {-}
 
-Above we simply asserted that three clusters was the right number. How would we know? This is what the elbow method, illustrated at the top of this chapter, is for, and we can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
+Above we simply asserted that three clusters was the right number. How would we know? Fewer clusters are generally easier to interpret, but too few leave a lot of variance inside each cluster, so the goal is a balance between the two. The elbow method, illustrated in the image at the top of this chapter, is a way of finding that balance. In that image, the same points are clustered into one, two, three, and more clusters (panel **A**), the within-cluster variance is measured for each number of clusters (**B**), and those values are plotted against the number of clusters (**C**). The best balance sits at the "elbow", the point where the line bends most sharply (the point with the smallest angle theta). The elbow point indicates the number of clusters we can use to get the smallest within-cluster variance before diminishing returns set in. We can ask `runMatrixAnalysis` for the numbers it needs by setting `parameters = "elbow"`:
 
 ```{r, message = FALSE}
 meteorite_elbow <- runMatrixAnalysis(
@@ -79,7 +107,7 @@ meteorite_elbow <- runMatrixAnalysis(
 meteorite_elbow
 ```
 
-The elbow follows the same `scale_variance` setting as the clustering, so the elbow you read always belongs to the clusters you then ask for. This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters — in the limit, where every sample is its own cluster, there is no within-cluster variance left at all — so the smallest value is never the answer. What we are after is the bend:
+The elbow follows the same `scale_variance` setting as the clustering, so the elbow on the plot always belongs to the clusters that could then be requested by changing the `parameters` argument to `n_cluster = 3`, or whatever number is chosen. This gives us one row for each number of clusters it tried: `k`, and the `within_cluster_variance` that number of clusters leaves behind. Notice that the within-cluster variance *always* falls as we add clusters. At the extreme, where every sample is its own cluster, there is no within-cluster variance left at all. What we are after is the bend:
 
 ```{r, fig.width = 5, fig.height = 4, fig.cap = "Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters."}
 ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
@@ -89,7 +117,7 @@ ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
   labs(x = "number of clusters (k)", y = "within-cluster variance")
 ```
 
-Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgement call, not a calculation. Part of the skill is recognising when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely your choice).
+Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice).
 
 By default `runMatrixAnalysis` tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:
 
@@ -103,9 +131,35 @@ runMatrixAnalysis(
 )
 ```
 
+#### concept check {-}
+
+Fill in the blank so that runMatrixAnalysis returns the within-cluster variance for each number of clusters instead of the clusters themselves. Press Run and find the bend.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_elbow <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "kmeans",
+  parameters = "____",
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
+  geom_line() +
+  geom_point(size = 3) +
+  theme_classic()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Within-cluster variance always falls as clusters are added, and reaches zero when every sample is its own cluster, so the lowest value just points at the largest k tried. The useful number is where the line bends and adding clusters stops buying much: here, three.">
+<p class="scq">Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the number of clusters to choose?</p>
+<label><input type="radio"> Because runMatrixAnalysis cannot make more than six clusters</label>
+<label><input type="radio"> Because an even number of clusters is never correct</label>
+<label><input type="radio"> Because the variance always falls as clusters are added, so the lowest value says nothing; the bend, where extra clusters stop helping much, is what to read</label>
+</div>
+
+<hr>
+
 ## dbscan {-}
 
-There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters, as in k-means. dbscan grows a cluster outwards from points that have at least "k" neighbours within a "threshold" distance of them; a point that is not close enough to any cluster is left unassigned. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting these two parameters. In the context of a markdown document, simply provide "k" and "threshold" to the `parameters` argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters. dbscan grows a cluster outwards from points that have at least "k" neighbors within a "threshold" distance of them, and a point that is not close enough to any cluster is left unassigned. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting these two parameters. In the context of a markdown document, escape room, or sandbox, simply provide "k" and "threshold" to the `parameters` argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:
 
 ```{r, message = FALSE}
 meteorite_dbscan <- runMatrixAnalysis(
@@ -137,9 +191,33 @@ ggplot() +
 
 dbscan finds the same three groups, but this time the two in-between fragments are left out, with `NA` as their cluster. For a meteorite hunter that is the more useful answer: a fragment that fits none of the known kinds is exactly the one worth a closer look.
 
+#### concept check {-}
+
+Fill in the blank with the function that tests for missing values, so that only the fragments dbscan left unassigned are kept. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan <- runMatrixAnalysis(
+  data = meteorite_fragments,
+  analysis = "dbscan",
+  parameters = c(4, 0.3),
+  columns_w_values_for_single_analyte = c("iron_percent", "density_g_per_cm3"),
+  columns_w_sample_ID_info = c("fragment", "find_site")
+)
+
+meteorite_dbscan %>%
+  filter(____(cluster))</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="k-means has no way to leave a sample out: every fragment is assigned to whichever cluster center it is closest to, however poorly it fits. dbscan only grows clusters through points that have enough close neighbors, so a fragment sitting between the clumps is left as NA.">
+<p class="scq">Self-check: k-means was run on the same two fragments earlier in the chapter. What did it do with them?</p>
+<label><input type="radio"> It placed each of them in one of the three clusters anyway</label>
+<label><input type="radio"> It left them unassigned, just as dbscan did</label>
+<label><input type="radio"> It put the two of them together in a fourth cluster of their own</label>
+</div>
+
+<hr>
+
 ## summarize by cluster {-}
 
-One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the `cluster` column and use `n()`, which counts the rows in each group (we met it in the wrangling chapter):
+One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the `cluster` column and use `n()`, which counts the rows in each group:
 
 ```{r, message = FALSE}
 meteorite_dbscan %>%
@@ -147,13 +225,40 @@ meteorite_dbscan %>%
   summarize(n = n())
 ```
 
-Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an `NA` row. A count like this is often the question itself — which kind of meteorite turned up most often, or how big is the largest group — so it is worth reaching for first.
+Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an `NA` row. A count like this is often the question itself: which kind of meteorite turned up most often, or how big is the largest group?
 
-We can also ask how the two measurements we did *not* cluster on, nickel and silica, differ among the clusters. The clustering output only carries the columns we clustered on, so we first join the rest of the data back on:
+#### concept check {-}
 
-```{r, fig.width = 10, fig.height = 5, message = FALSE, fig.cap = "Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster."}
-meteorite_dbscan <- left_join(meteorite_dbscan, meteorite_fragments)
+Using meteorite_dbscan from the previous concept check, fill in the blank with the function that counts the rows in each group. Press Run.
 
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan %>%
+  group_by(cluster) %>%
+  summarize(n = ____())</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="dbscan gives the fragments it could not place a cluster of NA, and group_by treats NA as a group of its own, so the NA row counts the unassigned fragments. It is not a cluster, and it should not be read as a fourth kind of meteorite.">
+<p class="scq">Self-check: what does the row with NA in the cluster column count?</p>
+<label><input type="radio"> Fragments that were missing an iron or density measurement</label>
+<label><input type="radio"> Fragments that dbscan did not assign to any cluster</label>
+<label><input type="radio"> A fourth, smaller cluster that dbscan found</label>
+</div>
+
+<hr>
+
+### joining data {-}
+
+We can also ask how the two measurements we did *not* cluster on, nickel and silica, differ among the clusters. The clustering output only carries the ID columns and the columns we clustered on, so nickel and silica have to be brought back from `meteorite_fragments`. Combining two tables like this is called a join. `left_join(x, y, by = ...)` keeps every row of `x`, finds the row of `y` with the same value in the `by` column(s), and adds that row's other columns alongside. Each fragment has its own ID in the `fragment` column of both tables, so we match on that, and take only the two columns we need from `meteorite_fragments`:
+
+```{r, message = FALSE}
+meteorite_dbscan <- left_join(
+  meteorite_dbscan,
+  select(meteorite_fragments, fragment, nickel_percent, silica_percent),
+  by = "fragment"
+)
+```
+
+Selecting first matters: any column that is in both tables but not in `by` comes back twice, renamed with `.x` and `.y` endings, and code that refers to it by its old name stops working. Naming `by` is worth it too: left out, `left_join` matches on every column the two tables share, which is not always what was intended. (The networks chapter used `full_join()`, which works the same way but also keeps rows of `y` that have no match in `x`.) With nickel and silica back in place, we can summarize them by cluster:
+
+```{r, fig.width = 10, fig.height = 5, message = FALSE, fig.cap = "Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster."}
 meteorite_dbscan %>%
   select(cluster, nickel_percent, silica_percent) %>%
   pivot_longer(cols = c(2,3), names_to = "measurement", values_to = "percent") %>%
@@ -166,7 +271,7 @@ plot_2 <- ggplot() +
       meteorite_dbscan_clean,
       mean = mean(percent), sd = sd(percent)
     ),
-    aes(x = cluster, y = mean, fill = cluster),
+    aes(x = mean, y = cluster, fill = cluster),
     color = "black", alpha = 0.6
   ) +
   geom_errorbar(
@@ -174,15 +279,17 @@ plot_2 <- ggplot() +
       meteorite_dbscan_clean,
       mean = mean(percent), sd = sd(percent)
     ),
-    aes(x = cluster, ymin = mean-sd, ymax = mean+sd),
-    color = "black", width = 0.5
+    aes(y = cluster, xmin = mean-sd, xmax = mean+sd),
+    color = "black", width = 0.2
   ) +
-  facet_grid(.~measurement, scales = "free_y") + theme_bw() +
+  facet_grid(.~measurement, scales = "free_x") + theme_bw() +
+  theme(panel.spacing = unit(1.5, "lines")) +
   geom_jitter(
     data = meteorite_dbscan_clean,
-    aes(x = cluster, y = percent, fill = cluster), width = 0.05,
+    aes(x = percent, y = cluster, fill = cluster), width = 0, height = 0.05,
     shape = 21
   ) +
+  labs(x = "percent") +
   scale_fill_manual(values = discrete_palette) 
 
 plot_1 <- ggplot() +
@@ -201,9 +308,30 @@ plot_1 <- ggplot() +
 plot_1 + plot_2
 ```
 
-The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artefact of the method.
+The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artifact of the method.
 
-Finally, nothing limits clustering to two columns: list as many as you like in `columns_w_values_for_single_analyte` and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which you can try with the tools from the dimensionality reduction chapter.
+
+#### concept check {-}
+
+Fill in the blank with the column that identifies a fragment in both tables, so that each fragment's nickel content is matched up with its cluster. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">meteorite_dbscan %>%
+  select(fragment, cluster) %>%
+  left_join(meteorite_fragments, by = "____") %>%
+  select(fragment, cluster, nickel_percent)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The by argument names the column whose values must match for a row of one table to be paired with a row of the other. left_join keeps every row of the first table and brings across the other columns of the matching row in the second.">
+<p class="scq">Self-check: what does the by argument tell left_join?</p>
+<label><input type="radio"> Which column to use to match each row of the first table to a row of the second</label>
+<label><input type="radio"> Which columns to bring across from the second table</label>
+<label><input type="radio"> Which column to sort the joined table by</label>
+</div>
+
+<hr>
+
+Finally, nothing limits clustering to two columns: any number of columns can be listed in `columns_w_values_for_single_analyte` and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which we will look at in the next chapter.
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 ## exercises {-}
 
@@ -226,13 +354,15 @@ cat('
 
 ## further reading {-}
 
-- [DBSCAN Clustering in R](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940). STHDA's tutorial walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages.
+- [Visualizing K-Means Clustering](https://www.naftaliharris.com/blog/visualizing-k-means-clustering/). Naftali Harris's interactive page runs k-means one step at a time on a choice of point patterns, including ones where it fails, and lets the reader place the starting centers by hand to see how much the answer depends on them.
 
-- [Hierarchical and Density-Based Clustering](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/). Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach.
+- [Visualizing DBSCAN Clustering](https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/). The companion page for dbscan: set the neighbor count and the distance threshold, then watch clusters grow outwards from dense points and leave stragglers unassigned. The page invites a comparison with k-means on the same point patterns.
 
-- [Hierarchical clustering dendrogram reference](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png). A color-coded dendrogram figure from the accompanying tutorial that distills the merge sequence, making it easy to visualize where to cut the tree when defining flat clusters.
+- [Clustering](https://doi.org/10.1038/nmeth.4299). Naomi Altman and Martin Krzywinski's short *Points of Significance* column in *Nature Methods* (2017) explains clustering for life scientists, built around a warning: a clustering method will find groups in data whether they are there or not.
 
-- [DBSCAN Clustering in R Programming](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/). GeeksforGeeks' step-by-step R workflow for running DBSCAN, visualizing clusters, and understanding how adjusting `eps` and `MinPts` affects noise handling.
+- [K-means clustering with tidy data principles](https://www.tidymodels.org/learn/statistics/k-means/). A tidymodels tutorial that runs base R's `kmeans()` across a range of k and plots the total within-cluster sum of squares, the same elbow this chapter draws with `parameters = "elbow"`.
+
+- [DBSCAN: Density-Based Clustering in R](https://www.datanovia.com/learn/machine-learning/clustering/dbscan). A worked R tutorial using the `dbscan` package, showing how the two parameters (`minPts` and `eps`) control which points form clusters and which are treated as noise.
 
 
 <!-- ## exercises {-}
