@@ -162,6 +162,7 @@
     const DATASETS = [
       "alaska_lake_data", "hawaii_aquifers", "solvents", "beer_components",
       "wine_quality", "chemical_blooms", "tequila_chemistry", "algae_data",
+      "meteorite_fragments",
     ].map(name => ({ name, url: `/phylochemistry/sample_data/${name}.csv` }));
 
     /*
@@ -201,6 +202,17 @@ buildCaption <- function() {
      * injected names to drop by hand are the two callable ones. A function the STUDENT defines is kept
      * and shown — RStudio lists those too, and losing your own function from the pane is confusing.
      */
+    // discrete_palette — copied verbatim from phylochemistry/modules/datasets.R, which defines it on
+    // desktop; the book's chapters (e.g. ch.10's scale_fill_manual) use it bare.
+    const DISCRETE_PALETTE_R = `
+discrete_palette <- c(
+  "dodgerblue2", "#E31A1C", "green4", "#6A3D9A", "#FF7F00", "black", "gold1",
+  "skyblue2", "#FB9A99", "palegreen2", "#CAB2D6", "#FDBF6F", "gray70", "khaki2",
+  "maroon", "orchid1", "deeppink1", "blue1", "steelblue4", "darkturquoise", "green1",
+  "yellow4", "yellow3", "darkorange4", "brown"
+)
+`;
+
     const ENV_R = `
 .__env_take <- function() {
   nms <- setdiff(ls(envir = globalenv()), c("view", "View", "buildCaption"))
@@ -234,11 +246,14 @@ buildCaption <- function() {
 
     const console_ = new WebRConsole(
       {
-        packages: ["dplyr", "ggplot2", "tidyr", "readr", "stringr"],
+        // ggforce (geom_mark_ellipse) and patchwork (plot_1 + plot_2) are what ch.10's clustering
+        // code needs beyond the shared baseline (2026-10-14). Page-level on purpose: adding them to
+        // shared/r_packages.js would lengthen every escape room's boot too.
+        packages: ["dplyr", "ggplot2", "tidyr", "readr", "stringr", "ggforce", "patchwork"],
         datasets: DATASETS,
         // The shared console appends its own reset snapshot AFTER this string, so everything defined
         // here is part of the state "reset session" restores. Nothing to do from this side.
-        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr)})" + CAPTION_R + ENV_R,
+        setup: "suppressMessages({library(dplyr); library(ggplot2); library(tidyr); library(readr); library(stringr); library(ggforce); library(patchwork)})" + DISCRETE_PALETTE_R + CAPTION_R + ENV_R,
       },
       { status: document.getElementById("status"), output: document.getElementById("output") }
     );
