@@ -13,8 +13,8 @@ AGENTS.md
 # students source by URL, live and fetchable with pre-dgx behaviour. All three deleted 2026-09-08;
 # they leave the live site at the next deploy (bulk staging picks up the deletions).
 # Pattern checked against the tree: it matches only `*.bak*` backups and NOT
-# `phylochemistry/bustalabfunctions/analyzeGCMSdata4_bak.R` (underscore, no dot), which stays
-# tracked. NOTE: gitignore does not untrack an already-committed file — deleting it is what removes
+# `phylochemistry/bustalabfunctions/z_archive/analyzeGCMSdata4_bak.R` (underscore, no dot), which is
+# kept out by the analyzeGCMSdata archive rule below instead. NOTE: gitignore does not untrack an already-committed file — deleting it is what removes
 # it from the site; this rule only stops the next one being published.
 *.bak*
 
@@ -116,3 +116,10 @@ z_history/
 # Local-only build harness (machine paths, private data location) — never publish
 integrated_bioanalytics/_local_harness.R
 integrated_bioanalytics/book_test/
+
+# Retired analyzeGCMSdata versions (archived 2026-10-15): local-only history, kept off the public
+# site. The stubs at the old URLs point users to analyzeGCMSdata6(). The rest of
+# phylochemistry/z_archive/ predates this and stays tracked.
+phylochemistry/bustalabfunctions/z_archive/
+phylochemistry/z_archive/phylochemistry_analyzeGCMSdata1.R
+phylochemistry/z_archive/phylochemistry_analyzeGCMSdata2_3.R
