@@ -151,17 +151,17 @@
                 paste0(format(as.numeric(fi$mtime), digits = 17), ":", fi$size)
             }
             stamp_path <- function(derived) paste0(derived, ".stamp")
-            stamp_is_current <- function(derived, source) {
+            stamp_is_current <- function(derived, source, tag = "") {
                 if (!file.exists(derived)) return(FALSE)
-                want <- file_stamp(source)
-                if (is.na(want)) return(TRUE)     # source gone: keep what we have
+                want <- paste0(file_stamp(source), tag)
+                if (is.na(file_stamp(source))) return(TRUE)     # source gone: keep what we have
                 sp <- stamp_path(derived)
                 if (!file.exists(sp)) return(FALSE)
                 identical(readLines(sp, warn = FALSE)[1], want)
             }
-            write_stamp <- function(derived, source) {
+            write_stamp <- function(derived, source, tag = "") {
                 want <- file_stamp(source)
-                if (!is.na(want)) writeLines(want, stamp_path(derived))
+                if (!is.na(want)) writeLines(paste0(want, tag), stamp_path(derived))
                 invisible(NULL)
             }
 
@@ -180,6 +180,19 @@
 
             allion_store_path <- function(cdf_csv) paste0(cdf_csv, ".allions.csv")
 
+            ## Nominal m/z for the all-ion store. NOT round(): R rounds exact halves
+            ## to the EVEN integer, and this instrument reports heavy ions at x.5 -
+            ## Skylar's ion 467 sits at m/z 467.5 and went into bin 468, along with
+            ## 468.5 (2026-10-16), while the extracted-ion traces (a +/-0.6 window)
+            ## showed it at 467. floor(mz + 0.3) bins 281.7-282.69 as 282: whole-
+            ## number data unchanged, mass defects from -0.3 to +0.69 (wax-range
+            ## hydrocarbons up to ~m/z 600) kept on their nominal mass.
+            ## test_nominal_binning.R pins this.
+            nominal_mz <- function(mz) floor(as.numeric(mz) + 0.3)
+            ## Bumped whenever the binning changes, so every existing store rebuilds
+            ## once instead of serving bins made the old way.
+            .allion_binning_tag <- ":nominal-floor+0.3"
+
             ## One row per (rt, nominal m/z) with non-zero signal. Built once per
             ## sample from the framed CSV and cached on disk beside it. This is
             ## deliberately NOT folded into chromatograms.csv: that file is
@@ -187,9 +200,9 @@
             ## turn a small index into hundreds of megabytes.
             build_allion_store <- function(cdf_csv, force = FALSE) {
                 out <- allion_store_path(cdf_csv)
-                if (!force && stamp_is_current(out, cdf_csv)) return(invisible(out))
+                if (!force && stamp_is_current(out, cdf_csv, .allion_binning_tag)) return(invisible(out))
                 framed <- data.table::as.data.table(data.table::fread(cdf_csv))
-                framed[, mz := round(as.numeric(mz))]
+                framed[, mz := nominal_mz(mz)]
                 framed <- framed[!is.na(mz) & !is.na(rt) & !is.na(intensity)]
                 agg <- framed[, .(abundance = sum(intensity)), by = .(rt, mz)]
                 ## Keep every single-detector scan. Dropping non-positive rows is the
@@ -201,7 +214,7 @@
                 agg <- agg[mz == 0 | abundance > 0]
                 data.table::setorder(agg, rt, mz)
                 fwrite_atomic(agg, out)
-                write_stamp(out, cdf_csv)
+                write_stamp(out, cdf_csv, .allion_binning_tag)
                 invisible(out)
             }
 
@@ -221,7 +234,7 @@
 
             load_allions <- function(cdf_csv) {
                 p <- allion_store_path(cdf_csv)
-                fresh <- stamp_is_current(p, cdf_csv)
+                fresh <- stamp_is_current(p, cdf_csv, .allion_binning_tag)
                 if (!fresh) {
                     if (!is.null(.allion_cache[[cdf_csv]])) rm(list = cdf_csv, envir = .allion_cache)
                     build_allion_store(cdf_csv, force = TRUE)
@@ -1245,7 +1258,7 @@
                     ## lands during ingest, where there is already a progress
                     ## log, instead of freezing the first redraw.
 
-                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file]) ) {
+                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file], .allion_binning_tag) ) {
                             cat(paste("   Building all-ion store for ", paths_to_cdf_csvs[file], "\n", sep = ""))
                             build_allion_store(paths_to_cdf_csvs[file])
                         }

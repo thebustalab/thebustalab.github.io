@@ -85,9 +85,9 @@
     ##
     ##   rt        scan retention times
     ##   tic_net   baseline-corrected TIC per scan (signed; v6's TIC - baseline)
-    ##   ion_a     baseline-corrected diagnostic trace for the FIRST-eluting
-    ##             compound (one ion, or the sum of several), same scans
-    ##   ion_b     the same for the second-eluting compound
+    ##   ion_a     baseline-corrected diagnostic trace for compound 1 (one ion,
+    ##             or the sum of several), same scans; order of elution does not matter
+    ##   ion_b     the same for compound 2
     ##   crosstalk c(xA, xB): A's signal on ion_b per unit of its signal on
     ##             ion_a, and B's on ion_a per unit on ion_b. Default 0, 0.
     ##   scale     optional c(kA, kB) to use instead of fitting them (e.g.
@@ -297,14 +297,15 @@
         pt
     }
 
-    ## Rewrite one pair's rows from a finished split: A from the hump start to the
-    ## scan before the drop line, B from the drop line to the hump end, `area` =
-    ## the split areas. Returns the two rows.
+    ## Rewrite one pair's rows from a finished split. BOTH rows keep the whole
+    ## hump's bounds (Lucas, 2026-10-16): the shares are symmetric in the two
+    ## compounds, so nothing needs to know which elutes first - an earlier version
+    ## cut the rows at a drop line, which needed an elution order the data often
+    ## cannot give. `area` = each compound's split area. Returns the two rows.
     .gcms_pair_rows <- function(tmpl, tr, s) {
         if (nrow(tmpl) == 1) tmpl <- tmpl[c(1, 1), , drop = FALSE]
-        rt_sorted <- sort(tr$rt)
-        tmpl$peak_start <- c(min(tr$rt), s$drop_rt)
-        tmpl$peak_end   <- c(max(rt_sorted[rt_sorted < s$drop_rt]), max(tr$rt))
+        tmpl$peak_start <- rep(min(tr$rt), 2)
+        tmpl$peak_end   <- rep(max(tr$rt), 2)
         tmpl$peak_start_rt_offset <- tmpl$peak_start + tmpl$rt_offset
         tmpl$peak_end_rt_offset   <- tmpl$peak_end   + tmpl$rt_offset
         tmpl$area <- c(s$area_a, s$area_b)
@@ -319,7 +320,8 @@
 
     ## Renumber within each sample after rows were replaced.
     .gcms_renumber <- function(pt) {
-        pt <- pt[order(as.character(pt$path_to_cdf_csv), pt$peak_start), , drop = FALSE]
+        cs <- if ("coelution_split" %in% names(pt)) as.character(pt$coelution_split) else rep(NA_character_, nrow(pt))
+        pt <- pt[order(as.character(pt$path_to_cdf_csv), pt$peak_start, cs, na.last = TRUE), , drop = FALSE]
         if ("peak_number_within_sample" %in% names(pt))
             pt$peak_number_within_sample <- stats::ave(seq_len(nrow(pt)),
                                                        as.character(pt$path_to_cdf_csv), FUN = seq_along)
@@ -470,11 +472,7 @@
             } else k <- batch_k
             s <- gcms_split_coeluting(h$tr$rt, h$tr$tic_net, h$tr$ion_a, h$tr$ion_b,
                                       crosstalk = crosstalk, scale = k)
-            if (s$status != "ok" || is.na(s$drop_rt)) {
-                say("  skipped ", basename(smp), ": ",
-                    if (s$status != "ok") s$status else "the second compound never takes the majority of the TIC")
-                next
-            }
+            if (s$status != "ok") { say("  skipped ", basename(smp), ": ", s$status); next }
             tmpl <- .gcms_pair_rows(peak_table[h$rows, , drop = FALSE], h$tr, s)
             tmpl$split_id <- split_id
             tmpl$split_ions_a <- ions_a_txt; tmpl$split_ions_b <- ions_b_txt
@@ -530,8 +528,12 @@
             ib <- gcms_parse_ions(peak_table$split_ions_b[rows[1]])
             fail <- function(why) {
                 peak_table$split_status[rows] <<- paste("not split:", why)
+                ## Both rows span the whole hump, so the recompute has just given EACH
+                ## of them the whole hump's area. Blank them, so nothing that sums the
+                ## column counts the hump twice.
+                peak_table$area[rows] <<- NA_real_
                 say("  ", basename(smp), ": split ", peak_table$split_id[rows[1]], " not refreshed (", why,
-                    "); its rows carry plain drop-line areas")
+                    "); its areas are blank until it is fixed or unsplit")
             }
             if (any(!is.finite(k)) || length(ia) == 0 || length(ib) == 0) { fail("its stored settings are missing"); next }
             tr <- try(get_traces(smp, min(peak_table$peak_start[rows]), max(peak_table$peak_end[rows]), ia, ib), silent = TRUE)
@@ -540,7 +542,7 @@
             if (identical(tr, "not_loaded")) next
             if (inherits(tr, "try-error") || is.null(tr)) { fail("no TIC/ion traces"); next }
             s <- gcms_split_coeluting(tr$rt, tr$tic_net, tr$ion_a, tr$ion_b, crosstalk = crosstalk, scale = k)
-            if (s$status != "ok" || is.na(s$drop_rt)) { fail(if (s$status != "ok") s$status else "no drop line"); next }
+            if (s$status != "ok") { fail(s$status); next }
             tmpl <- .gcms_pair_rows(peak_table[rows, , drop = FALSE], tr, s)
             new_rows[[g]] <- tmpl
             drop_rows <- c(drop_rows, rows)
@@ -715,17 +717,17 @@
                 paste0(format(as.numeric(fi$mtime), digits = 17), ":", fi$size)
             }
             stamp_path <- function(derived) paste0(derived, ".stamp")
-            stamp_is_current <- function(derived, source) {
+            stamp_is_current <- function(derived, source, tag = "") {
                 if (!file.exists(derived)) return(FALSE)
-                want <- file_stamp(source)
-                if (is.na(want)) return(TRUE)     # source gone: keep what we have
+                want <- paste0(file_stamp(source), tag)
+                if (is.na(file_stamp(source))) return(TRUE)     # source gone: keep what we have
                 sp <- stamp_path(derived)
                 if (!file.exists(sp)) return(FALSE)
                 identical(readLines(sp, warn = FALSE)[1], want)
             }
-            write_stamp <- function(derived, source) {
+            write_stamp <- function(derived, source, tag = "") {
                 want <- file_stamp(source)
-                if (!is.na(want)) writeLines(want, stamp_path(derived))
+                if (!is.na(want)) writeLines(paste0(want, tag), stamp_path(derived))
                 invisible(NULL)
             }
 
@@ -744,6 +746,19 @@
 
             allion_store_path <- function(cdf_csv) paste0(cdf_csv, ".allions.csv")
 
+            ## Nominal m/z for the all-ion store. NOT round(): R rounds exact halves
+            ## to the EVEN integer, and this instrument reports heavy ions at x.5 -
+            ## Skylar's ion 467 sits at m/z 467.5 and went into bin 468, along with
+            ## 468.5 (2026-10-16), while the extracted-ion traces (a +/-0.6 window)
+            ## showed it at 467. floor(mz + 0.3) bins 281.7-282.69 as 282: whole-
+            ## number data unchanged, mass defects from -0.3 to +0.69 (wax-range
+            ## hydrocarbons up to ~m/z 600) kept on their nominal mass.
+            ## test_nominal_binning.R pins this.
+            nominal_mz <- function(mz) floor(as.numeric(mz) + 0.3)
+            ## Bumped whenever the binning changes, so every existing store rebuilds
+            ## once instead of serving bins made the old way.
+            .allion_binning_tag <- ":nominal-floor+0.3"
+
             ## One row per (rt, nominal m/z) with non-zero signal. Built once per
             ## sample from the framed CSV and cached on disk beside it. This is
             ## deliberately NOT folded into chromatograms.csv: that file is
@@ -751,9 +766,9 @@
             ## turn a small index into hundreds of megabytes.
             build_allion_store <- function(cdf_csv, force = FALSE) {
                 out <- allion_store_path(cdf_csv)
-                if (!force && stamp_is_current(out, cdf_csv)) return(invisible(out))
+                if (!force && stamp_is_current(out, cdf_csv, .allion_binning_tag)) return(invisible(out))
                 framed <- data.table::as.data.table(data.table::fread(cdf_csv))
-                framed[, mz := round(as.numeric(mz))]
+                framed[, mz := nominal_mz(mz)]
                 framed <- framed[!is.na(mz) & !is.na(rt) & !is.na(intensity)]
                 agg <- framed[, .(abundance = sum(intensity)), by = .(rt, mz)]
                 ## Keep every single-detector scan. Dropping non-positive rows is the
@@ -765,7 +780,7 @@
                 agg <- agg[mz == 0 | abundance > 0]
                 data.table::setorder(agg, rt, mz)
                 fwrite_atomic(agg, out)
-                write_stamp(out, cdf_csv)
+                write_stamp(out, cdf_csv, .allion_binning_tag)
                 invisible(out)
             }
 
@@ -785,7 +800,7 @@
 
             load_allions <- function(cdf_csv) {
                 p <- allion_store_path(cdf_csv)
-                fresh <- stamp_is_current(p, cdf_csv)
+                fresh <- stamp_is_current(p, cdf_csv, .allion_binning_tag)
                 if (!fresh) {
                     if (!is.null(.allion_cache[[cdf_csv]])) rm(list = cdf_csv, envir = .allion_cache)
                     build_allion_store(cdf_csv, force = TRUE)
@@ -1810,7 +1825,7 @@
                     ## lands during ingest, where there is already a progress
                     ## log, instead of freezing the first redraw.
 
-                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file]) ) {
+                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file], .allion_binning_tag) ) {
                             cat(paste("   Building all-ion store for ", paths_to_cdf_csvs[file], "\n", sep = ""))
                             build_allion_store(paths_to_cdf_csvs[file])
                         }
@@ -2220,10 +2235,10 @@
 
                         tags$hr(),
                         strong("Co-elution split"),
-                        helpText("Integrate the hump as ONE peak and press Shift+Q. Then give its peak number and the diagnostic ions of the first- and second-eluting compound, and press Split. The hump becomes two peaks in every sample, its TIC shared scan by scan by the ions. Each split keeps its own settings, and Shift+Q only refreshes it. Unsplit merges the pair a peak number belongs to back into one peak."),
+                        helpText("Integrate the hump as ONE peak and press Shift+Q. Then give its peak number and a diagnostic ion (or several) for each of the two compounds, in either order, and press Split. Pick ions that are strong in every scan of the hump: a sparse ion gives a noisy split. The hump becomes two peaks in every sample, its TIC shared scan by scan by the ions. Each split keeps its own settings, and Shift+Q only refreshes it. Unsplit merges the pair a peak number belongs to back into one peak."),
                         numericInput("split_peak", "Peak number", value = NA, min = 1, step = 1),
-                        textInput("split_ions_a", "Ions, first compound (e.g. 57, 71)", value = ""),
-                        textInput("split_ions_b", "Ions, second compound", value = ""),
+                        textInput("split_ions_a", "Ions, compound 1 (e.g. 282, 281)", value = ""),
+                        textInput("split_ions_b", "Ions, compound 2 (e.g. 111, 125)", value = ""),
                         radioButtons("split_k_mode", "Response factors",
                                      choices = c("Fit per sample" = "sample", "Fit across the batch" = "batch"),
                                      selected = "sample", inline = TRUE),
@@ -3045,7 +3060,10 @@
                                         peak_table <- peak_table[!is.na(peak_table$peak_start),]
                                         peak_table <- peak_table[order(peak_table$path_to_cdf_csv, peak_table$peak_start, peak_table$peak_end),]
                                         peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>%
-                                            mutate(duplicated = duplicated(paste(peak_start, peak_end, sep = "_")))
+                                            ## + coelution_split: the two rows of a co-elution split share the
+                                            ## hump's bounds by design and must not dedupe into one.
+                                            mutate(duplicated = duplicated(paste(peak_start, peak_end,
+                                                if ("coelution_split" %in% names(peak_table)) coelution_split else "", sep = "_")))
                                         peak_table <- as.data.frame(peak_table)
                                         peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
                                         peak_table <- peak_table[,!colnames(peak_table) == "duplicated"]
@@ -3056,7 +3074,9 @@
                                         samples_with_peaks <- unique(as.character(peak_table$path_to_cdf_csv))
                                         for (sample_number in seq_along(samples_with_peaks)) {
                                           peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_with_peaks[sample_number],]
-                                          peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start),]
+                                          peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start,
+                                              if ("coelution_split" %in% names(peaks_in_this_sample)) as.character(peaks_in_this_sample$coelution_split) else NA_character_,
+                                              na.last = TRUE),]
                                           peaks_in_this_sample$peak_number_within_sample <- seq(1,length(peaks_in_this_sample$path_to_cdf_csv),1)
                                           peak_table_updated[[sample_number]] <- peaks_in_this_sample
                                         }
