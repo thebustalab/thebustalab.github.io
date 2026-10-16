@@ -251,7 +251,7 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 <span><span class="co">##  8     8                   0.166</span></span>
 <span><span class="co">##  9     9                   0.141</span></span>
 <span><span class="co">## 10    10                   0.118</span></span></code></pre></div>
-<p>The elbow follows the same <code>scale_variance</code> setting as the clustering, so the elbow on the plot always belongs to the clusters that could then be requested by changing the <code>parameters</code> argument to <code>n_cluster = 3</code>, or whatever number is chosen. This gives us one row for each number of clusters it tried: <code>k</code>, and the <code>within_cluster_variance</code> that number of clusters leaves behind. Notice that the within-cluster variance <em>always</em> falls as we add clusters. At the extreme, where every sample is its own cluster, there is no within-cluster variance left at all. What we are after is the bend:</p>
+<p>The elbow follows the same <code>scale_variance</code> setting as the clustering, so the elbow on the plot always belongs to the clusters that could then be requested by changing the <code>parameters</code> argument to <code>c(n_clusters = 3)</code>, or whatever number is chosen. This gives us one row for each number of clusters it tried: <code>k</code>, and the <code>within_cluster_variance</code> that number of clusters leaves behind. Notice that the within-cluster variance <em>always</em> falls as we add clusters. At the extreme, where every sample is its own cluster, there is no within-cluster variance left at all. What we are after is the bend:</p>
 <div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">meteorite_elbow</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">k</span>, y <span class="op">=</span> <span class="va">within_cluster_variance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -264,7 +264,7 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 Figure: Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.
 </p>
 </div>
-<p>Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice).</p>
+<p>Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice). Even a sharp elbow belongs to the columns that were clustered, not to the samples alone: the same samples clustered on a different set of measurements can bend just as sharply at a different number of groups, and both answers can be right.</p>
 <p>By default <code>runMatrixAnalysis</code> tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
@@ -502,6 +502,18 @@ Flat clustering · k-means + choosing k + scaling
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
 An order of alchemists bled a valley dry to feed their great sorting engine, and stole the stone that kept its springs sweet. Climb down through the failing waterworks, sort as its makers sorted to work the levers, and carry the Wellheart home before the flood closes over the engine floor.
+</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/heist/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/heist/cover.png" alt="Nobody Works Alone cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/flat_clustering/heist/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Nobody Works Alone</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">
+Flat clustering · k-means, choosing k + scaling · two players
+</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">
+Sixty robberies in three years, and nobody can say how many thieving crews are behind them. Play as a pair: one of you works the crime scenes, the other follows the stolen goods to their resellers. Your counts will not agree, and you will have to talk each other through to the end.
 </div>
 </div>
 </div>
