@@ -1481,6 +1481,11 @@
                 inside <- padded[rt >= start_rt & rt <= end_rt]
                 if (nrow(inside) == 0 || data.table::uniqueN(inside$rt) < 3) return(na_out)
 
+                ## as.double: median() of an INTEGER vector is integer for an odd count and
+                ## double for an even one, so by-mz groups came back mixed and data.table
+                ## stopped Shift+Q ("Column 1 of result for group N is type 'integer' but
+                ## expecting type 'double'"). The store's abundance is integer whenever
+                ## fread sees whole counts. test_ion_area_integer.R pins this.
                 ## Per-ion baseline from the flanks, interpolated across the peak.
                 ## Median rather than mean so a neighbouring peak intruding into
                 ## a flank does not drag the level up. Falls back to whichever
@@ -1488,8 +1493,8 @@
                 ## against the start or end of the run.
                 left  <- padded[rt <  start_rt]
                 right <- padded[rt >  end_rt]
-                lsum <- if (nrow(left))  left[,  .(bl = stats::median(abundance), rtl = stats::median(rt)), by = mz] else NULL
-                rsum <- if (nrow(right)) right[, .(br = stats::median(abundance), rtr = stats::median(rt)), by = mz] else NULL
+                lsum <- if (nrow(left))  left[,  .(bl = as.double(stats::median(abundance)), rtl = as.double(stats::median(rt))), by = mz] else NULL
+                rsum <- if (nrow(right)) right[, .(br = as.double(stats::median(abundance)), rtr = as.double(stats::median(rt))), by = mz] else NULL
 
                 w <- inside
                 if (!is.null(lsum)) w <- merge(w, lsum, by = "mz", all.x = TRUE)
