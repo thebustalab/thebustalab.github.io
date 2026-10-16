@@ -472,17 +472,20 @@
             tmpl$split_fit_r2    <- s$fit_r2
             tmpl$split_k_dev     <- k_dev
             new_rows[[smp]] <- tmpl
-            ## Each compound's share of the TIC, scan by scan, for the plot: the two
-            ## overlapping filled curves. Stored with its baseline and aligned rt so
-            ## the renderer needs nothing else.
+            ## Each compound's share of the TIC, scan by scan, for the plot: two
+            ## STACKED bands (Lucas, 2026-10-16) - A from the baseline up to its
+            ## share, B on top of it up to the TIC - so every part of the hump is
+            ## coloured by the compound it was given to. Stored with aligned rt and
+            ## both band edges so the renderer needs nothing else.
             b0 <- if (is.null(tr$base)) rep(0, length(tr$rt)) else tr$base
             off <- tmpl$rt_offset[1]
+            a_top <- b0 + tr$tic_net * s$share_a
             profiles[[smp]] <- data.frame(
                 path_to_cdf_csv = smp,
                 rt_rt_offset = rep(tr$rt + off, 2),
-                baseline = rep(b0, 2),
                 part = rep(c("A", "B"), each = length(tr$rt)),
-                top = c(b0 + tr$tic_net * s$share_a, b0 + tr$tic_net * (1 - s$share_a)),
+                ymin = c(b0, a_top),
+                top  = c(a_top, b0 + tr$tic_net),
                 stringsAsFactors = FALSE)
             drop_rows <- c(drop_rows, h$rows)
             n_split <- n_split + 1
@@ -3626,22 +3629,27 @@
                                                 prof$peak_number_within_sample <- split_peaks$peak_number_within_sample[
                                                     match(paste(prof$path_to_cdf_csv, prof$part), key_pk)]
                                                 prof$grp <- paste(prof$path_to_cdf_csv, prof$part)
-                                                split_labels <- do.call(rbind, lapply(split(prof, prof$grp), function(g)
-                                                    g[which.max(g$top), c("path_to_cdf_csv", "rt_rt_offset", "top", "peak_number_within_sample")]))
+                                                ## Label each band where it is thickest, halfway up it.
+                                                split_labels <- do.call(rbind, lapply(split(prof, prof$grp), function(g) {
+                                                    i <- which.max(g$top - g$ymin)
+                                                    data.frame(path_to_cdf_csv = g$path_to_cdf_csv[i], rt_rt_offset = g$rt_rt_offset[i],
+                                                               y = (g$top[i] + g$ymin[i]) / 2,
+                                                               peak_number_within_sample = g$peak_number_within_sample[i])
+                                                }))
                                                 prof$path_to_cdf_csv <- as_page_facet(prof$path_to_cdf_csv)
                                                 split_labels$path_to_cdf_csv <- as_page_facet(split_labels$path_to_cdf_csv)
                                                 if (mode_display == "tic") {
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_ribbon(data = prof,
-                                                                    mapping = aes(x = rt_rt_offset, ymin = baseline, ymax = top,
+                                                                    mapping = aes(x = rt_rt_offset, ymin = ymin, ymax = top,
                                                                                   fill = peak_number_within_sample, group = grp),
-                                                                    alpha = 0.45) +
-                                                        geom_line(data = prof,
+                                                                    alpha = 0.6) +
+                                                        geom_line(data = prof[prof$part == "A", , drop = FALSE],
                                                                   mapping = aes(x = rt_rt_offset, y = top, group = grp),
                                                                   colour = "black", linewidth = 0.3) +
                                                         geom_text(data = split_labels,
-                                                                  mapping = aes(label = peak_number_within_sample, x = rt_rt_offset, y = top),
-                                                                  colour = "black", vjust = -0.3)
+                                                                  mapping = aes(label = peak_number_within_sample, x = rt_rt_offset, y = y),
+                                                                  colour = "black")
                                                 }
                                             }
                                         }
