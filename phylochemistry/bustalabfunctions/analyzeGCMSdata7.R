@@ -256,7 +256,25 @@
             net <- pmax(y - bl_y, 0)
             stats::approx(grid, net, xout = tic$rt, rule = 2)$y
         }
-        list(rt = tic$rt, tic_net = tic_net, ion_a = trace(ions_a), ion_b = trace(ions_b))
+        list(rt = tic$rt, tic_net = tic_net, base = base, ion_a = trace(ions_a), ion_b = trace(ions_b))
+    }
+
+    ## The sidebar names the hump by its peak number. Numbers differ between
+    ## samples (one extra early peak shifts everything after it) and a split
+    ## itself renumbers every later peak, so the number is turned into a window
+    ## in ALIGNED rt: the median start and end of peak `n` across the samples.
+    ## Each sample is then matched by time, not by number, and the caller saves
+    ## the window so later renumbering cannot move the split onto another peak.
+    ## NULL when no sample has a peak `n`.
+    gcms_window_for_peak <- function(peak_table, n) {
+        if (is.null(n) || length(n) != 1 || !is.finite(n) ||
+            !("peak_number_within_sample" %in% names(peak_table))) return(NULL)
+        r <- peak_table[!is.na(peak_table$peak_number_within_sample) &
+                        peak_table$peak_number_within_sample == round(n) &
+                        is.finite(peak_table$peak_start_rt_offset) &
+                        is.finite(peak_table$peak_end_rt_offset), , drop = FALSE]
+        if (nrow(r) == 0) return(NULL)
+        c(stats::median(r$peak_start_rt_offset), stats::median(r$peak_end_rt_offset))
     }
 
     ## Apply a co-elution split to a whole peak table.
@@ -303,7 +321,9 @@
             peak_table[[col]] <- rep(NA_character_, nrow(peak_table))
         for (col in c("area_tic_window", "split_fit_r2", "split_k_dev"))
             peak_table[[col]] <- rep(NA_real_, nrow(peak_table))
-        out <- function(k = NULL) list(peak_table = peak_table, k = k, log = log)
+        profiles <- list()
+        out <- function(k = NULL) list(peak_table = peak_table, k = k, log = log,
+                                       profiles = if (length(profiles)) do.call(rbind, profiles) else NULL)
         if (nrow(peak_table) == 0) return(out())
 
         ws <- min(window); we <- max(window)
@@ -452,6 +472,18 @@
             tmpl$split_fit_r2    <- s$fit_r2
             tmpl$split_k_dev     <- k_dev
             new_rows[[smp]] <- tmpl
+            ## Each compound's share of the TIC, scan by scan, for the plot: the two
+            ## overlapping filled curves. Stored with its baseline and aligned rt so
+            ## the renderer needs nothing else.
+            b0 <- if (is.null(tr$base)) rep(0, length(tr$rt)) else tr$base
+            off <- tmpl$rt_offset[1]
+            profiles[[smp]] <- data.frame(
+                path_to_cdf_csv = smp,
+                rt_rt_offset = rep(tr$rt + off, 2),
+                baseline = rep(b0, 2),
+                part = rep(c("A", "B"), each = length(tr$rt)),
+                top = c(b0 + tr$tic_net * s$share_a, b0 + tr$tic_net * (1 - s$share_a)),
+                stringsAsFactors = FALSE)
             drop_rows <- c(drop_rows, h$rows)
             n_split <- n_split + 1
             if (is.na(k_dev) || k_dev > k_dev_flag || (is.finite(s$fit_r2) && s$fit_r2 < r2_flag))
@@ -1560,14 +1592,16 @@
         ## v7 co-elution split: the pair definition lives in the folder
         ## (coelution_pair.csv, written on Shift+Q), so reopening the folder
         ## restores the fields and the split re-applies identically.
-        coelution_defaults <- list(window_start = NA_real_, window_end = NA_real_,
-                                   ions_a = "", ions_b = "")
+        coelution_defaults <- list(peak_number = NA_real_, window_start = NA_real_,
+                                   window_end = NA_real_, ions_a = "", ions_b = "")
         if (file.exists("coelution_pair.csv")) {
             cp <- try(utils::read.csv("coelution_pair.csv", stringsAsFactors = FALSE,
                                       colClasses = "character"), silent = TRUE)
             if (!inherits(cp, "try-error") && nrow(cp) >= 1 &&
                 all(c("window_start", "window_end", "ions_a", "ions_b") %in% names(cp))) {
                 coelution_defaults <- list(
+                    peak_number = if ("peak_number" %in% names(cp))
+                                      suppressWarnings(as.numeric(cp$peak_number[1])) else NA_real_,
                     window_start = suppressWarnings(as.numeric(cp$window_start[1])),
                     window_end   = suppressWarnings(as.numeric(cp$window_end[1])),
                     ions_a = cp$ions_a[1], ions_b = cp$ions_b[1])
@@ -2116,13 +2150,9 @@
 
                         tags$hr(),
                         strong("Co-elution split"),
-                        helpText("Integrate the hump as one peak, then give a window (aligned rt, as on the x axis) and the diagnostic ions of the first- and second-eluting compound. On Shift+Q the hump becomes two peaks in every sample, its TIC shared scan by scan by the ions. Clear the ion fields to turn it off."),
-                        fluidRow(
-                            column(6, numericInput("split_window_start", "Window start",
-                                                   value = coelution_defaults$window_start)),
-                            column(6, numericInput("split_window_end", "Window end",
-                                                   value = coelution_defaults$window_end))
-                        ),
+                        helpText("Integrate the hump as one peak, then give its peak number (from the peak table) and the diagnostic ions of the first- and second-eluting compound. On Shift+Q the hump becomes two peaks in every sample, its TIC shared scan by scan by the ions. The number is turned into a retention-time window once and saved, so renumbering later cannot move the split. Clear the ion fields to turn it off."),
+                        numericInput("split_peak", "Peak number to split",
+                                     value = coelution_defaults$peak_number, min = 1, step = 1),
                         textInput("split_ions_a", "Ions, first compound (e.g. 57, 71)",
                                   value = coelution_defaults$ions_a),
                         textInput("split_ions_b", "Ions, second compound",
@@ -3079,8 +3109,28 @@
                                     ## Shift+Q lands on the same numbers.
                                         split_ions_a <- gcms_parse_ions(input$split_ions_a)
                                         split_ions_b <- gcms_parse_ions(input$split_ions_b)
-                                        split_ws <- input$split_window_start
-                                        split_we <- input$split_window_end
+                                        ## Peak number -> aligned-rt window. Reuse the saved window while
+                                        ## the number is unchanged: after a split every later peak is
+                                        ## renumbered, and re-deriving would drift.
+                                        split_n <- input$split_peak
+                                        split_ws <- NA_real_; split_we <- NA_real_
+                                        if (is.numeric(split_n) && length(split_n) == 1 && is.finite(split_n)) {
+                                            if (isTRUE(coelution_defaults$peak_number == split_n) &&
+                                                is.finite(coelution_defaults$window_start) &&
+                                                is.finite(coelution_defaults$window_end)) {
+                                                split_ws <- coelution_defaults$window_start
+                                                split_we <- coelution_defaults$window_end
+                                            } else {
+                                                wnd <- gcms_window_for_peak(peak_table, split_n)
+                                                if (is.null(wnd)) {
+                                                    cat("Co-elution split: no sample has a peak number ", split_n, ".\n", sep = "")
+                                                } else {
+                                                    split_ws <- wnd[1]; split_we <- wnd[2]
+                                                    cat(sprintf("Co-elution split: peak %d is at %.2f-%.2f (aligned rt); that window is now saved.\n",
+                                                                as.integer(round(split_n)), split_ws, split_we))
+                                                }
+                                            }
+                                        }
                                         split_any <- nzchar(trimws(paste0(input$split_ions_a, input$split_ions_b)))
                                         split_ok <- length(split_ions_a) > 0 && length(split_ions_b) > 0 &&
                                             length(intersect(split_ions_a, split_ions_b)) == 0 &&
@@ -3088,7 +3138,11 @@
                                             length(split_ws) == 1 && length(split_we) == 1 &&
                                             is.finite(split_ws) && is.finite(split_we) && split_we > split_ws
                                         if (split_ok) {
+                                            coelution_defaults$peak_number  <<- split_n
+                                            coelution_defaults$window_start <<- split_ws
+                                            coelution_defaults$window_end   <<- split_we
                                             utils::write.csv(data.frame(
+                                                peak_number = split_n,
                                                 window_start = split_ws, window_end = split_we,
                                                 ions_a = paste(split_ions_a, collapse = ", "),
                                                 ions_b = paste(split_ions_b, collapse = ", ")),
@@ -3103,11 +3157,18 @@
                                                 crosstalk = coelution_crosstalk)
                                             peak_table <- split_res$peak_table
                                             cat(paste0(split_res$log, "\n"), sep = "")
+                                            if (!is.null(split_res$profiles)) {
+                                                utils::write.csv(split_res$profiles, "coelution_profiles.csv", row.names = FALSE)
+                                            } else if (file.exists("coelution_profiles.csv")) {
+                                                file.remove("coelution_profiles.csv")
+                                            }
                                         } else {
                                             if (split_any)
-                                                cat("Co-elution split: NOT applied this time (areas below are plain TIC) - needs a window (start < end) and ions for BOTH compounds, with no ion in both. The last good definition stays saved; clear both ion fields to remove it.\n")
+                                                cat("Co-elution split: NOT applied this time (areas below are plain TIC) - needs a peak number that exists and ions for BOTH compounds, with no ion in both. The last good definition stays saved; clear both ion fields to remove it.\n")
                                             if (!split_any && file.exists("coelution_pair.csv"))
                                                 file.remove("coelution_pair.csv")
+                                            if (file.exists("coelution_profiles.csv"))
+                                                file.remove("coelution_profiles.csv")
                                             ## The recompute above has just given an earlier split pair
                                             ## plain drop-line areas, so say so on those rows. The A/B
                                             ## labels stay: they are how the pair is found again when the
@@ -3364,7 +3425,7 @@
                                                          "No chromatogram points between x = ",
                                                          signif(xs, 6), " and ", signif(xe, 6), ".\n",
                                                          "Press Shift+Q with no brush to reset the view.")) +
-                                            scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
+                                            scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = scales::breaks_pretty(n = 80)) +
                                             scale_y_continuous(name = "Abundance (counts)") +
                                             theme_classic()
                                     )
@@ -3410,7 +3471,7 @@
                                         ## whole plot one shade of purple and wastes the top
                                         ## two-thirds of the scale on a handful of heavy ions.
                                         scale_colour_viridis_c(name = "m/z", trans = "log10") +
-                                        scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
+                                        scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = scales::breaks_pretty(n = 80)) +
                                         scale_y_continuous(name = allion_y_label(mode_scale),
                                                            limits = y_limits_for(view_key, drawn_yrange,
                                                                                  zero_floor = zero_floor_y),
@@ -3449,7 +3510,7 @@
                                         coord_cartesian(xlim = c(xs, xe),
                                                         ylim = y_limits_for(view_key, drawn_yrange,
                                                                             zero_floor = zero_floor_y)) +
-                                        scale_x_continuous(name = "Retention (Scan number)") +
+                                        scale_x_continuous(name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = scales::breaks_pretty(n = 80)) +
                                         scale_y_continuous(name = "m/z") +
                                         facet_grid(path_to_cdf_csv~., scales = "free_y", drop = FALSE, labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                         theme_classic()
@@ -3461,7 +3522,7 @@
                                             data = filter(cuf, ion == "baseline"),
                                             mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
                                         ) +
-                                        scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)") +
+                                        scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = scales::breaks_pretty(n = 80)) +
                                         scale_y_continuous(limits = y_limits_for(view_key, c(ys, ye),
                                                                                  zero_floor = zero_floor_y),
                                                            name = "Abundance (counts)", oob = scales::squish) +
@@ -3486,6 +3547,13 @@
                                             path_to_cdf_csv %in% page_samples,
                                             peak_start_rt_offset >= xs & peak_end_rt_offset <= xe
                                         )
+                                        ## v7: a split pair is drawn as two overlapping curves (below),
+                                        ## each compound's own share of the TIC, not as two drop-line
+                                        ## ribbons that would hide how the hump was shared out.
+                                        split_rows <- if ("split_status" %in% colnames(peak_table))
+                                            which(peak_table$split_status %in% "split") else integer(0)
+                                        split_peaks <- peak_table[split_rows, , drop = FALSE]
+                                        if (length(split_rows)) peak_table <- peak_table[-split_rows, , drop = FALSE]
                                         all_ribbons <- list(); all_vlines <- list(); all_labels <- list()
                                         if (nrow(peak_table) > 0) {
                                             for (peak in seq_len(nrow(peak_table))) {
@@ -3544,6 +3612,36 @@
                                                 } else {
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_vline(data = all_vlines, mapping = aes(xintercept = rt_rt_offset), alpha = 0.3)
+                                                }
+                                            }
+                                        }
+                                        if (nrow(split_peaks) > 0 && file.exists("coelution_profiles.csv")) {
+                                            prof <- try(utils::read.csv("coelution_profiles.csv", stringsAsFactors = FALSE), silent = TRUE)
+                                            if (!inherits(prof, "try-error") && nrow(prof) > 0) {
+                                                prof <- prof[prof$path_to_cdf_csv %in% split_peaks$path_to_cdf_csv &
+                                                             prof$rt_rt_offset >= xs & prof$rt_rt_offset <= xe, , drop = FALSE]
+                                            }
+                                            if (!inherits(prof, "try-error") && nrow(prof) > 0) {
+                                                key_pk <- paste(split_peaks$path_to_cdf_csv, split_peaks$coelution_split)
+                                                prof$peak_number_within_sample <- split_peaks$peak_number_within_sample[
+                                                    match(paste(prof$path_to_cdf_csv, prof$part), key_pk)]
+                                                prof$grp <- paste(prof$path_to_cdf_csv, prof$part)
+                                                split_labels <- do.call(rbind, lapply(split(prof, prof$grp), function(g)
+                                                    g[which.max(g$top), c("path_to_cdf_csv", "rt_rt_offset", "top", "peak_number_within_sample")]))
+                                                prof$path_to_cdf_csv <- as_page_facet(prof$path_to_cdf_csv)
+                                                split_labels$path_to_cdf_csv <- as_page_facet(split_labels$path_to_cdf_csv)
+                                                if (mode_display == "tic") {
+                                                    chromatogram_plot <- chromatogram_plot +
+                                                        geom_ribbon(data = prof,
+                                                                    mapping = aes(x = rt_rt_offset, ymin = baseline, ymax = top,
+                                                                                  fill = peak_number_within_sample, group = grp),
+                                                                    alpha = 0.45) +
+                                                        geom_line(data = prof,
+                                                                  mapping = aes(x = rt_rt_offset, y = top, group = grp),
+                                                                  colour = "black", linewidth = 0.3) +
+                                                        geom_text(data = split_labels,
+                                                                  mapping = aes(label = peak_number_within_sample, x = rt_rt_offset, y = top),
+                                                                  colour = "black", vjust = -0.3)
                                                 }
                                             }
                                         }
