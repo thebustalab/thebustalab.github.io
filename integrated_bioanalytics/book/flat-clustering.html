@@ -161,23 +161,22 @@ Figure: Iron content and density of 37 meteorite fragments. A scatter plot with 
 <span><span class="va">meteorite_clusters</span></span>
 <span><span class="co">## # A tibble: 37 × 6</span></span>
 <span><span class="co">##    sample_unique_ID  fragment find_site cluster iron_percent</span></span>
-<span><span class="co">##    &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;        &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 MF-01_Antarctic … MF-01    Antarcti…       3         24.5</span></span>
-<span><span class="co">##  2 MF-02_Atacama De… MF-02    Atacama …       3         23  </span></span>
-<span><span class="co">##  3 MF-03_Antarctic … MF-03    Antarcti…       3         37.5</span></span>
-<span><span class="co">##  4 MF-04_Nullarbor … MF-04    Nullarbo…       3         22.2</span></span>
-<span><span class="co">##  5 MF-05_Sahara Des… MF-05    Sahara D…       2         85.8</span></span>
-<span><span class="co">##  6 MF-06_Nullarbor … MF-06    Nullarbo…       3         19.6</span></span>
-<span><span class="co">##  7 MF-07_Nullarbor … MF-07    Nullarbo…       3         25  </span></span>
-<span><span class="co">##  8 MF-08_Sahara Des… MF-08    Sahara D…       2         89  </span></span>
-<span><span class="co">##  9 MF-09_Sahara Des… MF-09    Sahara D…       3         19.5</span></span>
-<span><span class="co">## 10 MF-10_Atacama De… MF-10    Atacama …       2         91.9</span></span>
+<span><span class="co">##    &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 MF-01_Antarctic … MF-01    Antarcti… cluste…         24.5</span></span>
+<span><span class="co">##  2 MF-02_Atacama De… MF-02    Atacama … cluste…         23  </span></span>
+<span><span class="co">##  3 MF-03_Antarctic … MF-03    Antarcti… cluste…         37.5</span></span>
+<span><span class="co">##  4 MF-04_Nullarbor … MF-04    Nullarbo… cluste…         22.2</span></span>
+<span><span class="co">##  5 MF-05_Sahara Des… MF-05    Sahara D… cluste…         85.8</span></span>
+<span><span class="co">##  6 MF-06_Nullarbor … MF-06    Nullarbo… cluste…         19.6</span></span>
+<span><span class="co">##  7 MF-07_Nullarbor … MF-07    Nullarbo… cluste…         25  </span></span>
+<span><span class="co">##  8 MF-08_Sahara Des… MF-08    Sahara D… cluste…         89  </span></span>
+<span><span class="co">##  9 MF-09_Sahara Des… MF-09    Sahara D… cluste…         19.5</span></span>
+<span><span class="co">## 10 MF-10_Atacama De… MF-10    Atacama … cluste…         91.9</span></span>
 <span><span class="co">## # ℹ 27 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: density_g_per_cm3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output has one row per fragment: its ID columns, the <code>cluster</code> k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, <code>runMatrixAnalysis</code> scales each column before it clusters (<code>scale_variance = TRUE</code> is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using <code>geom_mark_ellipse</code>. Note that it is recommended to specify both <code>fill</code> and <code>label</code> for geom_mark_ellipse:</p>
 <div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_clusters</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">meteorite_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_clusters</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
@@ -209,7 +208,7 @@ Figure: The meteorite fragments colored by k-means cluster, with an ellipse draw
   columns_w_sample_ID_info = c("fragment", "find_site")
 )
 
-ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = factor(cluster))) +
+ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = cluster)) +
   geom_point(shape = 21, size = 4) +
   theme_classic()</textarea>
 </div>
@@ -317,8 +316,7 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <span><span class="op">)</span></span></code></pre></div>
 <p>We can make the plot in the same way, but please note that to get <code>geom_mark_ellipse</code> to omit the ellipse for NAs it needs data without NAs:</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_dbscan</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">meteorite_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_dbscan</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
@@ -669,7 +667,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-15.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

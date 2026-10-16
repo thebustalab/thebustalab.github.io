@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-10-15"
+date: "2026-10-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3859,17 +3859,17 @@ meteorite_clusters <- runMatrixAnalysis(
 meteorite_clusters
 ## # A tibble: 37 × 6
 ##    sample_unique_ID  fragment find_site cluster iron_percent
-##    <chr>             <chr>    <chr>       <int>        <dbl>
-##  1 MF-01_Antarctic … MF-01    Antarcti…       3         24.5
-##  2 MF-02_Atacama De… MF-02    Atacama …       3         23  
-##  3 MF-03_Antarctic … MF-03    Antarcti…       3         37.5
-##  4 MF-04_Nullarbor … MF-04    Nullarbo…       3         22.2
-##  5 MF-05_Sahara Des… MF-05    Sahara D…       2         85.8
-##  6 MF-06_Nullarbor … MF-06    Nullarbo…       3         19.6
-##  7 MF-07_Nullarbor … MF-07    Nullarbo…       3         25  
-##  8 MF-08_Sahara Des… MF-08    Sahara D…       2         89  
-##  9 MF-09_Sahara Des… MF-09    Sahara D…       3         19.5
-## 10 MF-10_Atacama De… MF-10    Atacama …       2         91.9
+##    <chr>             <chr>    <chr>     <chr>          <dbl>
+##  1 MF-01_Antarctic … MF-01    Antarcti… cluste…         24.5
+##  2 MF-02_Atacama De… MF-02    Atacama … cluste…         23  
+##  3 MF-03_Antarctic … MF-03    Antarcti… cluste…         37.5
+##  4 MF-04_Nullarbor … MF-04    Nullarbo… cluste…         22.2
+##  5 MF-05_Sahara Des… MF-05    Sahara D… cluste…         85.8
+##  6 MF-06_Nullarbor … MF-06    Nullarbo… cluste…         19.6
+##  7 MF-07_Nullarbor … MF-07    Nullarbo… cluste…         25  
+##  8 MF-08_Sahara Des… MF-08    Sahara D… cluste…         89  
+##  9 MF-09_Sahara Des… MF-09    Sahara D… cluste…         19.5
+## 10 MF-10_Atacama De… MF-10    Atacama … cluste…         91.9
 ## # ℹ 27 more rows
 ## # ℹ 1 more variable: density_g_per_cm3 <dbl>
 ```
@@ -3878,7 +3878,6 @@ The output has one row per fragment: its ID columns, the `cluster` k-means assig
 
 
 ``` r
-meteorite_clusters$cluster <- factor(meteorite_clusters$cluster)
 ggplot() +
   geom_point(
     data = meteorite_clusters,
@@ -3912,7 +3911,7 @@ Fill in the blank with the analysis that sorts the fragments into a set number o
   columns_w_sample_ID_info = c("fragment", "find_site")
 )
 
-ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = factor(cluster))) +
+ggplot(meteorite_clusters, aes(x = iron_percent, y = density_g_per_cm3, fill = cluster)) +
   geom_point(shape = 21, size = 4) +
   theme_classic()</textarea></div>
 
@@ -4031,7 +4030,6 @@ We can make the plot in the same way, but please note that to get `geom_mark_ell
 
 
 ``` r
-meteorite_dbscan$cluster <- factor(meteorite_dbscan$cluster)
 ggplot() +
   geom_point(
     data = meteorite_dbscan,
