@@ -3463,7 +3463,7 @@ AK_lakes_pca <- runMatrixAnalysis(
 )
 head(AK_lakes_pca)
 ## # A tibble: 6 × 18
-##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp
+##   sample_unique_ID      lake  park   Dim_1  Dim_2 water_temp
 ##   <chr>                 <chr> <chr>  <dbl>  <dbl>      <dbl>
 ## 1 Devil_Mountain_Lake_… Devi… BELA   0.229 -0.861       6.46
 ## 2 Imuruk_Lake_BELA      Imur… BELA  -1.17  -1.62       17.4 
@@ -3480,7 +3480,7 @@ Let's plot the 2D projection of the Alaska lakes data:
 
 
 ``` r
-ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
+ggplot(data = AK_lakes_pca, aes(x = Dim_1, y = Dim_2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
   theme_classic()
@@ -3502,7 +3502,7 @@ Let's look at how to access the information about which analytes are major contr
 
 ```
 ## # A tibble: 6 × 3
-##   analyte      Dim.1   Dim.2
+##   analyte      Dim_1   Dim_2
 ##   <chr>        <dbl>   <dbl>
 ## 1 water_temp 0.0750  -0.261 
 ## 2 pH         0.686    0.0185
@@ -3528,15 +3528,15 @@ We can now visualize the ordination plot using our standard ggplot plotting tech
 # head(AK_lakes_pca_ord)
 
 ggplot(AK_lakes_pca_ord) +
-  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
+  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte), size = 1) +
   geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
   geom_label_repel(
-    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1),
-    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+    data = filter(AK_lakes_pca_ord, Dim_1 > 0.9, Dim_2 < 0.1, Dim_2 > -0.1),
+    aes(x = Dim_1, y = Dim_2, label = analyte), xlim = c(1,1.5)
   ) +
   geom_label_repel(
-    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5),
-    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+    data = filter(AK_lakes_pca_ord, Dim_2 > 0.5),
+    aes(x = Dim_1, y = Dim_2, label = analyte), direction = "y", ylim = c(1,1.5)
   ) +
   coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
   theme_bw()
@@ -3581,12 +3581,12 @@ With the ordination plot above, we can now see that the abundances of K, Cl, Br,
 ggplot() +
   geom_point(
     data = AK_lakes_pca, 
-    aes(x = Dim.1, y = Dim.2, fill = park), shape = 21, size = 4, alpha = 0.8
+    aes(x = Dim_1, y = Dim_2, fill = park), shape = 21, size = 4, alpha = 0.8
   ) +
   # geom_label_repel(aes(label = lake), alpha = 0.5) +
   geom_segment(
     data = AK_lakes_pca_ord,
-    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte),
+    aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte),
     size = 1
   ) +
   scale_color_manual(values = discrete_palette) +
@@ -3603,15 +3603,15 @@ Note that ordination data need not be plotted as a circular layout of segments. 
 
 ``` r
 AK_lakes_pca_ord %>%
-  ggplot(aes(x = Dim.1, y = analyte)) +
+  ggplot(aes(x = Dim_1, y = analyte)) +
     geom_point(aes(fill = analyte), shape = 22, size = 3) +
     scale_fill_manual(values = discrete_palette) +
     theme_bw()
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-339-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-339)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.</p>
+<img src="index_files/figure-html/unnamed-chunk-339-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim_1, making it easy to compare how each element contributes relative to the others." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-339)Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim_1, making it easy to compare how each element contributes relative to the others.</p>
 </div>
 
 ### principal components {-}
@@ -3683,7 +3683,7 @@ This opens a browser window (or RStudio viewer) with three linked panels:
 
 * **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to color or shape; the app reuses the `discrete_palette` defined earlier so colors stay consistent with the rest of this chapter.
 * **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below a chosen threshold, making it easier to focus on the analytes that matter.
-* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim.1 or Dim.2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
+* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim_1 or Dim_2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
 
 Because `pcaVisualizer()` calls `runMatrixAnalysis()` under the hood, any transformations performed on the data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while refining preprocessing steps, and once the preprocessing is settled, reproduce the final view with scripted ggplot code for publication-quality figures.
 
@@ -3715,7 +3715,7 @@ wq <- runMatrixAnalysis(
 )
 wq %>%
   arrange(quality_score) %>%
-  ggplot(aes(x = Dim.1, y = Dim.2)) +
+  ggplot(aes(x = Dim_1, y = Dim_2)) +
   geom_point(size = 3, aes(shape = type, fill = quality_score)) +
   scale_shape_manual(values = c(21, 22)) +
   scale_fill_viridis() +
@@ -4251,7 +4251,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_
 
 1. Run a PCA analysis on the data set and plot the results. 
 
-2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+2. Create an ordination plot and identify one analyte that varies with Dim_1 and one analyte that varies with Dim_2 (these are your "variables of interest").
 
 3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
 
@@ -5748,9 +5748,9 @@ data.frame(
 
 To practice creating models, try the following:
 
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
+1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca" contains the Dimension 1 coordinate "Dim_1" for each sample, as well as the abundance of each analyte in that sample.
 
-2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
+2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim_1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
 
 3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
 
@@ -5770,10 +5770,10 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c("cultivar", "treatment"),
   na_replacement = "drop"
 ) %>%
-filter(Dim.1 > 0.9) %>%
+filter(Dim_1 > 0.9) %>%
 ggplot() +
-  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2)) +
+  geom_label_repel(aes(x = Dim_1, y = Dim_2, label = analyte))
 
 runMatrixAnalysis(
   data = wine_grape_data,
@@ -5785,10 +5785,10 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c("cultivar", "treatment"),
   na_replacement = "drop"
 ) %>%
-filter(Dim.1 < -0.9) %>%
+filter(Dim_1 < -0.9) %>%
 ggplot() +
-  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2)) +
+  geom_label_repel(aes(x = Dim_1, y = Dim_2, label = analyte))
 
 out <- runMatrixAnalysis(
   data = wine_grape_data,
@@ -5803,8 +5803,8 @@ out <- runMatrixAnalysis(
 
 model <- buildLinearModel(
   data = solvents,
-  # formula = "Dim.1 = Aspartic_acid_3TMS"
-  # formula = "Dim.1 = Tyrosine_2TMS"
+  # formula = "Dim_1 = Aspartic_acid_3TMS"
+  # formula = "Dim_1 = Tyrosine_2TMS"
   formula = "refractive_index = formula_weight + melting_point"
 )
 
@@ -5963,8 +5963,8 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c("title", "term")
 ) %>%
   ggplot() +
-    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, color = "black", size = 5) +
-    geom_mark_ellipse(aes(x = Dim.1, y = Dim.2, fill = term), color = "black") +
+    geom_point(aes(x = Dim_1, y = Dim_2, fill = term), shape = 21, color = "black", size = 5) +
+    geom_mark_ellipse(aes(x = Dim_1, y = Dim_2, fill = term), color = "black") +
     theme_minimal() +
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
@@ -6033,10 +6033,10 @@ runMatrixAnalysis(
 ) %>%
   ggplot() +
     geom_label_repel(
-      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      aes(x = Dim_1, y = Dim_2, label = str_wrap(title, width = 35)),
       size = 2, min.segment.length = 0.5, force = 50
     ) +
-    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
+    geom_point(aes(x = Dim_1, y = Dim_2, fill = term), shape = 21, size = 5, alpha = 0.7) +
     scale_fill_brewer(palette = "Set1") +
     scale_x_continuous(expand = c(0,1)) +
     scale_y_continuous(expand = c(0,5)) +
@@ -6069,17 +6069,17 @@ runMatrixAnalysis(
 ) -> pca_out
 
 pca_out$color <- rgb(
-  scales::rescale(pca_out$Dim.1, to = c(0, 1)),
+  scales::rescale(pca_out$Dim_1, to = c(0, 1)),
   0,
-  scales::rescale(pca_out$Dim.2, to = c(0, 1))
+  scales::rescale(pca_out$Dim_2, to = c(0, 1))
 )
 
 ggplot(pca_out) +
   geom_label_repel(
-    aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
+    aes(x = Dim_1, y = Dim_2, label = str_wrap(odor, width = 35)),
     size = 2, min.segment.length = 0.5, force = 25
   ) +
-  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
+  geom_point(aes(x = Dim_1, y = Dim_2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
   theme_minimal()
 ```
 
@@ -6163,7 +6163,7 @@ runMatrixAnalysis(
 
 search_results_ex_embed_pca %>%
     ggplot() +
-      geom_point(aes(x = Dim.1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
+      geom_point(aes(x = Dim_1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
     scale_shape_manual(values = c(21, 22, 23)) +
     scale_fill_viridis() +
     scale_x_continuous(expand = c(0,1)) +
@@ -6261,7 +6261,7 @@ all_sequences_embedded_pca <- runMatrixAnalysis(
 all_sequences_embedded_pca$name <- gsub(".*__", "", all_sequences_embedded_pca$name)
 ggplot(all_sequences_embedded_pca) +
   geom_jitter(
-    aes(x = Dim.1, y = Dim.2, fill = name),
+    aes(x = Dim_1, y = Dim_2, fill = name),
     shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
   ) +
   scale_fill_manual(values = c("maroon", "gold")) +

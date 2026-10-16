@@ -63,8 +63,8 @@ pcaVisualizer <- function(data,
           "heatmap_order",
           "Arrange Heat Map by:",
           choices = c(
-            "By Dim.1" = "dim1",
-            "By Dim.2" = "dim2"
+            "By Dim_1" = "dim1",
+            "By Dim_2" = "dim2"
           ),
           selected = "dim1"
         ),
@@ -134,7 +134,7 @@ pcaVisualizer <- function(data,
       if (!nrow(ld_df)) {
         return(integer())
       }
-      dim_cols <- intersect(c("Dim.1", "Dim.2"), names(ld_df))
+      dim_cols <- intersect(c("Dim_1", "Dim_2"), names(ld_df))
       if (length(dim_cols) < 2) {
         return(seq_len(nrow(ld_df)))
       }
@@ -196,10 +196,10 @@ pcaVisualizer <- function(data,
         return(NULL)
       }
 
-      dim_cols <- intersect(c("Dim.1", "Dim.2"), names(ld_all))
+      dim_cols <- intersect(c("Dim_1", "Dim_2"), names(ld_all))
       order_choice <- if (is.null(input$heatmap_order)) "original" else input$heatmap_order
       if (order_choice %in% c("dim1", "dim2")) {
-        axis_col <- if (order_choice == "dim1") "Dim.1" else "Dim.2"
+        axis_col <- if (order_choice == "dim1") "Dim_1" else "Dim_2"
         if (axis_col %in% names(ld_all)) {
           axis_values <- ld_all[[axis_col]]
           axis_values <- suppressWarnings(as.numeric(axis_values))
@@ -237,7 +237,7 @@ pcaVisualizer <- function(data,
       sample_levels <- unique(sample_labels)
       if (order_choice %in% c("dim1", "dim2")) {
         scores_df <- pca_scores()
-        req(all(c("Dim.1", "Dim.2") %in% names(scores_df)))
+        req(all(c("Dim_1", "Dim_2") %in% names(scores_df)))
         req(all(sample_cols %in% names(scores_df)))
         score_labels <- if (length(sample_cols) == 1) {
           as.character(scores_df[[sample_cols]])
@@ -246,8 +246,8 @@ pcaVisualizer <- function(data,
         }
         ordering_df <- data.frame(
           Sample = score_labels,
-          Dim1 = scores_df[["Dim.1"]],
-          Dim2 = scores_df[["Dim.2"]],
+          Dim1 = scores_df[["Dim_1"]],
+          Dim2 = scores_df[["Dim_2"]],
           stringsAsFactors = FALSE
         )
         ordering_df <- ordering_df[!is.na(ordering_df$Sample), , drop = FALSE]
@@ -272,7 +272,7 @@ pcaVisualizer <- function(data,
     # Scores plot (samples)
     output$scores_plot <- renderPlot({
       df <- pca_scores()
-      req(all(c("Dim.1", "Dim.2") %in% names(df)))
+      req(all(c("Dim_1", "Dim_2") %in% names(df)))
       req(input$color_var, input$shape_var)
 
       color_var <- if (is.null(input$color_var)) "__none__" else input$color_var
@@ -280,7 +280,7 @@ pcaVisualizer <- function(data,
       use_color <- !identical(color_var, "__none__")
       use_shape <- !identical(shape_var, "__none__")
 
-      aes_args <- list(x = "Dim.1", y = "Dim.2")
+      aes_args <- list(x = "Dim_1", y = "Dim_2")
       if (use_color) {
         aes_args$colour <- color_var
       }
@@ -299,7 +299,7 @@ pcaVisualizer <- function(data,
 
       plot <- ggplot(df, mapping) +
         do.call(geom_point, point_args) +
-        labs(x = "PC1 (Dim.1)", y = "PC2 (Dim.2)") +
+        labs(x = "PC1 (Dim_1)", y = "PC2 (Dim_2)") +
         theme_bw(base_size = base_font_size)
 
       if (use_color) {
@@ -318,14 +318,14 @@ pcaVisualizer <- function(data,
     # Loadings plot (variable vectors)
     output$loadings_plot <- renderPlot({
       ld_all <- pca_loadings()
-      req(all(c("Dim.1", "Dim.2") %in% names(ld_all)))
+      req(all(c("Dim_1", "Dim_2") %in% names(ld_all)))
       labels_all <- resolve_loading_labels(ld_all)
       threshold <- if (is.null(input$loading_threshold)) 0 else input$loading_threshold
       keep_idx <- filter_indices_by_loading(ld_all, threshold)
       shiny::validate(shiny::need(length(keep_idx) > 0, "No analytes meet the loading threshold."))
       order_choice <- if (is.null(input$heatmap_order)) "original" else input$heatmap_order
       if (order_choice %in% c("dim1", "dim2")) {
-        axis_col <- if (order_choice == "dim1") "Dim.1" else "Dim.2"
+        axis_col <- if (order_choice == "dim1") "Dim_1" else "Dim_2"
         if (axis_col %in% names(ld_all)) {
           axis_values <- ld_all[[axis_col]]
           axis_values <- suppressWarnings(as.numeric(axis_values))
@@ -340,16 +340,16 @@ pcaVisualizer <- function(data,
       lbl[is.na(lbl)] <- ""
       ld$`__label` <- lbl
 
-      g <- ggplot(ld, aes(x = 0, y = 0, xend = .data[["Dim.1"]], yend = .data[["Dim.2"]])) +
+      g <- ggplot(ld, aes(x = 0, y = 0, xend = .data[["Dim_1"]], yend = .data[["Dim_2"]])) +
         geom_segment(arrow = arrow(length = unit(0.2, "cm")), linewidth = 0.5, color = "#636363") +
         coord_equal() +
-        labs(x = "PC1 loading (Dim.1)", y = "PC2 loading (Dim.2)") +
+        labs(x = "PC1 loading (Dim_1)", y = "PC2 loading (Dim_2)") +
         theme_bw(base_size = base_font_size)
 
       g + ggrepel::geom_text_repel(
           aes(
-            x = .data[["Dim.1"]], y = .data[["Dim.2"]],
-            label = paste(.data[["analyte"]], "(", round(.data[["Dim.1"]], 3), ", ", round(.data[["Dim.2"]], 3), ")")
+            x = .data[["Dim_1"]], y = .data[["Dim_2"]],
+            label = paste(.data[["analyte"]], "(", round(.data[["Dim_1"]], 3), ", ", round(.data[["Dim_2"]], 3), ")")
           ),
           direction = "x",
           color = "#333333",

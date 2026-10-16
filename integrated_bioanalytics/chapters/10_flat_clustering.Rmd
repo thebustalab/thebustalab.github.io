@@ -377,7 +377,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_
 
 1. Run a PCA analysis on the data set and plot the results. 
 
-2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+2. Create an ordination plot and identify one analyte that varies with Dim_1 and one analyte that varies with Dim_2 (these are your "variables of interest").
 
 3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
 
@@ -414,7 +414,7 @@ Run a principal components analysis on the dataset. Use `na_replacement = "drop"
 #   na_replacement = "drop"
 # ) %>%
 
-# ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+# ggplot(aes(x = Dim_1, y = Dim_2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
 
 ```
 
@@ -438,7 +438,7 @@ Modify your code from Question 1 so that only two clusters are generated. Plot t
 #   na_replacement = "drop"
 # ) %>%
 # 
-# ggplot(aes(x = Dim.1, y = Dim.2)) +
+# ggplot(aes(x = Dim_1, y = Dim_2)) +
 #   geom_text(aes(label = sample_unique_ID)) +
 #   geom_mark_ellipse(aes(fill = kmeans_cluster)) +
 #   geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
@@ -463,10 +463,10 @@ Use an ordination plot to determine what chemicals makes Chardonnay so different
 #   kmeans = "none",
 #   na_replacement = "drop"
 # ) %>%
-# filter(Dim.1 > 0.9) %>%
+# filter(Dim_1 > 0.9) %>%
 # ggplot() +
-#   geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-#   geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+#   geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2)) +
+#   geom_label_repel(aes(x = Dim_1, y = Dim_2, label = analyte))
 
 ```
 
@@ -489,7 +489,7 @@ Modify your code from Question 2 so that five clusters are generated. Plot the r
 #   na_replacement = "drop"
 # )
 # 
-# plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+# plot0 <- ggplot(da, aes(x = Dim_1, y = Dim_2)) +
 #   geom_text(aes(label = sample_unique_ID)) +
 #   geom_mark_ellipse(aes(fill = kmeans_cluster)) +
 #   geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
@@ -580,7 +580,7 @@ Save your plot as a png using `ggsave()`.
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 # library(RColorBrewer)
 # 
-# plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+# plot0 <- ggplot(da, aes(x = Dim_1, y = Dim_2)) +
 #   geom_mark_ellipse(aes(fill = kmeans_cluster, label = kmeans_cluster)) +
 #   scale_x_continuous(breaks = seq(-10,12,2), name = "Dimension 1", limits = c(-9, 12)) + 
 #   scale_y_continuous(breaks = seq(-10,10,1), name = "Dimension 2", limits = c(-9, 6)) + 

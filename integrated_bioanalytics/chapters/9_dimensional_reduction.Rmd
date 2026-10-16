@@ -50,7 +50,7 @@ head(AK_lakes_pca)
 Let's plot the 2D projection of the Alaska lakes data:
 
 ```{r, message = FALSE, fig.align = "center", fig.cap='PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.'}
-ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
+ggplot(data = AK_lakes_pca, aes(x = Dim_1, y = Dim_2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
   theme_classic()
@@ -89,15 +89,15 @@ We can now visualize the ordination plot using our standard ggplot plotting tech
 # head(AK_lakes_pca_ord)
 
 ggplot(AK_lakes_pca_ord) +
-  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
+  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte), size = 1) +
   geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
   geom_label_repel(
-    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1),
-    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+    data = filter(AK_lakes_pca_ord, Dim_1 > 0.9, Dim_2 < 0.1, Dim_2 > -0.1),
+    aes(x = Dim_1, y = Dim_2, label = analyte), xlim = c(1,1.5)
   ) +
   geom_label_repel(
-    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5),
-    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+    data = filter(AK_lakes_pca_ord, Dim_2 > 0.5),
+    aes(x = Dim_1, y = Dim_2, label = analyte), direction = "y", ylim = c(1,1.5)
   ) +
   coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
   theme_bw()
@@ -136,12 +136,12 @@ With the ordination plot above, we can now see that the abundances of K, Cl, Br,
 ggplot() +
   geom_point(
     data = AK_lakes_pca, 
-    aes(x = Dim.1, y = Dim.2, fill = park), shape = 21, size = 4, alpha = 0.8
+    aes(x = Dim_1, y = Dim_2, fill = park), shape = 21, size = 4, alpha = 0.8
   ) +
   # geom_label_repel(aes(label = lake), alpha = 0.5) +
   geom_segment(
     data = AK_lakes_pca_ord,
-    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte),
+    aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte),
     size = 1
   ) +
   scale_color_manual(values = discrete_palette) +
@@ -150,9 +150,9 @@ ggplot() +
 
 Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
-```{r, fig.cap='Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.'}
+```{r, fig.cap='Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim_1, making it easy to compare how each element contributes relative to the others.'}
 AK_lakes_pca_ord %>%
-  ggplot(aes(x = Dim.1, y = analyte)) +
+  ggplot(aes(x = Dim_1, y = analyte)) +
     geom_point(aes(fill = analyte), shape = 22, size = 3) +
     scale_fill_manual(values = discrete_palette) +
     theme_bw()
@@ -210,7 +210,7 @@ This opens a browser window (or RStudio viewer) with three linked panels:
 
 * **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to color or shape; the app reuses the `discrete_palette` defined earlier so colors stay consistent with the rest of this chapter.
 * **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below a chosen threshold, making it easier to focus on the analytes that matter.
-* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim.1 or Dim.2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
+* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. Rows can be ordered by Dim_1 or Dim_2 so the heatmap aligns with whichever direction of separation matters in the scores plot.
 
 Because `pcaVisualizer()` calls `runMatrixAnalysis()` under the hood, any transformations performed on the data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while refining preprocessing steps, and once the preprocessing is settled, reproduce the final view with scripted ggplot code for publication-quality figures.
 
@@ -240,7 +240,7 @@ wq <- runMatrixAnalysis(
 )
 wq %>%
   arrange(quality_score) %>%
-  ggplot(aes(x = Dim.1, y = Dim.2)) +
+  ggplot(aes(x = Dim_1, y = Dim_2)) +
   geom_point(size = 3, aes(shape = type, fill = quality_score)) +
   scale_shape_manual(values = c(21, 22)) +
   scale_fill_viridis() +

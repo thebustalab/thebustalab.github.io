@@ -107,7 +107,7 @@ all_sequences_embedded_pca <- runMatrixAnalysis(
 all_sequences_embedded_pca$name <- gsub(".*__", "", all_sequences_embedded_pca$name)
 ggplot(all_sequences_embedded_pca) +
   geom_jitter(
-    aes(x = Dim.1, y = Dim.2, fill = name),
+    aes(x = Dim_1, y = Dim_2, fill = name),
     shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
   ) +
   scale_fill_manual(values = c("maroon", "gold")) +
@@ -148,7 +148,7 @@ runMatrixAnalysis(
 ) %>%
   ggplot() +
     geom_jitter(
-      aes(x = Dim.1, y = Dim.2),
+      aes(x = Dim_1, y = Dim_2),
       shape = 21, size = 5, height = 0, width = 0, alpha = 0.6
     ) +
     theme_minimal()

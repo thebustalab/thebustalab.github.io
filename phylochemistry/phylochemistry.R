@@ -11065,16 +11065,17 @@
                                 if( analysis == "pca" ) {
                                     coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
+                                    ## Dim_1, Dim_2, ... to match mds/tsne/umap/mca (FactoMineR names them Dim.1)
+                                    colnames(clustering) <- sub("^Dim\\.", "Dim_", colnames(clustering))
                                     clustering$sample_unique_ID <- rownames(coords)
-                                    # colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
                                 }
 
                                 if( analysis == "pca_ord" ) {
                                     coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
+                                    colnames(clustering) <- sub("^Dim\\.", "Dim_", colnames(clustering))
                                     clustering$analyte <- rownames(coords)
-                                    clustering <- select(clustering, analyte, c(paste0("Dim.", seq(1,components_to_return,1))))
-                                    # colnames(clustering) <- c("analyte", "Dim_1", "Dim_2")
+                                    clustering <- select(clustering, analyte, c(paste0("Dim_", seq(1,components_to_return,1))))
                                     return(clustering)
                                     stop("Returning ordination plot coordinates.")
                                 }

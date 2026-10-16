@@ -96,8 +96,8 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c("title", "term")
 ) %>%
   ggplot() +
-    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, color = "black", size = 5) +
-    geom_mark_ellipse(aes(x = Dim.1, y = Dim.2, fill = term), color = "black") +
+    geom_point(aes(x = Dim_1, y = Dim_2, fill = term), shape = 21, color = "black", size = 5) +
+    geom_mark_ellipse(aes(x = Dim_1, y = Dim_2, fill = term), color = "black") +
     theme_minimal() +
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
@@ -151,10 +151,10 @@ runMatrixAnalysis(
 ) %>%
   ggplot() +
     geom_label_repel(
-      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      aes(x = Dim_1, y = Dim_2, label = str_wrap(title, width = 35)),
       size = 2, min.segment.length = 0.5, force = 50
     ) +
-    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
+    geom_point(aes(x = Dim_1, y = Dim_2, fill = term), shape = 21, size = 5, alpha = 0.7) +
     scale_fill_brewer(palette = "Set1") +
     scale_x_continuous(expand = c(0,1)) +
     scale_y_continuous(expand = c(0,5)) +
@@ -183,17 +183,17 @@ runMatrixAnalysis(
 ) -> pca_out
 
 pca_out$color <- rgb(
-  scales::rescale(pca_out$Dim.1, to = c(0, 1)),
+  scales::rescale(pca_out$Dim_1, to = c(0, 1)),
   0,
-  scales::rescale(pca_out$Dim.2, to = c(0, 1))
+  scales::rescale(pca_out$Dim_2, to = c(0, 1))
 )
 
 ggplot(pca_out) +
   geom_label_repel(
-    aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
+    aes(x = Dim_1, y = Dim_2, label = str_wrap(odor, width = 35)),
     size = 2, min.segment.length = 0.5, force = 25
   ) +
-  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
+  geom_point(aes(x = Dim_1, y = Dim_2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
   theme_minimal()
 
 ```
@@ -259,7 +259,7 @@ runMatrixAnalysis(
 
 search_results_ex_embed_pca %>%
     ggplot() +
-      geom_point(aes(x = Dim.1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
+      geom_point(aes(x = Dim_1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
     scale_shape_manual(values = c(21, 22, 23)) +
     scale_fill_viridis() +
     scale_x_continuous(expand = c(0,1)) +
@@ -288,10 +288,10 @@ hops_embedded_pca$color[grep("picy", hops_embedded_pca$hop_aroma)] <- "maroon"
 hops_embedded_pca$color[grep("itrus", hops_embedded_pca$hop_aroma)] <- "gold"
 ggplot(hops_embedded_pca) +
   geom_label_repel(
-    aes(x = Dim.1, y = Dim.2, label = hop_aroma),
+    aes(x = Dim_1, y = Dim_2, label = hop_aroma),
     size = 2, min.segment.length = 0.5, force = 25
   ) +
-  geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
+  geom_point(aes(x = Dim_1, y = Dim_2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
   theme_minimal()
 ```
 -->
