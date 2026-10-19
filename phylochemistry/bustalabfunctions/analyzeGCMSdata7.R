@@ -2157,6 +2157,11 @@
                                          border-radius: 3px; margin: 0 6px; }
                         .gcms-drag:hover { background: #9e9e9e; }
                         body.gcms-dragging { cursor: col-resize; user-select: none; }
+                        /* One font size throughout: the theme's help-text size (12px). */
+                        body, body * { font-size: 12px !important; }
+                        .gcms-shortcuts { padding-left: 0; list-style-position: inside; margin-bottom: 0; }
+                        .gcms-shortcuts li.gcms-sep { list-style: none; }
+                        #key, #message_window { margin-bottom: 6px; }
                     ")),
                     tags$script(HTML("
                         $(function() {
@@ -2202,6 +2207,11 @@
 
                         h4("Busta Lab GCMS Analysis App"),
 
+                        strong("Last key pressed"),
+                        verbatimTextOutput("key", placeholder = TRUE),
+                        strong("Messages"),
+                        verbatimTextOutput("message_window", placeholder = TRUE),
+
                         img(
                             src = "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/logo.png",
                             height = "260px", 
@@ -2210,9 +2220,9 @@
 
                         tags$hr(),
                         strong("Keyboard Shortcuts:"),
-                        tags$ul(
+                        tags$ul(class = "gcms-shortcuts",
                             tags$li("Shift + Q => Update chromatogram"),
-                            tags$li("------------------"),
+                            tags$li(class = "gcms-sep", "------------------"),
                             tags$li("Shift + 6 => Detect peaks"),
                             tags$li("Shift + A => Add single peak"),
                             tags$li("Shift + G => Add global peak"),
@@ -2220,7 +2230,7 @@
                             tags$li("Shift + R => Remove global peak"),
                             tags$li("Shift + 0 => Remove ALL peaks"),
                             tags$li("Shift + Z => Save peak table"),
-                            tags$li("------------------"),
+                            tags$li(class = "gcms-sep", "------------------"),
                             tags$li("Shift + 1 => Extract MS from selection"),
                             tags$li("Shift + 2 => Zoom in on selected MS portion"),
                             tags$li("Shift + 3 => Subtract selection MS from current MS"),
@@ -2269,11 +2279,6 @@
                             column(6, actionButton("unsplit_btn", "Unsplit peak"))
                         ),
 
-                        verbatimTextOutput("key", placeholder = TRUE),
-
-                        # Message window
-                            h5("Messages"),
-                            verbatimTextOutput("message_window", placeholder = TRUE),
                     ),
 
                     mainPanel(
@@ -2426,9 +2431,27 @@
 
                     # Helper function to append a new line
                     logMessage <- function(msg) {
-                        old_val <- message_data()
-                        new_val <- paste(old_val, msg, sep = "\n")
-                        message_data(new_val)
+                        msg <- trimws(gsub("\n", " ", msg))
+                        if (!nzchar(msg)) return(invisible(NULL))
+                        ## isolate(): notify() is also called from inside renders, which must not
+                        ## come to depend on the message box.
+                        old <- strsplit(isolate(message_data()), "\n", fixed = TRUE)[[1]]
+                        message_data(paste(head(c(msg, old[nzchar(old)]), 8), collapse = "\n"))
+                    }
+
+                    ## An action's outcome: to the console (Jupyter output) AND the
+                    ## Messages box, newest at the top.
+                    notify <- function(msg) {
+                        cat(msg, "\n", sep = "")
+                        logMessage(msg)
+                    }
+
+                    ## Split/refresh logs: everything to the console; to the box,
+                    ## all but the per-sample factor lines.
+                    notify_log <- function(lines) {
+                        if (!length(lines)) return(invisible(NULL))
+                        cat(paste0(lines, "\n"), sep = "")
+                        for (l in rev(lines[!grepl("^  [^ ]+: kA ", lines)])) logMessage(l)
                     }
 
                     # Render them in the message window
@@ -2453,8 +2476,15 @@
                     })
 
                 ## Check keystoke value
-                    output$key <- renderPrint({
-                        input$keypress
+                    output$key <- renderText({
+                        k <- input$keypress
+                        if (is.null(k)) return("")
+                        ch <- intToUtf8(k)
+                        shifted <- c("!" = "1", "@" = "2", "#" = "3", "$" = "4", "%" = "5",
+                                     "^" = "6", "&" = "7", "*" = "8", "(" = "9", ")" = "0")
+                        if (ch %in% names(shifted)) paste("Shift +", shifted[[ch]])
+                        else if (grepl("^[A-Z]$", ch)) paste("Shift +", ch)
+                        else ch
                     })
 
                 ## Keys to move chromatogram view - zoom in and out, move L and R
@@ -2519,7 +2549,7 @@
                             ## Write out any modifications to peak table (i.e. sample IDs)
                                 hot = isolate(input$peak_table)
                                 if (is.null(hot)) {
-                                    cat("Shift+Z: no editable peak table in the browser yet - press Shift+Q first.\n")
+                                    notify("Nothing to save yet. Press Shift+Q first.")
                                     return()
                                 }
                                 edited <- rhandsontable::hot_to_r(hot)
@@ -2533,20 +2563,20 @@
                                 moved_on <- !is.null(peak_table_snapshot) && !is.null(on_disk) &&
                                             !identical(dim(peak_table_snapshot), dim(on_disk))
                                 if (moved_on) {
-                                    cat(paste0("Shift+Z: peaks_monolist.csv has changed since the table was drawn (",
+                                    notify(paste0("Not saved: the peak list changed since the table was drawn (",
                                                nrow(peak_table_snapshot), " rows then, ", nrow(on_disk),
-                                               " now). Saving would discard the difference - press Shift+Q to refresh the table, then re-make your edits.\n"))
+                                               " now). Press Shift+Q, then redo your edits."))
                                     return()
                                 }
 
                                 saved <- gcms_apply_peak_id_edits(on_disk, edited)
                                 if (is.null(saved)) {
-                                    cat("Shift+Z: the on-screen table does not line up with peaks_monolist.csv - press Shift+Q to refresh the table, then re-make your edits.\n")
+                                    notify("Not saved: the table is out of date. Press Shift+Q, then redo your edits.")
                                     return()
                                 }
                                 writeMonolist(saved, "peaks_monolist.csv")
                                 peak_table_snapshot <<- saved
-                                cat("Peak IDs saved!\n")
+                                notify("Peak list saved.")
                         }
                     })
 
@@ -2572,13 +2602,13 @@
                             col.names = TRUE,
                             sep = ","
                           )
-                          cat("All peaks removed.\n")
+                          notify("All peaks removed.")
                           
                           # ALSO CLEAR THE facet-plot reactiveVal
                           peakDetectionPlotData(NULL)
                           
                         } else {
-                          cat("No peaks_monolist.csv file exists, so nothing to remove.\n")
+                          notify("No peaks to remove.")
                         }
                       }
                     })
@@ -2588,7 +2618,6 @@
                       if (input$keypress == 94) {  # '^' = Shift+6
                         peakDetectionPlotData(NULL)
                         cat("Starting custom peak detection...\n")
-                        logMessage("Starting custom peak detection...\n")
 
                         # 1) Read thresholds from your sliders
                         peakStartSlope         <- input$peakStartSlope
@@ -2622,7 +2651,7 @@
 
                         # 3) Ensure chromatograms_updated exists
                         if (is.null(chromatograms_updated)) {
-                          cat("No chromatogram data loaded yet. Press Q first to update.\n")
+                          notify("No chromatograms loaded yet. Press Shift+Q first.")
                           return()
                         }
 
@@ -2753,10 +2782,9 @@
                                 col.names = TRUE,
                                 sep = ","
                               )
-                              cat("Auto-detected", nrow(peak_data_new), "peaks (passed minArea filter).\n")
-                              logMessage(paste("Auto-detected", nrow(peak_data_new), "peaks (passed minArea filter).\n"))
+                              notify(paste0("Peaks detected: ", nrow(peak_data_new), "."))
                             } else {
-                              cat("No new peaks found above threshold or min area.\n")
+                              notify("No new peaks found.")
                               # No new peaks => might not want to do the random plot:
                               return()
                             }
@@ -2777,7 +2805,7 @@
 
                             # Make sure we have 'chromatograms_updated' loaded
                             if (is.null(chromatograms_updated)) {
-                              cat("No chromatograms_updated found. Press Q to update.\n")
+                              notify("No chromatograms loaded yet. Press Shift+Q first.")
                               return()
                             }
 
@@ -3044,9 +3072,8 @@
                                                 y_axis_end <<- max(peak_points$abundance)
                                             }
                                         } else {
-                                            cat("Brush selected no chromatogram points - keeping the current view.\n")
+                                            notify("Selection held no data. View unchanged.")
                                             cat("  Re-brush on a drawn trace and press Shift+Q again, or press Shift+Q with no brush to reset.\n")
-                                            logMessage("Brush selected no points; view left unchanged.")
                                             if (is.null(x_axis_start) || length(x_axis_start) == 0 || !is.finite(x_axis_start)) x_axis_start <<- x_axis_start_default
                                             if (is.null(x_axis_end)   || length(x_axis_end)   == 0 || !is.finite(x_axis_end))   x_axis_end   <<- x_axis_end_default
                                             if (is.null(y_axis_start) || length(y_axis_start) == 0 || !is.finite(y_axis_start)) y_axis_start <<- 0
@@ -3237,7 +3264,7 @@
                                         refreshed <- gcms_refresh_splits(peak_table, coelution_traces,
                                                                          crosstalk = coelution_crosstalk)
                                         peak_table <- refreshed$peak_table
-                                        if (length(refreshed$log)) cat(paste0(refreshed$log, "\n"), sep = "")
+                                        notify_log(refreshed$log)
                                         write_coelution_profiles(refreshed$profiles)
 
                                     ## Write out peaks now with assigned peak_number_within_sample and RT offset, update the peak_table in ui
@@ -3261,7 +3288,7 @@
                                 ## block). Here we only signal that fresh data is ready.
                                 redraw_trigger(isolate(redraw_trigger()) + 1)
 
-                                cat("Chromatogram updated.\n")
+                                notify("Chromatogram updated.")
                         }
                     })
 
@@ -3317,7 +3344,7 @@
                         }
                         coelution_finish <- function(pt) {
                             refreshed <- gcms_refresh_splits(pt, coelution_traces, crosstalk = coelution_crosstalk)
-                            if (length(refreshed$log)) cat(paste0(refreshed$log, "\n"), sep = "")
+                            notify_log(refreshed$log)
                             write_coelution_profiles(refreshed$profiles)
                             write.table(refreshed$peak_table, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
                             render_peak_table()
@@ -3325,12 +3352,12 @@
                         }
                         coelution_table <- function() {
                             if (is.null(chromatograms_updated) || !file.exists("peaks_monolist.csv")) {
-                                cat("Split: press Shift+Q first, so the chromatograms and peak table are loaded.\n")
+                                notify("Split: press Shift+Q first.")
                                 return(NULL)
                             }
                             pt <- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                             if (nrow(pt) == 0 || !all(c("peak_start_rt_offset", "peak_number_within_sample") %in% names(pt))) {
-                                cat("Split: no numbered peaks yet - integrate the hump and press Shift+Q first.\n")
+                                notify("Split: no numbered peaks yet. Integrate the hump and press Shift+Q first.")
                                 return(NULL)
                             }
                             pt
@@ -3340,21 +3367,21 @@
                             ia <- gcms_parse_ions(input$split_ions_a); ib <- gcms_parse_ions(input$split_ions_b)
                             n <- input$split_peak
                             if (length(ia) == 0 || length(ib) == 0 || length(intersect(ia, ib))) {
-                                cat("Split: give ions for BOTH compounds, with no ion in both.\n"); return()
+                                notify("Split: give ions for both compounds, with no ion in both."); return()
                             }
                             wnd <- gcms_window_for_peak(pt, n)
-                            if (is.null(wnd)) { cat("Split: no sample has a peak number ", n, ".\n", sep = ""); return() }
+                            if (is.null(wnd)) { notify(paste0("Split: no sample has a peak number ", n, ".")); return() }
                             cat(sprintf("Split: peak %d is at %.2f-%.2f (aligned rt).\n", as.integer(round(n)), wnd[1], wnd[2]))
                             res <- gcms_apply_coelution_split(pt, coelution_traces, wnd, ia, ib,
                                                               crosstalk = coelution_crosstalk,
                                                               k_mode = if (is.null(input$split_k_mode)) "sample" else input$split_k_mode)
-                            cat(paste0(res$log, "\n"), sep = "")
+                            notify_log(res$log)
                             coelution_finish(res$peak_table)
                         })
                         observeEvent(input$unsplit_btn, {
                             pt <- coelution_table(); if (is.null(pt)) return()
                             res <- gcms_unsplit_peak(pt, input$split_peak)
-                            cat(paste0(res$log, "\n"), sep = "")
+                            notify_log(res$log)
                             coelution_finish(res$peak_table)
                         })
 
@@ -3364,7 +3391,7 @@
                         })
                         observeEvent(input$next_page, {
                             b <- page_bounds()
-                            if (is.null(b)) { cat("Press Shift+Q to load chromatograms first.\n"); return() }
+                            if (is.null(b)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
                             current_page(min(b$n_pages, current_page() + 1))
                         })
 
@@ -3507,7 +3534,7 @@
                                     ## to c(0, 0). Fall back to the TIC, as Shift+1 and Shift+4
                                     ## already do for the same reason.
                                     if (!is.null(allion) && all(allion$mz == 0, na.rm = TRUE)) {
-                                        cat("All-ion view is not available for single-detector data (no m/z dimension) - showing the TIC.\n")
+                                        notify("All-ion view needs mass-spec data. Showing the TIC.")
                                         mode_display <- "tic"
                                         allion <- NULL
                                     }
@@ -3833,7 +3860,7 @@
 
                             peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                             if (nrow(peak_points) == 0) {
-                                cat("Shift+E: the brush selected no points; nothing excised.\n")
+                                notify("Nothing excised: the selection held no data.")
                                 return()
                             }
                             path_to_cdf_csv <- single_sample(peak_points, "Shift+E")
@@ -3843,7 +3870,7 @@
 
                             peak_table <- read.csv("peaks_monolist.csv")
                             if (nrow(peak_table) == 0) {
-                                cat("Shift+E: no peaks on file.\n")
+                                notify("No peaks to excise.")
                                 return()
                             }
 
@@ -3867,9 +3894,9 @@
                               col.names = TRUE,
                               sep = ","
                             )
-                            cat("Excised single peak.\n")
+                            notify("Peak excised.")
                           } else {
-                            cat("No brush selection to excise.\n")
+                            notify("Nothing excised: draw a selection first.")
                           }
                         }
                       })
@@ -3883,14 +3910,14 @@
 
                             peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                             if (nrow(peak_points) == 0) {
-                                cat("Shift+R: the brush selected no points; nothing removed.\n")
+                                notify("Nothing removed: the selection held no data.")
                                 return()
                             }
 
                             # read peak table
                             peak_table <- read.csv("peaks_monolist.csv")
                             if (nrow(peak_table) == 0) {
-                                cat("Shift+R: no peaks on file.\n")
+                                notify("No peaks to remove.")
                                 return()
                             }
 
@@ -3933,9 +3960,9 @@
                               col.names = TRUE,
                               sep = ","
                             )
-                            cat("Removed global peaks within brush.\n")
+                            notify("Peak removed from all samples.")
                           } else {
-                            cat("No brush selection to remove globally.\n")
+                            notify("Nothing removed: draw a selection first.")
                           }
                         }
                       })
@@ -3963,7 +3990,7 @@
                                 ## Inf/-Inf -- which used to be appended to peaks_monolist.csv as
                                 ## a permanent poison row that the Shift+Q dedupe does not drop.
                                 if (nrow(pp) == 0) {
-                                    cat("Shift+A: the brush selected no points; no peak added.\n")
+                                    notify("No peak added: the selection held no data.")
                                     return()
                                 }
                                 pp_sample <- single_sample(pp, "Shift+A")
@@ -3991,7 +4018,7 @@
                                 )
 
                                 render_peak_table()
-                                cat("Added peak.\n")
+                                notify("Peak added.")
                             }
                     })
 
@@ -4010,7 +4037,7 @@
                                 ## Evaluate the brush once (see Shift+A) and refuse an empty one.
                                 pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                                 if (nrow(pp) == 0) {
-                                    cat("Shift+G: the brush selected no points; no peaks added.\n")
+                                    notify("No peak added: the selection held no data.")
                                     return()
                                 }
 
@@ -4053,7 +4080,7 @@
                                 )
 
                                 render_peak_table()
-                                cat("Added global peak.\n")
+                                notify("Peak added to all samples.")
                             }
                     })
 
@@ -4071,7 +4098,7 @@
                                 ## sample happens to sort first.
                                 ms_pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                                 if (is.null(ms_pp) || nrow(ms_pp) == 0) {
-                                    cat("Shift+1: the brush selected no points; no spectrum extracted.\n")
+                                    notify("No spectrum extracted: the selection held no data.")
                                     return()
                                 }
                                 sample_name_MS <- single_sample(ms_pp, "Shift+1")
@@ -4126,7 +4153,7 @@
                             if ( input$keypress == 35 ) {
 
                                 if (is.null(MS_out_1)) {
-                                    cat("No mass spectrum extracted yet.\n")
+                                    notify("No mass spectrum extracted yet. Use Shift+1 first.")
                                     return()
                                 } else {
                                 
@@ -4134,7 +4161,7 @@
                                     ## from a single sample's panel.
                                     sub_pp <- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
                                     if (is.null(sub_pp) || nrow(sub_pp) == 0) {
-                                        cat("Shift+3: the brush selected no points; nothing subtracted.\n")
+                                        notify("Nothing subtracted: the selection held no data.")
                                         return()
                                     }
                                     sub_sample <- single_sample(sub_pp, "Shift+3")
@@ -4163,7 +4190,7 @@
                             if ( input$keypress == 33 | input$keypress == 64 | input$keypress == 35 ) {
 
                                 if (is.null(MS_out_1)) {
-                                    cat("No mass spectrum extracted yet.\n")
+                                    notify("No mass spectrum extracted yet. Use Shift+1 first.")
                                     return()
                                 } else if (nrow(MS_out_1) == 0 || (nrow(MS_out_1) == 1 && all(MS_out_1$mz == 0))) {
                                     # Single-detector data (e.g. GC-TCD): no mass spectrum exists.
@@ -4189,7 +4216,7 @@
                                             ## empty coordmap cannot error the whole block away.
                                             ms1_sel <- isolate(brushed_ms(MS_out_1, input$massSpectra_1_brush))
                                             if (is.null(ms1_sel) || nrow(ms1_sel) == 0) {
-                                                cat("MS brush selected no peaks - showing the full spectrum.\n")
+                                                notify("Selection held no ions. Showing the full spectrum.")
                                                 MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
                                             } else {
                                                 MS1_low_x_limit <- min(ms1_sel$mz)
@@ -4395,7 +4422,7 @@
 
                             #     # Do nothing if no MS extracted
                             #         if (!exists("MS_out_1")) {
-                            #             cat("No mass spectrum extracted yet.\n")
+                            #             notify("No mass spectrum extracted yet. Use Shift+1 first.")
                             #             return()
                             #         } else {
                             #             MS_out_1_to_write <- MS_out_1
@@ -4424,7 +4451,7 @@
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){
-                                        cat("No peaks available.\n")
+                                        notify("No peaks to classify.")
                                         return()
                                     }
 
@@ -4472,7 +4499,7 @@
                                     }
                                     
                                     if(length(ms_list) == 0){
-                                        message("No mass spectra extracted from peaks.")
+                                        notify("Classification: no spectra could be extracted from the peaks.")
                                         return()
                                     }
                                 
@@ -4482,7 +4509,7 @@
                                 # Guard: single-detector data (e.g. GC-TCD) has no
                                 # mass spectrum to classify, so stop here cleanly.
                                     if (all(ms_data$mz == 0)) {
-                                        message("Mass spectral classification skipped - single-detector data (e.g. TCD) has no spectrum to classify.")
+                                        notify("Classification needs mass-spec data. Skipped.")
                                         return()
                                     }
 
@@ -4526,7 +4553,7 @@
                                 exit_code <- system(paste0("python3 ", shQuote(ms_classifier_path),
                                                            " predict ms_wide_for_prediction.csv predictions.csv"))
                                 if (exit_code != 0 || !file.exists("predictions.csv")) {
-                                    message("ERROR: Python classifier failed. Check that ms_classifier.py is trained and its model pkl is present.")
+                                    notify("Classification failed: the Python classifier did not run.")
                                     return()
                                 }
 
@@ -4540,7 +4567,7 @@
                                                              " [", round(pred_df$confidence * 100, 0), "%]")
                                 writeMonolist(peak_table, "peaks_monolist.csv")
 
-                                message("Mass spectral classification completed.")
+                                notify("Peaks classified.")
                             }
 
                     })
