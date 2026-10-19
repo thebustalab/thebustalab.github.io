@@ -41,7 +41,7 @@ message("Loading dgx module...")
           # render is running), it answers 503 "memory_admission". That means "not yet", so
           # WAIT and retry, for up to this long. 0 = fail straight away. Added 2026-09-18.
           max_wait_sec = as.numeric(Sys.getenv("DGX_MEMORY_WAIT_SEC", 4 * 3600)),
-          on_wait = NULL         # internal: runModelGrid uses it to keep its lock fresh
+          on_wait = NULL         # internal: called before and after each memory wait
         ) {
           suppressPackageStartupMessages({ library(httr); library(jsonlite) })
           payload <- list(prompt = prompt, max_tokens = max_tokens)
@@ -82,79 +82,19 @@ message("Loading dgx module...")
             stop("dgx said ", httr::status_code(resp), ": ",
                  substr(httr::content(resp, "text", encoding = "UTF-8"), 1, 300))
           }
-          .dgxState$last_own_call <- as.numeric(Sys.time())
           jsonlite::fromJSON(httr::content(resp, "text", encoding = "UTF-8"))
         }
 
         # ---- SHARING: the dgx has ONE model slot for the whole lab ------------------------
-        # Two grids at once do not queue politely — they evict each other's model on every
-        # request, so both pay a ~3-minute reload per prompt and neither finishes. On
-        # 2026-09-16 that churn exhausted the dgx's memory, the kernel killed the model
-        # server, and the 45,358 prompts queued behind it failed in under a minute into a
-        # 114 MB CSV with nothing usable in it. These guards exist so that cannot repeat.
-        # They mirror dgx_client.py exactly — keep the two sides in step.
+        # Calls on port 9002 go through the dgx broker, which queues them and keeps a loaded
+        # model serving its work before swapping, so two grids take turns instead of evicting
+        # each other on every prompt. runModelGrid() still refuses an unreachable server or an
+        # absurdly large grid, and stops a run failing every prompt. These guards mirror
+        # dgx_client.py exactly — keep the two sides in step.
 
-        dgxGridLock      <- function() Sys.getenv("DGX_GRID_LOCK",
-          "/project_data/shared/general_lab_resources/remote_lm_server/.grid_lock.json")
-        dgxLockStaleSec  <- function() as.numeric(Sys.getenv("DGX_GRID_LOCK_STALE_SEC", "1800"))
-        dgxBusyIdleSec   <- function() as.numeric(Sys.getenv("DGX_GRID_BUSY_IDLE_SEC", "300"))
         dgxMaxGridCells  <- function() as.numeric(Sys.getenv("DGX_MAX_GRID_CELLS", "5000"))
 
-        .dgxMe <- function() list(host = as.character(Sys.info()[["nodename"]]),
-                                  pid  = as.integer(Sys.getpid()))
-
-        .dgxReadLock <- function() {
-          f <- dgxGridLock()
-          if (!file.exists(f)) return(NULL)
-          tryCatch(jsonlite::fromJSON(f), error = function(e) NULL)
-        }
-
-        .dgxWriteLock <- function(info) {
-          f <- dgxGridLock(); tmp <- paste0(f, ".tmp", Sys.getpid())
-          ok <- tryCatch({
-            writeLines(jsonlite::toJSON(info, auto_unbox = TRUE), tmp)
-            file.rename(tmp, f)
-            try(Sys.chmod(f, "666"), silent = TRUE)
-            TRUE
-          }, error = function(e) FALSE, warning = function(w) FALSE)
-          if (!ok) {
-            try(unlink(tmp), silent = TRUE)
-            message("[warn] could not write the grid lock at ", f,
-                    ". Carrying on, but nobody else can see that you are running.")
-          }
-          invisible(ok)
-        }
-
-        # The live lock, if somebody OTHER than us holds it. NULL if free, stale, or ours.
-        .dgxLockHolder <- function() {
-          lock <- .dgxReadLock(); if (is.null(lock)) return(NULL)
-          me <- .dgxMe()
-          if (identical(as.character(lock$host), me$host) &&
-              identical(as.integer(lock$pid), me$pid)) return(NULL)
-          hb <- suppressWarnings(as.numeric(lock$heartbeat))
-          if (is.na(hb) || (as.numeric(Sys.time()) - hb) > dgxLockStaleSec()) return(NULL)
-          lock
-        }
-
-        .dgxReleaseLock <- function() {
-          lock <- .dgxReadLock(); if (is.null(lock)) return(invisible(NULL))
-          me <- .dgxMe()
-          if (identical(as.character(lock$host), me$host) &&
-              identical(as.integer(lock$pid), me$pid)) try(unlink(dgxGridLock()), silent = TRUE)
-          invisible(NULL)
-        }
-
-        # When THIS R session last got an answer from the server. The server's idle_sec cannot
-        # tell whose call it was, so without this a grid started right after your own
-        # dgxGenerate() looks like "somebody else is using it" and is refused (2026-10-05).
-        .dgxState <- new.env()
-        .dgxState$last_own_call <- NA_real_
-        .dgxLastActivityWasMine <- function(idle) {
-          !is.na(.dgxState$last_own_call) &&
-            idle >= (as.numeric(Sys.time()) - .dgxState$last_own_call) - 5
-        }
-
-        # Seconds since the generate server last answered anyone; NA if we cannot tell.
+        # Seconds since the generate server last answered anyone; NA if we cannot reach it.
         .dgxServerIdle <- function(
           server_url = Sys.getenv("DGX_GENERATE_URL", "http://127.0.0.1:9002")
         ) {
@@ -166,26 +106,19 @@ message("Loading dgx module...")
           }, error = function(e) NA_real_)
         }
 
-        # Is it safe to start a grid right now? Run this before a long job, and again if
-        # runModelGrid() refuses to start.
+        # Can I start a grid right now? The broker queues everyone's calls, so another grid
+        # running is not a reason to wait: yours takes its turn.
         dgxGridStatus <- function() {
-          holder <- .dgxLockHolder()
-          if (!is.null(holder)) {
-            mins <- (as.numeric(Sys.time()) - as.numeric(holder$started)) / 60
-            message("BUSY — ", holder$user, " on ", holder$host, " started a grid ",
-                    round(mins), " min ago (", holder$total, " prompts -> ", holder$out_csv, ").")
-          } else message("Grid lock: free.")
           idle <- .dgxServerIdle()
           if (is.na(idle)) message("Server: could not reach the generate endpoint.")
-          else if (idle < dgxBusyIdleSec() && .dgxLastActivityWasMine(idle))
-            message("Server: quiet apart from your own call ", round(idle), " s ago.")
-          else if (idle < dgxBusyIdleSec())
-            message("Server: in use — it answered someone ", round(idle), " s ago.")
-          else message("Server: quiet — idle for ", round(idle / 60), " min.")
+          else if (idle < 300)
+            message("Server: up, last answered a call ", round(idle), " s ago. Calls are queued, ",
+                    "so you can start anyway — yours will take its turn.")
+          else message("Server: up and quiet — idle for ", round(idle / 60), " min.")
           invisible(NULL)
         }
 
-        # Refuse to start a grid that would collide with someone else or monopolise the box.
+        # Refuse to start a grid that would monopolise the box or run against a dead server.
         .dgxPreflight <- function(total, force, verbose) {
           problems <- character(0)
           if (total > dgxMaxGridCells()) problems <- c(problems, paste0(
@@ -193,23 +126,9 @@ message("Loading dgx module...")
             "    time for the whole lab. Pilot on 20-50 prompts across the full grid first,\n",
             "    decide which (model, quant) actually works, then run everything through that\n",
             "    ONE cell."))
-          holder <- .dgxLockHolder()
-          if (!is.null(holder)) {
-            mins <- (as.numeric(Sys.time()) - as.numeric(holder$started)) / 60
-            problems <- c(problems, paste0(
-              "Another grid is running: ", holder$user, " on ", holder$host, ", started ",
-              round(mins), " min ago\n    (", holder$total, " prompts -> ", holder$out_csv,
-              "). Starting now would make both runs evict\n",
-              "    each other's model on every prompt."))
-          } else {
-            idle <- .dgxServerIdle()
-            if (is.na(idle)) problems <- c(problems, paste0(
-              "Cannot reach the generate server. Run dgxHealth() first — starting a grid\n",
-              "    against a dead server just fills the CSV with errors."))
-            else if (idle < dgxBusyIdleSec() && !.dgxLastActivityWasMine(idle)) problems <- c(problems, paste0(
-              "The server answered somebody ", round(idle), " s ago, so it is probably in use.\n",
-              "    Wait for them to finish, or check with dgxGridStatus()."))
-          }
+          if (is.na(.dgxServerIdle())) problems <- c(problems, paste0(
+            "Cannot reach the generate server. Run dgxHealth() first — starting a grid\n",
+            "    against a dead server just fills the CSV with errors."))
           if (verbose) { message("Pre-flight check (same as dgxGridStatus()):"); dgxGridStatus() }
           if (!length(problems)) return(invisible(NULL))
           bar <- strrep("-", 90)
@@ -229,9 +148,9 @@ message("Loading dgx module...")
         # kernel dies four hours in, re-running the same cell continues where it stopped.
         # Rows that FAILED are retried — a failure is not a result. A retried prompt appends a
         # second row; the later row is the one that counts.
-        # IT WILL REFUSE TO START if another grid holds the lock, if the server is answering
-        # somebody else, or if the grid is larger than DGX_MAX_GRID_CELLS. Call dgxGridStatus()
-        # to see why, and pass force = TRUE if you are sure.
+        # IT WILL REFUSE TO START if the server is unreachable or the grid is larger than
+        # DGX_MAX_GRID_CELLS (pass force = TRUE if you are sure about the size). Someone else's
+        # grid running is fine: the dgx broker queues both and they take turns.
         runModelGrid <- function(
           prompts,
           models = c("google/gemma-4-E2B-it", "google/gemma-4-E4B-it",
@@ -282,14 +201,6 @@ message("Loading dgx module...")
           }
 
           n <- length(done_keys); consecutive_errors <- 0
-          me <- .dgxMe()
-          lock <- list(host = me$host, pid = me$pid,
-                       user = as.character(Sys.info()[["user"]]),
-                       out_csv = normalizePath(out_csv, mustWork = FALSE),
-                       total = total, started = as.numeric(Sys.time()),
-                       heartbeat = as.numeric(Sys.time()))
-          .dgxWriteLock(lock)
-          on.exit(.dgxReleaseLock(), add = TRUE)
 
           for (m in models) for (q in quants) {
             keep <- !(paste(m, q, labels) %in% done_keys)
@@ -301,10 +212,7 @@ message("Loading dgx module...")
               row <- tryCatch({
                 r <- dgxGenerate(prompts[i], model = m, quant = q,
                                  max_tokens = max_tokens, system = system,
-                                 logprobs = if (use_lp) logprobs else NULL,
-                                 on_wait = function() {   # keep the lock fresh while waiting
-                                   lock$heartbeat <- as.numeric(Sys.time()); .dgxWriteLock(lock)
-                                 })
+                                 logprobs = if (use_lp) logprobs else NULL)
                 tibble(model = m, quant = q, prompt_id = labels[i], prompt = prompts[i],
                        completion = r$completion, duration_sec = r$duration_sec,
                        error = NA_character_, timestamp = format(Sys.time())) %>%
@@ -322,7 +230,6 @@ message("Loading dgx module...")
               })
               readr::write_csv(row, out_csv, append = file.exists(out_csv))
               n <- n + 1
-              lock$heartbeat <- as.numeric(Sys.time()); .dgxWriteLock(lock)
               consecutive_errors <- if (failed) consecutive_errors + 1 else 0
 
               if (consecutive_errors >= max_consecutive_errors) {
