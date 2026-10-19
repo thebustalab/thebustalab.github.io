@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-10-16"
+date: "2026-10-18"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4724,12 +4724,12 @@ K_data %>%
 ## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukeyTest`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 
 ``` r
 K_data %>%
-  tukey_hsd(abundance ~ aquifer_code)
+  tukeyTest(abundance ~ aquifer_code)
 ## # A tibble: 45 × 9
 ##    term         group1   group2 null.value estimate conf.low
 ##  * <chr>        <chr>    <chr>       <dbl>    <dbl>    <dbl>
@@ -4746,9 +4746,6 @@ K_data %>%
 ## # ℹ 35 more rows
 ## # ℹ 3 more variables: conf.high <dbl>, p.adj <dbl>,
 ## #   p.adj.signif <chr>
-
-# K_data %>%
-#   tukeyHSD(abundance ~ aquifer_code)
 ```
 
 Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
@@ -4756,7 +4753,7 @@ Using the output from our tukey test, we can determine which means are similar. 
 
 ``` r
 groups_based_on_tukey <- K_data %>%
-  tukey_hsd(abundance ~ aquifer_code) %>%
+  tukeyTest(abundance ~ aquifer_code) %>%
   pGroups()
 groups_based_on_tukey
 ##             treatment group spaced_group
@@ -4929,7 +4926,7 @@ hawaii_aquifers %>%
 ## 10 aquifer_9        1    64    1.10   0.298
 ```
 
-It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the `wilcox_test`, but we have may pairs, so we will use `pairwise_wilcox_test` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?pairwise_wilcox_test`):
+It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use `wilcoxTest`, but we have many pairs, so we will use `pairwiseWilcoxTest` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?rstatix::pairwise_wilcox_test`):
 
 
 ``` r
@@ -4956,7 +4953,7 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
+What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwiseTTest` of course!
 
 
 ``` r

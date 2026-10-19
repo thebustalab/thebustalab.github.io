@@ -384,7 +384,7 @@
         tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
         anovaTest <- function( data, ... ) {rstatix::anova_test( data = ungroup(data), ... )}
-        tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
+        tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data, ... )}  # tukey_hsd's first argument is x, not data
         kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = ungroup(data), ... )}
         dunnTest <- function( data, ... ) {rstatix::dunn_test( data = ungroup(data), ... )}
         pairwiseWilcoxTest <- function( data, ... ) {rstatix::pairwise_wilcox_test( data = data, ... )}

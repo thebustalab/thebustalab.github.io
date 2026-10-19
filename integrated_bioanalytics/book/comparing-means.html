@@ -402,10 +402,10 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">## </span></span>
 <span><span class="co">##         Effect DFn DFd     F        p p&lt;.05   ges</span></span>
 <span><span class="co">## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471</span></span></code></pre></div>
-<p>A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey’s Honest Significant Difference test (implemented using <code>tukey_hsd</code>). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
+<p>A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey’s Honest Significant Difference test (implemented using <code>tukeyTest</code>). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
 <div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 9</span></span>
 <span><span class="co">##    term         group1   group2 null.value estimate conf.low</span></span>
 <span><span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
@@ -421,14 +421,11 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">## 10 aquifer_code aquifer… aquif…          0  1.44      -0.954</span></span>
 <span><span class="co">## # ℹ 35 more rows</span></span>
 <span><span class="co">## # ℹ 3 more variables: conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
-<span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span>
-<span></span>
-<span><span class="co"># K_data %&gt;%</span></span>
-<span><span class="co">#   tukeyHSD(abundance ~ aquifer_code)</span></span></code></pre></div>
+<span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:</p>
 <div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_tukey</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">groups_based_on_tukey</span></span>
 <span><span class="co">##             treatment group spaced_group</span></span>
@@ -571,7 +568,7 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">##  8 aquifer_7        1    16    1.54   0.232  </span></span>
 <span><span class="co">##  9 aquifer_8        1     4    0.515  0.512  </span></span>
 <span><span class="co">## 10 aquifer_9        1    64    1.10   0.298</span></span></code></pre></div>
-<p>It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the <code>wilcox_test</code>, but we have may pairs, so we will use <code>pairwise_wilcox_test</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code>?pairwise_wilcox_test</code>):</p>
+<p>It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use <code>wilcoxTest</code>, but we have many pairs, so we will use <code>pairwiseWilcoxTest</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code><a href="https://rpkgs.datanovia.com/rstatix/reference/wilcox_test.html">?rstatix::pairwise_wilcox_test</a></code>):</p>
 <div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -593,7 +590,7 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">## # ℹ 3 more variables: p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).</p>
-<p>What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a <code>pairwise_TTest</code> of course!</p>
+<p>What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a <code>pairwiseTTest</code> of course!</p>
 <div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -719,7 +716,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
