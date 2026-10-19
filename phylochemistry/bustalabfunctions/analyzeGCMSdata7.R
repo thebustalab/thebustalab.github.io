@@ -596,6 +596,28 @@
                            paste(ids, collapse = ", "), length(merged)))
     }
 
+    ## The peak table on screen. read.csv() reads a column with no values in it
+    ## (area_peak_ions on a TIC-only folder, every split column before the first
+    ## split) as logical, and rhandsontable draws a logical column as tick boxes.
+    ## Show such a column as blank text instead. Display only: the file is not
+    ## touched.
+    gcms_peak_table_display <- function(pt) {
+        for (col in names(pt))
+            if (is.logical(pt[[col]]) && all(is.na(pt[[col]]))) pt[[col]] <- rep("", nrow(pt))
+        pt
+    }
+
+    ## Shift+Z. peak_ID is the only column edited by hand, so the save takes the
+    ## file as it is on disk and copies in only the on-screen peak_ID column.
+    ## Areas, ions and every split setting therefore never pass through the
+    ## widget. Returns NULL when the two tables do not line up row for row.
+    gcms_apply_peak_id_edits <- function(on_disk, edited) {
+        if (is.null(on_disk) || is.null(edited) || nrow(on_disk) != nrow(edited) ||
+            !("peak_ID" %in% names(on_disk)) || !("peak_ID" %in% names(edited))) return(NULL)
+        on_disk$peak_ID <- as.character(edited$peak_ID)
+        on_disk
+    }
+
 
 #### analyzeGCMSdata7
 ####
@@ -2479,9 +2501,14 @@
                     render_peak_table <- function() {
                         current <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv") else NULL
                         peak_table_snapshot <<- current
-                        output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
-                            current
-                        }))
+                        ## Only peak_ID is editable; everything else is computed.
+                        output$peak_table <- rhandsontable::renderRHandsontable({
+                            if (is.null(current)) return(NULL)
+                            hot <- rhandsontable::rhandsontable(gcms_peak_table_display(current))
+                            hot <- rhandsontable::hot_cols(hot, readOnly = TRUE)
+                            if ("peak_ID" %in% names(current)) hot <- rhandsontable::hot_col(hot, "peak_ID", readOnly = FALSE)
+                            hot
+                        })
                         invisible(NULL)
                     }
 
@@ -2512,9 +2539,14 @@
                                     return()
                                 }
 
-                                writeMonolist(edited, "peaks_monolist.csv")
-                                peak_table_snapshot <<- edited
-                                cat("Peak list saved!\n")
+                                saved <- gcms_apply_peak_id_edits(on_disk, edited)
+                                if (is.null(saved)) {
+                                    cat("Shift+Z: the on-screen table does not line up with peaks_monolist.csv - press Shift+Q to refresh the table, then re-make your edits.\n")
+                                    return()
+                                }
+                                writeMonolist(saved, "peaks_monolist.csv")
+                                peak_table_snapshot <<- saved
+                                cat("Peak IDs saved!\n")
                         }
                     })
 
