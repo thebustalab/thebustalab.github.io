@@ -1,0 +1,186 @@
+<!-- start machine learning -->
+
+<!-- DRAFT (2026-10-20): split out of 12_numerical_models.Rmd. Holds the training/testing and random-forest
+material while the chapter is written; plan in notes/modeling_split_notes.md -> Chapter C. -->
+
+# machine learning {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg', dpi = NA)
+```
+
+The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. This chapter turns to flexible models that are judged mainly by how well they predict, starting with random forests.
+
+*This chapter is a draft. It currently holds the random-forest material that used to sit in the numerical models chapter, and will grow into a full chapter on training, testing and comparing flexible models against simple ones.*
+
+## {-}
+
+## why hold data back {-}
+
+Increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is 'overfitted', which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.
+
+To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.
+
+The examples below use `metabolomics_data` with its missing values filled in by the median of each column, as in the regression chapter:
+
+```{r}
+metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))
+```
+
+## random forests {-}
+
+Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree's output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
+
+We can use the `buildModel2()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split`, `n_trees`, and `min_leaf_size`. Here is more information on those parameters:
+
+- `n_vars_tried_at_split` (often called "mtry" in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of `n_vars_tried_at_split` increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
+
+- `n_trees` (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
+
+- `min_leaf_size` (often referred to as "min_n" in other implementations): this parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
+
+`buildModel2()` explores a number of settings for these parameters, then selects the combination with the highest predictive accuracy. In this function:
+
+- `data` specifies the dataset to be used for model training, here `metabolomics_data`.
+- `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
+- `input_variables` selects the features or predictors for the model, here using columns 3 to 32 from `metabolomics_data` as predictors.
+- `output_variable` is the target variable for prediction, in this case, "Valine".
+
+The `optimization_parameters` argument takes a list to define the grid of parameters for optimization: `n_vars_tried_at_split`, `n_trees`, and `min_leaf_size`. The `seq()` function generates sequences of numbers and is used here to create ranges for each parameter:
+
+- `n_vars_tried_at_split = seq(1,20,5)` generates a sequence for the number of variables tried at each split, starting at 1, ending at 20, in steps of 5 (1, 6, 11, 16).
+- `n_trees = seq(1,40,10)` creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 10.
+- `min_leaf_size = seq(1,3,1)` defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.
+
+This setup creates a grid of parameter combinations where each combination of `n_vars_tried_at_split`, `n_trees`, and `min_leaf_size` defines a unique random forest model. The function tests each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
+
+```{r, cache = TRUE}
+random_forest_model <- buildModel2(
+    data = metabolomics_data,
+    model_type = "random_forest_regression",
+    input_variables = colnames(metabolomics_data)[3:32],
+    output_variable = "Valine",
+    optimization_parameters = list(
+      n_vars_tried_at_split = seq(1,20,5),
+      n_trees = seq(1,40,10),
+      min_leaf_size = seq(1,3,1)
+    )
+)
+
+names(random_forest_model)
+```
+
+The above code builds our random forest model. Its output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
+
+`$model_type` tells us what type of model this is.
+
+`$model` shows the configuration of the best random forest model that was created.
+
+`$metrics` provides detailed results of model performance across the different combinations of the random forest parameters. For each combination, it shows:
+
+- `n_vars_tried_at_split`, `n_trees` and `min_leaf_size`: the specific values used in that model configuration.
+- `.metric`: the performance metric used. For a regression forest this is RMSE, the root mean squared error of the predictions; for a classification forest it is accuracy, how often the model predicts the correct class.
+- `.estimator`: the type of calculation behind the metric ("standard" for RMSE; "binary" when a classifier chooses between two classes).
+- `mean`: the average of the metric across the cross-validation folds.
+- `fold_cross_validation`: the number of folds used in cross-validation.
+- `std_err`: the standard error of the mean, providing an idea of the variability in model performance.
+- `.config`: a unique identifier for each model configuration tested.
+
+We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space. In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. Smaller values indicate a better model.
+
+```{r, fig.width = 10, fig.height = 4, fig.cap = "Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with darker tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data."}
+random_forest_model$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_leaf_size) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+We can use the model to make predictions with the `predictWithModel()` function:
+
+```{r, fig.width = 6, fig.height = 4, fig.cap = "Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data."}
+ggplot() +
+  geom_point(
+    data = metabolomics_data,
+    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
+  ) +
+  geom_line(aes(
+    x = metabolomics_data[["iso-Leucine"]],
+    y = mean(metabolomics_data$Valine)
+  ), color = "grey") +
+  geom_line(aes(
+    x = metabolomics_data[["iso-Leucine"]],
+    y = unlist(predictWithModel(
+      data = metabolomics_data,
+      model_type = "random_forest_regression",
+      model = random_forest_model$model
+    ))),
+    color = "maroon", size = 1
+  ) +
+  theme_bw()
+```
+
+In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the `model_type` to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
+
+```{r}
+set.seed(123)
+unknown <- metabolomics_data[35:40,]
+
+rfc <- buildModel2(
+  data = metabolomics_data[c(1:34, 41:93),],
+  model_type = "random_forest_classification",
+  input_variables = colnames(metabolomics_data)[3:75],
+  output_variable = "patient_status",
+  optimization_parameters = list(
+    n_vars_tried_at_split = seq(5,50,5),
+    n_trees = seq(10,100,10),
+    min_leaf_size = seq(1,3,1)
+  )
+)
+rfc$metrics %>% arrange(desc(mean))
+```
+
+Our best settings lead to a model with >90% accuracy. Again we can look at how accuracy varies across the parameter grid:
+
+```{r, fig.width = 10, fig.height = 4, fig.cap = "Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out."}
+rfc$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_leaf_size) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+We can also make predictions on data the model has not seen, here the six patients that were held out:
+
+```{r}
+predictions <- predictWithModel(
+  data = unknown,
+  model_type = "random_forest_classification",
+  model = rfc$model
+)
+
+data.frame(
+  real_status = metabolomics_data[35:40,]$patient_status,
+  predicted_status = unlist(predictions)
+)
+```
+
+<!-- ## exercises {-}
+
+-->
+
+## {-}
+
+## further reading {-}
+
+- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms (classification, regression, and clustering) with brief definitions and examples to help orient the reader in the landscape of ML methods.
+
+- [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
+
+- [Tutorial on tidymodels for Machine Learning](https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/). Demonstrates how to use tidymodels as a modular alternative to caret, walking through a complete machine learning project with preprocessing, model building, and hyperparameter tuning.
+
+- [Dials, Tune, and Parsnip: Tidymodels' Way to Create and Tune Model Parameters](https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173). Explores three tidymodels packages for managing and tuning hyperparameters, explaining how dials, tune, and parsnip work together in a machine learning workflow.
+
+<!-- end machine learning -->

@@ -76,7 +76,8 @@
 <li><a class="active" href="flat-clustering.html">flat clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">MODELS</li>
-<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="" href="machine-learning.html">machine learning</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -143,8 +144,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-367"></span>
-<img src="index_files/figure-html/unnamed-chunk-367-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-370"></span>
+<img src="index_files/figure-html/unnamed-chunk-370-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%"><p class="caption">
 Figure: Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps.
 </p>
 </div>
@@ -189,8 +190,8 @@ Figure: Iron content and density of 37 meteorite fragments. A scatter plot with 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-369"></span>
-<img src="index_files/figure-html/unnamed-chunk-369-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-372"></span>
+<img src="index_files/figure-html/unnamed-chunk-372-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%"><p class="caption">
 Figure: The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster.
 </p>
 </div>
@@ -258,8 +259,8 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"number of clusters (k)"</span>, y <span class="op">=</span> <span class="st">"within-cluster variance"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-371"></span>
-<img src="index_files/figure-html/unnamed-chunk-371-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-374"></span>
+<img src="index_files/figure-html/unnamed-chunk-374-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%"><p class="caption">
 Figure: Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.
 </p>
 </div>
@@ -329,8 +330,8 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-374"></span>
-<img src="index_files/figure-html/unnamed-chunk-374-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-377"></span>
+<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%"><p class="caption">
 Figure: The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse.
 </p>
 </div>
@@ -372,7 +373,7 @@ Self-check: k-means was run on the same two fragments earlier in the chapter. Wh
 <span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 4 × 2</span></span>
 <span><span class="co">##   cluster       n</span></span>
-<span><span class="co">##   &lt;fct&gt;     &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;     &lt;int&gt;</span></span>
 <span><span class="co">## 1 cluster_1    14</span></span>
 <span><span class="co">## 2 cluster_2    12</span></span>
 <span><span class="co">## 3 cluster_3     9</span></span>
@@ -457,8 +458,8 @@ Self-check: what does the row with NA in the cluster column count?
 <span></span>
 <span><span class="va">plot_1</span> <span class="op">+</span> <span class="va">plot_2</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-377"></span>
-<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-380"></span>
+<img src="index_files/figure-html/unnamed-chunk-380-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%"><p class="caption">
 Figure: Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.
 </p>
 </div>
@@ -667,7 +668,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-19.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-20.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

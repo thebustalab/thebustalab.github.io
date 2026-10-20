@@ -27,7 +27,8 @@ outdir <- file.path(here, "book_test")
 dir.create(outdir, showWarnings = FALSE)
 
 ## ── locate the chapter files from the numbers given ───────────────────────────────────────────────
-all_ch <- list.files("chapters", pattern = "^[0-9]+_.*\\.Rmd$", full.names = FALSE)
+## a letter suffix is allowed (12c_machine_learning.Rmd): pass "12c"
+all_ch <- list.files("chapters", pattern = "^[0-9]+[a-z]?_.*\\.Rmd$", full.names = FALSE)
 pick <- function(n) {
   hit <- all_ch[grepl(paste0("^", n, "_"), all_ch)]
   if (length(hit) != 1) stop("no single chapter file for number ", n,

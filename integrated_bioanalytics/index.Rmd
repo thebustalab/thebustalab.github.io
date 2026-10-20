@@ -126,6 +126,9 @@ ________________________________________________________________________________
 ```{r child="chapters/12_numerical_models.Rmd"}
 ```
 
+```{r child="chapters/12c_machine_learning.Rmd"}
+```
+
 ```{r child="chapters/13_language_models.Rmd"}
 ```
 

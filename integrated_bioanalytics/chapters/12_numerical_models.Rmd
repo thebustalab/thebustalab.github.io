@@ -1,14 +1,19 @@
-<!-- start numerical models -->
+<!-- start regression models -->
 
-# numerical models {-}
-
-
-<!-- explain cross validation and rmse in some sort of metrics section -->
-
+# regression models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
+
+A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
+</script>
+
+## {-}
 
 ## model use {-}
 
@@ -16,21 +21,17 @@ Next on our quest to develop our abilities in analytical data exploration is mod
 
 - Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
-- Predictive uses are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
+- Predictive uses are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, it matters less how the model works as long as it is accurate.
 
-In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model's mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.
+The straight-line models in this chapter serve both purposes at once: their inner workings are simple enough to read directly, and they can also be used to predict. More flexible models, whose inner workings are harder to read and which are judged mainly on their predictive accuracy, are the subject of the machine learning chapter.
 
-Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is 'overfitted' which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.
+In this course, we will build models using a function called `buildModel2()`. To use it, we give it our data and tell it which sets of values we want to relate. To do that, we need to specify (at least) two things:
 
-To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.
+- `input_variables`: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
 
-In this course, we will build both types of models using a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
+- `output_variable`: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
 
-- input_variables: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
-
-- output_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
-
-For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to  one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
+For model building, we also need to handle missing data. `buildModel2()` stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the `impute()` function from the `Hmisc` package:
 
 ```{r}
 any(is.na(metabolomics_data))
@@ -38,16 +39,29 @@ metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, me
 any(is.na(metabolomics_data))
 ```
 
+#### concept check {-}
+
+The cells on this page start from a copy of `metabolomics_data` whose missing values have already been filled in this way.
+
+<div class="selfcheck" data-answer="2" data-explain="An inferential use is about understanding the relationship itself: which inputs matter, in which direction, and how strongly. Forecasting new samples or chasing the most accurate predictions are predictive uses, where the inner workings matter less.">
+<p class="scq">Self-check: which of these is an inferential use of a model?</p>
+<label><input type="radio"> Predicting Valine for patients whose blood has not been measured for it yet</label>
+<label><input type="radio"> Choosing whichever model gives the most accurate predictions, however it works inside</label>
+<label><input type="radio"> Finding out whether Valine rises or falls with iso-Leucine, and by how much</label>
+</div>
+
+<hr>
+
 ## single linear regression {-}
 
-We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
+We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use `buildModel2()`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
 
-```{r}
+```{r, fig.width = 6, fig.height = 4, fig.cap = "Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
+It looks like there might be a relationship! Let's build a linear regression model and use it inferentially to examine the details of that relationship:
 
 ```{r}
 basic_regression_model <- buildModel2(
@@ -58,132 +72,114 @@ basic_regression_model <- buildModel2(
 )
 names(basic_regression_model)
 ```
-The output of `buildModel` consists of three things: the model_type, the model itself, and the metric describing certain aspects of the model and/or its performance. Let's look at the model:
+
+The output of `buildModel2()` consists of three things: the model_type, the model itself, and the metrics describing the model and its performance. Let's look at the model:
 
 ```{r}
 basic_regression_model$model
 ```
 
-This is a linear model stored inside a special object type inside R called an `lm`. They can be a bit tricky to work with, but we have a way to make it easier - we'll look at that in a second. Before that, let's look at the metrics.
+This is a linear model stored inside a special object type inside R called an `lm`. They can be a bit tricky to work with, but the metrics table makes the important parts easy to reach. Let's look at the metrics:
 
 ```{r}
 basic_regression_model$metrics
 ```
 
-It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for iso-Leucine (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for iso-Leucine (i.e. the slope, m), as well as some other things (we will talk about them in a second). The `type` column separates the two kinds of row, so `filter()` pulls out just the coefficients:
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r}
+basic_regression_model$metrics %>%
+  filter(type == "coefficient")
+```
+
+Note that a variable whose name contains a space or a hyphen, like iso-Leucine, is listed in the `variable` column with backticks around it (`` `iso-Leucine` ``), so filtering on `type` is the more reliable way to find a coefficient. The slope here says that for every one-unit increase in iso-Leucine abundance, the model expects Valine abundance to rise by about 0.51.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png', dpi = NA)
 ```
 
-We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for iso-Leucine and Valine. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of Valine for each value of iso-Leucine in our data set. We can do that like this:
+We can also use a function called `predictWithModel()` to make predictions using the model. We give it the model and the data we want predictions for. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance, and store the predictions as a new column next to the measured values:
 
 ```{r}
-predicted_Valine_values <- predictWithModel(
-  data = metabolomics_data,
-  model_type = "linear_regression",
-  model = basic_regression_model$model
-)
-head(predicted_Valine_values)
+predictions_from_basic_linear_model <- metabolomics_data %>%
+  mutate(predicted_Valine = predictWithModel(
+    data = metabolomics_data,
+    model_type = "linear_regression",
+    model = basic_regression_model$model
+  )$value)
+
+predictions_from_basic_linear_model %>%
+  select(`iso-Leucine`, Valine, predicted_Valine) %>%
+  head()
 ```
 
-So, `predictWithModel` is using the model to predict Valine values from iso-Leucine. However, note that we have the measured Valine values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
+`predictWithModel()` returns a table with one column, `value`, so `$value` pulls out the predictions themselves. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:
 
-```{r}
-predictions_from_basic_linear_model <- data.frame(
-    iso_Leucine_values = metabolomics_data$`iso-Leucine`,
-    predicted_Valine_values = predicted_Valine_values,
-    measured_Valine_values = metabolomics_data$Valine
-)
-names(predictions_from_basic_linear_model)[2] <- "predicted_Valine_values"
-
-plot1 <- ggplot() +
-    geom_line(
-        data = predictions_from_basic_linear_model,
-        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
-    ) +
-    geom_point(
-        data = predictions_from_basic_linear_model,
-        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
-    ) +
-    geom_point(
-        data = metabolomics_data,
-        aes(x = `iso-Leucine`, y = Valine), color = "blue"
-    )
-plot1
-```
-
-Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
-
-```{r}
+```{r, fig.width = 6, fig.height = 4, fig.cap = "Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data."}
 ggplot(predictions_from_basic_linear_model) +
-  geom_point(aes(x = iso_Leucine_values, y = measured_Valine_values)) +
-  geom_line(aes(x = iso_Leucine_values, y = predicted_Valine_values)) +
-  geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
+  geom_line(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
+  geom_point(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
+  geom_point(aes(x = `iso-Leucine`, y = Valine), color = "blue")
+```
+
+Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals: the distance between each of our points and our line.
+
+```{r, fig.width = 6, fig.height = 4, fig.cap = "Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data."}
+ggplot(predictions_from_basic_linear_model) +
+  geom_point(aes(x = `iso-Leucine`, y = Valine)) +
+  geom_line(aes(x = `iso-Leucine`, y = predicted_Valine)) +
+  geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = predicted_Valine))
 ```
 
 We can calculate the sum of the squared residuals:
 
 ```{r}
-sum(
-  (predictions_from_basic_linear_model$measured_Valine_values - predictions_from_basic_linear_model$predicted_Valine_values)^2
-, na.rm = TRUE)
+sum((predictions_from_basic_linear_model$Valine - predictions_from_basic_linear_model$predicted_Valine)^2)
 ```
 
-Cool! Let's call that the "residual sum of the squares". So... does that mean our model is good? I don't know. We have to compare that number to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
+Let's call that the "residual sum of the squares". Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
 
-```{r}
+```{r, fig.width = 6, fig.height = 4, fig.cap = "A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine)) +
-  geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
+  geom_hline(aes(yintercept = mean(Valine)))
 ```
 
-A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
+A pretty bad model. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
 
-```{r}
+```{r, fig.width = 6, fig.height = 4, fig.cap = "Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine)) +
-  geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE))) +
-  geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
+  geom_hline(aes(yintercept = mean(Valine))) +
+  geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine)))
 
-sum(
-  (metabolomics_data$Valine - mean(metabolomics_data$Valine, na.rm = TRUE))^2
-, na.rm = TRUE)
+sum((metabolomics_data$Valine - mean(metabolomics_data$Valine))^2)
 ```
 
-Cool. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
+Let's call that the "total sum of the squares", and now we can compare it to our "residual sum of the squares":
 
 ```{r}
 residual_sum_of_squares <- sum(
-  (predictions_from_basic_linear_model$measured_Valine_values - predictions_from_basic_linear_model$predicted_Valine_values)^2,
-  na.rm = TRUE
+  (predictions_from_basic_linear_model$Valine - predictions_from_basic_linear_model$predicted_Valine)^2
 )
 total_sum_of_squares <- sum(
-  (metabolomics_data$Valine - mean(metabolomics_data$Valine, na.rm = TRUE))^2,
-  na.rm = TRUE
+  (metabolomics_data$Valine - mean(metabolomics_data$Valine))^2
 )
 1 - (residual_sum_of_squares / total_sum_of_squares)
 ```
 
-Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
-- The amount of variance in the response explained by the dependent variable.
+That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
+
+- The amount of variance in the output variable explained by the input variable.
 - How much better the line of best fit describes the data than the flat line.
+
 Now, let's put it all together and make it pretty:
 
-```{r, fig.width = 10, fig.height = 7}
-top <- ggplot() +
-    geom_line(
-        data = predictions_from_basic_linear_model,
-        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
-    ) +
-    geom_point(
-        data = predictions_from_basic_linear_model,
-        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
-    ) +
-    geom_point(
-        data = metabolomics_data,
-        aes(x = `iso-Leucine`, y = Valine), color = "blue"
-    ) +
+```{r, fig.width = 10, fig.height = 7, fig.cap = "A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data."}
+top <- ggplot(predictions_from_basic_linear_model) +
+    geom_line(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
+    geom_point(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
+    geom_point(aes(x = `iso-Leucine`, y = Valine), color = "blue") +
     annotate(geom = "table",
       x = 3.25,
       y = 5,
@@ -194,7 +190,7 @@ top <- ggplot() +
 
 bottom <- ggplot(predictions_from_basic_linear_model) +
   geom_col(
-    aes(x = iso_Leucine_values, y = measured_Valine_values - predicted_Valine_values),
+    aes(x = `iso-Leucine`, y = Valine - predicted_Valine),
     width = 0.03, color = "black", position = "dodge", alpha = 0.5
   ) +
   theme_bw()
@@ -202,23 +198,100 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-## multiple linear regression {-}
+#### concept check {-}
 
-Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
+Fill in the blank with the variable the model should predict, then press Run to see its coefficients.
 
-```{r, fig.width = 10, fig.height = 6}
-
-single_input_regression_model <- buildModel2(
+<div class="webr-cell"><textarea class="webr-code">basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = "iso-Leucine",
-  output_variable = "Valine"
+  output_variable = "____"
 )
 
-single_input_regression_model$metrics %>%
-  filter(type == "coefficient") %>%
-  arrange(desc(abs(value)))
+basic_regression_model$metrics %>%
+  filter(type == "coefficient")</textarea></div>
 
+<div class="selfcheck" data-answer="1" data-explain="The slope is the coefficient on iso-Leucine, about 0.51. It is the change in Valine the model expects for each one-unit increase in iso-Leucine. The intercept, about 2.78, is the Valine the line gives when iso-Leucine is zero, and the share of variation explained is the r-squared, 0.40.">
+<p class="scq">Self-check: what does the iso-Leucine coefficient of about 0.51 tell us?</p>
+<label><input type="radio"> The model explains about 51% of the variation in Valine</label>
+<label><input type="radio"> For each one-unit increase in iso-Leucine, the model expects Valine to rise by about 0.51</label>
+<label><input type="radio"> A patient with no iso-Leucine is expected to have a Valine abundance of about 0.51</label>
+</div>
+
+<hr>
+
+## predicting with a model {-}
+
+A fitted model is not tied to the data it was built from. It can predict the output for any table that has the same input columns, including samples whose output was never measured. That is the predictive use of a model, and it is often the reason for building one.
+
+`metabolomics_unknown` holds measurements from seven new patients. It has every metabolite column that `metabolomics_data` has, so our iso-Leucine model can predict a Valine abundance for each of them. The table has no column identifying the patients, though, so first we number the rows. Then `predictWithModel()` can carry that column through to its output with the `id_cols` argument, which keeps every prediction attached to the patient it belongs to:
+
+```{r}
+unknown_patients <- metabolomics_unknown %>%
+  mutate(patient = row_number())
+
+unknown_predictions <- predictWithModel(
+  data = unknown_patients,
+  model_type = "linear_regression",
+  model = basic_regression_model$model,
+  id_cols = "patient"
+)
+unknown_predictions
+```
+
+The output is an ordinary table, so the verbs from the wrangling chapter work on it. We can read off the prediction for a single patient:
+
+```{r}
+unknown_predictions %>%
+  filter(patient == 3)
+```
+
+Or sort the patients by their predicted value, or keep only those predicted to be above some level:
+
+```{r}
+unknown_predictions %>%
+  arrange(desc(value))
+
+unknown_predictions %>%
+  filter(value > 4.66)
+```
+
+A prediction is only as good as the model behind it. This model explains about 40% of the variation in Valine (its r-squared is 0.40), so these predictions are rough. Using more of what was measured is the next step.
+
+#### concept check {-}
+
+Fill in the blank with the column that keeps each prediction attached to its patient, then press Run. This cell uses `basic_regression_model` from the previous check, so run that one first.
+
+<div class="webr-cell"><textarea class="webr-code">unknown_patients <- metabolomics_unknown %>%
+  mutate(patient = row_number())
+
+unknown_predictions <- predictWithModel(
+  data = unknown_patients,
+  model_type = "linear_regression",
+  model = basic_regression_model$model,
+  id_cols = "____"
+)
+
+unknown_predictions %>%
+  arrange(desc(value))</textarea></div>
+
+<div class="selfcheck" data-answer="3" data-explain="Sorted from highest to lowest, patient 5 comes first, with a predicted Valine abundance of about 4.75. Patient 3 has the lowest prediction, about 4.56.">
+<p class="scq">Self-check: which of the seven new patients does the model predict to have the highest Valine abundance?</p>
+<label><input type="radio"> Patient 1</label>
+<label><input type="radio"> Patient 2</label>
+<label><input type="radio"> Patient 3</label>
+<label><input type="radio"> Patient 5</label>
+<label><input type="radio"> Patient 7</label>
+</div>
+
+<hr>
+
+## multiple linear regression {-}
+
+Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let's try it with the first 30 metabolites in our data set:
+
+```{r}
 multiple_input_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
@@ -226,111 +299,165 @@ multiple_input_regression_model <- buildModel2(
   output_variable = "Valine"
 )
 
+basic_regression_model$metrics %>% filter(type == "statistic")
 multiple_input_regression_model$metrics %>% filter(type == "statistic")
+```
+
+The 30-input model explains far more of the variation in Valine than the iso-Leucine model does (an r-squared of 0.89 against 0.40). Comparing each model's predictions with the measured values shows the same thing:
+
+```{r, fig.width = 10, fig.height = 5, fig.cap = "Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data."}
+model_comparison_data <- metabolomics_data %>%
+  mutate(
+    single_input_predicted_Valine = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = basic_regression_model$model
+    )$value,
+    multiple_input_predicted_Valine = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = multiple_input_regression_model$model
+    )$value
+  )
+
+plot1 <- ggplot(model_comparison_data) +
+  geom_point(aes(x = Valine, y = single_input_predicted_Valine))
+
+plot2 <- ggplot(model_comparison_data) +
+  geom_point(aes(x = Valine, y = multiple_input_predicted_Valine))
+
+plot_grid(plot1, plot2, nrow = 1, labels = "AUTO")
+```
+
+#### concept check {-}
+
+Fill in the blank with the metric that measures how much of the variation in Valine a model explains, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">multiple_input_regression_model <- buildModel2(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = colnames(metabolomics_data)[3:32],
+  output_variable = "Valine"
+)
 
 multiple_input_regression_model$metrics %>%
-  filter(type == "coefficient") %>%
+  filter(variable == "____")</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The 30-input model has an r-squared of about 0.89, against 0.40 for the iso-Leucine model, so across these 93 patients it accounts for far more of the variation in Valine. A higher r-squared does not show that any one input causes the change, and the model still has an intercept.">
+<p class="scq">Self-check: what does the higher r-squared of the 30-input model tell us?</p>
+<label><input type="radio"> Together, the 30 inputs account for much more of the variation in Valine across these patients than iso-Leucine does alone</label>
+<label><input type="radio"> Every one of the 30 inputs has a strong effect on Valine</label>
+<label><input type="radio"> The 30-input model no longer needs an intercept</label>
+</div>
+
+<hr>
+
+### which inputs matter most {-}
+
+Once a model has several inputs, a natural question is which of them drives the prediction. The metrics table reports a coefficient, a standard error and a p-value for every input:
+
+- Coefficient value: its magnitude and sign describe the expected change in the output when that input increases by one unit while all the other inputs are held constant.
+- `p_value` (or `p_value_adj`, adjusted for testing many inputs at once) is the p-value from testing whether that input's coefficient is different from zero. Small p-values highlight inputs that are likely to matter after accounting for the rest.
+
+It is tempting to rank the inputs by the size of their coefficients, but a coefficient is measured in the units of its own input, so raw coefficients cannot be compared with each other. Let's see what goes wrong, with a model of Valine built from four metabolites:
+
+```{r}
+four_input_model <- buildModel2(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
+  output_variable = "Valine"
+)
+
+four_input_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
   arrange(desc(abs(value)))
 ```
 
-Even though the multiple-input model predicts Valine more accurately overall (based on r-squared values), it is helpful to quantify which metabolites drive that improvement. The regression summary (`multiple_input_regression_model$metrics`) reports the coefficient estimate, standard error, and p-value for each predictor. To decide which variables are the most important contributors:
+Phenylalanine has by far the largest coefficient. But Phenylalanine barely varies from patient to patient: its standard deviation is about 0.12, against about 0.4 for 2-Aminoadipate and Propionate. A one-unit change in Phenylalanine is therefore an enormous change, far bigger than anything seen in the data, so its coefficient is large simply because its unit is large.
 
-- Coefficient value: magnitude and sign describe the expected change in the output when that predictor moves by one unit while all other variables are held constant. However, please note that because our predictors are on different scales, centering and scaling them (e.g., with `metabolomics_data %>% mutate(across(3:32, scale))`) lets us compare the absolute size of coefficients directly.
-- `p_value` (or an adjusted p-value when many metabolites are examined at once) is the p-value obtained by testing whether the predictors coefficient is significantly different from zero. Small p-values highlight predictors that are likely to matter after accounting for the rest of the variables.
+The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the networks chapter). Each coefficient then means "the change in the output for a one-standard-deviation change in this input", which can be compared across inputs:
 
-In this Valine model, `5-Aminovaleric Acid` has the largest absolute coefficient, so the third panel below plots its raw relationship with Valine alongside the two sets of predictions to highlight why it stands out in the summary table.
+```{r}
+scaled_metabolomics_data <- metabolomics_data %>%
+  mutate(across(c(Phenylalanine, `2-Aminoadipate`, Tryptophan, Propionate), scale))
 
-
-```{r, fig.width = 10, fig.height = 6}
-model_comparison_data <- data.frame(
-  measured_Valine_values = metabolomics_data$Valine,
-  single_input_predicted_Valine_values = predictWithModel(
-    data = metabolomics_data,
-    model_type = "linear_regression",
-    model = basic_regression_model$model
-  )$value,
-  multiple_input_predicted_Valine_values = predictWithModel(
-    data = metabolomics_data,
-    model_type = "linear_regression",
-    model = multiple_input_regression_model$model
-  )$value,
-  measured_5AA_values = metabolomics_data$`5-Aminovaleric Acid`
+scaled_four_input_model <- buildModel2(
+  data = scaled_metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
+  output_variable = "Valine"
 )
-  
-plot1 <- ggplot(model_comparison_data) + geom_point(aes(
-  x = measured_Valine_values, y = single_input_predicted_Valine_values
-))
 
-plot2 <- ggplot(model_comparison_data) + geom_point(aes(
-  x = measured_Valine_values, y = multiple_input_predicted_Valine_values
-))
-
-plot3 <- ggplot(model_comparison_data) + geom_point(aes(
-  x = measured_Valine_values, y = measured_5AA_values
-))
-
-plot_grid(plot1, plot2, plot3, nrow = 1)
-
+scaled_four_input_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
+  arrange(desc(abs(value)))
 ```
 
+After scaling, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third. The scaled ranking also agrees with the p-values, where 2-Aminoadipate has the smallest. Three further points:
 
+- The intercept is left out of the ranking with `variable != "(Intercept)"`. It is not a measurement but the model's baseline (after scaling it is simply the mean Valine abundance), so it does not belong in a list of inputs.
+- Scaling changes the units of the coefficients, not the fit. Both models have the same r-squared and make the same predictions:
 
+```{r}
+four_input_model$metrics %>% filter(variable == "r_squared")
+scaled_four_input_model$metrics %>% filter(variable == "r_squared")
+```
 
+- Use the scaled model to compare inputs, and the model built on the data as measured to make predictions. A model fitted on scaled inputs expects scaled inputs, so giving it the raw columns of a new table, such as `metabolomics_unknown`, produces nonsense.
 
-<!-- # ggplot() + -->
-<!-- #   geom_point( -->
-<!-- #     data = metabolomics_data, -->
-<!-- #     aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black" -->
-<!-- #   ) + -->
-<!-- #   geom_line(aes( -->
-<!-- #     x = metabolomics_data$`iso-Leucine`, -->
-<!-- #     y = mean(metabolomics_data$Valine) -->
-<!-- #   ), color = "grey") + -->
-<!-- #   geom_line(aes( -->
-<!-- #     x = metabolomics_data$`iso-Leucine`, -->
-<!-- #     y = unlist(predictWithModel( -->
-<!-- #       data = metabolomics_data, -->
-<!-- #       model_type = "linear_regression", -->
-<!-- #       model = basic_regression_model$model -->
-<!-- #     ))), -->
-<!-- #     color = "maroon", size = 1 -->
-<!-- #   ) + -->
-<!-- #   geom_line(aes( -->
-<!-- #     x = metabolomics_data$`iso-Leucine`, -->
-<!-- #     y = unlist(predictWithModel( -->
-<!-- #       data = metabolomics_data, -->
-<!-- #       model_type = "linear_regression", -->
-<!-- #       model = multiple_regression_model$model -->
-<!-- #     ))), -->
-<!-- #     color = "black", size = 1, alpha = 0.6 -->
-<!-- #   ) + -->
-<!-- #   theme_bw() -->
+#### concept check {-}
+
+Fill in the blank with the function that puts each input on a mean of zero and a standard deviation of one, then press Run to rank the inputs.
+
+<div class="webr-cell"><textarea class="webr-code">scaled_metabolomics_data <- metabolomics_data %>%
+  mutate(across(c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"), ____))
+
+scaled_four_input_model <- buildModel2(
+  data = scaled_metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
+  output_variable = "Valine"
+)
+
+scaled_four_input_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
+  arrange(desc(abs(value)))</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Phenylalanine varies very little between patients (a standard deviation of about 0.12), so a one-unit change in it is far larger than anything in the data and its raw coefficient is large for that reason alone. Once every input is scaled, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third.">
+<p class="scq">Self-check: why does Phenylalanine have the largest coefficient in the model built on the raw, unscaled inputs?</p>
+<label><input type="radio"> It has the strongest effect on Valine of the four inputs</label>
+<label><input type="radio"> It has the smallest p-value of the four inputs</label>
+<label><input type="radio"> It barely varies between patients, so one unit of it is a very large change</label>
+</div>
+
+<hr>
 
 ## assessing regression models {-}
 
-There are three aspects of a regression model that we should check on, to make sure the model isn't violating and assumptions that we make when declaring the model to be valid:
+There are three aspects of a regression model that we should check on, to make sure the model isn't violating any assumptions that we make when declaring the model to be valid:
 
-1. Residual-Based Assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:
+1. Residual-based assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:
 
-    - Linearity: Examines if residuals show a random scatter around zero, indicating a linear relationship between predictors and the response variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.
-    
-    - Homoscedasticity (Homogeneity of Variance): Looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.
-    
-    - Normality of Residuals: Assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a Quantile-Quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
+    - Linearity: examines if residuals show a random scatter around zero, indicating a linear relationship between the inputs and the output variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.
 
-2. Predictor Relationships: This check pertains to relationships among the predictor/input variables themselves, rather than their relationship with the response/output variable. In this case:
-    
-    - Collinearity: Assesses multicollinearity, which occurs when predictors are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual predictors. This check helps ensure that predictors are independent enough to provide clear, interpretable results for each variable’s influence on the response.
+    - Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.
 
-3. Model Fit and Influence: These checks look at the overall fit of the model and assess if specific data points have undue influence on the model’s results. This group includes:
+    - Normality of residuals: assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
 
-    - Posterior Predictive Check: This checks if model predictions align well with observed data, indicating a good overall fit. While not directly a residual analysis, it’s a comprehensive check for how well the model captures data patterns.
+2. Input relationships. This check pertains to relationships among the input variables themselves, rather than their relationship with the output variable. In this case:
 
-    - Influential Observations: Identifies data points that might disproportionately affect the model. High-leverage points can distort model estimates, so it’s important to verify that no single observation is overly influential.
+    - Collinearity: assesses multicollinearity, which occurs when inputs are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual inputs. This check helps ensure that inputs are independent enough to provide clear, interpretable results for each variable's influence on the output.
+
+3. Model fit and influence. These checks look at the overall fit of the model and assess if specific data points have undue influence on the model's results. This group includes:
+
+    - Posterior predictive check: this checks if model predictions align well with observed data, indicating a good overall fit. While not directly a residual analysis, it's a comprehensive check for how well the model captures data patterns.
+
+    - Influential observations: identifies data points that might disproportionately affect the model. High-leverage points can distort model estimates, so it's important to verify that no single observation is overly influential.
 
 We can assess all of these using:
 
-```{r, fig.width = 12, fig.height = 10}
+```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data."}
 multiple_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
@@ -341,167 +468,29 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-## random forests {-}
+#### concept check {-}
 
-Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree's output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
+Fill in the blank with the part of the `buildModel2()` output that holds the fitted model, then press Run. Drawing the six panels takes about ten seconds.
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg', dpi = NA)
-```
-
-We can use the `buildModel()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split`, `n_trees`, and `min_n_leaves`. Here is more information on those parameters:
-
-- n_vars_at_split (often called "mtry" in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
-
-- n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
-
-- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
-
-`buildModel()` explores a number of settings for both n_vars_at_split and n_trees, then selects the combination with the highest predictive accuracy. In this function:
-
-- `data` specifies the dataset to be used for model training, here metabolomics_data.
-- `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
-- `input_variables` selects the features or predictors for the model, here using columns 3 to 32 from metabolomics_data as predictors.
-- `output_variable` is the target variable for prediction, in this case, "Valine".
-
-The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
-
-- `n_vars_tried_at_split` = seq(1,24,3) generates a sequence for the number of variables tried at each split, starting at 1, ending at 24, in steps of 3 (e.g., 1, 4, 7, ..., 24).
-- `n_trees` = seq(1,40,2) creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 2.
-- `min_leaf_size` = seq(1,3,1) defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.
-
-This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
-
-```{r, cache = TRUE}
-random_forest_model <- buildModel2(
-    data = metabolomics_data,
-    model_type = "random_forest_regression",
-    input_variables = colnames(metabolomics_data)[3:32],
-    output_variable = "Valine",
-    optimization_parameters = list(
-      n_vars_tried_at_split = seq(1,20,5),
-      n_trees = seq(1,40,10),
-      min_leaf_size = seq(1,3,1)
-    )
+<div class="webr-cell"><textarea class="webr-code">multiple_regression_model <- buildModel2(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = colnames(metabolomics_data)[3:10],
+  output_variable = "Valine"
 )
 
-names(random_forest_model)
-```
+check_model(multiple_regression_model$____)</textarea></div>
 
-The above code builds our random forest model. It's output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
+<div class="selfcheck" data-answer="1" data-explain="A funnel means the residuals spread out (or close in) as the fitted values change, so the variance of the errors is not constant. That is heteroscedasticity, a failure of the homogeneity-of-variance check. Collinearity is about the inputs being correlated with each other, and normality is judged on the Q-Q plot.">
+<p class="scq">Self-check: in a plot of residuals against fitted values, the residuals form a funnel that widens to the right. Which assumption does that call into question?</p>
+<label><input type="radio"> That the inputs are not strongly correlated with each other</label>
+<label><input type="radio"> That the variance of the residuals is the same across fitted values</label>
+<label><input type="radio"> That the residuals follow a normal distribution</label>
+</div>
 
-`$model_type` tells us what type of model this is.
+<hr>
 
-`$model` shows the configuration of the best random forest model that was created.
-
-`$metrics` provides detailed results of model performance across different combinations of the random forest parameters n_vars_tried_at_split (the number of variables randomly sampled as candidates at each split) and n_trees (the number of trees in the forest). For each combination, it shows:
-- n_vars_tried_at_split and n_trees: The specific values used in that model configuration.
-- .metric: The performance metric used, here it's accuracy, which measures how often the model correctly predicts the patient status.
-- .estimator: Indicates the type of averaging used for the metric, here it's binary for binary classification tasks.
-- mean: The average accuracy across the cross-validation folds.
-- fold_cross_validation: Indicates the number of folds used in cross-validation, here it's 3 for all models.
-- std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
-- .config: A unique identifier for each model configuration tested.
-
-We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.
-
-```{r}
-random_forest_model$metrics %>%
-    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
-    facet_grid(.~min_leaf_size) +
-    scale_fill_viridis(direction = -1) +
-    geom_tile() +
-    theme_bw()
-```
-
-We can easily use the model to make predictions by using the `predictWithModel()` function:
-
-```{r}
-ggplot() +
-  geom_point(
-    data = metabolomics_data,
-    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
-  ) +
-  geom_line(aes(
-    x = metabolomics_data[["iso-Leucine"]],
-    y = mean(metabolomics_data$Valine)
-  ), color = "grey") +
-  geom_line(aes(
-    x = metabolomics_data[["iso-Leucine"]],
-    y = unlist(predictWithModel(
-      data = metabolomics_data,
-      model_type = "random_forest_regression",
-      model = random_forest_model$model
-    ))),
-    color = "maroon", size = 1
-  ) +
-  theme_bw()
-```
-
-In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
-
-```{r}
-set.seed(123)
-unknown <- metabolomics_data[35:40,]
-
-rfc <- buildModel2(
-  data = metabolomics_data[c(1:34, 41:93),],
-  model_type = "random_forest_classification",
-  input_variables = colnames(metabolomics_data)[3:75],
-  output_variable = "patient_status",
-  optimization_parameters = list(
-    n_vars_tried_at_split = seq(5,50,5),
-    n_trees = seq(10,100,10),
-    min_leaf_size = seq(1,3,1)
-  )
-)
-rfc$metrics %>% arrange(desc(mean))
-```
-
-Cool! Our best settings lead to a model with >90% accuracy! We can also make predictions on unknown data with this model:
-
-```{r}
-rfc$metrics %>%
-    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
-    facet_grid(.~min_leaf_size) +
-    scale_fill_viridis(direction = -1) +
-    geom_tile() +
-    theme_bw()
-```
-
-```{r}
-predictions <- predictWithModel(
-  data = unknown,
-  model_type = "random_forest_classification",
-  model = rfc$model
-)
-
-data.frame(
-  real_status = metabolomics_data[35:40,]$patient_status,
-  predicted_status = unlist(predictions)
-)
-```
-
-## {-}
-
-## further reading {-}
-
-- [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
-
-- [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms — classification, regression, and clustering — with brief definitions and examples to help orient the reader in the landscape of ML methods.
-
-- [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.
-
-- [Tutorial on tidymodels for Machine Learning](https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/). Demonstrates how to use tidymodels as a modular alternative to caret, walking through a complete machine learning project with preprocessing, model building, and hyperparameter tuning.
-
-- [Dials, Tune, and Parsnip: Tidymodels' Way to Create and Tune Model Parameters](https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173). Explores three tidymodels packages for managing and tuning hyperparameters, explaining how dials, tune, and parsnip work together in a machine learning workflow.
-
-- [Understand ridge regression and hyperparameter selection](https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html). Explains why ridge regression stabilizes coefficients when predictors are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.
-
-- [Ridge, Lasso, and Elastic Net Tutorial](https://rpubs.com/jmkelly91/881590). Covers how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection, with tuning tips and interpretability notes in an applied workflow.
-
-- [Regularization Techniques](https://allmodelsarewrong.github.io/regular.html). Frames PLSR and other regularization methods in the broader context of dimension reduction for predictive modeling, emphasizing latent components and when to prefer each approach.
-
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 <!-- ## exercises {-}
 
@@ -517,82 +506,20 @@ To practice creating models, try the following:
 
 5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
 
+-->
 
-{r, echo = FALSE, eval = FALSE}
-runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca_ord",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  na_replacement = "drop"
-) %>%
-filter(Dim_1 > 0.9) %>%
-ggplot() +
-  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2)) +
-  geom_label_repel(aes(x = Dim_1, y = Dim_2, label = analyte))
+## {-}
 
-runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca_ord",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  na_replacement = "drop"
-) %>%
-filter(Dim_1 < -0.9) %>%
-ggplot() +
-  geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2)) +
-  geom_label_repel(aes(x = Dim_1, y = Dim_2, label = analyte))
+## further reading {-}
 
-out <- runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  na_replacement = "drop"
-)
+- [performance R package](https://github.com/easystats/performance). Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.
 
-model <- buildLinearModel(
-  data = solvents,
-  # formula = "Dim_1 = Aspartic_acid_3TMS"
-  # formula = "Dim_1 = Tyrosine_2TMS"
-  formula = "refractive_index = formula_weight + melting_point"
-)
+- [Understand ridge regression and hyperparameter selection](https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html). Explains why ridge regression stabilizes coefficients when inputs are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.
 
+- [Ridge, Lasso, and Elastic Net Tutorial](https://rpubs.com/jmkelly91/881590). Covers how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection, with tuning tips and interpretability notes in an applied workflow.
 
-top <- ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, y = model_y)) +
-  # annotate(geom = "table",
-  #   x = 13,
-  #   y = 16,
-  #   label = list(model$metrics)
-  # ) +
-  # coord_cartesian(ylim = c(10,16)) +
-  theme_bw()
+- [Regularization Techniques](https://allmodelsarewrong.github.io/regular.html). Frames PLSR and other regularization methods in the broader context of dimension reduction for predictive modeling, emphasizing latent components and when to prefer each approach.
 
-bottom <- ggplot(model$data) +
-  geom_col(
-    aes(x = input_x, y = residuals),
-    width = 0.03, color = "black", position = "dodge", alpha = 0.5
-  ) +
-  theme_bw()
-
-cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
-
-model$metrics
-
-``` -->
-
-
-<!-- end -->
+<!-- end regression models -->
 
 <!-- start embedding models -->

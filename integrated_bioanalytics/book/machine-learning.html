@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>machine learning | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. This chapter turns to flexible models that are judged mainly...">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
+<meta property="og:title" content="machine learning | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. This chapter turns to flexible models that are judged mainly...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="machine learning | Integrated Bioanalytics">
+<meta name="twitter:description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. This chapter turns to flexible models that are judged mainly...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="networks.html">networks</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="active" href="machine-learning.html">machine learning</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="specialized-plots-and-maps.html">specialized plots and maps</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="machine-learning" class="section level1 unnumbered">
+<h1>machine learning<a class="anchor" aria-label="anchor" href="#machine-learning"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. This chapter turns to flexible models that are judged mainly by how well they predict, starting with random forests.</p>
+<p><em>This chapter is a draft. It currently holds the random-forest material that used to sit in the numerical models chapter, and will grow into a full chapter on training, testing and comparing flexible models against simple ones.</em></p>
+<div id="section-18" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="why-hold-data-back" class="section level2 unnumbered">
+<h2>why hold data back<a class="anchor" aria-label="anchor" href="#why-hold-data-back"><i class="fas fa-link"></i></a>
+</h2>
+<p>Increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’, which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
+<p>To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.</p>
+<p>The examples below use <code>metabolomics_data</code> with its missing values filled in by the median of each column, as in the regression chapter:</p>
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">metabolomics_data</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">impute</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="random-forests" class="section level2 unnumbered">
+<h2>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
+</h2>
+<p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree’s output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest’s final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).</p>
+<p>We can use the <code>buildModel2()</code> function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code>. Here is more information on those parameters:</p>
+<ul>
+<li><p><code>n_vars_tried_at_split</code> (often called “mtry” in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of <code>n_vars_tried_at_split</code> increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.</p></li>
+<li><p><code>n_trees</code> (often referred to as “num.trees” or “n_estimators” in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model’s performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.</p></li>
+<li><p><code>min_leaf_size</code> (often referred to as “min_n” in other implementations): this parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model’s ability to capture the underlying patterns in the data and its generalization to unseen data.</p></li>
+</ul>
+<p><code>buildModel2()</code> explores a number of settings for these parameters, then selects the combination with the highest predictive accuracy. In this function:</p>
+<ul>
+<li>
+<code>data</code> specifies the dataset to be used for model training, here <code>metabolomics_data</code>.</li>
+<li>
+<code>model_type</code> defines the type of model to build, with “random_forest_regression” indicating a random forest model for regression tasks.</li>
+<li>
+<code>input_variables</code> selects the features or predictors for the model, here using columns 3 to 32 from <code>metabolomics_data</code> as predictors.</li>
+<li>
+<code>output_variable</code> is the target variable for prediction, in this case, “Valine”.</li>
+</ul>
+<p>The <code>optimization_parameters</code> argument takes a list to define the grid of parameters for optimization: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code>. The <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code> function generates sequences of numbers and is used here to create ranges for each parameter:</p>
+<ul>
+<li>
+<code>n_vars_tried_at_split = seq(1,20,5)</code> generates a sequence for the number of variables tried at each split, starting at 1, ending at 20, in steps of 5 (1, 6, 11, 16).</li>
+<li>
+<code>n_trees = seq(1,40,10)</code> creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 10.</li>
+<li>
+<code>min_leaf_size = seq(1,3,1)</code> defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.</li>
+</ul>
+<p>This setup creates a grid of parameter combinations where each combination of <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code> defines a unique random forest model. The function tests each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest’s performance. This approach allows for a systematic exploration of how different configurations affect the model’s ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.</p>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">random_forest_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>    model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
+<span>    input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
+<span>    output_variable <span class="op">=</span> <span class="st">"Valine"</span>,</span>
+<span>    optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>      n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">20</span>,<span class="fl">5</span><span class="op">)</span>,</span>
+<span>      n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span>      min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">random_forest_model</span><span class="op">)</span></span>
+<span><span class="co">## [1] "model_type" "metrics"    "model"</span></span></code></pre></div>
+<p>The above code builds our random forest model. Its output provides both the model itself and key components indicating the performance and configuration of the model. Here’s a breakdown of each part of the output:</p>
+<p><code>$model_type</code> tells us what type of model this is.</p>
+<p><code>$model</code> shows the configuration of the best random forest model that was created.</p>
+<p><code>$metrics</code> provides detailed results of model performance across the different combinations of the random forest parameters. For each combination, it shows:</p>
+<ul>
+<li>
+<code>n_vars_tried_at_split</code>, <code>n_trees</code> and <code>min_leaf_size</code>: the specific values used in that model configuration.</li>
+<li>
+<code>.metric</code>: the performance metric used. For a regression forest this is RMSE, the root mean squared error of the predictions; for a classification forest it is accuracy, how often the model predicts the correct class.</li>
+<li>
+<code>.estimator</code>: the type of calculation behind the metric (“standard” for RMSE; “binary” when a classifier chooses between two classes).</li>
+<li>
+<code>mean</code>: the average of the metric across the cross-validation folds.</li>
+<li>
+<code>fold_cross_validation</code>: the number of folds used in cross-validation.</li>
+<li>
+<code>std_err</code>: the standard error of the mean, providing an idea of the variability in model performance.</li>
+<li>
+<code>.config</code>: a unique identifier for each model configuration tested.</li>
+</ul>
+<p>We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space. In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. Smaller values indicate a better model.</p>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">random_forest_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_leaf_size</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-531"></span>
+<img src="index_files/figure-html/unnamed-chunk-531-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with darker tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%"><p class="caption">
+Figure: Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with darker tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.
+</p>
+</div>
+<p>We can use the model to make predictions with the <code>predictWithModel()</code> function:</p>
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"gold"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[[</span><span class="st">"iso-Leucine"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">Valine</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[[</span><span class="st">"iso-Leucine"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>      model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
+<span>      model <span class="op">=</span> <span class="va">random_forest_model</span><span class="op">$</span><span class="va">model</span></span>
+<span>    <span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-532"></span>
+<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+Figure: Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest’s predictions as a maroon line. Each point is one patient. Data: metabolomics_data.
+</p>
+</div>
+<p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the <code>model_type</code> to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span></span>
+<span></span>
+<span><span class="va">rfc</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">34</span>, <span class="fl">41</span><span class="op">:</span><span class="fl">93</span><span class="op">)</span>,<span class="op">]</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">75</span><span class="op">]</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"patient_status"</span>,</span>
+<span>  optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">50</span>,<span class="fl">5</span><span class="op">)</span>,</span>
+<span>    n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">100</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span>    min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 300 × 9</span></span>
+<span><span class="co">##    n_vars_tried_at_split n_trees min_leaf_size .metric </span></span>
+<span><span class="co">##                    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">##  1                    20      70             3 accuracy</span></span>
+<span><span class="co">##  2                     5      30             1 accuracy</span></span>
+<span><span class="co">##  3                    20      50             3 accuracy</span></span>
+<span><span class="co">##  4                    20      10             2 accuracy</span></span>
+<span><span class="co">##  5                    10      90             3 accuracy</span></span>
+<span><span class="co">##  6                    15      10             3 accuracy</span></span>
+<span><span class="co">##  7                    30      10             1 accuracy</span></span>
+<span><span class="co">##  8                     5      20             3 accuracy</span></span>
+<span><span class="co">##  9                     5      50             1 accuracy</span></span>
+<span><span class="co">## 10                    20      40             2 accuracy</span></span>
+<span><span class="co">## # ℹ 290 more rows</span></span>
+<span><span class="co">## # ℹ 5 more variables: .estimator &lt;chr&gt;, mean &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   std_err &lt;dbl&gt;, .config &lt;chr&gt;,</span></span>
+<span><span class="co">## #   fold_cross_validation &lt;int&gt;</span></span></code></pre></div>
+<p>Our best settings lead to a model with &gt;90% accuracy. Again we can look at how accuracy varies across the parameter grid:</p>
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_leaf_size</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-534"></span>
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%"><p class="caption">
+Figure: Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.
+</p>
+</div>
+<p>We can also make predictions on data the model has not seen, here the six patients that were held out:</p>
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">unknown</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">rfc</span><span class="op">$</span><span class="va">model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  real_status <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span><span class="op">$</span><span class="va">patient_status</span>,</span>
+<span>  predicted_status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">predictions</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##                          real_status predicted_status</span></span>
+<span><span class="co">## .pred_healthy1               healthy       0.82857143</span></span>
+<span><span class="co">## .pred_healthy2               healthy       0.90000000</span></span>
+<span><span class="co">## .pred_healthy3               healthy       0.79285714</span></span>
+<span><span class="co">## .pred_healthy4        kidney_disease       0.01904762</span></span>
+<span><span class="co">## .pred_healthy5        kidney_disease       0.03571429</span></span>
+<span><span class="co">## .pred_healthy6        kidney_disease       0.04285714</span></span>
+<span><span class="co">## .pred_kidney_disease1        healthy       0.17142857</span></span>
+<span><span class="co">## .pred_kidney_disease2        healthy       0.10000000</span></span>
+<span><span class="co">## .pred_kidney_disease3        healthy       0.20714286</span></span>
+<span><span class="co">## .pred_kidney_disease4 kidney_disease       0.98095238</span></span>
+<span><span class="co">## .pred_kidney_disease5 kidney_disease       0.96428571</span></span>
+<span><span class="co">## .pred_kidney_disease6 kidney_disease       0.95714286</span></span></code></pre></div>
+<!-- ## exercises {-}
+
+-->
+</div>
+<div id="section-19" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-9" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://pythonprogramminglanguage.com/machine-learning-tasks/">Common machine learning tasks</a>. An overview of core machine learning paradigms (classification, regression, and clustering) with brief definitions and examples to help orient the reader in the landscape of ML methods.</p></li>
+<li><p><a href="http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/">Tidymodels: tidy machine learning in R</a>. Rebecca Barter’s comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.</p></li>
+<li><p><a href="https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/">Tutorial on tidymodels for Machine Learning</a>. Demonstrates how to use tidymodels as a modular alternative to caret, walking through a complete machine learning project with preprocessing, model building, and hyperparameter tuning.</p></li>
+<li><p><a href="https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173">Dials, Tune, and Parsnip: Tidymodels’ Way to Create and Tune Model Parameters</a>. Explores three tidymodels packages for managing and tuning hyperparameters, explaining how dials, tune, and parsnip work together in a machine learning workflow.</p></li>
+</ul>
+<!-- end machine learning -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="regression-models.html">regression models</a></div>
+<div class="next"><a href="language-models.html">language models</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#machine-learning">machine learning</a></li>
+<li><a class="nav-link" href="#section-18"></a></li>
+<li><a class="nav-link" href="#why-hold-data-back">why hold data back</a></li>
+<li><a class="nav-link" href="#random-forests">random forests</a></li>
+<li><a class="nav-link" href="#section-19"></a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-20.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
+</body>
+</html>

@@ -12690,7 +12690,7 @@
 
                 ## Return
                     output <- as_tibble(output)
-                    if (!is.null(id_cols)) { output <- cbind(data[,colnames(data) %in% id_cols], output) }
+                    if (!is.null(id_cols)) { output <- cbind(data[,colnames(data) %in% id_cols, drop = FALSE], output) }
                     return(output)
 
             }
