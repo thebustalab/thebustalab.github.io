@@ -663,6 +663,11 @@
         jupyter = FALSE
     ) {
 
+        ## The TIC (ion 0) is always extracted: the baseline, integration and
+        ## the default display all run on it. A call such as ions = c(523, 537)
+        ## used to leave every sample with no TIC ("has 0 scans").
+        ions <- unique(c(0, as.numeric(ions)))
+
         ## Detect CDF flavour: "ms" for ANDI-MS (full rt x mz cube),
         ## "chrom" for ANDI-Chrom single-detector (e.g. GC-TCD, GC-FID, GC-ECD),
         ## "unknown" otherwise. Used to fork the ingest path below.
@@ -1890,7 +1895,7 @@
                             
                             cat("   Extracting chromatograms...\n")
                                 
-                                if (0 %in% ions) {
+                                if (0 %in% missing_ions) {
                                     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                     framedDataFile %>% 
                                         group_by(rt) %>% summarize(
@@ -1905,9 +1910,11 @@
                                     chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
                                 }
 
-                                if ( length(ions[ions != 0]) > 0 ) {
+                                ## Only the MISSING ions: re-extracting every requested ion
+                                ## duplicated the rows a cached sample already had.
+                                if ( length(missing_ions[missing_ions != 0]) > 0 ) {
 
-                                    numeric_ions <- as.numeric(as.character(ions[ions != 0]))
+                                    numeric_ions <- as.numeric(as.character(missing_ions[missing_ions != 0]))
                                     for ( ion in seq_along(numeric_ions) ){
                                         framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                         framedDataFile %>% 

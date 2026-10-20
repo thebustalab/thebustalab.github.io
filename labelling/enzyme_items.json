@@ -808,5 +808,77 @@
     },
     "source_topic": "pks",
     "discovered": "2026-10-13"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_3b196d437c45",
+    "title": "Spatial metabolomics reveals brassinosteroid-mediated compartmentalization of saikosaponin biosynthesis in Bupleurum chinense DC. under abiotic stress",
+    "authors": "Linlin Yang; Shengwei Zhou; Xupeng Gu; Jie Wan; 初雷霞; Ning Dong; Dan Gao; Qiteng Ding; Weisheng Feng; Chengming Dong",
+    "journal": "Plant Physiology and Biochemistry",
+    "year": 2026,
+    "doi": "10.1016/j.plaphy.2026.111839",
+    "link": "https://doi.org/10.1016/j.plaphy.2026.111839",
+    "abstract": "Although the biosynthesis of active ingredients in medicinal plants is co-regulated by diverse environmental stimuli, the endocrine mechanism by which brassinosteroids (BRs) coordinate physiological resilience with the in situ spatial distribution of saikosaponins in Bupleurum chinense DC. under combined drought and salinity remains largely elusive. We hypothesized that exogenous brassinosteroids (BRs) application alleviates oxidative impairment provoked by single and combined osmotic/ionic stresses while orchestrating the tissue-level topological routing of saikosaponin biosynthesis. Here, B. chinense seedlings were exposed to drought (15% PEG6000), salinity (150 mM NaCl), and combined stress with or without root-applied BRs (0.2 mg/L). Plant growth, foliar cytomembrane integrity, antioxidant enzyme kinetics, and key transcriptional profiles were evaluated and integrated with matrix-assisted laser desorption/ionization mass spectrometry imaging (MALDI-MSI)-based spatial metabolomics. Stress-induced morphological inhibition and membrane lesion ranked salinity > combined stress > drought. Exogenous BRs markedly counteracted stress-evoked membrane lipid peroxidation by sustaining CAT, SOD, and POD activities and curtailing H 2 O 2 and superoxide accumulation, as corroborated by in situ DAB and NBT cytochemical visualization. Under drought and salinity, BRs further amplified the stress-elicited elevation of SS-a, SS-c, SS-d, and total saikosaponins through coordinated transcriptional activation of MVA/MEP pathway genes and pentacyclic triterpene synthases (HMGR, FPS, SS, SE, and β-AS). In sharp contrast, under combined drought and salinity, BRs application failed to upregulate these biosynthetic genes, revealing an antagonistic metabolic arrest driven by acute carbon allocation trade-offs. Spatial metabolomics demonstrated that common precursors (IPP, FPP, and 2,3-oxidosqualene) displayed an ubiquitous distribution across the whole root cross-section (cork, cortex, phloem, and xylem), whereas bioactive saikosaponins (SS-a, SS-c, SS-e, SS-f, and acetyl-SS-a) were preferentially compartmentalized in the secondary phloem and periderm. Exogenous BRs dynamically intensified precursor flux toward the outer cortical/phloem sink under single stress regimes. In summary, this work systematically characterizes BRs-regulated spatial patterns of saikosaponins under combined stress. It offers theoretical evidence for decoding stress adaptation mechanisms of B. chinense and provides practical support for optimizing its ecological cultivation techniques.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.plaphy.2026.111839"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-10-20"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_ebb70c2ae316",
+    "title": "Genome-Wide Characterization of the Chalcone Synthase Gene Family in 84K Poplar Reveals Roles in Tissue-Specific Development and Abiotic Stress Responses",
+    "authors": "W. Gu; B. Feng; Y. Sun; Y. Zhang; X. Bi; L. Sunhai; Y. Ren; K. Cai; X. Zhao",
+    "journal": "Russian Journal of Plant Physiology",
+    "year": 2026,
+    "doi": "10.1134/s1021443726603058",
+    "link": "https://doi.org/10.1134/s1021443726603058",
+    "abstract": "Chalcone synthase (CHS), a key enzyme in flavonoid biosynthesis, plays essential roles in plant growth, development, and responses to biotic and abiotic stresses. Despite extensive studies in herbaceous species, CHS genes in forest trees remain poorly characterized, and the CHS gene family in 84K poplar (Populus alba × P. glandulosa) has not yet been systematically investigated. In this study, a total of 15 CHS genes were identified from the 84K poplar reference genome using the HMMER approach and classified into five subgroups. Members within the same subgroup exhibited highly conserved motif compositions and domain structures. Cis-regulatory element analysis indicated that PagCHS genes are potentially involved in responses to multiple environmental stresses. Expression profiling revealed that most PagCHS genes were highly expressed in terminal buds, whereas a subset showed preferential expression in roots, consistent with flavonoid accumulation in actively dividing meristematic tissues. Furthermore, PagCHS03A and PagCHS11B were induced by light, while PagCHS07A, PagCHS08A, and PagCHS09B were significantly upregulated under cold stress. Several genes, including PagCHS04A, PagCHS07A, PagCHS12B, and PagCHS15B, also exhibited differential responses to drought stress. Notably, PagCHS07A responded to both cold and drought stresses, suggesting a potential role in coordinated stress adaptation. Overall, this study provides a comprehensive framework for understanding the functional roles of the PagCHS gene family in abiotic stress responses and offers valuable candidate genes for future functional characterization.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1134/s1021443726603058"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-20"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_2fcbfc68dfa9",
+    "title": "Collaborative Type I and Type III Polyketide Synthases Produce Unique Benzoquinones Affecting the Growth of Rice Roots",
+    "authors": "Xiaoyang Hao; Kang Chen; Liwen Zhang; Meng Bai; István Molnár; Yuquan Xu; Linan Xie",
+    "journal": "Journal of Agricultural and Food Chemistry",
+    "year": 2026,
+    "doi": "10.1021/acs.jafc.6c02018",
+    "link": "https://doi.org/10.1021/acs.jafc.6c02018",
+    "abstract": "Fungal quinones are widely distributed in nature, display various bioactivities, and are exploited for biotechnological and pharmaceutical applications. Here, we used genome mining in Sarocladium oryzae to identify a gene cluster harboring both type I and III polyketide synthases (PKSs). We reconstructed the biosynthetic pathway via in vitro reactions with purified recombinant enzymes and in vivo total biosynthesis in Aspergillus nidulans and Saccharomyces cerevisiae . The resulting new benzoquinones, saroetins A and B, feature a rare gem -dimethyl moiety installed by the C -methyltransferase domain of the type I PKS. Saroetins are redox-active, and their hydroquinone state can reduce Fe(III) to Fe(II). Saroetin B impedes rice seedlings root growth, induces the accumulation of hydrogen peroxide, and modulates antioxidant enzyme activities. This study broadens our understanding of the catalytic repertoire of fungal collaborative type I and type III PKSs and provides enzymatic tools for expanding the chemical diversity of aromatic polyketides.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "saroetins A and B",
+      "doi": "doi:10.1021/acs.jafc.6c02018"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-20"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_86348afccd74",
+    "title": "From stress perception to metabolite disposition: dynamic regulation of stilbene biosynthesis in plants",
+    "authors": "Yang Li; Lingchao Kong; Yanshen Ren; Guotian Liu; Jochen Bogs; Alessandro Vannozzi; Yuejin Wang; Zhenchang Liang; Ling Yuan; Lijun Wang",
+    "journal": "The Plant Cell",
+    "year": 2026,
+    "doi": "10.1093/plcell/koag315",
+    "link": "https://doi.org/10.1093/plcell/koag315",
+    "abstract": "Stilbenes are inducible plant specialized metabolites, best exemplified by resveratrol, a phytoalexin that links environmental perception, defense responses, and phenylpropanoid resource allocation. Stilbene accumulation may be controlled at three mechanistically distinct levels: signaling cascades that connect environmental and hormonal cues to kinase-dependent activation; combinatorial transcriptional control, which governs the response amplitude and specificity of stilbene synthase (STS) genes; and branch selection together with product disposition, which shapes the final metabolic output. Within this framework, MYB and WRKY proteins serve as major transcriptional nodes as activators or repressors, yet their regulatory effects depend on combinatorial interactions, phosphorylation events, competitive promoter occupancy, and metabolic context. We explicitly distinguish strongly supported mechanisms, defined by genetic perturbation, direct target validation, and metabolite quantification from emerging models built primarily on transient expression assays or co-expression correlations. This distinction avoids equating regulators supported by disparate levels of experimental evidence, identifies the most robust principles governing pathway control, and highlights experiments required to turn descriptive associations into causal mechanistic models. We further highlight conceptual insights extending beyond stilbene metabolism to inducible specialized metabolism in general, and outline research priorities for comparative genetics, cell-resolved analysis, and predictive pathway engineering.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1093/plcell/koag315"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-10-20"
   }
 ]
