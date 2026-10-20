@@ -3141,7 +3141,8 @@
                                         for (sample_number in seq_along(samples_with_peaks)) {
                                           peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_with_peaks[sample_number],]
                                           peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start,
-                                              if ("coelution_split" %in% names(peaks_in_this_sample)) as.character(peaks_in_this_sample$coelution_split) else NA_character_,
+                                              ## Full-length fallback: order() rejects a length-1 key (test_shiftq_unsplit_table.R).
+                                              if ("coelution_split" %in% names(peaks_in_this_sample)) as.character(peaks_in_this_sample$coelution_split) else rep(NA_character_, nrow(peaks_in_this_sample)),
                                               na.last = TRUE),]
                                           peaks_in_this_sample$peak_number_within_sample <- seq(1,length(peaks_in_this_sample$path_to_cdf_csv),1)
                                           peak_table_updated[[sample_number]] <- peaks_in_this_sample
