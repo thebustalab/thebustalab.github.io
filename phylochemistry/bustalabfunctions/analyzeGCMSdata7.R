@@ -675,6 +675,22 @@
         list(ribbons = ribbons, vlines = vlines, labels = labels)
     }
 
+    ## Slide the x window by its own width (the Earlier / Later buttons, 2026-10-21):
+    ## the next window starts where this one ends, so stepping covers the run with
+    ## no gap and no overlap. Clamped to the run [lo, hi] keeping the width, so the
+    ## last step lands flush with the end rather than off it. Returns NULL when the
+    ## window is unusable (not set yet, or zero width).
+    gcms_slide_window <- function(xs, xe, direction, lo, hi) {
+        if (length(xs) != 1 || length(xe) != 1 || !is.finite(xs) || !is.finite(xe) || xe <= xs) return(NULL)
+        w <- xe - xs
+        ns <- xs + sign(direction) * w
+        if (is.finite(lo) && is.finite(hi) && hi > lo) {
+            if (w >= hi - lo) return(c(lo, hi))
+            ns <- min(max(ns, lo), hi - w)
+        }
+        c(ns, ns + w)
+    }
+
     ## ---- Peak spectra and assignment confidence (phase 3, 2026-10-21) ----------
     ## Overview mode marks every peak with a square coloured by how well its mass
     ## spectrum agrees with the other peaks given the same peak_ID in this folder,
@@ -2666,6 +2682,9 @@
                                         column(12,
                                             actionButton("prev_page", paste0("\u25c0 Prev ", samples_per_page)),
                                             actionButton("next_page", paste0("Next ", samples_per_page, " \u25b6")),
+                                            ## Slide the retention-time window by its own width.
+                                            actionButton("pan_back", "\u25c0 Earlier", style = "margin-left:15px;"),
+                                            actionButton("pan_fwd", "Later \u25b6"),
                                             tags$span(
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
@@ -3848,6 +3867,24 @@
                             if (is.null(b)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
                             current_page(min(b$n_pages, current_page() + 1))
                         })
+
+                    ## Earlier / Later: the same-width window before or after the current one.
+                    ## Moves the view only (x limits); a y-zoom is kept, as with a brush zoom.
+                        slide_view <- function(direction) {
+                            if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
+                            rng <- suppressWarnings(range(chromatograms_updated$rt_rt_offset, na.rm = TRUE))
+                            nw <- gcms_slide_window(x_axis_start, x_axis_end, direction, rng[1], rng[2])
+                            if (is.null(nw)) { notify("Zoom in first (brush + Shift+Q), then slide."); return() }
+                            if (isTRUE(all.equal(nw, c(x_axis_start, x_axis_end)))) {
+                                notify(if (direction > 0) "Already at the end of the run." else "Already at the start of the run.")
+                                return()
+                            }
+                            x_axis_start <<- nw[1]; x_axis_end <<- nw[2]
+                            cat(sprintf("Slide: x-axis now %s to %s\n", signif(nw[1], 8), signif(nw[2], 8)))
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                        }
+                        observeEvent(input$pan_back, slide_view(-1))
+                        observeEvent(input$pan_fwd,  slide_view(+1))
 
                     ## Page indicator text (e.g. "Page 2 / 8   (samples 21-40 of 152)")
                         output$page_indicator <- renderText({
