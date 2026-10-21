@@ -1637,17 +1637,31 @@
                 width  <- end_rt - start_rt
                 pad_lo <- start_rt - flank_frac * width
                 pad_hi <- end_rt   + flank_frac * width
-                padded <- d[rt >= pad_lo & rt <= pad_hi]
+                ## load_allions() keys the store on rt, so the window is one contiguous
+                ## slice: find its ends by binary search instead of scanning every row
+                ## of the store (~0.5M) for every peak on every Shift+Q. Same rows, same
+                ## order. An unkeyed table (test stubs) takes the plain scan.
+                padded <- if (identical(data.table::key(d)[1], "rt")) {
+                    i_lo <- findInterval(pad_lo, d$rt, left.open = TRUE) + 1L
+                    i_hi <- findInterval(pad_hi, d$rt)
+                    if (i_hi >= i_lo) d[i_lo:i_hi] else d[0]
+                } else d[rt >= pad_lo & rt <= pad_hi]
                 if (nrow(padded) == 0) return(na_out)
+
+                ## Abundance and rt as double, ONCE, here: median() of an INTEGER vector is
+                ## integer for an odd count and double for an even one, so by-mz groups came
+                ## back mixed and data.table stopped Shift+Q ("Column 1 of result for group N
+                ## is type 'integer' but expecting type 'double'"). fread reads a column as
+                ## integer whenever every value is whole. test_ion_area_integer.R pins this.
+                ## It used to be as.double() around each median, which also stopped
+                ## data.table using its fast grouped median (GForce): ~30% of the function's
+                ## time. Whole numbers are exact in double, so every number is unchanged.
+                if (is.integer(padded$abundance)) padded[, abundance := as.double(abundance)]
+                if (is.integer(padded$rt))        padded[, rt := as.double(rt)]
 
                 inside <- padded[rt >= start_rt & rt <= end_rt]
                 if (nrow(inside) == 0 || data.table::uniqueN(inside$rt) < 3) return(na_out)
 
-                ## as.double: median() of an INTEGER vector is integer for an odd count and
-                ## double for an even one, so by-mz groups came back mixed and data.table
-                ## stopped Shift+Q ("Column 1 of result for group N is type 'integer' but
-                ## expecting type 'double'"). The store's abundance is integer whenever
-                ## fread sees whole counts. test_ion_area_integer.R pins this.
                 ## Per-ion baseline from the flanks, interpolated across the peak.
                 ## Median rather than mean so a neighbouring peak intruding into
                 ## a flank does not drag the level up. Falls back to whichever
@@ -1655,8 +1669,8 @@
                 ## against the start or end of the run.
                 left  <- padded[rt <  start_rt]
                 right <- padded[rt >  end_rt]
-                lsum <- if (nrow(left))  left[,  .(bl = as.double(stats::median(abundance)), rtl = as.double(stats::median(rt))), by = mz] else NULL
-                rsum <- if (nrow(right)) right[, .(br = as.double(stats::median(abundance)), rtr = as.double(stats::median(rt))), by = mz] else NULL
+                lsum <- if (nrow(left))  left[,  .(bl = median(abundance), rtl = median(rt)), by = mz] else NULL
+                rsum <- if (nrow(right)) right[, .(br = median(abundance), rtr = median(rt)), by = mz] else NULL
 
                 w <- inside
                 if (!is.null(lsum)) w <- merge(w, lsum, by = "mz", all.x = TRUE)
@@ -1664,7 +1678,8 @@
                 if (is.null(lsum)) { w[, bl := NA_real_]; w[, rtl := NA_real_] }
                 if (is.null(rsum)) { w[, br := NA_real_]; w[, rtr := NA_real_] }
 
-                w[, floor_mz := min(abundance), by = mz]
+                fm <- w[, .(floor_mz = min(abundance)), by = mz]
+                w[fm, on = "mz", floor_mz := i.floor_mz]
                 w[, base := data.table::fifelse(
                         !is.na(bl) & !is.na(br) & is.finite(rtr - rtl) & (rtr - rtl) != 0,
                         bl + (br - bl) * (rt - rtl) / (rtr - rtl),
@@ -1677,7 +1692,7 @@
                 ## the two compounds, which is exactly the case we are trying to
                 ## resolve. The single strongest ion belongs unambiguously to one
                 ## compound, so it is the honest model peak.
-                tops <- w[, .(top = max(net), ion_apex = rt[which.max(net)]), by = mz]
+                tops <- w[, .(top = max(net)), by = mz]
                 if (nrow(tops) == 0 || max(tops$top) <= 0) return(na_out)
                 base_mz <- tops$mz[which.max(tops$top)]
 
@@ -1715,6 +1730,77 @@
 
                 kept <- w[mz %in% keep]
                 list(area = sum(kept$net), ions = paste(sort(unique(kept$mz)), collapse = ";"))
+            }
+
+            ## Shift+Q recomputes area_peak_ions for EVERY peak, and that was ~75% of
+            ## each press (714 peaks, ~40 s on host1, 2026-10-20) although a zoom
+            ## changes no peak. The result depends only on the sample's all-ion store,
+            ## the window and the threshold, so remember it under exactly those: the
+            ## store's stamp (mtime:size) is in the key, so a rebuilt store recomputes.
+            ## Pinned by test_shiftq_speed.R.
+            .ion_area_memo <- new.env(hash = TRUE, parent = emptyenv())
+            .ion_area_memo_max <- 100000L
+            .ion_area_keys_used <- character(0)
+            .ion_area_memo_dirty <- FALSE
+            peak_ion_area_memo <- function(cdf_csv, start_rt, end_rt, threshold) {
+                ok <- !inherits(try(load_allions(cdf_csv), silent = TRUE), "try-error")
+                if (!ok) return(peak_ion_area(cdf_csv, start_rt, end_rt, threshold))
+                key <- paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
+                             format(threshold, digits = 17),
+                             file_stamp(allion_store_path(cdf_csv)), sep = "|")
+                .ion_area_keys_used <<- c(.ion_area_keys_used, key)
+                hit <- .ion_area_memo[[key]]
+                if (!is.null(hit)) return(hit)
+                res <- peak_ion_area(cdf_csv, start_rt, end_rt, threshold)
+                if (length(.ion_area_memo) >= .ion_area_memo_max)
+                    rm(list = ls(.ion_area_memo, all.names = TRUE), envir = .ion_area_memo)
+                assign(key, res, envir = .ion_area_memo)
+                .ion_area_memo_dirty <<- TRUE
+                res
+            }
+
+            ## The memo above is per session, so the FIRST Shift+Q after opening a
+            ## folder still recomputed every peak (~27 s on Skylar's folder). It is
+            ## saved beside peaks_monolist.csv after each Shift+Q and read back on the
+            ## next session's first one. Same keys (so a rebuilt store, a moved window
+            ## or a new threshold still recomputes), plus the text of peak_ion_area()
+            ## and of the store builder/loader: a cache written by different code is ignored whole,
+            ## never trusted. Only the current peaks' entries are written, so the file
+            ## does not grow with every window ever tried. Pinned by test_shiftq_speed.R.
+            .ion_area_cache_file <- "ion_area_cache.rds"
+            .ion_area_cache_loaded <- FALSE
+            .ion_area_cache_keys <- character(0)       # what the file on disk holds
+            ## The integration code AND what builds the store it reads (binning, loading).
+            ion_area_code_tag <- function() paste(c(deparse(peak_ion_area), deparse(load_allions),
+                                                    deparse(build_allion_store), deparse(nominal_mz),
+                                                    .allion_binning_tag), collapse = "\n")
+            ion_area_cache_load <- function(path = .ion_area_cache_file) {
+                if (.ion_area_cache_loaded) return(invisible(0L))
+                .ion_area_cache_loaded <<- TRUE
+                if (!file.exists(path)) return(invisible(0L))
+                cache <- try(readRDS(path), silent = TRUE)
+                if (inherits(cache, "try-error") || !is.list(cache) ||
+                    !identical(cache$code, ion_area_code_tag()) || !is.list(cache$entries))
+                    return(invisible(0L))
+                .ion_area_cache_keys <<- names(cache$entries)
+                n <- 0L
+                for (k in names(cache$entries)) {
+                    if (is.null(.ion_area_memo[[k]])) { assign(k, cache$entries[[k]], envir = .ion_area_memo); n <- n + 1L }
+                }
+                invisible(n)
+            }
+            ion_area_cache_save <- function(keys, path = .ion_area_cache_file) {
+                keys <- unique(keys)
+                if (!.ion_area_memo_dirty && file.exists(path) && setequal(keys, .ion_area_cache_keys))
+                    return(invisible(FALSE))
+                entries <- mget(keys, envir = .ion_area_memo, ifnotfound = list(NULL))
+                entries <- entries[!vapply(entries, is.null, logical(1))]
+                tmp <- paste0(path, ".tmp", Sys.getpid())
+                ok <- !inherits(try(saveRDS(list(code = ion_area_code_tag(), entries = entries), tmp), silent = TRUE), "try-error")
+                if (ok) ok <- file.rename(tmp, path)
+                if (!ok) unlink(tmp)
+                if (ok) { .ion_area_memo_dirty <<- FALSE; .ion_area_cache_keys <<- names(entries) }
+                invisible(ok)
             }
 
         setwd(CDF_directory_path)
@@ -3185,6 +3271,17 @@
                                         ## twice and never reach the last one -- whose areas then kept
                                         ## their stale values with no error anywhere.
                                         samples_for_area <- unique(as.character(samples_monolist$path_to_cdf_csv))
+                                        ## Split the table by sample ONCE. Each peak used to subset the
+                                        ## whole chromatograms_updated (TIC + baseline + every extracted
+                                        ## ion, all samples) to its own sample: 714 full scans per
+                                        ## Shift+Q, ~6.5 s on Skylar's folder vs 0.35 s split once.
+                                        ## Same rows in the same order (test_shiftq_speed.R).
+                                        chrom_by_sample <- split(chromatograms_updated,
+                                                                 as.character(chromatograms_updated$path_to_cdf_csv))
+                                        if (isTRUE(integrate_peak_ions)) {
+                                            ion_area_cache_load()
+                                            .ion_area_keys_used <<- character(0)
+                                        }
                                         for (sample_number in seq_along(samples_for_area)) {
 
                                           this_sample <- samples_for_area[sample_number]
@@ -3214,9 +3311,8 @@
                                           ## so Shift+Q died on the first un-annotated sample.
                                           areas <- numeric(nrow(peaks_in_this_sample))
                                           for (peak in seq_len(nrow(peaks_in_this_sample))) {
-                                            rows_for_peak <- chromatograms_updated[
-                                                chromatograms_updated$path_to_cdf_csv ==
-                                                    as.character(peaks_in_this_sample$path_to_cdf_csv[peak]), ]
+                                            rows_for_peak <- chrom_by_sample[[as.character(peaks_in_this_sample$path_to_cdf_csv[peak])]]
+                                            if (is.null(rows_for_peak)) rows_for_peak <- chromatograms_updated[0, ]
                                             in_window <- dplyr::filter(
                                                 rows_for_peak,
                                                 rt >= peaks_in_this_sample$peak_start[peak],
@@ -3240,7 +3336,7 @@
                                             ion_areas <- numeric(nrow(peaks_in_this_sample))
                                             ion_lists <- character(nrow(peaks_in_this_sample))
                                             for (peak in seq_len(nrow(peaks_in_this_sample))) {
-                                              res <- peak_ion_area(
+                                              res <- peak_ion_area_memo(
                                                 as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),
                                                 peaks_in_this_sample$peak_start[peak],
                                                 peaks_in_this_sample$peak_end[peak],
@@ -3263,6 +3359,7 @@
                                         }
                                         # peak_table_updated <- do.call(rbind, peak_table_updated)
                                         # peak_table <- peak_table_updated
+                                        if (isTRUE(integrate_peak_ions)) ion_area_cache_save(.ion_area_keys_used)
 
                                     ## v7: refresh existing co-elution splits. Runs AFTER the area
                                     ## recompute above, which has just given every split pair plain
@@ -3481,6 +3578,15 @@
                                 ## to disappear entirely: a page returned 14 panels while the
                                 ## indicator still read "samples 21-40 of 152", which reads as
                                 ## "those six samples failed".
+                                ## The peak overlay below takes each peak's rows from this, one
+                                ## sample's slice at a time. It used to filter the WHOLE
+                                ## chromatograms_updated once per peak: ~4 s of every ~6.5 s redraw
+                                ## on Skylar's 21-sample folder (735 peaks). Every overlaid peak lies
+                                ## inside [xs, xe] on a page sample, so its rows are all in cuf, in
+                                ## the same order. Split BEFORE the facet factor below, so the slices
+                                ## carry the same character column the old filter returned.
+                                ## Pinned by test_shiftq_speed.R.
+                                cuf_by_sample <- split(cuf, as.character(cuf$path_to_cdf_csv))
                                 as_page_facet <- function(x) factor(as.character(x), levels = page_samples)
                                 cuf$path_to_cdf_csv <- as_page_facet(cuf$path_to_cdf_csv)
 
@@ -3706,9 +3812,10 @@
                                         all_ribbons <- list(); all_vlines <- list(); all_labels <- list()
                                         if (nrow(peak_table) > 0) {
                                             for (peak in seq_len(nrow(peak_table))) {
+                                                rows_for_peak <- cuf_by_sample[[as.character(peak_table[peak, ]$path_to_cdf_csv)]]
+                                                if (is.null(rows_for_peak)) rows_for_peak <- chromatograms_updated[0, ]
                                                 signal_for_this_peak <- dplyr::filter(
-                                                    chromatograms_updated,
-                                                    path_to_cdf_csv == peak_table[peak, ]$path_to_cdf_csv,
+                                                    rows_for_peak,
                                                     rt_rt_offset >= peak_table[peak, ]$peak_start_rt_offset,
                                                     rt_rt_offset <= peak_table[peak, ]$peak_end_rt_offset
                                                 )
