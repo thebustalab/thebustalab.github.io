@@ -2490,6 +2490,63 @@
                 ## the two columns. On release we fire a window resize, which is
                 ## what makes Shiny re-measure the plot outputs -- that also
                 ## refreshes last_brush_size, which the brush maths depends on.
+                ## Busy orb (top of the sidebar, 2026-10-21). Driven entirely in the
+                ## browser by Shiny's own shiny:busy / shiny:idle events, because while
+                ## Shift+Q runs the R side cannot send anything -- a server-driven
+                ## indicator would only update once the work was over. Green "Ready",
+                ## pulsing amber "Working... N s", grey "Disconnected".
+                tags$head(
+                    tags$style(HTML("
+                        .gcms-status { display: flex; align-items: center; gap: 8px; font-weight: bold;
+                                       margin: 2px 0 10px 0; font-size: 15px; }
+                        .gcms-orb    { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 16px;
+                                       background: #2e9d4f; box-shadow: 0 0 6px #2e9d4f; }
+                        .gcms-orb.gcms-on { background: #f0a30a;
+                                       animation: gcmsPulse 1.1s ease-in-out infinite; }
+                        .gcms-orb.gcms-off { background: #9e9e9e !important; box-shadow: none !important;
+                                       animation: none !important; }
+                        @keyframes gcmsPulse { 0%, 100% { transform: scale(0.8); box-shadow: 0 0 3px #f0a30a; }
+                                               50% { transform: scale(1.15); box-shadow: 0 0 14px #f0a30a; } }
+                        .gcms-status-key { font-weight: normal; color: #888; font-size: 85%; }
+                    ")),
+                    tags$script(HTML("
+                        (function () {
+                          // Shift+Q is a compute then a redraw: two busy spells a moment
+                          // apart. Count spells less than ~1 s apart as ONE job, so the
+                          // orb does not flash green in between and the time shown is
+                          // the whole wait.
+                          var t0 = null, timer = null, settle = null;
+                          function txt(s) { $('#gcms_status_text').text(s); }
+                          $(document).on('shiny:busy', function () {
+                            if (settle) { clearTimeout(settle); settle = null; }
+                            if (t0 === null) t0 = Date.now();
+                            $('.gcms-orb').addClass('gcms-on');
+                            if (!timer) {
+                              txt('Working\u2026');
+                              timer = setInterval(function () {
+                                txt('Working\u2026 ' + Math.round((Date.now() - t0) / 1000) + ' s');
+                              }, 500);
+                            }
+                          });
+                          $(document).on('shiny:idle', function () {
+                            if (settle) clearTimeout(settle);
+                            settle = setTimeout(function () {
+                              settle = null;
+                              if (timer) { clearInterval(timer); timer = null; }
+                              var secs = t0 === null ? 0 : Math.round((Date.now() - t0) / 1000);
+                              t0 = null;
+                              $('.gcms-orb').removeClass('gcms-on');
+                              txt(secs >= 2 ? 'Ready (last took ' + secs + ' s)' : 'Ready');
+                            }, 900);
+                          });
+                          $(document).on('shiny:disconnected', function () {
+                            if (timer) { clearInterval(timer); timer = null; }
+                            if (settle) { clearTimeout(settle); settle = null; }
+                            $('.gcms-orb').removeClass('gcms-on').addClass('gcms-off'); txt('Disconnected');
+                          });
+                        })();
+                    "))
+                ),
                 tags$head(
                     tags$style(HTML("
                         .gcms-flex-row { display: flex !important; align-items: stretch; }
@@ -2551,8 +2608,11 @@
 
                         h4("Busta Lab GCMS Analysis App"),
 
-                        strong("Last key pressed"),
-                        verbatimTextOutput("key", placeholder = TRUE),
+                        tags$div(class = "gcms-status",
+                            tags$span(class = "gcms-orb"),
+                            tags$span(id = "gcms_status_text", "Ready"),
+                            tags$span(class = "gcms-status-key", textOutput("key", inline = TRUE))
+                        ),
                         strong("Messages"),
                         verbatimTextOutput("message_window", placeholder = TRUE),
 
