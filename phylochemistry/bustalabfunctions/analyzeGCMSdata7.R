@@ -2578,7 +2578,11 @@
                             "samples_per_page_ui", "Samples per page",
                             value = samples_per_page, min = 1, max = 500, step = 1
                         ),
-                        helpText("Overview draws thin panels so a page holds many samples; Detail draws full-height panels for integrating. Each mode remembers its own page size. Zoom is kept when you switch."),
+                        sliderInput(
+                            "panel_height_mult", "Panel height",
+                            min = 0.5, max = 4, value = 1, step = 0.25, post = "x"
+                        ),
+                        helpText("Overview draws thin panels so a page holds many samples; Detail draws full-height panels for integrating. Each mode remembers its own page size. Zoom is kept when you switch. Panel height stretches every panel in both modes; it redraws when you let go of the slider."),
 
                         tags$hr(),
                         strong("Chromatogram display"),
@@ -3740,12 +3744,18 @@
                         })
                         ## Live plot height: 200 px of axes and margins plus one panel per
                         ## sample actually on this page, so a short last page is not stretched.
+                        ## Panel height multiplier (sidebar slider). Debounced: one redraw at
+                        ## 95 samples takes seconds, and a slider sends values while dragged.
+                        panel_height_mult <- debounce(reactive({
+                            v <- suppressWarnings(as.numeric(input$panel_height_mult))
+                            if (length(v) != 1 || !is.finite(v) || v <= 0) 1 else min(v, 4)
+                        }), 700)
                         chromatogram_height <- function() {
                             redraw_trigger()
                             b <- page_bounds()
                             n_here <- if (!is.null(b) && b$n > 0) b$hi - b$lo + 1 else
                                 min(page_size(), max(1, length(unique(chromatograms$path_to_cdf_csv))))
-                            200 + panel_px_for(view_overview()) * n_here
+                            200 + round(panel_px_for(view_overview()) * panel_height_mult()) * n_here
                         }
 
                     ## Which samples exist, and the current page's slice
