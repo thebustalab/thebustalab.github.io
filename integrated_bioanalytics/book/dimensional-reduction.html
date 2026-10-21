@@ -126,8 +126,11 @@
 <span><span class="co">## 10 Devil_Mountain_L… BELA        6.46  7.69 Ca         5.73 </span></span>
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
-<p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure</p>
-<div id="section-10" class="section level2 unnumbered">
+<p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure.</p>
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')" };
+</script><div id="section-10" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-10"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="pca" class="section level2 unnumbered">
@@ -196,6 +199,7 @@ Figure: Principal component rotation illustrated. The bold axes denote the new p
 <span><span class="co">## # ℹ 12 more variables: pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
+<p>Note that <code>runMatrixAnalysis()</code> scales every analyte before running the PCA (the reasons are covered in the networks chapter, under distances and scaling). Scaling matters here too: without it, the first principal component of the Alaska data explains 95% of the variance and is almost entirely chloride, simply because chloride is measured in the largest numbers.</p>
 <p>Let’s plot the 2D projection of the Alaska lakes data:</p>
 <div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -204,40 +208,63 @@ Figure: Principal component rotation illustrated. The bold axes denote the new p
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-336"></span>
-<img src="index_files/figure-html/unnamed-chunk-336-1.png" alt="PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel." width="100%"><p class="caption">
-Figure: PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.
+<img src="index_files/figure-html/unnamed-chunk-336-1.png" alt="Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
 <p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
+<div id="concept-check-28" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-28"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the analysis that returns the PCA scores for each lake. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_lakes_pca &lt;- runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "____",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+ggplot(AK_lakes_pca, aes(x = Dim_1, y = Dim_2, fill = park)) +
+  geom_point(shape = 21, size = 4) +
+  theme_classic()</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Each axis of a PCA plot is a combination of all the analytes, chosen to capture as much of the variance as possible. Two lakes sitting far out on Dim_1 differ from the rest in whatever combination of analytes makes up the first principal component. The plot says nothing about geography, and which analytes are responsible has to be read from the ordination, covered next.">
+<p class="scq">
+Self-check: two BELA lakes sit far to the right of all the others along Dim_1. What does that tell you?
+</p>
+<p><label><input type="radio"> Those two lakes are geographically far from the other lakes</label>
+<label><input type="radio"> Their chemistry differs from the other lakes in the combination of analytes that makes up the first principal component</label>
+<label><input type="radio"> Those two lakes have higher values for every analyte that was measured</label></p>
+</div>
+<hr>
+</div>
 </div>
 <div id="ordination-plots" class="section level3 unnumbered">
 <h3>ordination plots<a class="anchor" aria-label="anchor" href="#ordination-plots"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it reveals which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>:</p>
-<pre><code>## # A tibble: 6 × 3
-##   analyte      Dim_1   Dim_2
-##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
-## 1 water_temp 0.0750  -0.261 
-## 2 pH         0.686    0.0185
-## 3 C          0.290   -0.242 
-## 4 N          0.00435  0.714 
-## 5 P          0.473   -0.0796
-## 6 Cl         0.953    0.0148</code></pre>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 3</span></span>
+<span><span class="co">##   analyte      Dim_1   Dim_2</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 water_temp 0.0750  -0.261 </span></span>
+<span><span class="co">## 2 pH         0.686    0.0185</span></span>
+<span><span class="co">## 3 C          0.290   -0.242 </span></span>
+<span><span class="co">## 4 N          0.00435  0.714 </span></span>
+<span><span class="co">## 5 P          0.473   -0.0796</span></span>
+<span><span class="co">## 6 Cl         0.953    0.0148</span></span></code></pre></div>
 <p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_label_repel()</a></code> and <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> to label certain segments in the ordination plot. Using <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_label_repel()</a></code> is not required; the built in <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_label()</a></code> works too, but <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_label_repel()</a></code> can make labeling the segments easier.</p>
 <div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># AK_lakes_pca_ord &lt;- runMatrixAnalysis(</span></span>
-<span><span class="co">#   data = alaska_lake_data,</span></span>
-<span><span class="co">#   analysis = c("pca_ord"),</span></span>
-<span><span class="co">#   column_w_names_of_multiple_analytes = "element",</span></span>
-<span><span class="co">#   column_w_values_for_multiple_analytes = "mg_per_L",</span></span>
-<span><span class="co">#   columns_w_values_for_single_analyte = c("water_temp", "pH"),</span></span>
-<span><span class="co">#   columns_w_additional_analyte_info = "element_type",</span></span>
-<span><span class="co">#   columns_w_sample_ID_info = c("lake", "park")</span></span>
-<span><span class="co"># )</span></span>
-<span><span class="co"># head(AK_lakes_pca_ord)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim_1</span>, yend <span class="op">=</span> <span class="va">Dim_2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_circle</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x0 <span class="op">=</span> <span class="fl">0</span>, y0 <span class="op">=</span> <span class="fl">0</span>, r <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_label_repel</a></span><span class="op">(</span></span>
@@ -248,48 +275,49 @@ Figure: PCA scores for Alaskan lake chemistry. Points show each lake positioned 
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span>, <span class="va">Dim_2</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, label <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, direction <span class="op">=</span> <span class="st">"y"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Dim_1"</span>, y <span class="op">=</span> <span class="st">"Dim_2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-338"></span>
-<img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings." width="100%"><p class="caption">
-Figure: Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.
+<img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Great! Here is how to read the ordination plot:</p>
 <ol style="list-style-type: decimal">
 <li><p>When considering one analyte’s vector: the vector’s projected value on an axis shows how much its variance is aligned with that principal component.</p></li>
-<li><p>When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is “1.9” with respect to dimension 2 and another is “-1.9” with respect to dimension 2. Let’s also say that these vectors are ~“0” with respect to dimension 1.</p></li>
+<li><p>When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. For example, if one analyte sits at 0.9 on dimension 2 and another at -0.9 on dimension 2, and both sit near 0 on dimension 1, those two analytes are strongly negatively correlated. This reading is most reliable for vectors that reach close to the circle; a short vector is poorly described by these two dimensions.</p></li>
 </ol>
-<p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a “biplot”:</p>
+<p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements are what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
+<p>Reading the plot by eye works well for a handful of analytes, but the ordination data can also be sorted directly. One detail matters when doing so: a loading of -0.95 is just as strong as a loading of 0.95, it simply points the other way. So to rank analytes by how much they contribute to a component, sort by the absolute value of the loading with <code><a href="https://rdrr.io/r/base/MathFun.html">abs()</a></code>:</p>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># AK_lakes_pca &lt;- runMatrixAnalysis(</span></span>
-<span><span class="co">#   data = alaska_lake_data,</span></span>
-<span><span class="co">#   analysis = c("pca"),</span></span>
-<span><span class="co">#   column_w_names_of_multiple_analytes = "element",</span></span>
-<span><span class="co">#   column_w_values_for_multiple_analytes = "mg_per_L",</span></span>
-<span><span class="co">#   columns_w_values_for_single_analyte = c("water_temp", "pH"),</span></span>
-<span><span class="co">#   columns_w_additional_analyte_info = "element_type",</span></span>
-<span><span class="co">#   columns_w_sample_ID_info = c("lake", "park"),</span></span>
-<span><span class="co">#   scale_variance = TRUE</span></span>
-<span><span class="co"># )</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># AK_lakes_pca_ord &lt;- runMatrixAnalysis(</span></span>
-<span><span class="co">#   data = alaska_lake_data,</span></span>
-<span><span class="co">#   analysis = c("pca_ord"),</span></span>
-<span><span class="co">#   column_w_names_of_multiple_analytes = "element",</span></span>
-<span><span class="co">#   column_w_values_for_multiple_analytes = "mg_per_L",</span></span>
-<span><span class="co">#   columns_w_values_for_single_analyte = c("water_temp", "pH"),</span></span>
-<span><span class="co">#   columns_w_additional_analyte_info = "element_type",</span></span>
-<span><span class="co">#   columns_w_sample_ID_info = c("lake", "park")</span></span>
-<span><span class="co"># )</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca_ord</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 13 × 3</span></span>
+<span><span class="co">##    analyte       Dim_1    Dim_2</span></span>
+<span><span class="co">##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 K           0.961    0.0469 </span></span>
+<span><span class="co">##  2 Na          0.956    0.0133 </span></span>
+<span><span class="co">##  3 Cl          0.953    0.0148 </span></span>
+<span><span class="co">##  4 Br          0.947    0.00545</span></span>
+<span><span class="co">##  5 F           0.887   -0.303  </span></span>
+<span><span class="co">##  6 Mg          0.855    0.412  </span></span>
+<span><span class="co">##  7 pH          0.686    0.0185 </span></span>
+<span><span class="co">##  8 P           0.473   -0.0796 </span></span>
+<span><span class="co">##  9 C           0.290   -0.242  </span></span>
+<span><span class="co">## 10 S          -0.224    0.853  </span></span>
+<span><span class="co">## 11 Ca          0.174    0.814  </span></span>
+<span><span class="co">## 12 water_temp  0.0750  -0.261  </span></span>
+<span><span class="co">## 13 N           0.00435  0.714</span></span></code></pre></div>
+<p>The analytes at the top of this list are the main drivers of the first principal component. Sorting by <code>abs(Dim_2)</code> instead gives the drivers of the second.</p>
+<p>It is slightly easier to see how the two plots relate if we look at an overlay of them, which is often called a “biplot”:</p>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># geom_label_repel(aes(label = lake), alpha = 0.5) +</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">AK_lakes_pca_ord</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim_1</span>, yend <span class="op">=</span> <span class="va">Dim_2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>,</span>
@@ -298,30 +326,55 @@ Figure: Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-339"></span>
-<img src="index_files/figure-html/unnamed-chunk-339-1.png" alt="PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance." width="100%"><p class="caption">
-Figure: PCA biplot combining scores and loadings. Lakes are plotted as points colored by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.
+<span style="display:block;" id="fig:unnamed-chunk-340"></span>
+<img src="index_files/figure-html/unnamed-chunk-340-1.png" alt="Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_pca_ord</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">22</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-340"></span>
-<img src="index_files/figure-html/unnamed-chunk-340-1.png" alt="Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim_1, making it easy to compare how each element contributes relative to the others." width="100%"><p class="caption">
-Figure: Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim_1, making it easy to compare how each element contributes relative to the others.
+<span style="display:block;" id="fig:unnamed-chunk-341"></span>
+<img src="index_files/figure-html/unnamed-chunk-341-1.png" alt="Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
+</div>
+<div id="concept-check-29" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-29"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the function that ranks the analytes by the size of their loading, ignoring whether it is positive or negative. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_lakes_pca_ord &lt;- runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "pca_ord",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+AK_lakes_pca_ord %&gt;%
+  arrange(desc(____(Dim_2)))</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="Sorting by abs(Dim_2) puts S (0.85), Ca (0.81) and N (0.71) at the top, so those three analytes drive the second principal component. The analytes at the top of the first component's list, such as K and Na, sit almost exactly on zero for Dim_2.">
+<p class="scq">
+Self-check: which analytes are the main drivers of the second principal component?
+</p>
+<p><label><input type="radio"> K, Na and Cl</label>
+<label><input type="radio"> water_temp and pH</label>
+<label><input type="radio"> S, Ca and N</label></p>
+</div>
+<hr>
 </div>
 </div>
 <div id="principal-components" class="section level3 unnumbered">
 <h3>principal components<a class="anchor" aria-label="anchor" href="#principal-components"><i class="fas fa-link"></i></a>
 </h3>
-<p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<p>We also can access information about how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_pca_dim</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_dim"</span><span class="op">)</span>,</span>
@@ -347,19 +400,50 @@ Figure: Analyte loadings by principal component. The dot plot re-expresses the P
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-341"></span>
-<img src="index_files/figure-html/unnamed-chunk-341-1.png" alt="Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain." width="100%"><p class="caption">
-Figure: Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.
+<span style="display:block;" id="fig:unnamed-chunk-342"></span>
+<img src="index_files/figure-html/unnamed-chunk-342-1.png" alt="How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding <code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed()</a></code> to a ggplot.</p>
+<p>To pull out the value for a single component, filter the table to that component:</p>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_dim</span>, <span class="va">principal_component</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 2</span></span>
+<span><span class="co">##   principal_component percent_variance_explained</span></span>
+<span><span class="co">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1                   1                       48.8</span></span></code></pre></div>
+<div id="concept-check-30" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-30"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the analysis that reports how much of the variance each principal component explains. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_lakes_pca_dim &lt;- runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "____",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+filter(AK_lakes_pca_dim, principal_component %in% c(1, 2))</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="The first component explains about 49% of the variance and the second about 19%, so a given spread along Dim_1 represents far more of the differences among the lakes than the same spread along Dim_2. If ggplot stretches the two axes to different scales, a separation along Dim_2 can look as large as one along Dim_1. coord_fixed() keeps one unit the same length on both axes, so distances in the plot can be compared in any direction.">
+<p class="scq">
+Self-check: the first component explains about 49% of the variance and the second about 19%. Why add coord_fixed() when plotting the scores?
+</p>
+<p><label><input type="radio"> So that a distance along Dim_2 is drawn at the same scale as a distance along Dim_1, and separations in the two directions can be compared fairly</label>
+<label><input type="radio"> So that the second principal component explains as much variance as the first</label>
+<label><input type="radio"> Because ggplot cannot draw principal component scores without it</label></p>
+</div>
+<hr>
+</div>
 </div>
 <div id="pcavisualizer" class="section level3 unnumbered">
 <h3>pcaVisualizer<a class="anchor" aria-label="anchor" href="#pcavisualizer"><i class="fas fa-link"></i></a>
 </h3>
 <p>Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. Our <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command provides an interactive app helper called <code>pcaVisualizer()</code> that wraps <code>runMatrixAnalysis()</code> and assembles a dashboard with coordinated plots.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-342"></span>
+<span style="display:block;" id="fig:unnamed-chunk-344"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%"><p class="caption">
 Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
 </p>
@@ -374,13 +458,13 @@ Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the lin
 <code>columns_w_values_for_single_analyte</code>: the numeric columns that should be analyzed (for example <code>colnames(alaska_lake_data_wide)[3:15]</code>).</li>
 </ul>
 <p>To launch the app for the Alaska lakes example:</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pcaVisualizer</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,</span>
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>This opens a browser window (or RStudio viewer) with three linked panels:</p>
+<p>This opens a browser window (or RStudio viewer) with three linked panels. Because it is an interactive app, <code>pcaVisualizer()</code> needs R running on a computer and does not run in the browser cells on this page:</p>
 <ul>
 <li>
 <strong>PCA Plot</strong> – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to color or shape; the app reuses the <code>discrete_palette</code> defined earlier so colors stay consistent with the rest of this chapter.</li>
@@ -399,11 +483,11 @@ Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the lin
 “Can I identify clusters or subtle gradients in my dataset that might be missed by PCA?”</p>
 <p>UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when the data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. Think of umap as a technique that “unwinds” a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as <code>n_neighbors</code> and <code>min_dist</code>, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.</p>
 <p>We will work here with the <code>wine_quality</code> dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wine_quality</span><span class="op">$</span><span class="va">ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>In this command, the dollar sign ($) is used to access (or create) the ID column within the wine_quality data frame. The seq() function generates a sequence of numbers starting at 1 and ending at the number of rows in the dataset (given by dim(wine_quality)[1]), with an increment of 1. This way, every sample is uniquely identified.</p>
 <p>Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wq</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">wine_quality</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -418,14 +502,14 @@ Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the lin
 <span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-345"></span>
-<img src="index_files/figure-html/unnamed-chunk-345-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%"><p class="caption">
-Figure: PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.
+<span style="display:block;" id="fig:unnamed-chunk-347"></span>
+<img src="index_files/figure-html/unnamed-chunk-347-1.png" alt="Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.</p>
 <p>We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">wine_quality</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"umap"</span>,</span>
@@ -439,14 +523,14 @@ Figure: PCA projection of wine chemistry. Samples are positioned by the first tw
 <span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-346"></span>
-<img src="index_files/figure-html/unnamed-chunk-346-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%"><p class="caption">
-Figure: UMAP embedding of wine chemistry. The non-linear projection preserves neighborhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.
+<span style="display:block;" id="fig:unnamed-chunk-348"></span>
+<img src="index_files/figure-html/unnamed-chunk-348-1.png" alt="Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.</p>
 <p>t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, t‑SNE can be run using the runMatrixAnalysis() function by specifying analysis = “tsne” (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wine_quality_deduplicated</span> <span class="op">&lt;-</span> <span class="va">wine_quality</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">14</span><span class="op">]</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="va">tsne_results</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">wine_quality_deduplicated</span>,</span>
@@ -456,6 +540,33 @@ Figure: UMAP embedding of wine chemistry. The non-linear projection preserves ne
 <span><span class="op">)</span></span></code></pre></div>
 <p>From there, the t‑SNE dimensions can be plotted in a similar fashion to the PCA and UMAP examples.</p>
 <p>Both UMAP and t‑SNE provide powerful alternatives to PCA when the data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.</p>
+<div id="concept-check-31" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-31"><i class="fas fa-link"></i></a>
+</h4>
+<p>UMAP cannot run in the browser, but t-SNE can. Fill in the blank with the analysis that runs t-SNE on the Alaska lakes, then press Run two or three times and watch the plot.</p>
+<div class="webr-cell">
+<textarea class="webr-code">AK_lakes_tsne &lt;- runMatrixAnalysis(
+  data = alaska_lake_data_wide,
+  analysis = "____",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
+  geom_point(shape = 21, size = 4) +
+  theme_classic()</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="t-SNE starts from a random arrangement, so each run can rotate, flip or rearrange the picture, and its axes are not combinations of the analytes the way principal components are. What is worth reading is which lakes end up near each other. To ask which analytes drive a separation, go back to the PCA ordination.">
+<p class="scq">
+Self-check: the picture changes a little each time the cell runs. What can you safely read from a t-SNE plot?
+</p>
+<p><label><input type="radio"> How much of the variance Dim_1 explains</label>
+<label><input type="radio"> Which lakes sit close to each other, but not what the axes mean</label>
+<label><input type="radio"> Which analyte drives Dim_1, from the direction of the separation</label></p>
+</div>
+<hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+</div>
 </div>
 <div id="exercises-5" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
@@ -542,7 +653,7 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-20.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-21.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

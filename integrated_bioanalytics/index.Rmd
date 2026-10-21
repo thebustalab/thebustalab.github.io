@@ -631,6 +631,12 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
   + There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
   + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
 
+## {-}
+
+## further reading {-}
+
+- [HHMI Educator Tips: Asking Scientific Questions](https://www.youtube.com/watch?v=8uZ9jUw6XN4). A short HHMI BioInteractive video on a method for developing scientific questions. Watch it before choosing the three questions your report will address, then use the method to draft questions that your dataset can actually answer and list the analyses each one would need.
+
 <!-- ### other thoughts -->
 
 <!-- * Somewhere in the discussion, be sure to list out what any unsolved problems you faced are. -->

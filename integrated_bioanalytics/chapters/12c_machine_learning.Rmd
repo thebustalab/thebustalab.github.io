@@ -175,6 +175,8 @@ data.frame(
 
 ## further reading {-}
 
+- [StatQuest: Random Forests Part 1 - Building, Using and Evaluating](https://www.youtube.com/watch?v=J4Wdy0Wc_xQ). Josh Starmer's short video builds a random forest from bootstrapped decision trees, then shows how the out-of-bag samples measure its accuracy. A good first pass on what a random forest is before running `buildModel2()`.
+
 - [Common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). An overview of core machine learning paradigms (classification, regression, and clustering) with brief definitions and examples to help orient the reader in the landscape of ML methods.
 
 - [Tidymodels: tidy machine learning in R](http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/). Rebecca Barter's comprehensive walkthrough of the tidymodels ecosystem, covering data preprocessing, model specification, cross-validation, and hyperparameter tuning in a unified tidyverse-friendly workflow.

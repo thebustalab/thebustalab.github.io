@@ -311,6 +311,9 @@
         tmpl$area <- c(s$area_a, s$area_b)
         if ("area_peak_ions" %in% names(tmpl)) tmpl$area_peak_ions <- NA_real_
         if ("peak_ions" %in% names(tmpl))      tmpl$peak_ions      <- NA_character_
+        ## A whole-hump spectrum belongs to neither compound, so no agreement score.
+        for (cc in c("spectrum_agreement", "spectrum_signal_frac"))
+            if (cc %in% names(tmpl)) tmpl[[cc]] <- NA_real_
         tmpl$coelution_split <- c("A", "B")
         tmpl$split_status    <- "split"
         tmpl$area_tic_window <- s$area_a + s$area_b
@@ -618,6 +621,162 @@
         on_disk
     }
 
+    ## The TIC view's peak overlay rows (shaded ribbons, peak-start lines, peak-number
+    ## positions) for every peak on the page, in ONE pass: a non-equi join of the peak
+    ## windows onto the page's rows. It replaces a loop that filtered each sample's rows
+    ## once per peak (~5 s of an ~11 s redraw at 95 samples, ~0.02 s this way). Same
+    ## rows, order, columns and types as that loop, including its skip message for a
+    ## peak whose window has TIC rows but no matching baseline rows. `cuf` is the
+    ## page's rows BEFORE the facet factor is applied. Pinned against the frozen loop
+    ## by test_overlay_onepass.R.
+    gcms_overlay_rows <- function(cuf, peak_table) {
+        none <- list(ribbons = dplyr::bind_rows(list()), vlines = dplyr::bind_rows(list()),
+                     labels = dplyr::bind_rows(list()))
+        if (is.null(cuf) || nrow(cuf) == 0 || is.null(peak_table) || nrow(peak_table) == 0) return(none)
+        s <- peak_table$peak_start_rt_offset; e <- peak_table$peak_end_rt_offset
+        keep_pk <- which(!is.na(s) & !is.na(e))
+        if (!length(keep_pk)) return(none)
+        cd <- data.table::data.table(i = seq_len(nrow(cuf)), p = as.character(cuf$path_to_cdf_csv),
+                                     rt = cuf$rt_rt_offset)
+        cd <- cd[!is.na(rt)]
+        pt <- data.table::data.table(k = keep_pk, p = as.character(peak_table$path_to_cdf_csv)[keep_pk],
+                                     s = s[keep_pk], e = e[keep_pk])
+        hits <- cd[pt, on = list(p, rt >= s, rt <= e), nomatch = 0L, list(k = i.k, i = x.i)]
+        if (!nrow(hits)) return(none)
+        data.table::setorderv(hits, c("k", "i"))
+        ion <- cuf$ion[hits$i]
+        hits[, tic := ion == 0 & !is.na(ion)]
+        hits[, bl := ion == "baseline" & !is.na(ion)]
+        per <- hits[, list(n_tic = sum(tic), n_bl = sum(bl), first_i = i[1]), by = k]
+        bad <- per[n_tic == 0 | n_tic != n_bl]
+        for (j in seq_len(nrow(bad))) {
+            cat(paste0("Skipping peak overlay for ", peak_table[bad$k[j], ]$path_to_cdf_csv,
+                       ", peak ", peak_table$peak_number_within_sample[bad$k[j]], ": ",
+                       bad$n_tic[j], " TIC rows vs ", bad$n_bl[j],
+                       " baseline rows. Press Shift+Q to rebuild the baseline.\n"))
+        }
+        good <- per[n_tic > 0 & n_tic == n_bl]
+        if (!nrow(good)) return(none)
+        hg <- hits[k %in% good$k]
+        pnum <- peak_table$peak_number_within_sample
+        rib_i <- hg[tic == TRUE]
+        rows_of <- function(idx) if (data.table::is.data.table(cuf)) cuf[idx] else cuf[idx, , drop = FALSE]
+        ribbons <- rows_of(rib_i$i)
+        ribbons$peak_number_within_sample <- pnum[rib_i$k]
+        ribbons$baseline <- cuf$abundance[hg[bl == TRUE]$i]
+        vlines <- rows_of(good$first_i)
+        vlines$peak_number_within_sample <- pnum[good$k]
+        lab <- data.table::data.table(k = rib_i$k, rt = ribbons$rt_rt_offset, ab = ribbons$abundance,
+                                      p = ribbons$path_to_cdf_csv)
+        lab <- lab[, list(x = stats::median(rt), y = max(ab), path_to_cdf_csv = p[1]), by = k]
+        labels <- data.frame(peak_number_within_sample = pnum[lab$k], x = lab$x, y = lab$y,
+                             path_to_cdf_csv = lab$path_to_cdf_csv, stringsAsFactors = FALSE)
+        if (!data.table::is.data.table(cuf)) { rownames(ribbons) <- NULL; rownames(vlines) <- NULL }
+        list(ribbons = ribbons, vlines = vlines, labels = labels)
+    }
+
+    ## ---- Peak spectra and assignment confidence (phase 3, 2026-10-21) ----------
+    ## Overview mode marks every peak with a square coloured by how well its mass
+    ## spectrum agrees with the other peaks given the same peak_ID in this folder,
+    ## so a mis-assigned or co-eluted peak stands out without opening each one.
+    ##
+    ## The spectrum is the lab library's extraction (Lucas, 2026-10-21): the mean
+    ## of the apex scan and `apex_half` scans either side, minus the mean of
+    ## `bg_scans` scans just outside each window edge, clipped at 0, on nominal
+    ## m/z (the all-ion store's floor(mz + 0.3)) over 40-1000, scaled to max 100.
+    ## Without the background step the column bleed (207/281) dominates a weak
+    ## peak's spectrum and every weak peak looks like every other.
+    ## `signal_frac` is the share of the apex signal left after subtraction.
+    ## `store` is a sample's all-ion store (rt, mz, abundance; rt-keyed or not).
+    ## Returns NULL when the window spans fewer than 3 scans or holds no signal.
+    gcms_spectrum_mz <- 40:1000
+    gcms_peak_spectrum <- function(store, start_rt, end_rt, apex_half = 2L, bg_scans = 3L,
+                                   mz_axis = gcms_spectrum_mz, rts = NULL) {
+        if (is.null(store) || !nrow(store) || !is.finite(start_rt) || !is.finite(end_rt) ||
+            end_rt <= start_rt) return(NULL)
+        ## `rts` (the sample's sorted unique scan times) can be passed in, so a
+        ## caller scoring every peak of a sample computes it once, not per peak.
+        if (is.null(rts)) rts <- sort(unique(store$rt))
+        i0 <- findInterval(start_rt, rts, left.open = TRUE) + 1L     # first scan >= start
+        i1 <- findInterval(end_rt, rts)                              # last scan <= end
+        if (i1 - i0 < 2L) return(NULL)
+        lo_scan <- max(1L, i0 - bg_scans); hi_scan <- min(length(rts), i1 + bg_scans)
+        mz_lo <- min(mz_axis); mz_hi <- max(mz_axis); rt_lo <- rts[lo_scan]; rt_hi <- rts[hi_scan]
+        d <- data.table::as.data.table(store)
+        ## An rt-keyed store (load_allions()) is sliced by binary search, as
+        ## peak_ion_area() does; scanning ~0.5M rows per peak would dominate.
+        sub <- if (identical(data.table::key(d)[1], "rt")) {
+            j_lo <- findInterval(rt_lo, d$rt, left.open = TRUE) + 1L; j_hi <- findInterval(rt_hi, d$rt)
+            if (j_hi >= j_lo) d[j_lo:j_hi] else d[0]
+        } else d[rt >= rt_lo & rt <= rt_hi]
+        sub <- sub[mz >= mz_lo & mz <= mz_hi]
+        if (!nrow(sub)) return(NULL)
+        scan_rts <- rts[lo_scan:hi_scan]
+        m <- matrix(0, nrow = length(scan_rts), ncol = length(mz_axis))
+        m[cbind(match(sub$rt, scan_rts), match(sub$mz, mz_axis))] <- as.double(sub$abundance)
+        win <- (i0:i1) - lo_scan + 1L
+        apex <- win[which.max(rowSums(m[win, , drop = FALSE]))]
+        top <- max(win[1], apex - apex_half):min(win[length(win)], apex + apex_half)
+        sig <- colMeans(m[top, , drop = FALSE])
+        bg_rows <- c(seq_len(i0 - lo_scan), if (hi_scan > i1) (i1 - lo_scan + 2L):(hi_scan - lo_scan + 1L))
+        bg <- if (length(bg_rows)) colMeans(m[bg_rows, , drop = FALSE]) else numeric(length(mz_axis))
+        s <- pmax(sig - bg, 0)
+        if (sum(sig) <= 0 || max(s) <= 0) return(NULL)
+        list(spectrum = 100 * s / max(s), apex_rt = scan_rts[apex], signal_frac = sum(s) / sum(sig))
+    }
+
+    ## Agreement of each peak with the other peaks of its peak_ID in the folder:
+    ## cosine (sqrt-weighted, which tames the big low-mass fragments) of its
+    ## spectrum to the leave-one-out MEDIAN of the rest. NA when it has no
+    ## spectrum, no real ID ("", NA, unknown), or fewer than 2 other peaks with
+    ## that ID to compare against. `spectra` is a list of numeric vectors or
+    ## NULLs, parallel to `ids`.
+    gcms_spectrum_agreement <- function(spectra, ids) {
+        n <- length(spectra); out <- rep(NA_real_, n)
+        ids <- as.character(ids)
+        has <- !vapply(spectra, is.null, logical(1)) & !is.na(ids) & nzchar(trimws(ids)) &
+               !(tolower(trimws(ids)) %in% c("unknown", "na"))
+        for (id in unique(ids[has])) {
+            idx <- which(has & ids == id)
+            if (length(idx) < 3L) next
+            W <- sqrt(do.call(rbind, spectra[idx]))
+            Wn <- W / pmax(sqrt(rowSums(W^2)), 1e-12)
+            for (j in seq_along(idx)) {
+                cons <- apply(W[-j, , drop = FALSE], 2, stats::median)
+                out[idx[j]] <- sum(Wn[j, ] * cons) / max(sqrt(sum(cons^2)), 1e-12)
+            }
+        }
+        out
+    }
+
+    ## Marker class for a score: thresholds c(red_below, green_from), chosen on
+    ## Lucas's leaf-wax folder (2026-10-21): IDs that are right every time (the
+    ## standard, C27-C31 alkanes, most acids) median 0.95-1.0; the known problem
+    ## IDs (C29/C30/C32 alcohols, fernenone, isoarborinol) median 0.5-0.7.
+    gcms_confidence_class <- function(score, thresholds = c(0.75, 0.90)) {
+        cls <- ifelse(is.na(score), "none",
+               ifelse(score >= thresholds[2], "high",
+               ifelse(score >= thresholds[1], "medium", "low")))
+        factor(cls, levels = c("high", "medium", "low", "none"))
+    }
+    gcms_confidence_colours <- c(high = "#1a9850", medium = "#f0a30a", low = "#d73027", none = "grey60")
+
+    ## One marker per overlaid peak: the label position from gcms_overlay_rows()
+    ## (window median x, apex y) joined to the peak's score by sample + peak number.
+    ## A table written before phase 3 has no score column: every marker is "none".
+    gcms_overview_markers <- function(labels, peak_table, thresholds = c(0.75, 0.90)) {
+        if (is.null(labels) || !nrow(labels)) return(data.frame(x = numeric(0), y = numeric(0),
+            confidence = gcms_confidence_class(numeric(0), thresholds), path_to_cdf_csv = character(0)))
+        score <- if ("spectrum_agreement" %in% names(peak_table)) {
+            key_pt <- paste(peak_table$path_to_cdf_csv, peak_table$peak_number_within_sample, sep = "\r")
+            key_lb <- paste(as.character(labels$path_to_cdf_csv), labels$peak_number_within_sample, sep = "\r")
+            suppressWarnings(as.numeric(peak_table$spectrum_agreement))[match(key_lb, key_pt)]
+        } else rep(NA_real_, nrow(labels))
+        data.frame(x = labels$x, y = labels$y, confidence = gcms_confidence_class(score, thresholds),
+                   path_to_cdf_csv = labels$path_to_cdf_csv, peak_number_within_sample = labels$peak_number_within_sample,
+                   score = score, stringsAsFactors = FALSE)
+    }
+
 
 #### analyzeGCMSdata7
 ####
@@ -648,6 +807,7 @@
         zoom_and_scroll_rate = 100,
         baseline_window = 400,
         samples_per_page = 20,
+        compact = FALSE,
         x_axis_start_default = NULL,
         x_axis_end_default = NULL,
         path_to_reference_library = busta_spectral_library,
@@ -658,6 +818,8 @@
         all_ion_scaling = "sqrt",
         all_ion_max_points = 1200,
         integrate_peak_ions = TRUE,
+        score_peak_confidence = TRUE,
+        confidence_thresholds = c(0.75, 0.90),
         coelution_crosstalk = c(0, 0),
         ms_classifier_path = "/project_data/shared/mass_spectral_library/ms_classifier.py",
         jupyter = FALSE
@@ -667,6 +829,12 @@
         ## the default display all run on it. A call such as ions = c(523, 537)
         ## used to leave every sample with no TIC ("has 0 scans").
         ions <- unique(c(0, as.numeric(ions)))
+
+        ## compact = TRUE draws thin panels (no y-axis text, sample name beside the
+        ## panel, tight spacing) so a page holds ~3x the samples at the same image
+        ## size, and the page defaults to 50 samples unless samples_per_page is given.
+        compact <- isTRUE(compact)
+        if (compact && missing(samples_per_page)) samples_per_page <- 50
 
         ## Detect CDF flavour: "ms" for ANDI-MS (full rt x mz cube),
         ## "chrom" for ANDI-Chrom single-detector (e.g. GC-TCD, GC-FID, GC-ECD),
@@ -1803,6 +1971,52 @@
                 invisible(ok)
             }
 
+            ## Phase 3: each peak's background-subtracted spectrum (gcms_peak_spectrum())
+            ## for the Overview confidence markers. Same caching shape as the ion areas:
+            ## an in-session memo keyed on sample, window and the all-ion store's stamp,
+            ## saved to peak_spectra_cache.rds beside the peak table and ignored whole if
+            ## the extraction or store code has changed. Pinned by test_confidence.R.
+            .spectrum_memo <- new.env(hash = TRUE, parent = emptyenv())
+            .spectrum_keys_used <- character(0)
+            .spectrum_memo_dirty <- FALSE
+            .spectrum_cache_file <- "peak_spectra_cache.rds"
+            .spectrum_cache_loaded <- FALSE
+            spectrum_code_tag <- function() paste(c(deparse(gcms_peak_spectrum), deparse(load_allions),
+                                                    deparse(build_allion_store), deparse(nominal_mz),
+                                                    .allion_binning_tag), collapse = "\n")
+            peak_spectrum_memo <- function(cdf_csv, start_rt, end_rt, store, rts) {
+                key <- paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
+                             file_stamp(allion_store_path(cdf_csv)), sep = "|")
+                .spectrum_keys_used <<- c(.spectrum_keys_used, key)
+                if (exists(key, envir = .spectrum_memo, inherits = FALSE)) return(.spectrum_memo[[key]])
+                res <- gcms_peak_spectrum(store, start_rt, end_rt, rts = rts)
+                assign(key, res, envir = .spectrum_memo)      # NULL is a valid, cached answer
+                .spectrum_memo_dirty <<- TRUE
+                res
+            }
+            spectrum_cache_load <- function(path = .spectrum_cache_file) {
+                if (.spectrum_cache_loaded) return(invisible(0L))
+                .spectrum_cache_loaded <<- TRUE
+                if (!file.exists(path)) return(invisible(0L))
+                cache <- try(readRDS(path), silent = TRUE)
+                if (inherits(cache, "try-error") || !is.list(cache) ||
+                    !identical(cache$code, spectrum_code_tag()) || !is.list(cache$entries))
+                    return(invisible(0L))
+                for (k in names(cache$entries)) assign(k, cache$entries[[k]], envir = .spectrum_memo)
+                invisible(length(cache$entries))
+            }
+            spectrum_cache_save <- function(keys, path = .spectrum_cache_file) {
+                keys <- intersect(unique(keys), ls(.spectrum_memo, all.names = TRUE))
+                if (!.spectrum_memo_dirty && file.exists(path)) return(invisible(FALSE))
+                entries <- mget(keys, envir = .spectrum_memo)
+                tmp <- paste0(path, ".tmp", Sys.getpid())
+                ok <- !inherits(try(saveRDS(list(code = spectrum_code_tag(), entries = entries), tmp), silent = TRUE), "try-error")
+                if (ok) ok <- file.rename(tmp, path)
+                if (!ok) unlink(tmp)
+                if (ok) .spectrum_memo_dirty <<- FALSE
+                invisible(ok)
+            }
+
         setwd(CDF_directory_path)
 
 
@@ -2132,7 +2346,7 @@
 
                 chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep("\\.CDF\\.csv$", dir(), ignore.case = TRUE)],]
 
-            ## Set up several variables, plot_height, and x_axis limits if not specified in function call
+            ## Set up several variables and x_axis limits if not specified in function call
                 
                 peak_data <- NULL
                 peak_points <- NULL
@@ -2189,7 +2403,28 @@
                 predictions <- NULL
                 ## Bounded: never draw more than one page of facets at once, so the
                 ## render can't blow up the graphics device on large sample sets.
-                plot_height <- 200 + 100*min(samples_per_page, length(unique(chromatograms$path_to_cdf_csv)))
+                ## Compact panels (begin) -- test_compact.R extracts this block.
+                ## Overview (compact) vs Detail is a live sidebar switch; `compact` is
+                ## only its starting value, so the sizes are functions of the mode.
+                panel_px_for <- function(overview) if (isTRUE(overview)) 35 else 100
+                peak_label_size_for <- function(overview) if (isTRUE(overview)) 2.2 else 3.88
+                panel_px <- panel_px_for(compact)
+                compact_theme <- ggplot2::theme(
+                    panel.spacing.y = grid::unit(1, "pt"),
+                    strip.background = ggplot2::element_blank(),
+                    strip.text.y = ggplot2::element_text(angle = 0, hjust = 0, size = 7,
+                                                         margin = ggplot2::margin(0, 2, 0, 2)),
+                    axis.text.y = ggplot2::element_blank(),
+                    axis.ticks.y = ggplot2::element_blank(),
+                    axis.title.y = ggplot2::element_blank()
+                )
+                peak_label_size <- peak_label_size_for(compact)
+                ## Page size per mode: the sidebar box shows the current mode's, and
+                ## switching mode brings back the size last used in that mode.
+                ## An explicit samples_per_page sets the starting mode's size only.
+                spp_detail_start   <- if (compact) 20 else samples_per_page
+                spp_overview_start <- if (compact) samples_per_page else 50
+                ## Compact panels (end)
 
                 ## x-axis defaults are resolved HERE, not in the Shift+Q handler, so
                 ## they are never NULL by the time a key handler can fire. The pan/zoom
@@ -2332,6 +2567,20 @@
                         ),
 
                         tags$hr(),
+                        strong("View"),
+                        radioButtons(
+                            "view_mode", NULL,
+                            choices = c("Detail" = "detail", "Overview" = "overview"),
+                            selected = if (compact) "overview" else "detail",
+                            inline = TRUE
+                        ),
+                        numericInput(
+                            "samples_per_page_ui", "Samples per page",
+                            value = samples_per_page, min = 1, max = 500, step = 1
+                        ),
+                        helpText("Overview draws thin panels so a page holds many samples; Detail draws full-height panels for integrating. Each mode remembers its own page size. Zoom is kept when you switch."),
+
+                        tags$hr(),
                         strong("Chromatogram display"),
                         selectInput(
                             "display_mode", NULL,
@@ -2435,7 +2684,9 @@
                                         ),
                                       click = "chromatogram_click", 
                                       dblclick = "chromatogram_double_click",
-                                      height = plot_height
+                                      ## The height is set per render by renderPlot(height =
+                                      ## chromatogram_height), so it follows the mode and page.
+                                      height = "auto"
                                     ),
 
                                     rhandsontable::rHandsontableOutput("peak_table")
@@ -3282,6 +3533,15 @@
                                             ion_area_cache_load()
                                             .ion_area_keys_used <<- character(0)
                                         }
+                                        ## Phase 3: one spectrum per peak, parallel to peak_table's rows.
+                                        ## Split rows are skipped (a whole-hump spectrum is neither compound).
+                                        peak_spectra <- vector("list", nrow(peak_table))
+                                        split_col <- if (is.null(peak_table$coelution_split)) rep(NA_character_, nrow(peak_table)) else
+                                            as.character(peak_table$coelution_split)
+                                        if (isTRUE(score_peak_confidence)) {
+                                            spectrum_cache_load()
+                                            .spectrum_keys_used <<- character(0)
+                                        }
                                         for (sample_number in seq_along(samples_for_area)) {
 
                                           this_sample <- samples_for_area[sample_number]
@@ -3354,12 +3614,38 @@
                                             peak_table$peak_ions[rows]      <- ion_lists
                                           }
 
+                                          if (isTRUE(score_peak_confidence) && nrow(peaks_in_this_sample) > 0) {
+                                            store <- try(load_allions(this_sample), silent = TRUE)
+                                            if (!inherits(store, "try-error") && !is.null(store) && nrow(store) > 0 &&
+                                                !all(store$mz == 0)) {
+                                              store_rts <- unique(store$rt)      # rt-keyed, so already sorted
+                                              if (is.unsorted(store_rts)) store_rts <- sort(store_rts)
+                                              for (r in which(peak_table$path_to_cdf_csv == this_sample)) {
+                                                if (!is.na(split_col[r]) && nzchar(split_col[r])) next
+                                                sp <- peak_spectrum_memo(this_sample, peak_table$peak_start[r],
+                                                                         peak_table$peak_end[r], store, store_rts)
+                                                if (!is.null(sp)) peak_spectra[r] <- list(sp)
+                                              }
+                                            }
+                                          }
+
                                           # peaks_in_this_sample$area <- areas
                                           # peak_table_updated[[sample_number]] <- peaks_in_this_sample
                                         }
                                         # peak_table_updated <- do.call(rbind, peak_table_updated)
                                         # peak_table <- peak_table_updated
                                         if (isTRUE(integrate_peak_ions)) ion_area_cache_save(.ion_area_keys_used)
+                                        if (isTRUE(score_peak_confidence)) {
+                                            got <- !vapply(peak_spectra, is.null, logical(1))
+                                            agree <- gcms_spectrum_agreement(
+                                                lapply(peak_spectra, function(x) if (is.null(x)) NULL else x$spectrum),
+                                                peak_table$peak_ID)
+                                            peak_table$spectrum_agreement <- round(agree, 3)
+                                            peak_table$spectrum_signal_frac <- ifelse(got,
+                                                round(vapply(peak_spectra, function(x) if (is.null(x)) NA_real_ else x$signal_frac, numeric(1)), 3),
+                                                NA_real_)
+                                            spectrum_cache_save(.spectrum_keys_used)
+                                        }
 
                                     ## v7: refresh existing co-elution splits. Runs AFTER the area
                                     ## recompute above, which has just given every split pair plain
@@ -3409,6 +3695,59 @@
                 ## baseline / area computation, so moving between views stays snappy.
                 ## ------------------------------------------------------------------
 
+                    ## View mode (Overview / Detail) and page size -- live sidebar controls.
+                    ## The launch arguments (compact, samples_per_page) are only their
+                    ## starting values. Each mode keeps its own page size, so switching
+                    ## brings back the size last used there. The state lives here, not in
+                    ## the inputs: after a mode switch the numeric box only catches up a
+                    ## round trip later, and reading it directly would draw one picture
+                    ## with the new panel height and the old page size.
+                        view_state <- reactiveValues(
+                            mode = if (compact) "overview" else "detail",
+                            detail = spp_detail_start, overview = spp_overview_start)
+                        view_overview <- function() identical(view_state$mode, "overview")
+                        page_size <- function() view_state[[view_state$mode]]
+                        clamp_page_size <- function(v) {
+                            v <- suppressWarnings(as.integer(v))
+                            if (length(v) != 1 || is.na(v) || v < 1) return(NULL)
+                            min(v, 500L)
+                        }
+                        ## Keep the first sample of the current page on screen when the
+                        ## page size changes (page_bounds() clamps the result).
+                        repage <- function(old_size, new_size) {
+                            first <- (current_page() - 1) * old_size + 1
+                            current_page(floor((first - 1) / new_size) + 1)
+                        }
+                        observeEvent(input$view_mode, {
+                            new <- input$view_mode; old <- view_state$mode
+                            if (!(new %in% c("detail", "overview")) || identical(new, old)) return()
+                            repage(view_state[[old]], view_state[[new]])
+                            view_state$mode <- new
+                            updateNumericInput(session, "samples_per_page_ui", value = view_state[[new]])
+                        })
+                        observeEvent(input$samples_per_page_ui, {
+                            v <- clamp_page_size(input$samples_per_page_ui)
+                            if (is.null(v)) return()
+                            m <- view_state$mode
+                            if (v == view_state[[m]]) return()
+                            repage(view_state[[m]], v)
+                            view_state[[m]] <- v
+                        })
+                        observe({
+                            n <- page_size()
+                            updateActionButton(session, "prev_page", label = paste0("\u25c0 Prev ", n))
+                            updateActionButton(session, "next_page", label = paste0("Next ", n, " \u25b6"))
+                        })
+                        ## Live plot height: 200 px of axes and margins plus one panel per
+                        ## sample actually on this page, so a short last page is not stretched.
+                        chromatogram_height <- function() {
+                            redraw_trigger()
+                            b <- page_bounds()
+                            n_here <- if (!is.null(b) && b$n > 0) b$hi - b$lo + 1 else
+                                min(page_size(), max(1, length(unique(chromatograms$path_to_cdf_csv))))
+                            200 + panel_px_for(view_overview()) * n_here
+                        }
+
                     ## Which samples exist, and the current page's slice
                         page_bounds <- function() {
                             if (is.null(chromatograms_updated)) return(NULL)
@@ -3422,10 +3761,10 @@
                                 return(list(all_samples = character(0), n = 0L, n_pages = 1L,
                                             pg = 1L, lo = 0L, hi = 0L, page_samples = character(0)))
                             }
-                            n_pages <- max(1, ceiling(n / samples_per_page))
+                            n_pages <- max(1, ceiling(n / page_size()))
                             pg <- min(max(1, current_page()), n_pages)
-                            lo <- (pg - 1) * samples_per_page + 1
-                            hi <- min(pg * samples_per_page, n)
+                            lo <- (pg - 1) * page_size() + 1
+                            hi <- min(pg * page_size(), n)
                             list(all_samples = all_samples, n = n, n_pages = n_pages,
                                  pg = pg, lo = lo, hi = hi,
                                  page_samples = all_samples[seq(lo, hi)])
@@ -3518,6 +3857,9 @@
 
                             redraw_trigger()
                             b <- page_bounds()
+                            ov <- view_overview()
+                            peak_label_size <- peak_label_size_for(ov)
+                            plot_px_h <- chromatogram_height()
 
                             ## Returning NULL here draws a plot with NO coordinate map, and the
                             ## browser then holds a degenerate 0..1 map for this output until the
@@ -3578,15 +3920,12 @@
                                 ## to disappear entirely: a page returned 14 panels while the
                                 ## indicator still read "samples 21-40 of 152", which reads as
                                 ## "those six samples failed".
-                                ## The peak overlay below takes each peak's rows from this, one
-                                ## sample's slice at a time. It used to filter the WHOLE
-                                ## chromatograms_updated once per peak: ~4 s of every ~6.5 s redraw
-                                ## on Skylar's 21-sample folder (735 peaks). Every overlaid peak lies
-                                ## inside [xs, xe] on a page sample, so its rows are all in cuf, in
-                                ## the same order. Split BEFORE the facet factor below, so the slices
-                                ## carry the same character column the old filter returned.
-                                ## Pinned by test_shiftq_speed.R.
-                                cuf_by_sample <- split(cuf, as.character(cuf$path_to_cdf_csv))
+                                ## The peak overlay below is built from these rows in one pass
+                                ## (gcms_overlay_rows()). Every overlaid peak lies inside [xs, xe] on
+                                ## a page sample, so its rows are all here. Kept BEFORE the facet
+                                ## factor below, so the overlay carries the same character column the
+                                ## old per-peak filter returned. Pinned by test_overlay_onepass.R.
+                                cuf_rows <- cuf
                                 as_page_facet <- function(x) factor(as.character(x), levels = page_samples)
                                 cuf$path_to_cdf_csv <- as_page_facet(cuf$path_to_cdf_csv)
 
@@ -3809,53 +4148,38 @@
                                             which(peak_table$split_status %in% "split") else integer(0)
                                         split_peaks <- peak_table[split_rows, , drop = FALSE]
                                         if (length(split_rows)) peak_table <- peak_table[-split_rows, , drop = FALSE]
-                                        all_ribbons <- list(); all_vlines <- list(); all_labels <- list()
-                                        if (nrow(peak_table) > 0) {
-                                            for (peak in seq_len(nrow(peak_table))) {
-                                                rows_for_peak <- cuf_by_sample[[as.character(peak_table[peak, ]$path_to_cdf_csv)]]
-                                                if (is.null(rows_for_peak)) rows_for_peak <- chromatograms_updated[0, ]
-                                                signal_for_this_peak <- dplyr::filter(
-                                                    rows_for_peak,
-                                                    rt_rt_offset >= peak_table[peak, ]$peak_start_rt_offset,
-                                                    rt_rt_offset <= peak_table[peak, ]$peak_end_rt_offset
-                                                )
-                                                if (nrow(signal_for_this_peak) > 0) {
-                                                    signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
-                                                    ribbon <- dplyr::filter(signal_for_this_peak, ion == 0)
-                                                    ## Length-mismatch guard: if this sample carries no ion == "baseline"
-                                                    ## rows, the filter returns a length-0 vector and assigning it into an
-                                                    ## n-row frame kills the entire render with no way back. Skip this
-                                                    ## peak's shading with a message instead.
-                                                    baseline_for_this_peak <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
-                                                    if (nrow(ribbon) == 0 || length(baseline_for_this_peak) != nrow(ribbon)) {
-                                                        cat(paste0("Skipping peak overlay for ", peak_table[peak, ]$path_to_cdf_csv,
-                                                                   ", peak ", peak_table$peak_number_within_sample[peak], ": ",
-                                                                   nrow(ribbon), " TIC rows vs ", length(baseline_for_this_peak),
-                                                                   " baseline rows. Press Shift+Q to rebuild the baseline.\n"))
-                                                        next
-                                                    }
-                                                    ribbon$baseline <- baseline_for_this_peak
-                                                    all_ribbons[[peak]] <- ribbon
-                                                    all_vlines[[peak]]  <- signal_for_this_peak[1, ]
-                                                    all_labels[[peak]]  <- dplyr::filter(signal_for_this_peak, ion == 0) %>%
-                                                        dplyr::summarize(
-                                                            peak_number_within_sample = peak_number_within_sample[1],
-                                                            x = median(rt_rt_offset),
-                                                            y = max(abundance),
-                                                            path_to_cdf_csv = path_to_cdf_csv[1]
-                                                        )
-                                                }
-                                            }
-                                            all_ribbons <- dplyr::bind_rows(all_ribbons)
-                                            all_vlines  <- dplyr::bind_rows(all_vlines)
-                                            all_labels  <- dplyr::bind_rows(all_labels)
+                                            all_ribbons <- list(); all_vlines <- list(); all_labels <- list()
+                                            if (nrow(peak_table) > 0) {
+                                                ## One pass over the page's rows for every peak (gcms_overlay_rows()).
+                                                overlay <- gcms_overlay_rows(cuf_rows, peak_table)
+                                                all_ribbons <- overlay$ribbons
+                                                all_vlines  <- overlay$vlines
+                                                all_labels  <- overlay$labels
                                             ## Same facet factor as the base layer, or these land
                                             ## in panels of their own.
                                             if (nrow(all_ribbons) > 0) all_ribbons$path_to_cdf_csv <- as_page_facet(all_ribbons$path_to_cdf_csv)
                                             if (nrow(all_vlines)  > 0) all_vlines$path_to_cdf_csv  <- as_page_facet(all_vlines$path_to_cdf_csv)
                                             if (nrow(all_labels)  > 0) all_labels$path_to_cdf_csv  <- as_page_facet(all_labels$path_to_cdf_csv)
                                             if (nrow(all_ribbons) > 0) {
-                                                if (mode_display == "tic") {
+                                                if (mode_display == "tic" && ov) {
+                                                    ## Overview: one square per peak at its apex, coloured by how
+                                                    ## well its spectrum agrees with the folder's other peaks of
+                                                    ## the same peak_ID. No ribbons or numbers: at 35 px they are
+                                                    ## unreadable, and the ribbons were most of the draw time.
+                                                    markers <- gcms_overview_markers(all_labels, peak_table, confidence_thresholds)
+                                                    chromatogram_plot <- chromatogram_plot +
+                                                        geom_point(data = markers, mapping = aes(x = x, y = y, fill = confidence),
+                                                                   shape = 22, size = 1.8, stroke = 0.2, colour = "grey20") +
+                                                        scale_fill_manual(values = gcms_confidence_colours, drop = FALSE,
+                                                                          name = "Spectrum agreement",
+                                                                          labels = c(high = sprintf(">= %.2f", confidence_thresholds[2]),
+                                                                                     medium = sprintf("%.2f-%.2f", confidence_thresholds[1], confidence_thresholds[2]),
+                                                                                     low = sprintf("< %.2f", confidence_thresholds[1]),
+                                                                                     none = "not scored")) +
+                                                        ## The TIC base plot hides the fill legend (it was the ribbons'
+                                                        ## peak numbers); in Overview fill is the markers' key, so show it.
+                                                        guides(fill = guide_legend(override.aes = list(size = 3, fill = unname(gcms_confidence_colours))))
+                                                } else if (mode_display == "tic") {
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_vline(data = all_vlines, mapping = aes(xintercept = rt_rt_offset), alpha = 0.3) +
                                                         geom_ribbon(
@@ -3864,14 +4188,14 @@
                                                                           fill = peak_number_within_sample, group = peak_number_within_sample),
                                                             alpha = 0.8
                                                         ) +
-                                                        geom_text(data = all_labels, mapping = aes(label = peak_number_within_sample, x = x, y = y), color = "black")
+                                                        geom_text(data = all_labels, mapping = aes(label = peak_number_within_sample, x = x, y = y), color = "black", size = peak_label_size)
                                                 } else {
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_vline(data = all_vlines, mapping = aes(xintercept = rt_rt_offset), alpha = 0.3)
                                                 }
                                             }
                                         }
-                                        if (nrow(split_peaks) > 0 && file.exists("coelution_profiles.csv")) {
+                                        if (!ov && nrow(split_peaks) > 0 && file.exists("coelution_profiles.csv")) {
                                             prof <- try(utils::read.csv("coelution_profiles.csv", stringsAsFactors = FALSE), silent = TRUE)
                                             ## Only bands whose row is still in the table: matching on the
                                             ## sample alone drew BOTH bands after one row of a pair had been
@@ -3905,7 +4229,7 @@
                                                                   colour = "black", linewidth = 0.3) +
                                                         geom_text(data = split_labels,
                                                                   mapping = aes(label = peak_number_within_sample, x = rt_rt_offset, y = y),
-                                                                  colour = "black")
+                                                                  colour = "black", size = peak_label_size)
                                                 }
                                             }
                                         }
@@ -3924,13 +4248,21 @@
                                         )
                                 }
 
+                            ## Compact styling goes on BEFORE the plot is kept for the brush
+                            ## maths, so panel_fraction() measures the panels as drawn.
+                                if (ov) chromatogram_plot <- chromatogram_plot + compact_theme
+
                             ## Kept so a mapping-less brush can be re-expressed against the
                             ## panel's real bounds. clientData carries the size the browser
                             ## actually rendered at, which is what the fractions refer to.
                                 last_brush_plot   <<- chromatogram_plot
+                                ## The height is the one this render is drawn at (renderPlot's
+                                ## height function), not clientData's, which still holds the
+                                ## previous picture's height when a mode or page-size change
+                                ## resizes the plot.
                                 last_brush_size   <<- suppressWarnings(as.numeric(c(
                                     session$clientData$output_chromatograms_width,
-                                    session$clientData$output_chromatograms_height)))
+                                    plot_px_h)))
                                 last_brush_key    <<- view_key
                                 last_brush_facet_sig <<- if (mode_display %in% c("all_ions", "ion_map") && !is.null(allion)) {
                                     sort(unique(as.character(allion$path_to_cdf_csv)))
@@ -3944,7 +4276,7 @@
                                     c(xs, xe, last_brush_yrange)))
 
                             chromatogram_plot
-                        })
+                        }, height = chromatogram_height)
 
                 ## Transfer chromatogram_brush info to selected_peak table
 
