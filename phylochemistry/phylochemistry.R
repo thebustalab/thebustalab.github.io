@@ -308,15 +308,9 @@
 
         source("https://thebustalab.github.io/phylochemistry/modules/datasets.R")
         source("https://thebustalab.github.io/phylochemistry/modules/pca_visualizer.R")
-        ## dgx client (dgxGenerate / runModelGrid / dgxHealth) for research students on
-        ## JupyterHub. Sourced for EVERYONE and at every scope: it needs only core-scope
-        ## packages, and until 2026-09-08 it lived in language_model_analysis.R, which is
-        ## sourced only on the lab build — so students hit `could not find function
-        ## "dgxHealth"` on the first cell of dgx_example_R.ipynb.
-        ## Wrapped in try(): dgx.R and this file publish separately, and a 404 here
-        ## must not abort the load for a whole class over three research functions.
-        try(suppressWarnings(source("https://thebustalab.github.io/phylochemistry/modules/dgx.R")),
-            silent = TRUE)
+        ## The dgx client (modules/dgx.R) is lab-only: it arrives through
+        ## language_model_analysis.R in the bustalab block above. Lab notebooks set
+        ## `bustalab <- TRUE` before sourcing this file.
 
     ## Set up prioriy functions
 
@@ -387,8 +381,48 @@
         tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data, ... )}  # tukey_hsd's first argument is x, not data
         kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = ungroup(data), ... )}
         dunnTest <- function( data, ... ) {rstatix::dunn_test( data = ungroup(data), ... )}
-        pairwiseWilcoxTest <- function( data, ... ) {rstatix::pairwise_wilcox_test( data = data, ... )}
-        pairwiseTTest <- function( data, ... ) {rstatix::pairwise_t_test( data = data, ... )}
+        # pairwiseWilcoxTest() makes the same cross-group correction as pairwiseTTest() below (see
+        # that comment): on grouped data every p-value is adjusted together, not group by group.
+        pairwiseWilcoxTest <- function( data, ..., p.adjust.method = "holm" ) {
+            if (!dplyr::is_grouped_df(data)) {
+                return(rstatix::pairwise_wilcox_test(data = data, ..., p.adjust.method = p.adjust.method))
+            }
+            res <- rstatix::pairwise_wilcox_test(data = data, ..., p.adjust.method = "none")
+            keep <- attributes(res)
+            cols <- unclass(res)
+            cols[["p.adj"]] <- stats::p.adjust(cols[["p"]], method = p.adjust.method)
+            cols[["p.adj.signif"]] <- as.character(stats::symnum(cols[["p.adj"]],
+                cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 1),
+                symbols = c("****", "***", "**", "*", "ns"), na = ""))
+            keep$names <- names(cols)
+            attributes(cols) <- keep
+            if (!is.null(keep$args)) attr(cols, "args")$p.adjust.method <- p.adjust.method
+            cols
+        }
+        # pairwiseTTest() deliberately differs from rstatix::pairwise_t_test() on GROUPED data. rstatix
+        # adjusts p-values within each group only, so the chapter's recipe, group_by(facet) then
+        # pairwiseTTest(y ~ x) with one comparison per group, got no multiple-comparison correction at
+        # all (p.adj == p). Here each group is tested unadjusted, then every p-value across all groups
+        # and comparisons is adjusted together with p.adjust.method (default "holm", as in rstatix;
+        # "none" is honoured), and p.adj.signif is recomputed with rstatix's cut-points. Columns, column
+        # order, class and grouping are kept as rstatix returns them. Ungrouped data go straight to
+        # rstatix, unchanged.
+        pairwiseTTest <- function( data, ..., p.adjust.method = "holm" ) {
+            if (!dplyr::is_grouped_df(data)) {
+                return(rstatix::pairwise_t_test(data = data, ..., p.adjust.method = p.adjust.method))
+            }
+            res <- rstatix::pairwise_t_test(data = data, ..., p.adjust.method = "none")
+            keep <- attributes(res)
+            cols <- unclass(res)
+            cols[["p.adj"]] <- stats::p.adjust(cols[["p"]], method = p.adjust.method)
+            cols[["p.adj.signif"]] <- as.character(stats::symnum(cols[["p.adj"]],
+                cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 1),
+                symbols = c("****", "***", "**", "*", "ns"), na = ""))
+            keep$names <- names(cols)
+            attributes(cols) <- keep
+            if (!is.null(keep$args)) attr(cols, "args")$p.adjust.method <- p.adjust.method
+            cols
+        }
         # tukeyHSD <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
 
     ## Set up lookups

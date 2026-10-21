@@ -832,10 +832,9 @@ message("Loading language model module...")
 
     #### DGX endpoints (research students, from JupyterHub on host1)
 
-        # MOVED 2026-09-08 to modules/dgx.R, which phylochemistry.R sources
-        # unconditionally — this file is only sourced on the lab build
-        # (bustalab = TRUE), so students never received these functions.
-        # Sourced here too, so the lab build still gets them from this file alone.
+        # The dgx functions live in modules/dgx.R. This is the only place
+        # phylochemistry.R loads them, so they come with the lab build
+        # (bustalab = TRUE) and nowhere else.
         source("https://thebustalab.github.io/phylochemistry/modules/dgx.R")
 
 
