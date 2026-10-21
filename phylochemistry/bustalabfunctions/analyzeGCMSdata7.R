@@ -675,6 +675,49 @@
         list(ribbons = ribbons, vlines = vlines, labels = labels)
     }
 
+    ## TRUE when the browser's copy of the peak table carries peak_ID edits that
+    ## the table it was drawn from does not. Only peak_ID is editable. Tables of
+    ## different lengths are not comparable (the browser is still showing an older
+    ## render), so they count as no edits rather than flashing the flag.
+    gcms_peak_ids_edited <- function(edited, snapshot) {
+        if (is.null(edited) || is.null(snapshot) || !("peak_ID" %in% names(edited)) ||
+            !("peak_ID" %in% names(snapshot)) || nrow(edited) != nrow(snapshot)) return(FALSE)
+        norm <- function(x) { x <- as.character(x); x[is.na(x)] <- ""; trimws(x) }
+        any(norm(edited$peak_ID) != norm(snapshot$peak_ID))
+    }
+
+    ## Move one sample along the retention-time axis (the Align strip, 2026-10-21):
+    ## add `delta` to its rt_offset and carry it through every table that stores an
+    ## offset-corrected time, so the redraw is right with no Shift+Q. Raw rt and the
+    ## integration windows (peak_start / peak_end) never change: the sample's
+    ## chromatogram and its peaks move together, so no area changes. Any table may
+    ## be NULL. Returns the updated tables plus the sample's new offset.
+    gcms_shift_sample_offset <- function(sample, delta, samples_ml, peaks = NULL, chrom = NULL, profiles = NULL) {
+        if (is.null(samples_ml) || !(sample %in% samples_ml$path_to_cdf_csv) || !is.finite(delta))
+            return(NULL)
+        r <- samples_ml$path_to_cdf_csv == sample
+        old <- suppressWarnings(as.numeric(samples_ml$rt_offset[r][1])); if (!is.finite(old)) old <- 0
+        new <- round(old + delta, 6)
+        samples_ml$rt_offset[r] <- new
+        if (!is.null(peaks) && nrow(peaks) && "path_to_cdf_csv" %in% names(peaks)) {
+            k <- as.character(peaks$path_to_cdf_csv) == sample
+            if (any(k)) {
+                peaks$rt_offset[k] <- new
+                if ("peak_start_rt_offset" %in% names(peaks)) peaks$peak_start_rt_offset[k] <- peaks$peak_start[k] + new
+                if ("peak_end_rt_offset" %in% names(peaks))   peaks$peak_end_rt_offset[k]   <- peaks$peak_end[k] + new
+            }
+        }
+        if (!is.null(chrom) && nrow(chrom)) {
+            k <- as.character(chrom$path_to_cdf_csv) == sample
+            if (any(k)) { chrom$rt_offset[k] <- new; chrom$rt_rt_offset[k] <- chrom$rt[k] + new }
+        }
+        if (!is.null(profiles) && nrow(profiles) && "rt_rt_offset" %in% names(profiles)) {
+            k <- as.character(profiles$path_to_cdf_csv) == sample
+            if (any(k)) profiles$rt_rt_offset[k] <- profiles$rt_rt_offset[k] + (new - old)
+        }
+        list(samples = samples_ml, peaks = peaks, chrom = chrom, profiles = profiles, offset = new)
+    }
+
     ## Slide the x window by its own width (the Earlier / Later buttons, 2026-10-21):
     ## the next window starts where this one ends, so stepping covers the run with
     ## no gap and no overlap. Clamped to the run [lo, hi] keeping the width, so the
@@ -1353,6 +1396,24 @@
                 }
                 near <- which.min(pmin(abs(frac_from_bottom - lo), abs(frac_from_bottom - hi)))
                 if (length(near) == 1) near else NULL
+            }
+
+            ## The sample whose panel a plot CLICK landed in (the Align strip picks it
+            ## this way). Same trust order as a brush: Shiny's panelvar1 if the coordmap
+            ## survived, else the panel geometry of the picture as drawn. NULL if unknown.
+            clicked_sample <- function(click) {
+                if (is.null(click)) return(NULL)
+                if (!is.null(click$panelvar1)) return(as.character(click$panelvar1))
+                if (is.null(last_brush_plot) || length(last_brush_size) != 2 ||
+                    !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) return(NULL)
+                pfull <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
+                                        view_key = last_brush_key, n_facets = last_brush_facets,
+                                        window = last_brush_window, facet_sig = last_brush_facet_sig)
+                if (is.null(pfull) || is.null(pfull$panels) || !nrow(pfull$panels)) return(NULL)
+                fy <- brush_unit_fraction(list(ymin = click$y, ymax = click$y, domain = click$domain), "y")
+                if (is.null(fy)) return(NULL)
+                idx <- panel_at_bottom_fraction(pfull, fy[1])
+                if (is.null(idx)) NULL else as.character(pfull$panels$facet[idx])
             }
 
             ## Honour a stored y-zoom only in the view it was taken in; otherwise
@@ -2507,7 +2568,25 @@
                                        animation: none !important; }
                         @keyframes gcmsPulse { 0%, 100% { transform: scale(0.8); box-shadow: 0 0 3px #f0a30a; }
                                                50% { transform: scale(1.15); box-shadow: 0 0 14px #f0a30a; } }
-                        .gcms-status-key { font-weight: normal; color: #888; font-size: 85%; }
+                        .gcms-unsaved { color: #c62828; font-weight: bold; margin: -4px 0 8px 0; }
+                        .gcms-switch { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+                        .gcms-switch .checkbox { margin: 0; }
+                        .gcms-switch .checkbox label { padding-left: 0; font-weight: bold; display: flex;
+                                       align-items: center; gap: 8px; }
+                        .gcms-switch-off { font-weight: bold; }
+                        #overview_toggle { -webkit-appearance: none; appearance: none; position: relative;
+                                       margin: 0; width: 38px; height: 20px; border-radius: 10px;
+                                       background: #bdbdbd; cursor: pointer; transition: background .2s; }
+                        #overview_toggle::before { content: ''; position: absolute; top: 2px; left: 2px;
+                                       width: 16px; height: 16px; border-radius: 50%; background: white;
+                                       transition: left .2s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+                        #overview_toggle:checked { background: #2e7dd7; }
+                        #overview_toggle:checked::before { left: 20px; }
+                        .gcms-align { display: flex; align-items: center; gap: 6px; margin: 6px 0 2px 0;
+                                       flex-wrap: wrap; }
+                        .gcms-align .form-group { margin: 0; }
+                        .gcms-align .selectize-control, .gcms-align select { min-width: 220px; }
+                        .gcms-align input[type=number] { width: 70px; }
                     ")),
                     tags$script(HTML("
                         (function () {
@@ -2610,11 +2689,14 @@
 
                         tags$div(class = "gcms-status",
                             tags$span(class = "gcms-orb"),
-                            tags$span(id = "gcms_status_text", "Ready"),
-                            tags$span(class = "gcms-status-key", textOutput("key", inline = TRUE))
+                            tags$span(id = "gcms_status_text", "Ready")
                         ),
-                        strong("Messages"),
-                        verbatimTextOutput("message_window", placeholder = TRUE),
+                        ## Red line while the peak table holds edits Shift+Z has not saved.
+                        tags$div(class = "gcms-unsaved", textOutput("unsaved_flag", inline = TRUE)),
+                        ## Messages now pop up as notifications (notify()). The box stays in
+                        ## the page, hidden, because the host1 drivers in
+                        ## singleion_prototype/shiftq_profiling/ read it to know Shift+Q is done.
+                        tags$div(style = "display: none;", verbatimTextOutput("message_window", placeholder = TRUE)),
 
                         img(
                             src = "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/logo.png",
@@ -2644,11 +2726,10 @@
 
                         tags$hr(),
                         strong("View"),
-                        radioButtons(
-                            "view_mode", NULL,
-                            choices = c("Detail" = "detail", "Overview" = "overview"),
-                            selected = if (compact) "overview" else "detail",
-                            inline = TRUE
+                        ## A switch: off = Detail, on = Overview.
+                        tags$div(class = "gcms-switch",
+                            tags$span(class = "gcms-switch-off", "Detail"),
+                            checkboxInput("overview_toggle", "Overview", value = compact)
                         ),
                         numericInput(
                             "samples_per_page_ui", "Samples per page",
@@ -2677,6 +2758,8 @@
                                         "Each ion to its own max" = "norm"),
                             selected = all_ion_scaling
                         ),
+                        tags$hr(),
+                        strong("All-ion settings (apply on Shift+Q)"),
                         sliderInput(
                             "allion_threshold", "Ion inclusion (fraction of the window's largest ion)",
                             min = 0.001, max = 0.2, value = all_ion_threshold, step = 0.001
@@ -2685,7 +2768,6 @@
                             "allion_max_points", "Max x-points per ion (render cost)",
                             min = 200, max = 4000, value = all_ion_max_points, step = 100
                         ),
-                        helpText("A pure peak draws as a tight bundle; a splayed bundle means two compounds. Display and Y scaling apply immediately; the two sliders apply on the next Shift+Q."),
 
                         tags$hr(),
                         strong("Co-elution split"),
@@ -2750,6 +2832,18 @@
                                                 textOutput("page_indicator", inline = TRUE)
                                             )
                                         )
+                                    ),
+                                    ## Align: nudge one sample along rt (column-length drift).
+                                    ## Click a panel to pick its sample.
+                                    tags$div(class = "gcms-align",
+                                        tags$strong("Align:"),
+                                        selectInput("align_sample", NULL, choices = character(0), width = "260px"),
+                                        actionButton("align_back", "\u25c0"),
+                                        actionButton("align_fwd", "\u25b6"),
+                                        tags$span("step"),
+                                        numericInput("align_step", NULL, value = 1, min = 0.001, step = 0.5, width = "80px"),
+                                        actionButton("align_reset", "Reset"),
+                                        tags$span(style = "color:#555;", textOutput("align_offset", inline = TRUE))
                                     ),
 
                                     plotOutput(
@@ -2871,6 +2965,8 @@
                     notify <- function(msg) {
                         cat(msg, "\n", sep = "")
                         logMessage(msg)
+                        ## The Messages box is hidden, so each outcome pops up briefly.
+                        try(showNotification(msg, duration = 5, type = "message"), silent = TRUE)
                     }
 
                     ## Split/refresh logs: everything to the console; to the box,
@@ -2879,6 +2975,18 @@
                         if (!length(lines)) return(invisible(NULL))
                         cat(paste0(lines, "\n"), sep = "")
                         for (l in rev(lines[!grepl("^  [^ ]+: kA ", lines)])) logMessage(l)
+                        ## The Messages box is hidden, so the outcome pops up: every headline
+                        ## (unindented line) and a count of skipped samples with the first
+                        ## reasons. Before this (2026-10-21) a split ran or refused silently.
+                        heads <- lines[!grepl("^\\s", lines) & nzchar(trimws(lines))]
+                        skips <- trimws(lines[grepl("^  skipped ", lines)])
+                        for (h in heads) try(showNotification(h, duration = 10, type = "message"), silent = TRUE)
+                        if (length(skips)) {
+                            msg <- paste0(length(skips), " sample", if (length(skips) > 1) "s" else "", " skipped: ",
+                                          paste(utils::head(skips, 3), collapse = "; "),
+                                          if (length(skips) > 3) "; ... (all listed in the R console)" else "")
+                            try(showNotification(msg, duration = 15, type = "warning"), silent = TRUE)
+                        }
                     }
 
                     # Render them in the message window
@@ -2902,17 +3010,6 @@
                         paste("\nstayin' alive ", input$count)
                     })
 
-                ## Check keystoke value
-                    output$key <- renderText({
-                        k <- input$keypress
-                        if (is.null(k)) return("")
-                        ch <- intToUtf8(k)
-                        shifted <- c("!" = "1", "@" = "2", "#" = "3", "$" = "4", "%" = "5",
-                                     "^" = "6", "&" = "7", "*" = "8", "(" = "9", ")" = "0")
-                        if (ch %in% names(shifted)) paste("Shift +", shifted[[ch]])
-                        else if (grepl("^[A-Z]$", ch)) paste("Shift +", ch)
-                        else ch
-                    })
 
                 ## Keys to move chromatogram view - zoom in and out, move L and R
                     observeEvent(input$keypress, {
@@ -2949,6 +3046,18 @@
                           guides(fill = "none")
                     })
 
+                ## Unsaved-edits flag: compares the browser's peak_IDs with what the table
+                ## was drawn from (gcms_peak_ids_edited()). Cleared by a re-render or a save.
+                    table_dirty <- reactiveVal(FALSE)
+                    observeEvent(input$peak_table, {
+                        ed <- try(rhandsontable::hot_to_r(input$peak_table), silent = TRUE)
+                        if (inherits(ed, "try-error")) return()
+                        table_dirty(gcms_peak_ids_edited(ed, peak_table_snapshot))
+                    }, ignoreNULL = TRUE)
+                    output$unsaved_flag <- renderText({
+                        if (table_dirty()) "\u25cf Unsaved peak-table edits: Shift+Z to save" else ""
+                    })
+
                 ## ONE way to render the editable peak table. Shift+G used to render it
                 ## as DT::renderDataTable while every other handler used rhandsontable --
                 ## and `input$peak_table` from a DT output carries nothing hot_to_r() can
@@ -2958,6 +3067,7 @@
                     render_peak_table <- function() {
                         current <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv") else NULL
                         peak_table_snapshot <<- current
+                        table_dirty(FALSE)      # a fresh table holds no edits
                         ## Only peak_ID is editable; everything else is computed.
                         output$peak_table <- rhandsontable::renderRHandsontable({
                             if (is.null(current)) return(NULL)
@@ -3003,6 +3113,7 @@
                                 }
                                 writeMonolist(saved, "peaks_monolist.csv")
                                 peak_table_snapshot <<- saved
+                                table_dirty(FALSE)
                                 notify("Peak list saved.")
                         }
                     })
@@ -3801,8 +3912,8 @@
                             first <- (current_page() - 1) * old_size + 1
                             current_page(floor((first - 1) / new_size) + 1)
                         }
-                        observeEvent(input$view_mode, {
-                            new <- input$view_mode; old <- view_state$mode
+                        observeEvent(input$overview_toggle, {
+                            new <- if (isTRUE(input$overview_toggle)) "overview" else "detail"; old <- view_state$mode
                             if (!(new %in% c("detail", "overview")) || identical(new, old)) return()
                             repage(view_state[[old]], view_state[[new]])
                             view_state$mode <- new
@@ -3936,7 +4047,8 @@
                             nw <- gcms_slide_window(x_axis_start, x_axis_end, direction, rng[1], rng[2])
                             if (is.null(nw)) { notify("Zoom in first (brush + Shift+Q), then slide."); return() }
                             if (isTRUE(all.equal(nw, c(x_axis_start, x_axis_end)))) {
-                                notify(if (direction > 0) "Already at the end of the run." else "Already at the start of the run.")
+                                notify(if (isTRUE(all.equal(nw, as.numeric(rng)))) "Showing the whole run: zoom in first, then slide."
+                                       else if (direction > 0) "Already at the end of the run." else "Already at the start of the run.")
                                 return()
                             }
                             x_axis_start <<- nw[1]; x_axis_end <<- nw[2]
@@ -3945,6 +4057,62 @@
                         }
                         observeEvent(input$pan_back, slide_view(-1))
                         observeEvent(input$pan_fwd,  slide_view(+1))
+
+                    ## Align: move one sample along rt. Same tables Shift+Q would rebuild,
+                    ## updated in place (gcms_shift_sample_offset()), so it redraws at once.
+                        align_tick <- reactiveVal(0)
+                        observe({
+                            redraw_trigger(); b <- page_bounds()
+                            if (is.null(b) || !length(b$page_samples)) return()
+                            keep <- isolate(input$align_sample)
+                            sel <- if (!is.null(keep) && keep %in% b$page_samples) keep else b$page_samples[1]
+                            updateSelectInput(session, "align_sample",
+                                              choices = stats::setNames(b$page_samples, sub("\\.CDF\\.csv$", "", b$page_samples)),
+                                              selected = sel)
+                        })
+                        observeEvent(input$chromatogram_click, {
+                            smp <- clicked_sample(input$chromatogram_click)
+                            if (!is.null(smp)) updateSelectInput(session, "align_sample", selected = smp)
+                        })
+                        output$align_offset <- renderText({
+                            align_tick(); smp <- input$align_sample
+                            if (is.null(smp) || !nzchar(smp) || !file.exists("samples_monolist.csv")) return("")
+                            sm <- try(read.csv("samples_monolist.csv", stringsAsFactors = FALSE), silent = TRUE)
+                            if (inherits(sm, "try-error")) return("")
+                            off <- sm$rt_offset[match(smp, sm$path_to_cdf_csv)]
+                            if (length(off) != 1 || is.na(off)) "" else sprintf("offset %+g", off)
+                        })
+                        nudge_sample <- function(delta, absolute = FALSE) {
+                            smp <- input$align_sample
+                            if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
+                            if (is.null(smp) || !nzchar(smp)) { notify("Pick a sample to align (click its panel)."); return() }
+                            if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): aligning redraws it."); return() }
+                            sm <- read.csv("samples_monolist.csv", stringsAsFactors = FALSE)
+                            if (absolute) {
+                                cur <- suppressWarnings(as.numeric(sm$rt_offset[match(smp, sm$path_to_cdf_csv)]))
+                                delta <- -(if (is.finite(cur)) cur else 0)
+                            }
+                            pk <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv", stringsAsFactors = FALSE) else NULL
+                            pr <- if (file.exists("coelution_profiles.csv")) try(read.csv("coelution_profiles.csv", stringsAsFactors = FALSE), silent = TRUE) else NULL
+                            if (inherits(pr, "try-error")) pr <- NULL
+                            res <- gcms_shift_sample_offset(smp, delta, sm, pk, chromatograms_updated, pr)
+                            if (is.null(res)) { notify("That sample is not in samples_monolist.csv."); return() }
+                            write.table(res$samples, file = "samples_monolist.csv", row.names = FALSE, sep = ",")
+                            if (!is.null(res$peaks)) write.table(res$peaks, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
+                            if (!is.null(res$profiles)) utils::write.csv(res$profiles, "coelution_profiles.csv", row.names = FALSE)
+                            chromatograms_updated <<- res$chrom
+                            render_peak_table()
+                            align_tick(isolate(align_tick()) + 1)
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                            cat(sprintf("Align: %s rt_offset now %g\n", smp, res$offset))
+                        }
+                        observeEvent(input$align_back,  {
+                            st <- suppressWarnings(as.numeric(input$align_step)); if (!is.finite(st) || st <= 0) st <- 1
+                            nudge_sample(-st) })
+                        observeEvent(input$align_fwd,   {
+                            st <- suppressWarnings(as.numeric(input$align_step)); if (!is.finite(st) || st <= 0) st <- 1
+                            nudge_sample(+st) })
+                        observeEvent(input$align_reset, nudge_sample(0, absolute = TRUE))
 
                     ## Page indicator text (e.g. "Page 2 / 8   (samples 21-40 of 152)")
                         output$page_indicator <- renderText({
