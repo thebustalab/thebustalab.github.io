@@ -718,15 +718,15 @@
         list(samples = samples_ml, peaks = peaks, chrom = chrom, profiles = profiles, offset = new)
     }
 
-    ## Slide the x window by its own width (the Earlier / Later buttons, 2026-10-21):
-    ## the next window starts where this one ends, so stepping covers the run with
-    ## no gap and no overlap. Clamped to the run [lo, hi] keeping the width, so the
+    ## Slide the x window by HALF its width (the Earlier / Later buttons, 2026-10-21;
+    ## Lucas: 50% overlap, so 500-600 -> 550-650), so a peak on the edge of one view
+    ## is whole in the next. Same width throughout. Clamped to the run [lo, hi] keeping the width, so the
     ## last step lands flush with the end rather than off it. Returns NULL when the
     ## window is unusable (not set yet, or zero width).
     gcms_slide_window <- function(xs, xe, direction, lo, hi) {
         if (length(xs) != 1 || length(xe) != 1 || !is.finite(xs) || !is.finite(xe) || xe <= xs) return(NULL)
         w <- xe - xs
-        ns <- xs + sign(direction) * w
+        ns <- xs + sign(direction) * w / 2
         if (is.finite(lo) && is.finite(hi) && hi > lo) {
             if (w >= hi - lo) return(c(lo, hi))
             ns <- min(max(ns, lo), hi - w)
@@ -2824,7 +2824,7 @@
                                         column(12,
                                             actionButton("prev_page", paste0("\u25c0 Prev ", samples_per_page)),
                                             actionButton("next_page", paste0("Next ", samples_per_page, " \u25b6")),
-                                            ## Slide the retention-time window by its own width.
+                                            ## Slide the retention-time window by half its width.
                                             actionButton("pan_back", "\u25c0 Earlier", style = "margin-left:15px;"),
                                             actionButton("pan_fwd", "Later \u25b6"),
                                             tags$span(
@@ -4039,7 +4039,7 @@
                             current_page(min(b$n_pages, current_page() + 1))
                         })
 
-                    ## Earlier / Later: the same-width window before or after the current one.
+                    ## Earlier / Later: the same-width window half a width before or after.
                     ## Moves the view only (x limits); a y-zoom is kept, as with a brush zoom.
                         slide_view <- function(direction) {
                             if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
