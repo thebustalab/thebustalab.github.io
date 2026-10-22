@@ -769,6 +769,29 @@
         c(ns, ns + w)
     }
 
+    ## View history (the Previous view / Subsequent view buttons, 2026-10-22; Lucas:
+    ## zoom in quickly, then step back to the last zoom rather than all the way out).
+    ## Browser-style: a list of views plus a position. A view is everything a zoom
+    ## sets (x limits, the raw-count y pair, and the keyed y-zoom). Recording a view
+    ## that differs from the one at the position drops anything after it, as a new
+    ## page does in a browser, and the list is capped at `cap` views.
+    gcms_view_history_record <- function(hist, view, cap = 50L) {
+        if (is.null(hist)) hist <- list(views = list(), pos = 0L)
+        if (is.null(view) || length(view$xs) != 1 || length(view$xe) != 1 ||
+            !is.finite(view$xs) || !is.finite(view$xe)) return(hist)
+        if (hist$pos > 0 && identical(hist$views[[hist$pos]], view)) return(hist)
+        views <- c(hist$views[seq_len(hist$pos)], list(view))
+        if (length(views) > cap) views <- views[(length(views) - cap + 1):length(views)]
+        list(views = views, pos = length(views))
+    }
+    ## One step back (-1) or forward (+1). NULL when there is nowhere to go.
+    gcms_view_history_step <- function(hist, direction) {
+        if (is.null(hist) || !length(hist$views)) return(NULL)
+        p <- hist$pos + sign(direction)
+        if (p < 1 || p > length(hist$views)) return(NULL)
+        list(views = hist$views, pos = as.integer(p))
+    }
+
     ## ---- Peak spectra and assignment confidence (phase 3, 2026-10-21) ----------
     ## Overview mode marks every peak with a square coloured by how well its mass
     ## spectrum agrees with the other peaks given the same peak_ID in this folder,
@@ -897,6 +920,295 @@
                    score = score, stringsAsFactors = FALSE)
     }
 
+    ## Detail-mode squares (Lucas, 2026-10-22: the Overview squares in Detail too).
+    ## In Detail the ribbons own the plot's fill scale (peak number), so the squares
+    ## cannot MAP fill; each confidence class is its own layer with a constant fill,
+    ## which needs no scale and adds no legend. Returns a list to add to a ggplot.
+    gcms_detail_marker_layers <- function(markers, size = 5) {
+        layers <- list()
+        for (cls in names(gcms_confidence_colours)) {
+            m <- markers[as.character(markers$confidence) == cls, , drop = FALSE]
+            if (!nrow(m)) next
+            layers[[length(layers) + 1]] <- ggplot2::geom_point(
+                data = m, mapping = ggplot2::aes(x = x, y = y), inherit.aes = FALSE,
+                shape = 22, size = size, stroke = 0.25, colour = "grey20",
+                fill = gcms_confidence_colours[[cls]], alpha = 0.85)
+        }
+        layers
+    }
+
+
+#### Stateless helpers lifted out of analyzeGCMSdata7() (2026-10-22)
+####
+#### These read nothing from the app's own state, so they live at the top
+#### level where tests can load them directly. gcms_ prefix as above, so
+#### sourcing the file cannot clobber (or be clobbered by) a user's objects.
+
+    ## Detect CDF flavour: "ms" for ANDI-MS (full rt x mz cube),
+    ## "chrom" for ANDI-Chrom single-detector (e.g. GC-TCD, GC-FID, GC-ECD),
+    ## "unknown" otherwise. Used to fork the ingest path below.
+    gcms_detect_cdf_type <- function(path) {
+        nc <- ncdf4::nc_open(path)
+        on.exit(ncdf4::nc_close(nc))
+        vars <- names(nc$var)
+        if (all(c("mass_values", "intensity_values", "scan_index") %in% vars)) {
+            return("ms")
+        }
+        if ("ordinate_values" %in% vars) {
+            return("chrom")
+        }
+        "unknown"
+    }
+
+    ## Read an ANDI-Chrom CDF and return a data frame matching the
+    ## framedDataFile shape used downstream (mz, intensity, rt). A
+    ## single-detector trace has no mz axis, so mz is a sentinel 0:
+    ## the TIC pipeline sums by rt to recover the one signal channel,
+    ## and any extracted-ion request returns empty (no spectrum exists).
+    gcms_read_chrom_cdf_as_framed <- function(path) {
+        nc <- ncdf4::nc_open(path)
+        on.exit(ncdf4::nc_close(nc))
+        ord <- as.numeric(ncdf4::ncvar_get(nc, "ordinate_values"))
+        var_names <- names(nc$var)
+        delay <- if ("actual_delay_time" %in% var_names) {
+            as.numeric(ncdf4::ncvar_get(nc, "actual_delay_time"))
+        } else 0
+        interval <- if ("actual_sampling_interval" %in% var_names) {
+            as.numeric(ncdf4::ncvar_get(nc, "actual_sampling_interval"))
+        } else 1
+        n <- length(ord)
+        rt <- delay + (seq_len(n) - 1) * interval
+        data.frame(mz = 0, intensity = ord, rt = rt)
+    }
+
+    ## ---- cache stamping -------------------------------------------------
+    ## Every derived file in this folder used to be keyed on its source's
+    ## NAME alone, which made replacing an acquisition invisible: drop a new
+    ## run in under the same filename and the app kept plotting and
+    ## integrating the OLD one, because <file>.CDF.csv already existed so it
+    ## was never rebuilt and chromatograms.csv still held its rows. Deleting
+    ## the .CDF.csv by hand did not help either, since chromatograms.csv was
+    ## the copy actually being read. Each derived file now carries a .stamp
+    ## sidecar holding its source's mtime and size.
+    gcms_file_stamp <- function(path) {
+        fi <- file.info(path)
+        if (is.na(fi$size)) return(NA_character_)
+        paste0(format(as.numeric(fi$mtime), digits = 17), ":", fi$size)
+    }
+
+    gcms_stamp_path <- function(derived) paste0(derived, ".stamp")
+
+    gcms_stamp_is_current <- function(derived, source, tag = "") {
+        if (!file.exists(derived)) return(FALSE)
+        want <- paste0(gcms_file_stamp(source), tag)
+        if (is.na(gcms_file_stamp(source))) return(TRUE)     # source gone: keep what we have
+        sp <- gcms_stamp_path(derived)
+        if (!file.exists(sp)) return(FALSE)
+        identical(readLines(sp, warn = FALSE)[1], want)
+    }
+
+    gcms_write_stamp <- function(derived, source, tag = "") {
+        want <- gcms_file_stamp(source)
+        if (!is.na(want)) writeLines(paste0(want, tag), gcms_stamp_path(derived))
+        invisible(NULL)
+    }
+
+    ## Write through a temp file in the same directory, then rename. An
+    ## interrupted fwrite straight to the destination left a TRUNCATED file
+    ## behind, which file.exists() then accepted for ever.
+    gcms_fwrite_atomic <- function(x, path) {
+        tmp <- paste0(path, ".tmp", Sys.getpid())
+        data.table::fwrite(x, tmp)
+        if (!file.rename(tmp, path)) {
+            file.copy(tmp, path, overwrite = TRUE)
+            unlink(tmp)
+        }
+        invisible(path)
+    }
+
+    gcms_allion_store_path <- function(cdf_csv) paste0(cdf_csv, ".allions.csv")
+
+    ## Nominal m/z for the all-ion store. NOT round(): R rounds exact halves
+    ## to the EVEN integer, and this instrument reports heavy ions at x.5 -
+    ## Skylar's ion 467 sits at m/z 467.5 and went into bin 468, along with
+    ## 468.5 (2026-10-16), while the extracted-ion traces (a +/-0.6 window)
+    ## showed it at 467. floor(mz + 0.3) bins 281.7-282.69 as 282: whole-
+    ## number data unchanged, mass defects from -0.3 to +0.69 (wax-range
+    ## hydrocarbons up to ~m/z 600) kept on their nominal mass.
+    ## test_nominal_binning.R pins this.
+    gcms_nominal_mz <- function(mz) floor(as.numeric(mz) + 0.3)
+
+    ## y transform for the overlay, plus the per-line opacity that goes
+    ## with it. "norm" divides each ion by its own maximum in the window,
+    ## which is what actually makes co-elution obvious: every ion becomes
+    ## a unit-height peak, so a two-scan apex shift is unmissable. It
+    ## also destroys quantitation and would draw a noise-level ion as
+    ## tall as the base peak -- hence opacity carrying absolute
+    ## abundance in that mode, and only in that mode.
+    gcms_allion_scale <- function(w, mode) {
+        w <- data.table::copy(w)
+        if (identical(mode, "norm")) {
+            w[, peak := max(net), by = mz]
+            w[, y := ifelse(peak > 0, net / peak, 0)]
+            top <- max(w$peak)
+            w[, opacity := 0.10 + 0.65 * (peak / top)^0.35]
+            w[, peak := NULL]
+        } else {
+            w[, y := switch(mode,
+                raw  = net,
+                sqrt = sqrt(net),
+                log  = log10(pmax(net, 1)),
+                net)]
+            w[, opacity := 0.35]
+        }
+        w[]
+    }
+
+    gcms_allion_y_label <- function(mode) switch(mode,
+        raw  = "Abundance (counts, baseline removed)",
+        sqrt = "sqrt abundance (baseline removed)",
+        log  = "log10 abundance (baseline removed)",
+        norm = "Abundance, each ion scaled to its own max",
+        "Abundance")
+
+    ## Read a panel_params range whichever way this ggplot2 stores it.
+    gcms_pp_range <- function(pp, axis) {
+        v <- pp[[paste0(axis, ".range")]]
+        if (is.null(v)) v <- tryCatch(pp[[axis]]$continuous_range, error = function(e) NULL)
+        if (is.null(v)) v <- tryCatch(pp[[axis]]$dimension(), error = function(e) NULL)
+        if (length(v) == 2 && all(is.finite(v)) && v[2] > v[1]) v else NULL
+    }
+
+    ## Turn a fallback brush coordinate into a true fraction of the rendered
+    ## IMAGE, using the brush's OWN reported domain.
+    ##
+    ## Shiny's degenerate coordmap does NOT report 0..1, which is what this
+    ## code assumed for three weeks. The labelled probe on host1
+    ## (2026-10-02, 5 facets, 1124x700 css at a 2x pixel ratio) came back:
+    ##
+    ##   domain  left=-0.04 right=1.04 bottom=-0.04 top=1.04
+    ##   range   left=0 right=2248 bottom=1399 top=-1
+    ##   coords_img xmin=230 xmax=1222 ymin=296 ymax=364
+    ##   xmin=0.0704982 xmax=0.547082 ymin=0.758429 ymax=0.810886
+    ##
+    ## i.e. a UNIT domain carrying ggplot's own 5% expansion, mapped across
+    ## the WHOLE 2248x1400 image. Inverting Shiny's transform reproduces the
+    ## raw pixels to five decimals on both axes: 230/2248 = 0.10231 =
+    ## (0.0704982 + 0.04)/1.08. So reading xmin straight as a fraction is a
+    ## -0.04 shift plus a 1.08 stretch -- about 4% of the window, which is
+    ## why every reading was "nearly right" and why a drag inside a panel
+    ## could report a y fraction ABOVE the panel top (0.8109 vs the panel's
+    ## 0.8016) and get clamped, losing the top of the y-zoom.
+    ##
+    ## y needs no flipping: Shiny has already done it (range top=-1 < bottom
+    ## =1399), so the larger value is the higher point on the picture. That
+    ## is the "y fractions are measured from the BOTTOM" rule, confirmed.
+    ##
+    ## Returns NULL -- leaving the caller's old reading untouched -- unless
+    ## the domain really is a unit domain. A surviving coordmap reports the
+    ## domain in DATA units (365..4664 here), and those coordinates are
+    ## already data values that must never be rescaled.
+    gcms_brush_unit_fraction <- function(brush, axis = c("x", "y")) {
+        axis <- match.arg(axis)
+        d <- brush$domain
+        if (is.null(d)) return(NULL)
+        if (axis == "x") {
+            lo <- d$left;   hi <- d$right; v <- c(brush$xmin, brush$xmax)
+        } else {
+            lo <- d$bottom; hi <- d$top;   v <- c(brush$ymin, brush$ymax)
+        }
+        if (is.null(lo) || is.null(hi) || length(lo) != 1 || length(hi) != 1) return(NULL)
+        lo <- suppressWarnings(as.numeric(lo)); hi <- suppressWarnings(as.numeric(hi))
+        if (!is.finite(lo) || !is.finite(hi)) return(NULL)
+        span <- hi - lo
+        ## A unit domain: span ~1 (1.08 with the expansion, 1.0 without) and
+        ## an origin near 0. Anything else is a real data axis.
+        if (!is.finite(span) || span < 0.9 || span > 1.2 || abs(lo) > 0.2) return(NULL)
+        if (length(v) != 2 || !all(is.finite(v))) return(NULL)
+        (v - lo) / span
+    }
+
+    ## Which panel (1 = top) a from-the-bottom image fraction falls in.
+    ## Returns NULL when the geometry is unknown; a fraction in a gutter or
+    ## just off the stack snaps to the nearest panel, because a drag that
+    ## overshoots the panel edge is the normal gesture, not an error.
+    gcms_panel_at_bottom_fraction <- function(pf, frac_from_bottom) {
+        if (is.null(pf) || is.null(pf$panels) || nrow(pf$panels) == 0) return(NULL)
+        if (!is.finite(frac_from_bottom)) return(NULL)
+        lo <- 1 - pf$panels$y_hi          # panels carry fractions from the TOP
+        hi <- 1 - pf$panels$y_lo
+        hit <- which(frac_from_bottom >= lo & frac_from_bottom <= hi)
+        if (length(hit) >= 1) {
+            return(hit[which.min(abs(frac_from_bottom - (lo[hit] + hi[hit]) / 2))])
+        }
+        near <- which.min(pmin(abs(frac_from_bottom - lo), abs(frac_from_bottom - hi)))
+        if (length(near) == 1) near else NULL
+    }
+
+    ## The panels (1 = top) a tall brush covers, for Shift+A / Shift+E across
+    ## several samples at once (Lucas, 2026-10-22). A panel counts only when the
+    ## brush covers its vertical MIDDLE, so the usual overshoot into a
+    ## neighbouring panel does not drag that sample in. `fry` is the brush's
+    ## y extent as from-the-bottom fractions (gcms_brush_unit_fraction()).
+    ## integer(0) when the geometry is unknown or no middle is covered.
+    gcms_panels_covering <- function(pf, fry) {
+        if (is.null(pf) || is.null(pf$panels) || nrow(pf$panels) == 0) return(integer(0))
+        if (length(fry) != 2 || !all(is.finite(fry))) return(integer(0))
+        mid <- 1 - (pf$panels$y_lo + pf$panels$y_hi) / 2     # panels carry fractions from the TOP
+        which(mid >= min(fry) & mid <= max(fry))
+    }
+
+    ## Split a multi-sample brush selection into one window per sample, each
+    ## from that sample's OWN points, so raw rt follows the sample's rt_offset.
+    ## Returns a data frame: path_to_cdf_csv, start, end, area (TIC minus
+    ## baseline, long format: ion == 0 / ion == "baseline").
+    ## Drop every peak lying wholly inside its own sample's window (inclusive).
+    gcms_excise_windows <- function(peak_table, win) {
+        if (!nrow(peak_table) || !nrow(win)) return(peak_table)
+        i <- match(as.character(peak_table$path_to_cdf_csv), win$path_to_cdf_csv)
+        gone <- (!is.na(i) & peak_table$peak_start >= win$start[i] & peak_table$peak_end <= win$end[i]) %in% TRUE
+        peak_table[!gone, , drop = FALSE]
+    }
+
+    gcms_brush_windows_by_sample <- function(pp) {
+        if (is.null(pp) || !nrow(pp)) return(data.frame(path_to_cdf_csv = character(0), start = numeric(0),
+                                                         end = numeric(0), area = numeric(0)))
+        s <- as.character(pp$path_to_cdf_csv)
+        do.call(rbind, lapply(unique(s), function(k) {
+            g <- pp[s == k, , drop = FALSE]
+            data.frame(path_to_cdf_csv = k, start = min(g$rt), end = max(g$rt),
+                       area = sum(g$abundance[g$ion == 0]) - sum(g$abundance[g$ion == "baseline"]),
+                       stringsAsFactors = FALSE)
+        }))
+    }
+
+    ## A peak add or a spectrum extraction belongs to ONE sample. When the
+    ## facet cannot be recovered the selection spans every panel on the page,
+    ## and taking $path_to_cdf_csv[1] silently attributes it to the first
+    ## sample in table order rather than the brushed one -- a wrong peak
+    ## written against a wrong sample, with an area summed over all twenty.
+    ## Refuse and say so; the diagnostics above name what was resolved.
+    ## (Shift+G is exempt by design: it writes the same window to every
+    ## sample on purpose.)
+    gcms_single_sample <- function(pp, what) {
+        if (is.null(pp) || nrow(pp) == 0) return(NULL)
+        s <- unique(as.character(pp$path_to_cdf_csv))
+        if (length(s) == 1) return(s)
+        cat(paste0(what, " needs a brush inside ONE sample's panel, but this selection covers ",
+                   length(s), " samples (", paste(utils::head(s, 3), collapse = ", "),
+                   if (length(s) > 3) ", ..." else "", "). Nothing written.\n"))
+        NULL
+    }
+
+    ## ONE derivation for Sample_ID, used by both the create and the
+    ## append path below. They used to disagree: the first write stored
+    ## the full `foo.CDF.csv`, while later appends ran
+    ## gsub("\\..*$", "", ...) -- truncating at the FIRST dot, so
+    ## `WT.rep2.CDF` and `WT.rep3.CDF` both collapsed to `WT`. Strip only
+    ## the .CDF.csv suffix (and any directory), as the facet labels do.
+    gcms_sample_id_from_path <- function(x) {
+        gsub("\\.CDF\\.csv$", "", gsub(".*/", "", x), ignore.case = TRUE)
+    }
 
 #### analyzeGCMSdata7
 ####
@@ -957,42 +1269,7 @@
         compact <- isTRUE(compact)
         if (compact && missing(samples_per_page)) samples_per_page <- 50
 
-        ## Detect CDF flavour: "ms" for ANDI-MS (full rt x mz cube),
-        ## "chrom" for ANDI-Chrom single-detector (e.g. GC-TCD, GC-FID, GC-ECD),
-        ## "unknown" otherwise. Used to fork the ingest path below.
-        detect_cdf_type <- function(path) {
-            nc <- ncdf4::nc_open(path)
-            on.exit(ncdf4::nc_close(nc))
-            vars <- names(nc$var)
-            if (all(c("mass_values", "intensity_values", "scan_index") %in% vars)) {
-                return("ms")
-            }
-            if ("ordinate_values" %in% vars) {
-                return("chrom")
-            }
-            "unknown"
-        }
 
-        ## Read an ANDI-Chrom CDF and return a data frame matching the
-        ## framedDataFile shape used downstream (mz, intensity, rt). A
-        ## single-detector trace has no mz axis, so mz is a sentinel 0:
-        ## the TIC pipeline sums by rt to recover the one signal channel,
-        ## and any extracted-ion request returns empty (no spectrum exists).
-        read_chrom_cdf_as_framed <- function(path) {
-            nc <- ncdf4::nc_open(path)
-            on.exit(ncdf4::nc_close(nc))
-            ord <- as.numeric(ncdf4::ncvar_get(nc, "ordinate_values"))
-            var_names <- names(nc$var)
-            delay <- if ("actual_delay_time" %in% var_names) {
-                as.numeric(ncdf4::ncvar_get(nc, "actual_delay_time"))
-            } else 0
-            interval <- if ("actual_sampling_interval" %in% var_names) {
-                as.numeric(ncdf4::ncvar_get(nc, "actual_sampling_interval"))
-            } else 1
-            n <- length(ord)
-            rt <- delay + (seq_len(n) - 1) * interval
-            data.frame(mz = 0, intensity = ord, rt = rt)
-        }
 
 
         ## ---- All-ion chromatogram support (new in v6) ----------------------
@@ -1018,59 +1295,9 @@
             .allion_cache_order <- character(0)   # least-recently-used first
             .allion_cache_max <- 40L
 
-            ## ---- cache stamping -------------------------------------------------
-            ## Every derived file in this folder used to be keyed on its source's
-            ## NAME alone, which made replacing an acquisition invisible: drop a new
-            ## run in under the same filename and the app kept plotting and
-            ## integrating the OLD one, because <file>.CDF.csv already existed so it
-            ## was never rebuilt and chromatograms.csv still held its rows. Deleting
-            ## the .CDF.csv by hand did not help either, since chromatograms.csv was
-            ## the copy actually being read. Each derived file now carries a .stamp
-            ## sidecar holding its source's mtime and size.
-            file_stamp <- function(path) {
-                fi <- file.info(path)
-                if (is.na(fi$size)) return(NA_character_)
-                paste0(format(as.numeric(fi$mtime), digits = 17), ":", fi$size)
-            }
-            stamp_path <- function(derived) paste0(derived, ".stamp")
-            stamp_is_current <- function(derived, source, tag = "") {
-                if (!file.exists(derived)) return(FALSE)
-                want <- paste0(file_stamp(source), tag)
-                if (is.na(file_stamp(source))) return(TRUE)     # source gone: keep what we have
-                sp <- stamp_path(derived)
-                if (!file.exists(sp)) return(FALSE)
-                identical(readLines(sp, warn = FALSE)[1], want)
-            }
-            write_stamp <- function(derived, source, tag = "") {
-                want <- file_stamp(source)
-                if (!is.na(want)) writeLines(paste0(want, tag), stamp_path(derived))
-                invisible(NULL)
-            }
 
-            ## Write through a temp file in the same directory, then rename. An
-            ## interrupted fwrite straight to the destination left a TRUNCATED file
-            ## behind, which file.exists() then accepted for ever.
-            fwrite_atomic <- function(x, path) {
-                tmp <- paste0(path, ".tmp", Sys.getpid())
-                data.table::fwrite(x, tmp)
-                if (!file.rename(tmp, path)) {
-                    file.copy(tmp, path, overwrite = TRUE)
-                    unlink(tmp)
-                }
-                invisible(path)
-            }
 
-            allion_store_path <- function(cdf_csv) paste0(cdf_csv, ".allions.csv")
 
-            ## Nominal m/z for the all-ion store. NOT round(): R rounds exact halves
-            ## to the EVEN integer, and this instrument reports heavy ions at x.5 -
-            ## Skylar's ion 467 sits at m/z 467.5 and went into bin 468, along with
-            ## 468.5 (2026-10-16), while the extracted-ion traces (a +/-0.6 window)
-            ## showed it at 467. floor(mz + 0.3) bins 281.7-282.69 as 282: whole-
-            ## number data unchanged, mass defects from -0.3 to +0.69 (wax-range
-            ## hydrocarbons up to ~m/z 600) kept on their nominal mass.
-            ## test_nominal_binning.R pins this.
-            nominal_mz <- function(mz) floor(as.numeric(mz) + 0.3)
             ## Bumped whenever the binning changes, so every existing store rebuilds
             ## once instead of serving bins made the old way.
             .allion_binning_tag <- ":nominal-floor+0.3"
@@ -1081,10 +1308,10 @@
             ## shared by every sample, and appending the full cube to it would
             ## turn a small index into hundreds of megabytes.
             build_allion_store <- function(cdf_csv, force = FALSE) {
-                out <- allion_store_path(cdf_csv)
-                if (!force && stamp_is_current(out, cdf_csv, .allion_binning_tag)) return(invisible(out))
+                out <- gcms_allion_store_path(cdf_csv)
+                if (!force && gcms_stamp_is_current(out, cdf_csv, .allion_binning_tag)) return(invisible(out))
                 framed <- data.table::as.data.table(data.table::fread(cdf_csv))
-                framed[, mz := nominal_mz(mz)]
+                framed[, mz := gcms_nominal_mz(mz)]
                 framed <- framed[!is.na(mz) & !is.na(rt) & !is.na(intensity)]
                 agg <- framed[, .(abundance = sum(intensity)), by = .(rt, mz)]
                 ## Keep every single-detector scan. Dropping non-positive rows is the
@@ -1095,8 +1322,8 @@
                 ## the positive part of each peak.
                 agg <- agg[mz == 0 | abundance > 0]
                 data.table::setorder(agg, rt, mz)
-                fwrite_atomic(agg, out)
-                write_stamp(out, cdf_csv, .allion_binning_tag)
+                gcms_fwrite_atomic(agg, out)
+                gcms_write_stamp(out, cdf_csv, .allion_binning_tag)
                 invisible(out)
             }
 
@@ -1115,8 +1342,8 @@
             }
 
             load_allions <- function(cdf_csv) {
-                p <- allion_store_path(cdf_csv)
-                fresh <- stamp_is_current(p, cdf_csv, .allion_binning_tag)
+                p <- gcms_allion_store_path(cdf_csv)
+                fresh <- gcms_stamp_is_current(p, cdf_csv, .allion_binning_tag)
                 if (!fresh) {
                     if (!is.null(.allion_cache[[cdf_csv]])) rm(list = cdf_csv, envir = .allion_cache)
                     build_allion_store(cdf_csv, force = TRUE)
@@ -1181,38 +1408,7 @@
                 w[]
             }
 
-            ## y transform for the overlay, plus the per-line opacity that goes
-            ## with it. "norm" divides each ion by its own maximum in the window,
-            ## which is what actually makes co-elution obvious: every ion becomes
-            ## a unit-height peak, so a two-scan apex shift is unmissable. It
-            ## also destroys quantitation and would draw a noise-level ion as
-            ## tall as the base peak -- hence opacity carrying absolute
-            ## abundance in that mode, and only in that mode.
-            allion_scale <- function(w, mode) {
-                w <- data.table::copy(w)
-                if (identical(mode, "norm")) {
-                    w[, peak := max(net), by = mz]
-                    w[, y := ifelse(peak > 0, net / peak, 0)]
-                    top <- max(w$peak)
-                    w[, opacity := 0.10 + 0.65 * (peak / top)^0.35]
-                    w[, peak := NULL]
-                } else {
-                    w[, y := switch(mode,
-                        raw  = net,
-                        sqrt = sqrt(net),
-                        log  = log10(pmax(net, 1)),
-                        net)]
-                    w[, opacity := 0.35]
-                }
-                w[]
-            }
 
-            allion_y_label <- function(mode) switch(mode,
-                raw  = "Abundance (counts, baseline removed)",
-                sqrt = "sqrt abundance (baseline removed)",
-                log  = "log10 abundance (baseline removed)",
-                norm = "Abundance, each ion scaled to its own max",
-                "Abundance")
 
             ## Shiny infers the brush's x/y variable names from the FIRST LAYER's
             ## aes, then brushedPoints() looks those names up as columns of the
@@ -1245,13 +1441,6 @@
             ## because building a second grob is not free on a million-row plot.
             .panel_cache <- new.env(parent = emptyenv())
 
-            ## Read a panel_params range whichever way this ggplot2 stores it.
-            pp_range <- function(pp, axis) {
-                v <- pp[[paste0(axis, ".range")]]
-                if (is.null(v)) v <- tryCatch(pp[[axis]]$continuous_range, error = function(e) NULL)
-                if (is.null(v)) v <- tryCatch(pp[[axis]]$dimension(), error = function(e) NULL)
-                if (length(v) == 2 && all(is.finite(v)) && v[2] > v[1]) v else NULL
-            }
 
             ## view_key and n_facets are part of the CACHE KEY, not decoration: the
             ## margins depend on the plot, not only on the image size. Measured at
@@ -1372,8 +1561,8 @@
                     pps <- built$layout$panel_params
                     if (nrow(bl) == nrow(panels) && !is.null(bl$PANEL)) {
                         pidx <- as.integer(bl$PANEL)
-                        panels$y_data_lo <- vapply(pidx, function(k) { v <- pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[1] }, numeric(1))
-                        panels$y_data_hi <- vapply(pidx, function(k) { v <- pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[2] }, numeric(1))
+                        panels$y_data_lo <- vapply(pidx, function(k) { v <- gcms_pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[1] }, numeric(1))
+                        panels$y_data_hi <- vapply(pidx, function(k) { v <- gcms_pp_range(pps[[k]], "y"); if (is.null(v)) NA_real_ else v[2] }, numeric(1))
                     } else {
                         panels$y_data_lo <- NA_real_
                         panels$y_data_hi <- NA_real_
@@ -1386,7 +1575,7 @@
                     ## is out by 5% of the window, worst at the panel edges.
                     pp <- built$layout$panel_params[[1]]
                     list(x = xf, y = yf, panels = panels, facet_var = facet_var,
-                         x_range = pp_range(pp, "x"), y_range = pp_range(pp, "y"))
+                         x_range = gcms_pp_range(pp, "x"), y_range = gcms_pp_range(pp, "y"))
                 }, error = function(e) NULL)
                 grDevices::dev.off(); unlink(tf)
                 ok <- function(v) length(v) == 2 && all(is.finite(v)) && v[2] > v[1]
@@ -1397,71 +1586,7 @@
                 NULL
             }
 
-            ## Turn a fallback brush coordinate into a true fraction of the rendered
-            ## IMAGE, using the brush's OWN reported domain.
-            ##
-            ## Shiny's degenerate coordmap does NOT report 0..1, which is what this
-            ## code assumed for three weeks. The labelled probe on host1
-            ## (2026-10-02, 5 facets, 1124x700 css at a 2x pixel ratio) came back:
-            ##
-            ##   domain  left=-0.04 right=1.04 bottom=-0.04 top=1.04
-            ##   range   left=0 right=2248 bottom=1399 top=-1
-            ##   coords_img xmin=230 xmax=1222 ymin=296 ymax=364
-            ##   xmin=0.0704982 xmax=0.547082 ymin=0.758429 ymax=0.810886
-            ##
-            ## i.e. a UNIT domain carrying ggplot's own 5% expansion, mapped across
-            ## the WHOLE 2248x1400 image. Inverting Shiny's transform reproduces the
-            ## raw pixels to five decimals on both axes: 230/2248 = 0.10231 =
-            ## (0.0704982 + 0.04)/1.08. So reading xmin straight as a fraction is a
-            ## -0.04 shift plus a 1.08 stretch -- about 4% of the window, which is
-            ## why every reading was "nearly right" and why a drag inside a panel
-            ## could report a y fraction ABOVE the panel top (0.8109 vs the panel's
-            ## 0.8016) and get clamped, losing the top of the y-zoom.
-            ##
-            ## y needs no flipping: Shiny has already done it (range top=-1 < bottom
-            ## =1399), so the larger value is the higher point on the picture. That
-            ## is the "y fractions are measured from the BOTTOM" rule, confirmed.
-            ##
-            ## Returns NULL -- leaving the caller's old reading untouched -- unless
-            ## the domain really is a unit domain. A surviving coordmap reports the
-            ## domain in DATA units (365..4664 here), and those coordinates are
-            ## already data values that must never be rescaled.
-            brush_unit_fraction <- function(brush, axis = c("x", "y")) {
-                axis <- match.arg(axis)
-                d <- brush$domain
-                if (is.null(d)) return(NULL)
-                if (axis == "x") {
-                    lo <- d$left;   hi <- d$right; v <- c(brush$xmin, brush$xmax)
-                } else {
-                    lo <- d$bottom; hi <- d$top;   v <- c(brush$ymin, brush$ymax)
-                }
-                if (is.null(lo) || is.null(hi) || length(lo) != 1 || length(hi) != 1) return(NULL)
-                lo <- suppressWarnings(as.numeric(lo)); hi <- suppressWarnings(as.numeric(hi))
-                if (!is.finite(lo) || !is.finite(hi)) return(NULL)
-                span <- hi - lo
-                ## A unit domain: span ~1 (1.08 with the expansion, 1.0 without) and
-                ## an origin near 0. Anything else is a real data axis.
-                if (!is.finite(span) || span < 0.9 || span > 1.2 || abs(lo) > 0.2) return(NULL)
-                if (length(v) != 2 || !all(is.finite(v))) return(NULL)
-                (v - lo) / span
-            }
 
-            ## Which panel (1 = top) a from-the-bottom image fraction falls in.
-            ## Returns NULL when the geometry is unknown; a fraction in a gutter or
-            ## just off the stack snaps to the nearest panel, because a drag that
-            ## overshoots the panel edge is the normal gesture, not an error.
-            panel_at_bottom_fraction <- function(pf, frac_from_bottom) {
-                if (is.null(pf) || is.null(pf$panels) || nrow(pf$panels) == 0) return(NULL)
-                if (!is.finite(frac_from_bottom)) return(NULL)
-                lo <- 1 - pf$panels$y_hi          # panels carry fractions from the TOP
-                hi <- 1 - pf$panels$y_lo
-                hit <- which(frac_from_bottom >= lo & frac_from_bottom <= hi)
-                if (length(hit) >= 1) {
-                    return(hit[which.min(abs(frac_from_bottom - (lo[hit] + hi[hit]) / 2))])
-                }
-                near <- which.min(pmin(abs(frac_from_bottom - lo), abs(frac_from_bottom - hi)))
-                if (length(near) == 1) near else NULL
-            }
 
             ## The sample whose panel a plot CLICK landed in (the Align strip picks it
             ## this way). Same trust order as a brush: Shiny's panelvar1 if the coordmap
@@ -1475,9 +1600,9 @@
                                         view_key = last_brush_key, n_facets = last_brush_facets,
                                         window = last_brush_window, facet_sig = last_brush_facet_sig)
                 if (is.null(pfull) || is.null(pfull$panels) || !nrow(pfull$panels)) return(NULL)
-                fy <- brush_unit_fraction(list(ymin = click$y, ymax = click$y, domain = click$domain), "y")
+                fy <- gcms_brush_unit_fraction(list(ymin = click$y, ymax = click$y, domain = click$domain), "y")
                 if (is.null(fy)) return(NULL)
-                idx <- panel_at_bottom_fraction(pfull, fy[1])
+                idx <- gcms_panel_at_bottom_fraction(pfull, fy[1])
                 if (is.null(idx)) NULL else as.character(pfull$panels$facet[idx])
             }
 
@@ -1541,11 +1666,11 @@
                     why <- "the y coordinates are not usable fractions"
                 }
                 ## The reported values are a UNIT DOMAIN, not 0..1 -- see
-                ## brush_unit_fraction(). Without this the top of a drag inside a
+                ## gcms_brush_unit_fraction(). Without this the top of a drag inside a
                 ## panel reads ABOVE the panel top and clamps, so a y-zoom lost its
                 ## ceiling (host1 probe 2026-10-02: 0.8109 against a panel topping
                 ## out at 0.8016, which is how "it is not getting the top y" looked).
-                fry <- brush_unit_fraction(brush, "y")
+                fry <- gcms_brush_unit_fraction(brush, "y")
                 yfr <- if (!is.null(fry)) fry else c(brush$ymin, brush$ymax)
                 if (!is.null(why)) {
                     cat(paste0("  y-zoom skipped (", why, "); raw y ",
@@ -1582,7 +1707,7 @@
                 ## in-facet drag in panel 1 and the same drag in panel 20 used to
                 ## produce completely different zooms.
                 centre <- mean(yfr)
-                idx <- if (!is.null(pf$panels) && nrow(pf$panels) > 1) panel_at_bottom_fraction(pf, centre) else NULL
+                idx <- if (!is.null(pf$panels) && nrow(pf$panels) > 1) gcms_panel_at_bottom_fraction(pf, centre) else NULL
                 if (!is.null(idx)) {
                     panel_lo <- 1 - pf$panels$y_hi[idx]
                     panel_hi <- 1 - pf$panels$y_lo[idx]
@@ -1619,23 +1744,6 @@
                 vals
             }
 
-            ## A peak add or a spectrum extraction belongs to ONE sample. When the
-            ## facet cannot be recovered the selection spans every panel on the page,
-            ## and taking $path_to_cdf_csv[1] silently attributes it to the first
-            ## sample in table order rather than the brushed one -- a wrong peak
-            ## written against a wrong sample, with an area summed over all twenty.
-            ## Refuse and say so; the diagnostics above name what was resolved.
-            ## (Shift+G is exempt by design: it writes the same window to every
-            ## sample on purpose.)
-            single_sample <- function(pp, what) {
-                if (is.null(pp) || nrow(pp) == 0) return(NULL)
-                s <- unique(as.character(pp$path_to_cdf_csv))
-                if (length(s) == 1) return(s)
-                cat(paste0(what, " needs a brush inside ONE sample's panel, but this selection covers ",
-                           length(s), " samples (", paste(utils::head(s, 3), collapse = ", "),
-                           if (length(s) > 3) ", ..." else "", "). Nothing written.\n"))
-                NULL
-            }
 
             ## The mass-spectrum plots have the chromatogram's coordmap problem too,
             ## and a worse symptom: with an empty mapping a bare brushedPoints()
@@ -1658,7 +1766,7 @@
 
                 rng <- range(df[[xcol]], na.rm = TRUE)
                 bxmin <- brush$xmin; bxmax <- brush$xmax
-                frx <- brush_unit_fraction(brush, "x")
+                frx <- gcms_brush_unit_fraction(brush, "x")
                 if ((!is.null(frx) || (bxmin >= 0 && bxmax <= 1)) && rng[2] > 1) {
                     fr <- if (!is.null(frx)) frx else c(bxmin, bxmax)
                     pfm <- NULL
@@ -1684,8 +1792,13 @@
                 df[!is.na(df[[xcol]]) & df[[xcol]] >= bxmin & df[[xcol]] <= bxmax, , drop = FALSE]
             }
 
-            brushed_chromatogram <- function(df, brush) {
+            ## multi = TRUE (Shift+A / Shift+E only): a brush that covers the
+            ## middles of two or more panels selects all of those samples, and the
+            ## result carries attr "gcms_multi_panel" = TRUE so the caller knows the
+            ## several samples are intended, not an unresolved facet.
+            brushed_chromatogram <- function(df, brush, multi = FALSE) {
                 empty <- df[0, , drop = FALSE]
+                multi_applied <- FALSE
                 if (is.null(brush)) return(empty)
 
                 xv <- if (!is.null(brush$mapping)) brush$mapping$x else NULL
@@ -1777,7 +1890,7 @@
                 ## to the first second of the run (ticks 0.25/0.5/0.75) whatever was
                 ## brushed. The range check now guards only the domain-less legacy
                 ## reading, where a 0..1 value could genuinely be a data coordinate.
-                frx <- brush_unit_fraction(brush, "x")
+                frx <- gcms_brush_unit_fraction(brush, "x")
                 if (is.null(xv_mapped) &&
                     (!is.null(frx) || (rng[1] > 1 && bxmin >= 0 && bxmax <= 1))) {
                     win_lo <- if (!is.null(x_axis_start) && length(x_axis_start) == 1 && is.finite(x_axis_start)) x_axis_start else rng[1]
@@ -1858,13 +1971,19 @@
                     ## centre sat ~2% too high, which on the host1 probe put a
                     ## gesture made in panel 4 into panel 5 and attributed the
                     ## peak to wildtype7 instead of vector7.
-                    fry <- brush_unit_fraction(brush, "y")
+                    fry <- gcms_brush_unit_fraction(brush, "y")
                     ycentre <- if (!is.null(fry)) mean(fry) else mean(c(brush$ymin, brush$ymax))
-                    pidx <- panel_at_bottom_fraction(pfull, ycentre)
-                    if (!is.null(pidx) && !is.na(pfull$panels$facet[pidx])) {
+                    cov <- if (isTRUE(multi) && !is.null(fry)) gcms_panels_covering(pfull, fry) else integer(0)
+                    cov_values <- as.character(pfull$panels$facet[cov]); cov_values <- cov_values[!is.na(cov_values)]
+                    pidx <- if (length(cov_values) >= 2) NULL else gcms_panel_at_bottom_fraction(pfull, ycentre)
+                    if (length(cov_values) >= 2) {
+                        panel_value <- cov_values
+                        panel_source <- paste0("panels ", paste(cov, collapse = ", "), " of ", nrow(pfull$panels),
+                                               ", whose middles the brush covers")
+                    } else if (!is.null(pidx) && !is.na(pfull$panels$facet[pidx])) {
                         panel_value <- pfull$panels$facet[pidx]
                         panel_source <- paste0("panel ", pidx, "/", nrow(pfull$panels), " by y position")
-                        ## panel_at_bottom_fraction() SNAPS to the nearest panel when the
+                        ## gcms_panel_at_bottom_fraction() SNAPS to the nearest panel when the
                         ## centre lands in a gutter, which is right for a drag that
                         ## overshoots -- and indistinguishable, silently, from a y
                         ## convention that is simply wrong. The host1 log of 2026-10-02
@@ -1883,8 +2002,12 @@
                     }
                 }
                 if (!is.null(pv) && pv %in% names(df) && !is.null(panel_value)) {
-                    keep <- keep & as.character(df[[pv]]) == panel_value
-                    cat(paste0("Brush resolved to facet ", panel_value, " (", panel_source, ").\n"))
+                    keep <- keep & as.character(df[[pv]]) %in% panel_value
+                    ## Marked multi only HERE, where the facet filter was actually applied:
+                    ## an unfiltered selection spans every panel and must still be refused.
+                    multi_applied <- length(panel_value) > 1
+                    cat(paste0("Brush resolved to ", if (length(panel_value) > 1) paste0(length(panel_value), " facets: ") else "facet ",
+                               paste(panel_value, collapse = ", "), " (", panel_source, ").\n"))
                 } else if (!is.null(pfull) && !is.null(pfull$panels) && nrow(pfull$panels) > 1) {
                     cat("Brush facet could not be resolved - the selection spans every panel on the page.\n")
                 }
@@ -1897,6 +2020,7 @@
                     cat(paste0("Brush selected ", nrow(out), " points, ", xv, " ",
                                signif(min(out[[xv]]), 6), " to ", signif(max(out[[xv]]), 6), ".\n"))
                 }
+                if (isTRUE(multi_applied)) attr(out, "gcms_multi_panel") <- TRUE
                 out
             }
 
@@ -2062,8 +2186,8 @@
             store_is_fresh <- function(cdf_csv) {
                 f <- .store_fresh[[cdf_csv]]
                 if (is.null(f)) {
-                    p <- allion_store_path(cdf_csv)
-                    f <- file.exists(p) && stamp_is_current(p, cdf_csv, .allion_binning_tag)
+                    p <- gcms_allion_store_path(cdf_csv)
+                    f <- file.exists(p) && gcms_stamp_is_current(p, cdf_csv, .allion_binning_tag)
                     assign(cdf_csv, f, envir = .store_fresh)
                 }
                 f
@@ -2071,7 +2195,7 @@
             ion_area_key <- function(cdf_csv, start_rt, end_rt, threshold)
                 paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
                       format(threshold, digits = 17),
-                      file_stamp(allion_store_path(cdf_csv)), sep = "|")
+                      gcms_file_stamp(gcms_allion_store_path(cdf_csv)), sep = "|")
             peak_ion_area_memo <- function(cdf_csv, start_rt, end_rt, threshold) {
                 if (store_is_fresh(cdf_csv)) {
                     key <- ion_area_key(cdf_csv, start_rt, end_rt, threshold)
@@ -2105,7 +2229,7 @@
             .ion_area_cache_keys <- character(0)       # what the file on disk holds
             ## The integration code AND what builds the store it reads (binning, loading).
             ion_area_code_tag <- function() paste(c(deparse(peak_ion_area), deparse(load_allions),
-                                                    deparse(build_allion_store), deparse(nominal_mz),
+                                                    deparse(build_allion_store), deparse(gcms_nominal_mz),
                                                     .allion_binning_tag), collapse = "\n")
             ion_area_cache_load <- function(path = .ion_area_cache_file) {
                 if (.ion_area_cache_loaded) return(invisible(0L))
@@ -2147,7 +2271,7 @@
             .spectrum_cache_file <- "peak_spectra_cache.rds"
             .spectrum_cache_loaded <- FALSE
             spectrum_code_tag <- function() paste(c(deparse(gcms_peak_spectrum), deparse(load_allions),
-                                                    deparse(build_allion_store), deparse(nominal_mz),
+                                                    deparse(build_allion_store), deparse(gcms_nominal_mz),
                                                     .allion_binning_tag), collapse = "\n")
             ## `get_store()` returns list(store, rts) for the sample, or NULL; it is
             ## only called on a miss, so a press whose spectra are all cached never
@@ -2155,7 +2279,7 @@
             ## missing store skips the memo, so the store is reloaded (and rebuilt).
             spectrum_key <- function(cdf_csv, start_rt, end_rt)
                 paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
-                      file_stamp(allion_store_path(cdf_csv)), sep = "|")
+                      gcms_file_stamp(gcms_allion_store_path(cdf_csv)), sep = "|")
             peak_spectrum_memo <- function(cdf_csv, start_rt, end_rt, get_store) {
                 key <- spectrum_key(cdf_csv, start_rt, end_rt)
                 .spectrum_keys_used <<- c(.spectrum_keys_used, key)
@@ -2311,7 +2435,7 @@
                     ## acquisition was replaced under the same filename. Before the
                     ## stamp, that case silently kept serving the previous run.
 
-                        cdf_csv_stale <- !stamp_is_current(paths_to_cdf_csvs[file], paths_to_cdfs[file])
+                        cdf_csv_stale <- !gcms_stamp_is_current(paths_to_cdf_csvs[file], paths_to_cdfs[file])
 
                         if ( cdf_csv_stale ) {
 
@@ -2319,14 +2443,14 @@
                                 cat(paste0(paths_to_cdfs[file], " has changed since its CSV was built - rebuilding it and everything derived from it.\n"))
                             }
 
-                            cdf_type_this <- detect_cdf_type(paths_to_cdfs[file])
+                            cdf_type_this <- gcms_detect_cdf_type(paths_to_cdfs[file])
 
                             if (cdf_type_this == "chrom") {
 
                                 ## ANDI-Chrom single-detector file (e.g. GC-TCD).
                                 ## One row per timepoint with mz=0 sentinel.
                                 cat(paste("CDF (single-detector / chromatography format) to CSV conversion. Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
-                                    framedDataFile <- read_chrom_cdf_as_framed(paths_to_cdfs[file])
+                                    framedDataFile <- gcms_read_chrom_cdf_as_framed(paths_to_cdfs[file])
 
                                 cat("   Writing out data file as CSV... \n")
                                     data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
@@ -2368,9 +2492,9 @@
                             ## and this sample's rows in chromatograms.csv (which is
                             ## the table actually plotted, so leaving them there is
                             ## exactly how a replaced acquisition stayed invisible).
-                            write_stamp(paths_to_cdf_csvs[file], paths_to_cdfs[file])
-                            unlink(c(allion_store_path(paths_to_cdf_csvs[file]),
-                                     stamp_path(allion_store_path(paths_to_cdf_csvs[file]))))
+                            gcms_write_stamp(paths_to_cdf_csvs[file], paths_to_cdfs[file])
+                            unlink(c(gcms_allion_store_path(paths_to_cdf_csvs[file]),
+                                     gcms_stamp_path(gcms_allion_store_path(paths_to_cdf_csvs[file]))))
                             if (!is.null(.allion_cache[[paths_to_cdf_csvs[file]]])) {
                                 rm(list = paths_to_cdf_csvs[file], envir = .allion_cache)
                             }
@@ -2392,7 +2516,7 @@
                     ## lands during ingest, where there is already a progress
                     ## log, instead of freezing the first redraw.
 
-                        if ( isTRUE(all_ion_view) && !stamp_is_current(allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file], .allion_binning_tag) ) {
+                        if ( isTRUE(all_ion_view) && !gcms_stamp_is_current(gcms_allion_store_path(paths_to_cdf_csvs[file]), paths_to_cdf_csvs[file], .allion_binning_tag) ) {
                             cat(paste("   Building all-ion store for ", paths_to_cdf_csvs[file], "\n", sep = ""))
                             build_allion_store(paths_to_cdf_csvs[file])
                         }
@@ -2522,22 +2646,13 @@
 
             ## Set up new samples monolist
 
-                ## ONE derivation for Sample_ID, used by both the create and the
-                ## append path below. They used to disagree: the first write stored
-                ## the full `foo.CDF.csv`, while later appends ran
-                ## gsub("\\..*$", "", ...) -- truncating at the FIRST dot, so
-                ## `WT.rep2.CDF` and `WT.rep3.CDF` both collapsed to `WT`. Strip only
-                ## the .CDF.csv suffix (and any directory), as the facet labels do.
-                sample_id_from_path <- function(x) {
-                    gsub("\\.CDF\\.csv$", "", gsub(".*/", "", x), ignore.case = TRUE)
-                }
 
                 ## If it doesn't exist, create it
 
                     if ( !file.exists("samples_monolist.csv") ) {
 
                         samples_monolist <- data.frame(
-                            Sample_ID = sample_id_from_path(unique(chromatograms$path_to_cdf_csv)),
+                            Sample_ID = gcms_sample_id_from_path(unique(chromatograms$path_to_cdf_csv)),
                             rt_offset = 0,
                             baseline_window = baseline_window,
                             path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
@@ -2561,7 +2676,7 @@
                         if ( length(missing_from_samples_monolist) > 0 ) {
 
                             samples_monolist_additions <- data.frame(
-                                Sample_ID = sample_id_from_path(missing_from_samples_monolist),
+                                Sample_ID = gcms_sample_id_from_path(missing_from_samples_monolist),
                                 rt_offset = 0,
                                 baseline_window = baseline_window,
                                 path_to_cdf_csv = missing_from_samples_monolist
@@ -2833,6 +2948,10 @@
                         .gcms-shortcuts { padding-left: 0; list-style-position: inside; margin-bottom: 0; }
                         .gcms-shortcuts li.gcms-sep { list-style: none; }
                         #key, #message_window { margin-bottom: 6px; }
+                        /* Pinned spectra + buttons; the chromatograms scroll under them. */
+                        .gcms-sticky-top { position: -webkit-sticky; position: sticky; top: 0; z-index: 100;
+                                           background: #fff; padding-bottom: 4px;
+                                           box-shadow: 0 3px 4px -3px rgba(0,0,0,.25); }
                     ")),
                     tags$script(HTML("
                         $(function() {
@@ -2897,9 +3016,9 @@
                             tags$li("Shift + Q => Update chromatogram"),
                             tags$li(class = "gcms-sep", "------------------"),
                             tags$li("Shift + 6 => Detect peaks"),
-                            tags$li("Shift + A => Add single peak"),
+                            tags$li("Shift + A => Add peak (every panel the brush spans)"),
                             tags$li("Shift + G => Add global peak"),
-                            tags$li("Shift + E => Excise single peak"),
+                            tags$li("Shift + E => Excise peak (every panel the brush spans)"),
                             tags$li("Shift + R => Remove global peak"),
                             tags$li("Shift + 0 => Remove ALL peaks"),
                             tags$li("Shift + Z => Save peak table"),
@@ -2987,7 +3106,13 @@
 
                             tabPanel("Main",
 
-                                verticalLayout(
+                                ## The two mass-spectrum panels and the button row stay pinned
+                                ## at the top while the chromatograms scroll beneath them (Lucas,
+                                ## 2026-10-22). Rows built by hand, not with verticalLayout(),
+                                ## because that wraps every child in its own row and a sticky
+                                ## element can only stick within its parent: the pinned block
+                                ## has to be ONE row whose parent is the whole tab.
+                                tags$div(class = "row gcms-sticky-top", column(12,
 
                                     plotOutput(
                                         outputId = "massSpectra_1",
@@ -3016,12 +3141,17 @@
                                             ## Slide the retention-time window by half its width.
                                             actionButton("pan_back", "\u25c0 Earlier", style = "margin-left:15px;"),
                                             actionButton("pan_fwd", "Later \u25b6"),
+                                            ## Step back and forth through past zoom windows.
+                                            actionButton("view_back", "\u25c0 Previous view", style = "margin-left:15px;"),
+                                            actionButton("view_fwd", "Subsequent view \u25b6"),
                                             tags$span(
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
                                             )
                                         )
-                                    ),
+                                    )
+                                )),
+                                fluidRow(column(12,
                                     ## Align (Lucas, 2026-10-21): a pair of arrows beside EACH panel moves
                                     ## that sample along rt by the sidebar's Align step. The column is
                                     ## filled by the renderer (gcms_align_rows message, positions from
@@ -3047,10 +3177,11 @@
                                       ## The height is set per render by renderPlot(height =
                                       ## chromatogram_height), so it follows the mode and page.
                                       height = "auto"
-                                    ))),
+                                    ))))),
 
+                                fluidRow(column(12,
                                     rhandsontable::rHandsontableOutput("peak_table")
-                                ),
+                                )),
 
                                 tags$head(
                                     HTML(
@@ -3139,8 +3270,10 @@
                 ##   Shift+Q              recompute if anything changed, else zoom    (81)
                 ##   Shift+W              always recompute                            (87)
                 ##   Shift+Z              save peak_ID edits from the table           (90)
-                ##   Shift+A / Shift+G    add the brushed peak: this sample / all     (65 / 71)
-                ##   Shift+E / Shift+R    remove peaks inside the brush: this / all   (69 / 82)
+                ##   Shift+A / Shift+G    add the brushed peak: brushed samples / all (65 / 71)
+                ##   Shift+E / Shift+R    remove peaks inside the brush: brushed / all (69 / 82)
+                ##                        ("brushed samples": every panel whose middle the
+                ##                        brush covers, else the one panel it sits in)
                 ##   Shift+6 (^)          automatic peak detection                    (94)
                 ##   Shift+0 ())          remove ALL peaks                            (41)
                 ##   Shift+1 (!)          mass spectrum of the brushed region         (33)
@@ -4315,6 +4448,44 @@
                         observeEvent(input$pan_back, slide_view(-1))
                         observeEvent(input$pan_fwd,  slide_view(+1))
 
+                    ## View history (begin) -- test_view_history.R extracts this block.
+                    ## Previous view / Subsequent view. Every view change (a Shift+Q zoom
+                    ## or reset, Earlier / Later) ends in a redraw, so the history is
+                    ## recorded there: on each redraw, a view that differs from the one at
+                    ## the current position becomes a new entry. Stepping sets the position
+                    ## FIRST and then restores that view, so its own redraw finds them equal
+                    ## and records nothing. Plain environment, not `<<-` globals.
+                        view_hist <- new.env(parent = emptyenv())
+                        view_hist$h <- NULL
+                        current_view <- function() list(xs = x_axis_start, xe = x_axis_end,
+                                                        ys = y_axis_start, ye = y_axis_end,
+                                                        yz = y_zoom, yk = y_zoom_key)
+                        ## ignoreInit: the view globals live in analyzeGCMSdata7()'s frame, which
+                        ## every browser session of one launch shares, so at startup they can hold
+                        ## an EARLIER session's zoom. Recording it would offer a view this session
+                        ## never showed (seen on host1 after a page reload).
+                        observeEvent(redraw_trigger(), {
+                            view_hist$h <- gcms_view_history_record(view_hist$h, current_view())
+                        }, ignoreInit = TRUE)
+                        step_view <- function(direction) {
+                            nh <- gcms_view_history_step(view_hist$h, direction)
+                            if (is.null(nh)) {
+                                notify(if (direction < 0) "No earlier view to go back to." else "No later view to go forward to.")
+                                return()
+                            }
+                            v <- nh$views[[nh$pos]]
+                            view_hist$h <- nh
+                            x_axis_start <<- v$xs; x_axis_end <<- v$xe
+                            y_axis_start <<- v$ys; y_axis_end <<- v$ye
+                            y_zoom <<- v$yz; y_zoom_key <<- v$yk
+                            cat(sprintf("View %d of %d: x-axis %s to %s\n", nh$pos, length(nh$views),
+                                        signif(v$xs, 8), signif(v$xe, 8)))
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                        }
+                        observeEvent(input$view_back, step_view(-1))
+                        observeEvent(input$view_fwd,  step_view(+1))
+                    ## View history (end)
+
                     ## Align: move one sample along rt. Same tables Shift+Q would rebuild,
                     ## updated in place (gcms_shift_sample_offset()), so it redraws at once.
                     ## Driven by the arrow pair beside each panel (input$align_nudge, sent by
@@ -4418,7 +4589,7 @@
                             h <- (height - L[["top"]] - L[["bottom"]] - (n - 1) * L[["gap"]]) / n
                             if (!is.finite(h) || h <= 0) return(list())
                             lapply(seq_len(n), function(i) list(
-                                sample = samples[i], label = unname(sample_id_from_path(samples[i])),
+                                sample = samples[i], label = unname(gcms_sample_id_from_path(samples[i])),
                                 y = round(L[["top"]] + (i - 1) * (h + L[["gap"]]) + h / 2, 1)))
                         }
 
@@ -4506,7 +4677,7 @@
                                 ## entry per facet, but this built a named vector as long as the
                                 ## table -- two gsub passes and a names<- over ~1-2M elements on
                                 ## every redraw, including every page flip.
-                                facet_labels <- sample_id_from_path(page_samples)
+                                facet_labels <- gcms_sample_id_from_path(page_samples)
                                 names(facet_labels) <- page_samples
 
                             ## Gather the all-ion data for the page, one sample at a time.
@@ -4537,7 +4708,7 @@
                                         if (length(off) == 0 || is.na(off)) off <- 0
                                         w <- try(allion_window(s, xs - off, xe - off, thr, npx_used, rt_shift = off), silent = TRUE)
                                         if (inherits(w, "try-error") || is.null(w) || nrow(w) == 0) next
-                                        w <- allion_scale(w, mode_scale)
+                                        w <- gcms_allion_scale(w, mode_scale)
                                         ## Round the reconstructed grid. allion_window() snaps every
                                         ## sample to one shared set of centres in offset-corrected
                                         ## space, but it hands them back shifted into native rt, and
@@ -4639,7 +4810,7 @@
                                         ## two-thirds of the scale on a handful of heavy ions.
                                         scale_colour_viridis_c(name = "m/z", trans = "log10") +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = function(lims) scales::breaks_pretty(n = 80)(lims)) +
-                                        scale_y_continuous(name = allion_y_label(mode_scale),
+                                        scale_y_continuous(name = gcms_allion_y_label(mode_scale),
                                                            limits = y_limits_for(view_key, drawn_yrange,
                                                                                  zero_floor = zero_floor_y),
                                                            oob = scales::squish) +
@@ -4668,7 +4839,7 @@
                                             mapping = aes(x = rt_rt_offset, y = mz, fill = y),
                                             width = tile_w, height = 1
                                         ) +
-                                        scale_fill_viridis_c(name = allion_y_label(mode_scale)) +
+                                        scale_fill_viridis_c(name = gcms_allion_y_label(mode_scale)) +
                                         ## coord_cartesian, not scale limits: a tile straddling
                                         ## the window edge should be clipped, not dropped.
                                         ## Both limits go through coord_cartesian, not the scales:
@@ -4761,6 +4932,9 @@
                                                                           fill = peak_number_within_sample, group = peak_number_within_sample),
                                                             alpha = 0.8
                                                         ) +
+                                                        ## Detail: the Overview's confidence square at each apex,
+                                                        ## drawn under the peak number so the number stays readable.
+                                                        gcms_detail_marker_layers(gcms_overview_markers(all_labels, peak_table, confidence_thresholds)) +
                                                         geom_text(data = all_labels, mapping = aes(label = peak_number_within_sample, x = x, y = y), color = "black", size = peak_label_size)
                                                 } else {
                                                     chromatogram_plot <- chromatogram_plot +
@@ -4882,15 +5056,18 @@
                           cat("Excising single peak...\n")
                           if ( !is.null(input$chromatogram_brush )) {
 
-                            peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+                            peak_points <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush, multi = TRUE)
                             if (nrow(peak_points) == 0) {
                                 notify("Nothing excised: the selection held no data.")
                                 return()
                             }
-                            path_to_cdf_csv <- single_sample(peak_points, "Shift+E")
-                            if (is.null(path_to_cdf_csv)) return()
-                            selection_start = min(peak_points$rt)
-                            selection_end   = max(peak_points$rt)
+                            ## Several samples only when the brush covers their panels' middles
+                            ## (as Shift+A); each sample is excised over its OWN raw-rt window.
+                            if (!isTRUE(attr(peak_points, "gcms_multi_panel"))) {
+                                path_to_cdf_csv <- gcms_single_sample(peak_points, "Shift+E")
+                                if (is.null(path_to_cdf_csv)) return()
+                            }
+                            win <- gcms_brush_windows_by_sample(peak_points)
 
                             peak_table <- read.csv("peaks_monolist.csv")
                             if (nrow(peak_table) == 0) {
@@ -4898,17 +5075,13 @@
                                 return()
                             }
 
-                            # Remove any peak that fully resides within [selection_start, selection_end]
-                            # for that single cdf. INCLUSIVE bounds: with `>` and `<` a peak could not
-                            # be excised by the very brush that created it, because Shift+A set its
-                            # bounds to exactly this selection's min and max.
-                            peak_table <- peak_table[!
-                              apply(cbind(
-                                peak_table$peak_start >= selection_start,
-                                peak_table$peak_end <= selection_end,
-                                peak_table$path_to_cdf_csv == as.character(path_to_cdf_csv)
-                              ), 1, all)
-                            ,]
+                            # Remove any peak that fully resides within its sample's window. INCLUSIVE
+                            # bounds: with `>` and `<` a peak could not be excised by the very brush
+                            # that created it, because Shift+A set its bounds to exactly this
+                            # selection's min and max.
+                            n_before <- nrow(peak_table)
+                            peak_table <- gcms_excise_windows(peak_table, win)
+                            n_gone <- n_before - nrow(peak_table)
 
                             write.table(
                               x = peak_table,
@@ -4918,7 +5091,8 @@
                               col.names = TRUE,
                               sep = ","
                             )
-                            notify("Peak excised.")
+                            notify(if (nrow(win) > 1) paste0("Excised ", n_gone, " peak", if (n_gone == 1) "" else "s",
+                                                              " across ", nrow(win), " samples.") else "Peak excised.")
                           } else {
                             notify("Nothing excised: draw a selection first.")
                           }
@@ -5006,7 +5180,7 @@
                                 ## Evaluate the brush ONCE. It was called four times here,
                                 ## each re-running the whole coordinate conversion and printing
                                 ## its own diagnostic line.
-                                pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
+                                pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush, multi = TRUE)
 
                                 ## An empty selection must not be written. brushed_chromatogram()
                                 ## returns a 0-row frame on several paths (brush outside the data,
@@ -5017,8 +5191,14 @@
                                     notify("No peak added: the selection held no data.")
                                     return()
                                 }
-                                pp_sample <- single_sample(pp, "Shift+A")
-                                if (is.null(pp_sample)) return()
+                                ## A brush covering the middles of several panels adds one peak
+                                ## to EACH of those samples (Lucas, 2026-10-22), each from its own
+                                ## points. Anything else must still resolve to one sample.
+                                if (!isTRUE(attr(pp, "gcms_multi_panel"))) {
+                                    pp_sample <- gcms_single_sample(pp, "Shift+A")
+                                    if (is.null(pp_sample)) return()
+                                }
+                                win <- gcms_brush_windows_by_sample(pp)
 
                                 ## area = TIC minus baseline, both read out of the LONG format
                                 ## (rows tagged ion == 0 / ion == "baseline", value in `abundance`).
@@ -5028,11 +5208,11 @@
                                 ## with area = 0.
                                 write.table(
                                     x = data.frame(
-                                            peak_start = min(pp$rt),
-                                            peak_end = max(pp$rt),
+                                            peak_start = win$start,
+                                            peak_end = win$end,
                                             peak_ID = "unknown",
-                                            path_to_cdf_csv = pp_sample,
-                                            area = sum(pp$abundance[pp$ion == 0]) - sum(pp$abundance[pp$ion == "baseline"])
+                                            path_to_cdf_csv = win$path_to_cdf_csv,
+                                            area = win$area
                                         ),
                                     file = "peaks_monolist.csv",
                                     append = TRUE,
@@ -5042,7 +5222,7 @@
                                 )
 
                                 render_peak_table()
-                                notify("Peak added.")
+                                notify(if (nrow(win) > 1) paste0("Peak added to ", nrow(win), " samples.") else "Peak added.")
                             }
                     })
 
@@ -5125,7 +5305,7 @@
                                     notify("No spectrum extracted: the selection held no data.")
                                     return()
                                 }
-                                sample_name_MS <- single_sample(ms_pp, "Shift+1")
+                                sample_name_MS <- gcms_single_sample(ms_pp, "Shift+1")
                                 if (is.null(sample_name_MS)) return()
                                 ret_start_MS <- min(ms_pp$rt)
                                 ret_end_MS <- max(ms_pp$rt)
@@ -5188,7 +5368,7 @@
                                         notify("Nothing subtracted: the selection held no data.")
                                         return()
                                     }
-                                    sub_sample <- single_sample(sub_pp, "Shift+3")
+                                    sub_sample <- gcms_single_sample(sub_pp, "Shift+3")
                                     if (is.null(sub_sample)) return()
                                     framedDataFile_to_subtract <- isolate(as.data.frame(
                                                         data.table::fread(sub_sample)
