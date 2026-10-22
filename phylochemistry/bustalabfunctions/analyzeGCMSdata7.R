@@ -2746,11 +2746,15 @@
                                        transition: left .2s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
                         #overview_toggle:checked { background: #2e7dd7; }
                         #overview_toggle:checked::before { left: 20px; }
-                        .gcms-align { display: flex; align-items: center; gap: 6px; margin: 6px 0 2px 0;
-                                       flex-wrap: wrap; }
-                        .gcms-align .form-group { margin: 0; }
-                        .gcms-align .selectize-control, .gcms-align select { min-width: 220px; }
-                        .gcms-align input[type=number] { width: 70px; }
+                        .gcms-plot-row { display: flex; align-items: flex-start; }
+                        .gcms-plot-cell { flex: 1 1 auto; min-width: 0; }
+                        .gcms-align-col { flex: 0 0 38px; position: relative; }
+                        .gcms-align-pair { position: absolute; left: 0; display: flex; gap: 1px;
+                                           transform: translateY(-50%); }
+                        .gcms-align-pair button { width: 18px; height: 16px; padding: 0; line-height: 14px;
+                                                  border: 1px solid #bbb; border-radius: 3px; background: #f7f7f7;
+                                                  font-size: 9px !important; color: #333; cursor: pointer; }
+                        .gcms-align-pair button:hover { background: #2e7dd7; color: #fff; border-color: #2e7dd7; }
                     ")),
                     tags$script(HTML("
                         (function () {
@@ -2788,13 +2792,36 @@
                             $('.gcms-orb').removeClass('gcms-on').addClass('gcms-off'); txt('Disconnected');
                           });
                         })();
+                    ")),
+                    ## Align arrows: one pair per panel, placed at the panel's vertical centre
+                    ## (rows from align_rows_for(), sent after every chromatogram render).
+                    tags$script(HTML("
+                        $(function () {
+                          Shiny.addCustomMessageHandler('gcms_align_rows', function (m) {
+                            var col = $('#gcms_align_col');
+                            col.empty().css('height', (m.height || 0) + 'px');
+                            (m.rows || []).forEach(function (r) {
+                              var pair = $('<div class=\"gcms-align-pair\"></div>').css('top', r.y + 'px')
+                                .attr('title', r.label + ': earlier / later by the Align step');
+                              [-1, 1].forEach(function (dir) {
+                                var b = $('<button type=\"button\"></button>').html(dir < 0 ? '&#9664;' : '&#9654;');
+                                b.on('click', function () {
+                                  Shiny.setInputValue('align_nudge', {sample: r.sample, dir: dir, t: Date.now()}, {priority: 'event'});
+                                });
+                                pair.append(b);
+                              });
+                              col.append(pair);
+                            });
+                          });
+                        });
                     "))
                 ),
                 tags$head(
                     tags$style(HTML("
                         .gcms-flex-row { display: flex !important; align-items: stretch; }
                         .gcms-sidebar  { flex: 0 0 auto !important; float: none !important;
-                                         max-width: none !important; }
+                                         max-width: none !important; display: flex; flex-direction: column; }
+                        .gcms-sidebar > .well { flex: 1 1 auto; margin-bottom: 0; }
                         .gcms-main     { flex: 1 1 auto !important; float: none !important;
                                          width: auto !important; min-width: 0; }
                         .gcms-drag     { flex: 0 0 6px; cursor: col-resize; background: #dcdcdc;
@@ -2846,8 +2873,10 @@
 
                 sidebarLayout(
 
+                    ## No internal scroll box (Lucas, 2026-10-21): the sidebar runs the full
+                    ## height of the page, and its grey well stretches to the bottom of the
+                    ## main column (the peak table), see .gcms-sidebar > .well.
                     sidebarPanel(
-                        style = "overflow-y: auto; max-height: 90vh;",
 
                         h4("Busta Lab GCMS Analysis App"),
 
@@ -2858,15 +2887,9 @@
                         ## Red line while the peak table holds edits Shift+Z has not saved.
                         tags$div(class = "gcms-unsaved", textOutput("unsaved_flag", inline = TRUE)),
                         ## Messages now pop up as notifications (notify()). The box stays in
-                        ## the page, hidden, because the host1 drivers in
-                        ## singleion_prototype/shiftq_profiling/ read it to know Shift+Q is done.
+                        ## the page, hidden; it does not fill while hidden, so headless drivers
+                        ## time off the busy orb instead.
                         tags$div(style = "display: none;", verbatimTextOutput("message_window", placeholder = TRUE)),
-
-                        img(
-                            src = "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/logo.png",
-                            height = "260px", 
-                            style = "border-radius:8px; margin-bottom:5px;"
-                        ),
 
                         tags$hr(),
                         strong("Keyboard Shortcuts:"),
@@ -2904,6 +2927,8 @@
                             min = 0.5, max = 4, value = 1, step = 0.25, post = "x"
                         ),
                         helpText("Overview draws thin panels so a page holds many samples; Detail draws full-height panels for integrating. Each mode remembers its own page size. Zoom is kept when you switch. Panel height stretches every panel in both modes; it redraws when you let go of the slider."),
+                        numericInput("align_step", "Align step (the \u25c0 \u25b6 beside each panel)",
+                                     value = 1, min = 0.001, step = 0.5, width = "100%"),
 
                         tags$hr(),
                         strong("Chromatogram display"),
@@ -2997,19 +3022,13 @@
                                             )
                                         )
                                     ),
-                                    ## Align: nudge one sample along rt (column-length drift).
-                                    ## Click a panel to pick its sample.
-                                    tags$div(class = "gcms-align",
-                                        tags$strong("Align:"),
-                                        selectInput("align_sample", NULL, choices = character(0), width = "260px"),
-                                        actionButton("align_back", "\u25c0"),
-                                        actionButton("align_fwd", "\u25b6"),
-                                        tags$span("step"),
-                                        numericInput("align_step", NULL, value = 1, min = 0.001, step = 0.5, width = "80px"),
-                                        actionButton("align_reset", "Reset"),
-                                        tags$span(style = "color:#555;", textOutput("align_offset", inline = TRUE))
-                                    ),
-
+                                    ## Align (Lucas, 2026-10-21): a pair of arrows beside EACH panel moves
+                                    ## that sample along rt by the sidebar's Align step. The column is
+                                    ## filled by the renderer (gcms_align_rows message, positions from
+                                    ## align_rows_for()); a click sends input$align_nudge.
+                                    tags$div(class = "gcms-plot-row",
+                                    tags$div(id = "gcms_align_col", class = "gcms-align-col"),
+                                    tags$div(class = "gcms-plot-cell",
                                     plotOutput(
                                         outputId = "chromatograms",
                                         ## resetOnNew: the box is cleared whenever the plot
@@ -3028,7 +3047,7 @@
                                       ## The height is set per render by renderPlot(height =
                                       ## chromatogram_height), so it follows the mode and page.
                                       height = "auto"
-                                    ),
+                                    ))),
 
                                     rhandsontable::rHandsontableOutput("peak_table")
                                 ),
@@ -4279,32 +4298,12 @@
 
                     ## Align: move one sample along rt. Same tables Shift+Q would rebuild,
                     ## updated in place (gcms_shift_sample_offset()), so it redraws at once.
-                        align_tick <- reactiveVal(0)
-                        observe({
-                            redraw_trigger(); b <- page_bounds()
-                            if (is.null(b) || !length(b$page_samples)) return()
-                            keep <- isolate(input$align_sample)
-                            sel <- if (!is.null(keep) && keep %in% b$page_samples) keep else b$page_samples[1]
-                            updateSelectInput(session, "align_sample",
-                                              choices = stats::setNames(b$page_samples, sub("\\.CDF\\.csv$", "", b$page_samples)),
-                                              selected = sel)
-                        })
-                        observeEvent(input$chromatogram_click, {
-                            smp <- clicked_sample(input$chromatogram_click)
-                            if (!is.null(smp)) updateSelectInput(session, "align_sample", selected = smp)
-                        })
-                        output$align_offset <- renderText({
-                            align_tick(); smp <- input$align_sample
-                            if (is.null(smp) || !nzchar(smp) || !file.exists("samples_monolist.csv")) return("")
-                            sm <- try(read.csv("samples_monolist.csv", stringsAsFactors = FALSE), silent = TRUE)
-                            if (inherits(sm, "try-error")) return("")
-                            off <- sm$rt_offset[match(smp, sm$path_to_cdf_csv)]
-                            if (length(off) != 1 || is.na(off)) "" else sprintf("offset %+g", off)
-                        })
-                        nudge_sample <- function(delta, absolute = FALSE) {
-                            smp <- input$align_sample
+                    ## Driven by the arrow pair beside each panel (input$align_nudge, sent by
+                    ## the gcms_align_rows script), by the sidebar's Align step.
+                        nudge_sample <- function(smp, delta, absolute = FALSE) {
+                            fp_was_current <- !is.null(.shiftq_fp) && identical(shiftq_fingerprint(), .shiftq_fp)
                             if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
-                            if (is.null(smp) || !nzchar(smp)) { notify("Pick a sample to align (click its panel)."); return() }
+                            if (is.null(smp) || !nzchar(smp)) { notify("No sample to align."); return() }
                             if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): aligning redraws it."); return() }
                             sm <- read.csv("samples_monolist.csv", stringsAsFactors = FALSE)
                             if (absolute) {
@@ -4320,18 +4319,37 @@
                             if (!is.null(res$peaks)) write.table(res$peaks, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
                             if (!is.null(res$profiles)) utils::write.csv(res$profiles, "coelution_profiles.csv", row.names = FALSE)
                             chromatograms_updated <<- res$chrom
-                            render_peak_table()
-                            align_tick(isolate(align_tick()) + 1)
+                            ## The plot redraws now; the peak table (thousands of rows, ~2 s
+                            ## for the browser to rebuild) once the arrows have been left alone
+                            ## for a moment -- see align_table_due below. Shift+Z is safe
+                            ## meanwhile: it copies only peak_ID onto the file as it is on disk,
+                            ## and a nudge never changes peak_ID or the row order.
+                            ## Counted from when this redraw has been SENT (onFlushed), not from
+                            ## the press: the redraw itself takes ~2.5 s, so a timer started at
+                            ## the press ran out before the plot even appeared.
+                            session$onFlushed(function() align_table_due(isolate(align_table_due()) + 1), once = TRUE)
                             redraw_trigger(isolate(redraw_trigger()) + 1)
+                            ## Align updates every table Shift+Q would rebuild, in place, so a
+                            ## recompute that was current stays current: the next Shift+Q is a zoom.
+                            if (fp_was_current) .shiftq_fp <<- shiftq_fingerprint()
                             cat(sprintf("Align: %s rt_offset now %g\n", smp, res$offset))
                         }
-                        observeEvent(input$align_back,  {
-                            st <- suppressWarnings(as.numeric(input$align_step)); if (!is.finite(st) || st <= 0) st <- 1
-                            nudge_sample(-st) })
-                        observeEvent(input$align_fwd,   {
-                            st <- suppressWarnings(as.numeric(input$align_step)); if (!is.finite(st) || st <= 0) st <- 1
-                            nudge_sample(+st) })
-                        observeEvent(input$align_reset, nudge_sample(0, absolute = TRUE))
+                        ## Debounced: a run of nudges refreshes the table once, 1.5 s after the
+                        ## last. Skipped if the table now holds unsaved peak_ID edits (a
+                        ## re-render would discard them); the next Shift+Q refreshes it then.
+                        align_table_due <- reactiveVal(0)
+                        align_table_quiet <- debounce(reactive(align_table_due()), 1500)
+                        observeEvent(align_table_quiet(), {
+                            if (align_table_quiet() > 0 && !isTRUE(isolate(table_dirty()))) render_peak_table()
+                        }, ignoreInit = TRUE)
+                        observeEvent(input$align_nudge, {
+                            a <- input$align_nudge
+                            smp <- if (is.list(a)) a$sample else NULL
+                            dir <- suppressWarnings(as.numeric(if (is.list(a)) a$dir else NA))
+                            if (is.null(smp) || !is.finite(dir)) return()
+                            st <- suppressWarnings(as.numeric(input$align_step)); if (!length(st) || !is.finite(st) || st <= 0) st <- 1
+                            nudge_sample(as.character(smp), sign(dir) * st)
+                        })
 
                     ## Page indicator text (e.g. "Page 2 / 8   (samples 21-40 of 152)")
                         output$page_indicator <- renderText({
@@ -4347,6 +4365,44 @@
                     ## and current_page (Prev/Next). Axis limits come from the globals that
                     ## Shift+Q set from the brush/defaults, so brushing does not itself force
                     ## a redraw (matches v4: press Q to refresh the view).
+                        ## Where each panel sits, for the Align arrows beside the plot. Panels
+                        ## are equal height, so the layout is three numbers per mode: the margin
+                        ## above the first panel, the gap between panels and the band below the
+                        ## last (x axis + title), all fixed in pixels by the theme. They are
+                        ## measured ONCE per mode from a 2-panel skeleton of the real plot (same
+                        ## facets, x axis, theme), through panel_fraction(); a full-size skeleton
+                        ## agreed with the real plot to 0 px but cost ~3 s at 95 panels.
+                        ## test_align.R pins the arithmetic against a full skeleton.
+                        .align_layout <- new.env(parent = emptyenv())
+                        align_layout_for <- function(ov) {
+                            k <- if (isTRUE(ov)) "ov" else "detail"
+                            if (!is.null(.align_layout[[k]])) return(.align_layout[[k]])
+                            H0 <- 600
+                            sk <- ggplot(data.frame(rt_rt_offset = c(0, 1), abundance = c(0, 1),
+                                                    path_to_cdf_csv = factor(c("a", "b"))),
+                                         aes(x = rt_rt_offset, y = abundance)) + geom_blank() +
+                                scale_x_continuous(name = "Retention (Scan number)") +
+                                scale_y_continuous(name = "Abundance (counts)") +
+                                facet_grid(path_to_cdf_csv ~ ., scales = "free_y", drop = FALSE) + theme_classic()
+                            if (isTRUE(ov)) sk <- sk + compact_theme
+                            g <- try(panel_fraction(sk, 1000, H0, view_key = paste0("align-skeleton-", k), n_facets = 2), silent = TRUE)
+                            if (inherits(g, "try-error") || is.null(g$panels) || nrow(g$panels) != 2) return(NULL)
+                            pn <- g$panels[order(g$panels$y_lo), ]
+                            out <- c(top = pn$y_lo[1] * H0, gap = (pn$y_lo[2] - pn$y_hi[1]) * H0,
+                                     bottom = (1 - pn$y_hi[2]) * H0)
+                            assign(k, out, envir = .align_layout)
+                            out
+                        }
+                        align_rows_for <- function(samples, height, ov) {
+                            n <- length(samples); L <- align_layout_for(ov)
+                            if (!n || is.null(L) || !is.finite(height)) return(list())
+                            h <- (height - L[["top"]] - L[["bottom"]] - (n - 1) * L[["gap"]]) / n
+                            if (!is.finite(h) || h <= 0) return(list())
+                            lapply(seq_len(n), function(i) list(
+                                sample = samples[i], label = unname(sample_id_from_path(samples[i])),
+                                y = round(L[["top"]] + (i - 1) * (h + L[["gap"]]) + h / 2, 1)))
+                        }
+
                         output$chromatograms <- renderPlot({
 
                             redraw_trigger()
@@ -4667,7 +4723,7 @@
                                                     markers <- gcms_overview_markers(all_labels, peak_table, confidence_thresholds)
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_point(data = markers, mapping = aes(x = x, y = y, fill = confidence),
-                                                                   shape = 22, size = 1.8, stroke = 0.2, colour = "grey20") +
+                                                                   shape = 22, size = 3, stroke = 0.25, colour = "grey20") +
                                                         scale_fill_manual(values = gcms_confidence_colours, drop = FALSE,
                                                                           name = "Spectrum agreement",
                                                                           labels = c(high = sprintf(">= %.2f", confidence_thresholds[2]),
@@ -4772,6 +4828,10 @@
                                                                    zero_floor = zero_floor_y)
                                 last_brush_window <<- suppressWarnings(as.numeric(
                                     c(xs, xe, last_brush_yrange)))
+                                ## One Align arrow pair per panel, top to bottom in page order
+                                ## (the facets are a factor over page_samples, drop = FALSE).
+                                session$sendCustomMessage("gcms_align_rows",
+                                    list(height = plot_px_h, rows = align_rows_for(page_samples, plot_px_h, ov)))
 
                             chromatogram_plot
                         }, height = chromatogram_height)
