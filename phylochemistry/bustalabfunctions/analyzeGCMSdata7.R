@@ -629,6 +629,41 @@
     ## peak whose window has TIC rows but no matching baseline rows. `cuf` is the
     ## page's rows BEFORE the facet factor is applied. Pinned against the frozen loop
     ## by test_overlay_onepass.R.
+    ## Thin a page's line data to what the screen can show (2026-10-21). For each
+    ## trace (sample x ion) the window [xs, xe] is cut into `n_bins` columns (about
+    ## one per pixel) and each column keeps only its lowest and highest points, so the
+    ## drawn line covers the same pixels (0.02% of pixels differ, by antialiasing, on
+    ## a 20-sample page) at half the draw time, while a full-range
+    ## page draws a few thousand points per trace instead of every scan (a 95-sample
+    ## Overview held ~2.5M). Rows are kept as they are (no new values) and stay in
+    ## their original order. A page with no more than 4 points per column overall
+    ## is returned untouched, so a zoomed-in view is drawn exactly as before. Only
+    ## the LINE layers use this; the peak ribbons and every area read the full rows.
+    ## test_render_thin.R.
+    gcms_thin_lines <- function(d, xs, xe, n_bins = 2000L, x = "rt_rt_offset", y = "abundance",
+                                by = c("path_to_cdf_csv", "ion")) {
+        if (is.null(d) || nrow(d) == 0 || !is.finite(xs) || !is.finite(xe) || xe <= xs ||
+            !is.finite(n_bins) || n_bins < 1) return(d)
+        if (nrow(d) <= 4 * n_bins) return(d)
+        xv <- d[[x]]; yv <- d[[y]]
+        bin <- pmin(floor((xv - xs) / (xe - xs) * n_bins), n_bins - 1)
+        ## One integer per (trace, column): trace codes from the grouping columns.
+        tr <- rep(0, nrow(d))
+        for (b in intersect(by, names(d))) {
+            f <- as.integer(factor(d[[b]], exclude = NULL)); tr <- tr * (max(f) + 1) + f
+        }
+        gid <- tr * (n_bins + 1) + bin
+        ok <- !is.na(gid) & !is.na(xv) & !is.na(yv)
+        keep <- !ok                                   # anything unbinnable is kept as is
+        w <- which(ok)
+        ## Within each column: its lowest and highest point.
+        o <- w[order(gid[w], yv[w], w)]
+        g <- gid[o]
+        keep[o[!duplicated(g)]] <- TRUE
+        keep[o[!duplicated(g, fromLast = TRUE)]] <- TRUE
+        d[keep, , drop = FALSE]
+    }
+
     gcms_overlay_rows <- function(cuf, peak_table) {
         none <- list(ribbons = dplyr::bind_rows(list()), vlines = dplyr::bind_rows(list()),
                      labels = dplyr::bind_rows(list()))
@@ -800,10 +835,36 @@
             if (length(idx) < 3L) next
             W <- sqrt(do.call(rbind, spectra[idx]))
             Wn <- W / pmax(sqrt(rowSums(W^2)), 1e-12)
+            cons_all <- gcms_loo_col_medians(W)
             for (j in seq_along(idx)) {
-                cons <- apply(W[-j, , drop = FALSE], 2, stats::median)
+                cons <- cons_all[j, ]
                 out[idx[j]] <- sum(Wn[j, ] * cons) / max(sqrt(sum(cons^2)), 1e-12)
             }
+        }
+        out
+    }
+
+    ## Row j = the column medians of W with row j left out, identical to
+    ## apply(W[-j, ], 2, stats::median). That apply() was ~2/3 of every Shift+Q at
+    ## 95 samples (961 medians per peak per ID, 2026-10-21); here each column is
+    ## sorted once and row j's median is read off the sorted column, skipping j's
+    ## own rank. Even counts average the two middle values through rowMeans()
+    ## (long-double sum, as mean() in median.default). test_confidence.R pins it
+    ## against the apply() form.
+    gcms_loo_col_medians <- function(W) {
+        k <- nrow(W); p <- ncol(W); m <- k - 1L
+        if (m < 1L) return(matrix(NA_real_, k, p))
+        ## One stable radix order over (column, value) sorts every column at once.
+        o <- order(col(W), W, method = "radix")
+        S <- matrix(W[o], nrow = k)
+        R <- matrix(0L, k, p); R[o] <- rep(seq_len(k), p)     # rank of each cell within its column
+        cols <- seq_len(p)
+        out <- matrix(NA_real_, k, p)
+        for (j in seq_len(k)) {
+            r <- R[j, ]
+            at <- function(pos) { q <- pos + (pos >= r); S[cbind(q, cols)] }
+            out[j, ] <- if (m %% 2L == 1L) at((m + 1L) %/% 2L) else
+                rowMeans(cbind(at(m %/% 2L), at(m %/% 2L + 1L)))
         }
         out
     }
@@ -880,6 +941,7 @@
         score_peak_confidence = TRUE,
         confidence_thresholds = c(0.75, 0.90),
         coelution_crosstalk = c(0, 0),
+        n_cores = NULL,
         ms_classifier_path = "/project_data/shared/mass_spectral_library/ms_classifier.py",
         jupyter = FALSE
     ) {
@@ -1229,7 +1291,10 @@
                     ## One build, used for both the gtable and the panel ranges.
                     built <- ggplot2::ggplot_build(p)
                     gt <- ggplot2::ggplot_gtable(built)
-                    grid::grid.draw(gt)
+                    ## No grid.draw(): the unit conversions below need an open device
+                    ## (font metrics), not a drawn plot. Drawing was ~45% of this
+                    ## function, paid on the first brush of every new view; the
+                    ## geometry is identical without it (checked 2026-10-21, test_batch3.R).
                     ws <- gt$widths
                     n <- length(ws)
                     isnull <- grid::unitType(ws) == "null"
@@ -1987,12 +2052,35 @@
             .ion_area_memo_max <- 100000L
             .ion_area_keys_used <- character(0)
             .ion_area_memo_dirty <- FALSE
+            ## Look in the memo BEFORE loading the store: the store cache holds 40
+            ## samples, so on a bigger folder every press re-read the rest from CSV
+            ## just to find a memo hit (~8% of a 95-sample press, 2026-10-21). The
+            ## freshness check load_allions() would make (store stamp vs source) is
+            ## made once per sample per press (.store_fresh, emptied by Shift+Q);
+            ## a store that is missing or stale takes the old path, which rebuilds it.
+            .store_fresh <- new.env(hash = TRUE, parent = emptyenv())
+            store_is_fresh <- function(cdf_csv) {
+                f <- .store_fresh[[cdf_csv]]
+                if (is.null(f)) {
+                    p <- allion_store_path(cdf_csv)
+                    f <- file.exists(p) && stamp_is_current(p, cdf_csv, .allion_binning_tag)
+                    assign(cdf_csv, f, envir = .store_fresh)
+                }
+                f
+            }
+            ion_area_key <- function(cdf_csv, start_rt, end_rt, threshold)
+                paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
+                      format(threshold, digits = 17),
+                      file_stamp(allion_store_path(cdf_csv)), sep = "|")
             peak_ion_area_memo <- function(cdf_csv, start_rt, end_rt, threshold) {
+                if (store_is_fresh(cdf_csv)) {
+                    key <- ion_area_key(cdf_csv, start_rt, end_rt, threshold)
+                    hit <- .ion_area_memo[[key]]
+                    if (!is.null(hit)) { .ion_area_keys_used <<- c(.ion_area_keys_used, key); return(hit) }
+                }
                 ok <- !inherits(try(load_allions(cdf_csv), silent = TRUE), "try-error")
                 if (!ok) return(peak_ion_area(cdf_csv, start_rt, end_rt, threshold))
-                key <- paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
-                             format(threshold, digits = 17),
-                             file_stamp(allion_store_path(cdf_csv)), sep = "|")
+                key <- ion_area_key(cdf_csv, start_rt, end_rt, threshold)
                 .ion_area_keys_used <<- c(.ion_area_keys_used, key)
                 hit <- .ion_area_memo[[key]]
                 if (!is.null(hit)) return(hit)
@@ -2061,12 +2149,21 @@
             spectrum_code_tag <- function() paste(c(deparse(gcms_peak_spectrum), deparse(load_allions),
                                                     deparse(build_allion_store), deparse(nominal_mz),
                                                     .allion_binning_tag), collapse = "\n")
-            peak_spectrum_memo <- function(cdf_csv, start_rt, end_rt, store, rts) {
-                key <- paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
-                             file_stamp(allion_store_path(cdf_csv)), sep = "|")
+            ## `get_store()` returns list(store, rts) for the sample, or NULL; it is
+            ## only called on a miss, so a press whose spectra are all cached never
+            ## reads a store (same reason as store_is_fresh() above). A stale or
+            ## missing store skips the memo, so the store is reloaded (and rebuilt).
+            spectrum_key <- function(cdf_csv, start_rt, end_rt)
+                paste(cdf_csv, format(start_rt, digits = 17), format(end_rt, digits = 17),
+                      file_stamp(allion_store_path(cdf_csv)), sep = "|")
+            peak_spectrum_memo <- function(cdf_csv, start_rt, end_rt, get_store) {
+                key <- spectrum_key(cdf_csv, start_rt, end_rt)
                 .spectrum_keys_used <<- c(.spectrum_keys_used, key)
-                if (exists(key, envir = .spectrum_memo, inherits = FALSE)) return(.spectrum_memo[[key]])
-                res <- gcms_peak_spectrum(store, start_rt, end_rt, rts = rts)
+                if (store_is_fresh(cdf_csv) && exists(key, envir = .spectrum_memo, inherits = FALSE))
+                    return(.spectrum_memo[[key]])
+                st <- get_store()
+                if (is.null(st)) return(NULL)
+                res <- gcms_peak_spectrum(st$store, start_rt, end_rt, rts = st$rts)
                 assign(key, res, envir = .spectrum_memo)      # NULL is a valid, cached answer
                 .spectrum_memo_dirty <<- TRUE
                 res
@@ -2092,6 +2189,72 @@
                 if (!ok) unlink(tmp)
                 if (ok) .spectrum_memo_dirty <<- FALSE
                 invisible(ok)
+            }
+
+            ## Cold Shift+Q in parallel (2026-10-21). With no cache (a new folder, a
+            ## new threshold, edited code) the per-peak ion areas and spectra were
+            ## ~70 s at 95 samples, one peak at a time. Before the serial loop runs,
+            ## the peaks it would MISS are computed here, one sample per forked
+            ## worker (parallel::mclapply), with the same functions on the same
+            ## inputs, and dropped into the memos under the same keys; the serial
+            ## loop then finds every one. Only fresh stores are prefetched (a stale
+            ## one is rebuilt by the serial path), a failed store returns nothing,
+            ## and any error in the workers just leaves the serial path to do it.
+            ## Results are identical to the serial run (test_shiftq_parallel.R).
+            ## `n_cores`: NULL = min(8, cores - 2); 1 turns it off. host1 is shared,
+            ## so it never takes the whole machine. Forking is unavailable on Windows.
+            gcms_prefetch_cores <- function() {
+                n <- if (is.null(n_cores)) min(8L, max(1L, parallel::detectCores() - 2L)) else as.integer(n_cores)
+                if (is.na(n) || .Platform$OS.type == "windows") 1L else max(1L, n)
+            }
+            gcms_prefetch_misses <- function(peak_table, threshold, want_ion, want_spec, split_col) {
+                cores <- gcms_prefetch_cores()
+                if (cores < 2L || nrow(peak_table) == 0) return(invisible(0L))
+                todo <- list()
+                for (smp in unique(as.character(peak_table$path_to_cdf_csv))) {
+                    if (!store_is_fresh(smp)) next
+                    r <- which(peak_table$path_to_cdf_csv == smp)
+                    st <- peak_table$peak_start[r]; en <- peak_table$peak_end[r]
+                    ion_need <- if (want_ion) r[vapply(seq_along(r), function(i)
+                        is.null(.ion_area_memo[[ion_area_key(smp, st[i], en[i], threshold)]]), logical(1))] else integer(0)
+                    spec_need <- if (want_spec) r[vapply(seq_along(r), function(i)
+                        (is.na(split_col[r[i]]) || !nzchar(split_col[r[i]])) &&
+                        !exists(spectrum_key(smp, st[i], en[i]), envir = .spectrum_memo, inherits = FALSE), logical(1))] else integer(0)
+                    if (length(ion_need) || length(spec_need))
+                        todo[[smp]] <- list(ion = ion_need, spec = spec_need)
+                }
+                n_miss <- sum(vapply(todo, function(t) length(t$ion) + length(t$spec), numeric(1)))
+                if (n_miss < 40L) return(invisible(0L))       # not worth forking for a handful
+                work <- function(smp) {
+                    t <- todo[[smp]]
+                    d <- try(load_allions(smp), silent = TRUE)
+                    if (inherits(d, "try-error") || is.null(d)) return(NULL)
+                    ion <- lapply(t$ion, function(i) peak_ion_area(smp, peak_table$peak_start[i], peak_table$peak_end[i], threshold))
+                    names(ion) <- vapply(t$ion, function(i) ion_area_key(smp, peak_table$peak_start[i], peak_table$peak_end[i], threshold), "")
+                    spec <- list()
+                    if (length(t$spec) && nrow(d) > 0 && !all(d$mz == 0)) {
+                        rts <- unique(d$rt); if (is.unsorted(rts)) rts <- sort(rts)
+                        for (i in t$spec) spec[spectrum_key(smp, peak_table$peak_start[i], peak_table$peak_end[i])] <-
+                            list(gcms_peak_spectrum(d, peak_table$peak_start[i], peak_table$peak_end[i], rts = rts))
+                    }
+                    list(ion = ion, spec = spec)
+                }
+                t0 <- Sys.time()
+                res <- try(parallel::mclapply(names(todo), work, mc.cores = min(cores, length(todo)),
+                                              mc.preschedule = FALSE), silent = TRUE)
+                if (inherits(res, "try-error")) return(invisible(0L))
+                n_ion <- 0L; n_spec <- 0L
+                for (r in res) {
+                    if (!is.list(r)) next                      # a worker that errored or returned NULL
+                    for (k in names(r$ion))  { assign(k, r$ion[[k]],  envir = .ion_area_memo); n_ion  <- n_ion + 1L }
+                    for (k in names(r$spec)) { assign(k, r$spec[[k]], envir = .spectrum_memo); n_spec <- n_spec + 1L }
+                }
+                if (n_ion)  .ion_area_memo_dirty <<- TRUE
+                if (n_spec) .spectrum_memo_dirty <<- TRUE
+                n <- n_ion + n_spec
+                cat(sprintf("Shift+Q: %d ion areas / spectra computed on %d cores in %.1f s.\n", n,
+                            min(cores, length(todo)), as.numeric(difftime(Sys.time(), t0, units = "secs"))))
+                invisible(n)
             }
 
         setwd(CDF_directory_path)
@@ -2464,6 +2627,7 @@
                 ## peaks_monolist.csv. Every guard on these names must therefore be
                 ## is.null(), NOT exists(): once declared they always exist.
                 chromatograms_updated <- NULL
+                .shiftq_fp <- NULL          # what the last full Shift+Q recompute saw (shiftq_fingerprint())
                 x_axis_start <- NULL
                 x_axis_end <- NULL
                 y_axis_start <- NULL
@@ -3424,9 +3588,33 @@
 
                 ## Update chromatogram on "Q" (81) keystroke
                     
+                    ## Everything Shift+Q's recompute reads that can change mid-session: the two
+                    ## monolists (every edit path - Shift+A/G/6/Z, Split, Align - writes one of
+                    ## them), the live ion threshold and the extracted chromatograms. When none
+                    ## has changed since the last recompute, Shift+Q only zooms: most presses are
+                    ## zooms, and the recompute was minutes at 95 samples (2026-10-21). Content
+                    ## hashes, not mtimes, so two writes in the same second cannot collide.
+                    ## Shift+W always recomputes. Pinned by test_shiftq_skip.R.
+                    shiftq_fingerprint <- function() {
+                        md5 <- function(f) if (file.exists(f)) unname(tools::md5sum(f)) else ""
+                        thr <- if (is.null(input$allion_threshold)) all_ion_threshold else input$allion_threshold
+                        c(samples = md5("samples_monolist.csv"), peaks = md5("peaks_monolist.csv"),
+                          threshold = format(thr, digits = 17),
+                          chromatograms = paste(nrow(chromatograms), ncol(chromatograms)))
+                    }
+
                     observeEvent(input$keypress, {      
                         
-                        if( input$keypress == 81 ) { # Update on "Q"
+                        if( input$keypress == 81 || input$keypress == 87 ) { # Update on "Q"; Shift+W forces the full recompute
+
+                          shiftq_recompute <- input$keypress == 87 || is.null(chromatograms_updated) ||
+                              !identical(shiftq_fingerprint(), .shiftq_fp)
+                          if (!shiftq_recompute) {
+                              cat("Shift+Q: nothing changed since the last recompute, so zoom only (Shift+W recomputes everything).\n")
+                          }
+
+                          if (shiftq_recompute) {
+                            rm(list = ls(.store_fresh, all.names = TRUE), envir = .store_fresh)
 
                             ## Read in samples monolist and put chromatograms into chromatograms_updated
                                 
@@ -3440,10 +3628,18 @@
 
                                 baselined_chromatograms <- list()
 
-                                for ( chrom in seq_along(unique(chromatograms_updated$path_to_cdf_csv)) ) {
-                          
-                                    chromatogram <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == unique(chromatograms_updated$path_to_cdf_csv)[chrom])
-                                    tic <- filter(chromatogram, ion == 0)
+                                ## Each sample's TIC rows taken from ONE split of the table, not one
+                                ## dplyr::filter() of the whole table (~1.8M rows at 95 samples) per
+                                ## sample. Same rows in the same order (test_shiftq_speed.R, 2026-10-21).
+                                baseline_samples <- unique(chromatograms_updated$path_to_cdf_csv)
+                                tic_rows_all <- chromatograms_updated[which(chromatograms_updated$ion == 0), , drop = FALSE]
+                                tic_by_sample <- split(tic_rows_all, factor(tic_rows_all$path_to_cdf_csv, levels = unique(tic_rows_all$path_to_cdf_csv)))
+                                for ( chrom in seq_along(baseline_samples) ) {
+
+                                    tic <- tic_by_sample[[as.character(baseline_samples[chrom])]]
+                                    if (is.null(tic)) tic <- tic_rows_all[0, , drop = FALSE]
+                                    rownames(tic) <- NULL
+                                    chromatogram <- tic
 
                                     prelim_baseline_window <- samples_monolist$baseline_window[match(chromatogram$path_to_cdf_csv[1], samples_monolist$path_to_cdf_csv)]
 
@@ -3519,6 +3715,7 @@
                                 chromatograms_updated$rt_offset <- samples_monolist$rt_offset[match(chromatograms_updated$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
                                 chromatograms_updated$rt_rt_offset <- chromatograms_updated$rt + chromatograms_updated$rt_offset
                                 chromatograms_updated <<- chromatograms_updated
+                          }
 
                             ## Subset x_axis according to selection in chromatogram
 
@@ -3641,6 +3838,7 @@
                             ## downstream read chromatograms_updated_filtered or the plot.
 
                             ## Add peaks, if any
+                          if (shiftq_recompute) {
                                 
                                 peak_table <- read.csv("peaks_monolist.csv")
                         
@@ -3736,6 +3934,10 @@
                                             spectrum_cache_load()
                                             .spectrum_keys_used <<- character(0)
                                         }
+                                        gcms_prefetch_misses(peak_table,
+                                            if (is.null(input$allion_threshold)) all_ion_threshold else input$allion_threshold,
+                                            want_ion = isTRUE(integrate_peak_ions), want_spec = isTRUE(score_peak_confidence),
+                                            split_col = split_col)
                                         for (sample_number in seq_along(samples_for_area)) {
 
                                           this_sample <- samples_for_area[sample_number]
@@ -3764,17 +3966,21 @@
                                           ## That is the normal state of a part-annotated folder,
                                           ## so Shift+Q died on the first un-annotated sample.
                                           areas <- numeric(nrow(peaks_in_this_sample))
+                                          ## The sample's columns pulled out once; each peak's window is
+                                          ## then a which() over them -- the same rows in the same order
+                                          ## as the dplyr::filter() it replaces (which() drops NA like
+                                          ## filter does), so the sums are bit-identical, without one
+                                          ## filter() call per peak (2026-10-21).
+                                          rows_for_sample <- chrom_by_sample[[this_sample]]
+                                          if (is.null(rows_for_sample)) rows_for_sample <- chromatograms_updated[0, ]
+                                          rt_s <- rows_for_sample$rt; ab_s <- rows_for_sample$abundance; ion_s <- rows_for_sample$ion
                                           for (peak in seq_len(nrow(peaks_in_this_sample))) {
-                                            rows_for_peak <- chrom_by_sample[[as.character(peaks_in_this_sample$path_to_cdf_csv[peak])]]
-                                            if (is.null(rows_for_peak)) rows_for_peak <- chromatograms_updated[0, ]
-                                            in_window <- dplyr::filter(
-                                                rows_for_peak,
-                                                rt >= peaks_in_this_sample$peak_start[peak],
-                                                rt <= peaks_in_this_sample$peak_end[peak]
-                                            )
+                                            w_in <- which(rt_s >= peaks_in_this_sample$peak_start[peak] &
+                                                          rt_s <= peaks_in_this_sample$peak_end[peak])
+                                            ab_w <- ab_s[w_in]; ion_w <- ion_s[w_in]
                                             areas[peak] <-
-                                                sum(in_window$abundance[in_window$ion == 0]) -
-                                                sum(in_window$abundance[in_window$ion == "baseline"])
+                                                sum(ab_w[ion_w == 0]) -
+                                                sum(ab_w[ion_w == "baseline"])
                                           }
 
                                           peak_table$area[peak_table$path_to_cdf_csv == this_sample] <- areas
@@ -3809,17 +4015,27 @@
                                           }
 
                                           if (isTRUE(score_peak_confidence) && nrow(peaks_in_this_sample) > 0) {
-                                            store <- try(load_allions(this_sample), silent = TRUE)
-                                            if (!inherits(store, "try-error") && !is.null(store) && nrow(store) > 0 &&
-                                                !all(store$mz == 0)) {
-                                              store_rts <- unique(store$rt)      # rt-keyed, so already sorted
-                                              if (is.unsorted(store_rts)) store_rts <- sort(store_rts)
-                                              for (r in which(peak_table$path_to_cdf_csv == this_sample)) {
-                                                if (!is.na(split_col[r]) && nzchar(split_col[r])) next
-                                                sp <- peak_spectrum_memo(this_sample, peak_table$peak_start[r],
-                                                                         peak_table$peak_end[r], store, store_rts)
-                                                if (!is.null(sp)) peak_spectra[r] <- list(sp)
+                                            ## Loaded on the first memo miss only (see peak_spectrum_memo()).
+                                            ## A store that fails, is empty or is single-detector gives NULL
+                                            ## spectra; remembered so it is tried once per sample.
+                                            st_cache <- new.env(parent = emptyenv())
+                                            get_store <- function() {
+                                              if (is.null(st_cache$v)) {
+                                                store <- try(load_allions(this_sample), silent = TRUE)
+                                                st_cache$v <- if (!inherits(store, "try-error") && !is.null(store) && nrow(store) > 0 &&
+                                                                 !all(store$mz == 0)) {
+                                                  store_rts <- unique(store$rt)      # rt-keyed, so already sorted
+                                                  if (is.unsorted(store_rts)) store_rts <- sort(store_rts)
+                                                  list(store = store, rts = store_rts)
+                                                } else FALSE
                                               }
+                                              if (isFALSE(st_cache$v)) NULL else st_cache$v
+                                            }
+                                            for (r in which(peak_table$path_to_cdf_csv == this_sample)) {
+                                              if (!is.na(split_col[r]) && nzchar(split_col[r])) next
+                                              sp <- peak_spectrum_memo(this_sample, peak_table$peak_start[r],
+                                                                       peak_table$peak_end[r], get_store)
+                                              if (!is.null(sp)) peak_spectra[r] <- list(sp)
                                             }
                                           }
 
@@ -3859,6 +4075,9 @@
                                         render_peak_table()
 
                                 }
+                                ## After the write above, so the table this recompute wrote counts as seen.
+                                .shiftq_fp <<- shiftq_fingerprint()
+                          }
 
                             ## The x-window globals must be usable before the paginated renderer
                             ## filters on them. Hoisted out of the peak block 2026-10-01: it used
@@ -4135,6 +4354,10 @@
                             ov <- view_overview()
                             peak_label_size <- peak_label_size_for(ov)
                             plot_px_h <- chromatogram_height()
+                            ## One line column per drawn pixel (gcms_thin_lines()); 2000 until
+                            ## the browser has reported the plot's width.
+                            thin_bins <- suppressWarnings(as.numeric(session$clientData$output_chromatograms_width))
+                            if (!length(thin_bins) || !is.finite(thin_bins) || thin_bins < 100) thin_bins <- 2000
 
                             ## Returning NULL here draws a plot with NO coordinate map, and the
                             ## browser then holds a degenerate 0..1 map for this output until the
@@ -4388,7 +4611,7 @@
 
                                     chromatogram_plot <- ggplot() +
                                         geom_line(
-                                            data = filter(cuf, ion == "baseline"),
+                                            data = gcms_thin_lines(filter(cuf, ion == "baseline"), xs, xe, thin_bins),
                                             mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
                                         ) +
                                         scale_x_continuous(limits = c(xs, xe), name = "Retention (Scan number)", breaks = scales::breaks_pretty(n = 20), minor_breaks = function(lims) scales::breaks_pretty(n = 80)(lims)) +
@@ -4517,7 +4740,7 @@
                                 if (mode_display == "tic") {
                                     chromatogram_plot <- chromatogram_plot +
                                         geom_line(
-                                            data = filter(cuf, ion != "baseline"),
+                                            data = gcms_thin_lines(filter(cuf, ion != "baseline"), xs, xe, thin_bins),
                                             mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
                                             alpha = 0.8
                                         )
