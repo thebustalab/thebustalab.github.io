@@ -2429,15 +2429,15 @@
                         }
 
                         if (length(missing_ions) > 0) {
-                            
-                            cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
+
+                            cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))
                                 framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
-                            
+
                             cat("   Extracting chromatograms...\n")
-                                
+
                                 if (0 %in% missing_ions) {
                                     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                    framedDataFile %>% 
+                                    framedDataFile %>%
                                         group_by(rt) %>% summarize(
                                         abundance = sum(intensity),
                                         ion = 0,
@@ -2457,8 +2457,8 @@
                                     numeric_ions <- as.numeric(as.character(missing_ions[missing_ions != 0]))
                                     for ( ion in seq_along(numeric_ions) ){
                                         framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                        framedDataFile %>% 
-                                            group_by(rt) %>% 
+                                        framedDataFile %>%
+                                            group_by(rt) %>%
                                             filter(mz > (numeric_ions[ion] - 0.6)) %>%
                                             filter(mz < (numeric_ions[ion] + 0.6)) -> signal
                                             summarize(signal,
@@ -2470,9 +2470,9 @@
                                         chromatogram <- as.data.frame(chromatogram)
                                         chromatogram$rt <- as.numeric(chromatogram$rt)
 
-                                        if (dim(signal)[1] > 0) { 
+                                        if (dim(signal)[1] > 0) {
                                             chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
-                                            chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
+                                            chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
                                         }
                                     }
                                 }
@@ -2519,7 +2519,7 @@
             ## Read in chromatograms
 
                 chromatograms <- readMonolist("chromatograms.csv")
-                        
+
             ## Set up new samples monolist
 
                 ## ONE derivation for Sample_ID, used by both the create and the
@@ -2533,7 +2533,7 @@
                 }
 
                 ## If it doesn't exist, create it
-                
+
                     if ( !file.exists("samples_monolist.csv") ) {
 
                         samples_monolist <- data.frame(
@@ -2587,7 +2587,7 @@
                 chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep("\\.CDF\\.csv$", dir(), ignore.case = TRUE)],]
 
             ## Set up several variables and x_axis limits if not specified in function call
-                
+
                 peak_data <- NULL
                 peak_points <- NULL
 
@@ -2681,9 +2681,9 @@
                 }
 
             ## Set up new peak monolist if it doesn't exist
-            
+
             if ( !file.exists("peaks_monolist.csv") ) {
-                
+
                 peak_data <- data.frame(
                   peak_start = 0,
                   peak_end = 0,
@@ -3042,7 +3042,7 @@
                                             id = "chromatogram_brush",
                                             resetOnNew = TRUE
                                         ),
-                                      click = "chromatogram_click", 
+                                      click = "chromatogram_click",
                                       dblclick = "chromatogram_double_click",
                                       ## The height is set per render by renderPlot(height =
                                       ## chromatogram_height), so it follows the mode and page.
@@ -3114,7 +3114,7 @@
                                             DT::dataTableOutput("ms_results")
                                         )
                                     ),
-                                    
+
                                     plotOutput(
                                         outputId = "massSpectrumLookup",
                                         height = 1200
@@ -3129,6 +3129,25 @@
         ## SET UP SERVER
 
             server <- function(input, output, session) {
+
+                ## Keyboard map. The browser sends e.which from a keypress event, so a
+                ## letter code is the UPPER-case letter (Shift+letter, or Caps Lock) and a
+                ## shifted digit arrives as its symbol. The handlers follow below; Shift+Q/W
+                ## share one observer and the four mass-spectrum keys share another.
+                ##   Shift+F / Shift+D    pan the default x window forward / back     (70 / 68)
+                ##   Shift+V / Shift+C    widen / narrow the default x window         (86 / 67)
+                ##   Shift+Q              recompute if anything changed, else zoom    (81)
+                ##   Shift+W              always recompute                            (87)
+                ##   Shift+Z              save peak_ID edits from the table           (90)
+                ##   Shift+A / Shift+G    add the brushed peak: this sample / all     (65 / 71)
+                ##   Shift+E / Shift+R    remove peaks inside the brush: this / all   (69 / 82)
+                ##   Shift+6 (^)          automatic peak detection                    (94)
+                ##   Shift+0 ())          remove ALL peaks                            (41)
+                ##   Shift+1 (!)          mass spectrum of the brushed region         (33)
+                ##   Shift+2 (@)          re-plot the mass spectrum                   (64)
+                ##   Shift+3 (#)          subtract the brushed region from it         (35)
+                ##   Shift+4 ($)          classify every peak (ms_classifier.py)      (36)
+                ## Pan/zoom changes take effect on the next Shift+Q.
 
                 ## Store console info:
                     message_data <- reactiveVal("")
@@ -3196,14 +3215,14 @@
 
                 ## Keys to move chromatogram view - zoom in and out, move L and R
                     observeEvent(input$keypress, {
-                        if( input$keypress == 70 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Forward on "F"
-                        if( input$keypress == 70 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Forward on "F"
-                        if( input$keypress == 68 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Backward on "D"
-                        if( input$keypress == 68 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Backward on "D"
-                        if( input$keypress == 86 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Wider on "V"
-                        if( input$keypress == 86 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Wider on "V"
-                        if( input$keypress == 67 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Closer on "C"
-                        if( input$keypress == 67 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Closer on "C"
+                        if( input$keypress == 70 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Forward on Shift+F
+                        if( input$keypress == 70 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Forward on Shift+F
+                        if( input$keypress == 68 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Backward on Shift+D
+                        if( input$keypress == 68 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Backward on Shift+D
+                        if( input$keypress == 86 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Wider on Shift+V
+                        if( input$keypress == 86 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Wider on Shift+V
+                        if( input$keypress == 67 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Closer on Shift+C
+                        if( input$keypress == 67 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Closer on Shift+C
                     })
 
                 ## Set up null values for peak detection
@@ -3215,7 +3234,7 @@
                         validate(
                           need(!is.null(df), "No random peak subset to display yet. Run Shift+6 to detect peaks.")
                         )
-                        
+
                         # Plot them in facet_wrap:
                         ggplot(df, aes(x = rt, y = abundance, color = ion)) +
                           geom_line() +
@@ -3262,7 +3281,7 @@
                         invisible(NULL)
                     }
 
-                ## Save manual changes to table on "Z" (90) keystroke
+                ## Save manual changes to table on Shift+Z (90)
 
                     observeEvent(input$keypress, {
                         if (input$keypress == 90 ) {
@@ -3324,10 +3343,10 @@
                             sep = ","
                           )
                           notify("All peaks removed.")
-                          
+
                           # ALSO CLEAR THE facet-plot reactiveVal
                           peakDetectionPlotData(NULL)
-                          
+
                         } else {
                           notify("No peaks to remove.")
                         }
@@ -3399,9 +3418,9 @@
                           baseline_data <- baseline_data[order(baseline_data$rt), ]
 
                           merged_data <- merge(
-                            tic_data, 
+                            tic_data,
                             baseline_data[, c("rt", "abundance")],
-                            by = "rt", 
+                            by = "rt",
                             suffixes = c("", ".bl")
                           )
                           merged_data$net_abundance <- merged_data$abundance - merged_data$abundance.bl
@@ -3435,7 +3454,7 @@
                               # If slope is now flattening out or net_abundance is near baseline => end peak
                               # i.e. derivative > -peakTailSlope OR net_abundance < minSignalAboveBaseline
                               if (d1[i] > -peakTailSlope || merged_data$net_abundance[i] < minSignalAboveBaseline) {
-                                
+
                                 # Record the peak
                                 rt_start <- merged_data$rt[peak_start_idx]
                                 rt_end   <- merged_data$rt[i]
@@ -3456,7 +3475,7 @@
                                     )
                                   )
                                 }
-                                
+
                                 # Reset
                                 currentState <- outsidePeak
                                 peak_start_idx <- NA
@@ -3531,9 +3550,9 @@
                             }
 
                             for (i in seq_len(nrow(peak_table_sampled))) {
-                              
+
                               rowi <- peak_table_sampled[i, ]
-                              
+
                               # Subset data from chromatograms_updated
                               # Only the relevant file, plus RT slice
                               df_signal <- dplyr::filter(
@@ -3542,46 +3561,46 @@
                                 rt >= rowi$peak_start,
                                 rt <= rowi$peak_end
                               )
-                              
+
                               # If no data, skip
                               if (nrow(df_signal) == 0) next
-                              
+
                               # Optionally keep only ion==0 and ion=="baseline" if you want
                               # so the plot isn't cluttered. Or keep all if you prefer.
                               # Let's keep both TIC (ion=0) and baseline (ion="baseline"):
                               df_signal <- df_signal[df_signal$ion %in% c(0, "baseline"), ]
-                              
+
                               # Add a facet label, e.g. "Peak #1"
                               df_signal$peak_label <- paste0("Peak #", i)
-                              
+
                               all_peaks_data[[i]] <- df_signal
                             }
 
                             # 4) Combine into one big data frame
                             if (length(all_peaks_data) > 0) {
                               all_peaks_data <- dplyr::bind_rows(all_peaks_data)
-                              
+
                               # To help the plotting, let's define a separate 'baseline' column
                               # For baseline rows, abundance is already the baseline,
-                              # For TIC rows, let's store the baseline in a new column. 
+                              # For TIC rows, let's store the baseline in a new column.
                               # We'll match them by RT if we want. Or we can do a simpler approach:
-                              
+
                               # For convenience, let's do a small join to assign a 'baseline' column
                               # to the entire data, so we can do a ribbon from baseline->abundance.
-                              
+
                               df_baselines <- dplyr::filter(all_peaks_data, ion=="baseline") %>%
                                 dplyr::select(rt, path_to_cdf_csv, peak_label, baseline=abundance)
-                              
+
                               # For TIC rows
                               df_signal_only <- dplyr::filter(all_peaks_data, ion==0)
-                              
+
                               # left_join by path_to_cdf_csv, rt, peak_label
                               df_signal_joined <- dplyr::left_join(
                                 df_signal_only,
                                 df_baselines,
                                 by = c("rt", "path_to_cdf_csv", "peak_label")
                               )
-                              
+
                               # For baseline rows themselves, we can keep them separate or combine them,
                               # but the simplest might be: "baseline" is the same as "abundance" for baseline.
                               # Let’s store them in the same df, though you can do separate geoms if you prefer.
@@ -3589,10 +3608,10 @@
                               df_baselines$ion <- "baseline"
                               # We'll rename abundance to something else to not confuse the ribbon
                               df_baselines$abundance <- df_baselines$baseline
-                              
+
                               # Combine them
                               df_plot <- dplyr::bind_rows(df_signal_joined, df_baselines)
-                              
+
                               # 5) Store in reactiveVal => triggers the plot
                               peakDetectionPlotData(df_plot)
                             } else {
@@ -3605,8 +3624,8 @@
 
                     })
 
-                ## Update chromatogram on "Q" (81) keystroke
-                    
+                ## Update chromatogram on Shift+Q (81)
+
                     ## Everything Shift+Q's recompute reads that can change mid-session: the two
                     ## monolists (every edit path - Shift+A/G/6/Z, Split, Align - writes one of
                     ## them), the live ion threshold and the extracted chromatograms. When none
@@ -3622,9 +3641,9 @@
                           chromatograms = paste(nrow(chromatograms), ncol(chromatograms)))
                     }
 
-                    observeEvent(input$keypress, {      
-                        
-                        if( input$keypress == 81 || input$keypress == 87 ) { # Update on "Q"; Shift+W forces the full recompute
+                    observeEvent(input$keypress, {
+
+                        if( input$keypress == 81 || input$keypress == 87 ) { # Shift+Q; Shift+W forces the full recompute
 
                           shiftq_recompute <- input$keypress == 87 || is.null(chromatograms_updated) ||
                               !identical(shiftq_fingerprint(), .shiftq_fp)
@@ -3636,10 +3655,10 @@
                             rm(list = ls(.store_fresh, all.names = TRUE), envir = .store_fresh)
 
                             ## Read in samples monolist and put chromatograms into chromatograms_updated
-                                
+
                                 samples_monolist <- read.csv("samples_monolist.csv")
                                 if ( length(samples_monolist_subset) > 0 ) {
-                                    samples_monolist <- samples_monolist[samples_monolist_subset,]    
+                                    samples_monolist <- samples_monolist[samples_monolist_subset,]
                                 }
                                 chromatograms_updated <- dplyr::filter(chromatograms, path_to_cdf_csv %in% samples_monolist$path_to_cdf_csv)
 
@@ -3834,7 +3853,7 @@
                                             if (is.null(y_axis_end)   || length(y_axis_end)   == 0 || !is.finite(y_axis_end))   y_axis_end   <<- max(chromatograms$abundance)
                                         }
                                     }
-                                
+
                                 ## One line that distinguishes every way the zoom can fail: no
                                 ## brush registered at all, a brush that produced no selection,
                                 ## or limits that were set correctly and then ignored downstream.
@@ -3858,13 +3877,13 @@
 
                             ## Add peaks, if any
                           if (shiftq_recompute) {
-                                
+
                                 peak_table <- read.csv("peaks_monolist.csv")
-                        
+
                                 if (dim(peak_table)[1] > 0) {
 
                                     ## Filter out duplicate peaks and NA peaks
-                                        
+
                                         ## Dedupe on the (start, end) PAIR. It used to run two
                                         ## independent passes -- one on peak_start, one on peak_end --
                                         ## so two genuinely distinct peaks that happened to share an
@@ -3883,7 +3902,7 @@
                                         peak_table <- peak_table[,!colnames(peak_table) == "duplicated"]
 
                                     ## Update with peak_number_within_sample
-                                        
+
                                         peak_table_updated <- list()
                                         samples_with_peaks <- unique(as.character(peak_table$path_to_cdf_csv))
                                         for (sample_number in seq_along(samples_with_peaks)) {
@@ -3899,15 +3918,15 @@
                                         peak_table <- peak_table_updated
 
                                     ## Modify peaks with RT offset
-                                        
+
                                         # for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
-                                          
+
                                         #   peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
-                                          
+
                                         #   rt_offsets <- samples_monolist$rt_offset[match(peaks_in_this_sample$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
                                         #   peak_start_rt_offsets <- peak_table$peak_start + peak_table$rt_offset
                                         #   peak_end_rt_offsets <- peak_table$peak_end + peak_table$rt_offset
-                                          
+
                                         #   peak_table$rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- rt_offsets
                                         #   peak_table$peak_start_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_start_rt_offsets
                                         #   peak_table$peak_end_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_end_rt_offsets
@@ -3918,9 +3937,9 @@
                                         peak_table$peak_start_rt_offset <- peak_table$peak_start + peak_table$rt_offset
                                         peak_table$peak_end_rt_offset <- peak_table$peak_end + peak_table$rt_offset
                                         peak_table$path_to_cdf_csv <- as.character(peak_table$path_to_cdf_csv)
-                            
+
                                     ## Update all peak areas in case baseline was adjusted
-                                        
+
                                         if (isTRUE(integrate_peak_ions)) {
                                             if (is.null(peak_table$area_peak_ions)) peak_table$area_peak_ions <- NA_real_
                                             if (is.null(peak_table$peak_ions))      peak_table$peak_ions      <- NA_character_
@@ -3961,7 +3980,7 @@
 
                                           this_sample <- samples_for_area[sample_number]
                                           peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == this_sample,]
-                                          
+
                                           ## Area = TIC sum over the peak window, minus the
                                           ## interpolated baseline over the same window.
                                           ##
@@ -4088,7 +4107,7 @@
                                         write_coelution_profiles(refreshed$profiles)
 
                                     ## Write out peaks now with assigned peak_number_within_sample and RT offset, update the peak_table in ui
-                            
+
                                         write.table(peak_table, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
 
                                         render_peak_table()
@@ -4858,7 +4877,7 @@
 
                 ## Single-peak remove => SHIFT+E => ASCII code 69
                       observeEvent(input$keypress, {
-                        if( input$keypress == 69 ) { # Update on "E" for "excise"
+                        if( input$keypress == 69 ) { # Shift+E, "excise"
 
                           cat("Excising single peak...\n")
                           if ( !is.null(input$chromatogram_brush )) {
@@ -4908,7 +4927,7 @@
 
                 ## Global peak remove => SHIFT+R => ASCII code 82
                       observeEvent(input$keypress, {
-                        if (input$keypress == 82) { # "R" for "Remove" globally
+                        if (input$keypress == 82) { # Shift+R, "remove" globally
 
                           cat("Removing selected peaks GLOBALLY...\n")
                           if ( !is.null(input$chromatogram_brush )) {
@@ -4972,8 +4991,8 @@
                         }
                       })
 
-                ## Append single peak with "A" (65) keystroke 
-                    
+                ## Append single peak with Shift+A (65)
+
                     observeEvent(input$keypress, {
 
                         # Do nothing if no selection
@@ -4983,7 +5002,7 @@
 
                         # If selection and "a" is pressed, add the selection to the peak table
                             if( input$keypress == 65 ) {
-                            
+
                                 ## Evaluate the brush ONCE. It was called four times here,
                                 ## each re-running the whole coordinate conversion and printing
                                 ## its own diagnostic line.
@@ -5027,7 +5046,7 @@
                             }
                     })
 
-                ## Global append peak with "G" (71) keystroke
+                ## Global append peak with Shift+G (71)
 
                     observeEvent(input$keypress, {
 
@@ -5038,7 +5057,7 @@
 
                         # If selection and "G" is pressed, add the selection to the peak table
                             if( input$keypress == 71 ) {
-                            
+
                                 ## Evaluate the brush once (see Shift+A) and refuse an empty one.
                                 pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
                                 if (nrow(pp) == 0) {
@@ -5089,12 +5108,12 @@
                             }
                     })
 
-                ## [MS1 extract ("shift+1"), update ("shift+2"), subtract ("shift+3"), library search ("shift+4"), save ("shift+5")]
-                    
+                ## Mass-spectrum keys: Shift+1 extract, Shift+2 re-plot, Shift+3 subtract, Shift+4 classify peaks
+
                     observeEvent(input$keypress, {
 
                         ## If "shift+1", MS from chromatogram brush -> MS_out_1
-                            
+
                             if( input$keypress == 33 ) {
 
                                 ## Evaluate the brush once (it was converted three times here),
@@ -5122,7 +5141,7 @@
                                 ))] + 1
 
                                 if (.Platform$OS.type == "unix") {
-                                    
+
                                     ## shQuote every path: CDF_directory_path is caller-supplied and
                                     ## a space in it used to split the command, so `head`/`sed` wrote
                                     ## temp_MS.csv somewhere else entirely and the read below picked
@@ -5132,19 +5151,19 @@
                                     system(paste0("head -1 ", ms_src, " > ", ms_tmp))
                                     system(paste0("sed -n ", MS_ret_start_line, ",", MS_ret_end_line, "p ", shQuote(sample_name_MS), " >> ", ms_tmp))
                                     framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))
-                                
+
                                 }
 
                                 if (.Platform$OS.type == "windows") {
-                                    
+
                                     # system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
-                                    # system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
+                                    # system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))
                                     framedDataFile <-   isolate(
                                         as.data.frame(
                                             data.table::fread(sample_name_MS)
                                         )
                                     )
-                                
+
                                 }
 
                                 framedDataFile <- isolate(dplyr::filter(framedDataFile, rt > ret_start_MS, rt < ret_end_MS))
@@ -5161,7 +5180,7 @@
                                     notify("No mass spectrum extracted yet. Use Shift+1 first.")
                                     return()
                                 } else {
-                                
+
                                     ## Same again: one conversion, and the subtraction has to come
                                     ## from a single sample's panel.
                                     sub_pp <- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
@@ -5213,7 +5232,7 @@
                                         MS_out_1$intensity <- MS_out_1$intensity*100/max(MS_out_1$intensity)
 
                                     # Set ranges on mass spec (allow zooming in with selection), Sometimes brush returns Inf or -Inf if the range gets too small, so if that happens, just go up to the main view
-                                
+
                                         if (isolate(is.null(input$massSpectra_1_brush))) {
                                             MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
                                         } else {
@@ -5282,177 +5301,9 @@
                                 }
                             }
 
-                        ## If "shift+4" library lookup
+                        ## Extract and classify mass spectra on Shift+4
 
                             if (input$keypress == 36) {
-                                    
-                                # message("Searching reference library for unknown spectrum...\n")
-
-                                #     ## Round to nominal mass spectrum
-                                #         MS_out_1$mz <- floor(MS_out_1$mz)
-                                #         MS_out_1 %>%
-                                #             group_by(mz) %>%
-                                #             dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
-                                #         MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
-
-                                #     ## Add zeros for mz values missing from unknown spectrum if necessary
-                                #         mz_missing <- seq(1, 800, 1)[!seq(1, 800, 1) %in% MS_out_1$mz]
-                                #         if (length(mz_missing) > 0) {
-                                #             MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
-                                #             MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
-                                #         }
-
-                                #     ## Bind it with metadata
-                                #         unknown <- cbind(
-                                #             data.frame(
-                                #                 Accession_number = "unknown",
-                                #                 Compound_systematic_name = "unknown",
-                                #                 Compound_common_name = "unknown",
-                                #                 SMILES = NA,
-                                #                 Source = "unknown"
-                                #             ),
-                                #             t(MS_out_1$intensity)
-                                #         )
-                                #         colnames(unknown)[6:805] <- paste("mz_", seq(1,800, 1), sep = "")
-
-                                #     ## Bind it to the library and run the lookup
-                                #         lookup_data <- rbind(busta_spectral_library, unknown)
-                                        
-                                #         hits <- runMatrixAnalysis(
-                                #             data = lookup_data,
-                                #             analysis = c("hclust"),
-                                #             column_w_names_of_multiple_analytes = NULL,
-                                #             column_w_values_for_multiple_analytes = NULL,
-                                #             columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
-                                #             columns_w_additional_analyte_info = NULL,
-                                #             columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
-                                #             transpose = FALSE,
-                                #             unknown_sample_ID_info = c("unknown_unknown"),
-                                #             scale_variance = FALSE,
-                                #             kmeans = "none",
-                                #             na_replacement = "drop",
-                                #             output_format = "long"
-                                #         )
-
-                                #     ## Find distance between tips
-
-                                #         phylo <- runMatrixAnalysis(
-                                #             data = hits[!is.na(hits$sample_unique_ID),],
-                                #             analysis = c("hclust_phylo"),
-                                #             column_w_names_of_multiple_analytes = "analyte_name",
-                                #             column_w_values_for_multiple_analytes = "value",
-                                #             columns_w_values_for_single_analyte = NULL,
-                                #             columns_w_additional_analyte_info = NULL,
-                                #             columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
-                                #             transpose = FALSE,
-                                #             unknown_sample_ID_info = NULL,
-                                #             scale_variance = FALSE,
-                                #             kmeans = "none",
-                                #             na_replacement = "drop",
-                                #             output_format = "long"
-                                #         )
-
-                                #         distances_1 <- as.data.frame(cophenetic.phylo(phylo)[,colnames(cophenetic.phylo(phylo)) == "unknown_unknown"])
-                                #         distances_2 <- data.frame(
-                                #             sample_unique_ID = rownames(distances_1),
-                                #             distance = distances_1[,1]
-                                #         )
-                                #         distances_2$distance <- normalize(distances_2$distance, old_min = min(distances_2$distance), old_max = max(distances_2$distance), new_min = 100, new_max = 0)
-
-                                #     ## Make the bar data
-
-                                #         hits[!is.na(hits$sample_unique_ID),] %>%
-                                #             select(analyte_name, value, sample_unique_ID) %>%
-                                #             unique() -> bars
-
-                                #         bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
-
-                                #         bars %>%
-                                #             group_by(sample_unique_ID) %>%
-                                #             arrange(desc(value)) -> bar_labels
-
-                                #         bar_labels <- bar_labels[1:110,]
-
-                                #     ## Order bar data
-
-                                #         bars$sample_unique_ID <- factor(
-                                #             bars$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                #         )
-
-                                #         distances_2$sample_unique_ID <- factor(
-                                #             distances_2$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                #         )
-
-                                #         bar_labels$sample_unique_ID <- factor(
-                                #             bar_labels$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                #         )
-
-                                #     ## Make the bar plot
-                                        
-                                #         plot <- ggplot() +
-                                #             geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
-                                #             geom_text(data = unique(select(bars, sample_unique_ID)), aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
-                                #             facet_grid(sample_unique_ID~.) +
-                                #             theme_bw() +
-                                #             scale_x_continuous(name = "m/z") +
-                                #             scale_y_continuous(name = "Relative intensity (%)") +
-                                #             geom_text(
-                                #                     data = bar_labels,
-                                #                     mapping = aes(
-                                #                         x = as.numeric(as.character(analyte_name)),
-                                #                         y = value + 5, label = analyte_name
-                                #                     )
-                                #                 ) +
-                                #             geom_text(
-                                #                     data = distances_2,
-                                #                     mapping = aes(
-                                #                         x = 800,
-                                #                         y = 75,
-                                #                         label = paste0(
-                                #                             "Relative similarity to unknown: ",
-                                #                             round(distance, 2), "%"
-                                #                         ), hjust = 1
-                                #                     )
-                                #                 )
-
-                                #         output$massSpectrumLookup <- renderPlot({plot})
-
-                                # message("Done.\n")
-
-                            }
-                    
-                        ## If "shift+5" save mass spectrum
-
-                            # if( input$keypress == 37 ) {
-
-                            #     # Do nothing if no MS extracted
-                            #         if (!exists("MS_out_1")) {
-                            #             notify("No mass spectrum extracted yet. Use Shift+1 first.")
-                            #             return()
-                            #         } else {
-                            #             MS_out_1_to_write <- MS_out_1
-                            #             MS_out_1_to_write$mz <- round(MS_out_1_to_write$mz)
-                            #             MS_out_1_to_write %>% 
-                            #                 group_by(mz) %>%
-                            #                 dplyr::summarize(intensity = sum(intensity)) -> MS_out_1_to_write
-                            #             MS_out_1_to_write$intensity <- MS_out_1_to_write$intensity*100/max(MS_out_1_to_write$intensity)
-                            #             MS_out_1_to_write <- data.frame(
-                            #                 Compound_common_name = NA,
-                            #                 Compound_systematic_name = NA,
-                            #                 SMILES = NA,
-                            #                 Source = "Busta",
-                            #                 mz = MS_out_1_to_write$mz,
-                            #                 abu = MS_out_1_to_write$intensity
-                            #             )
-                            #             write_csv(MS_out_1_to_write, paste0(CDF_directory_path, "/selected_MS.csv"))
-                            #         }
-                                
-                            # }
-
-                        ## Extract and classify mass spectra on button press (shift + 4)
-                                
-                            if (input$keypress == 36) {
-                                message("UPDATED3!")
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){
@@ -5502,12 +5353,12 @@
                                             }
                                         }
                                     }
-                                    
+
                                     if(length(ms_list) == 0){
                                         notify("Classification: no spectra could be extracted from the peaks.")
                                         return()
                                     }
-                                
+
                                 # Combine all peaks into one data frame
                                     ms_data <<- dplyr::bind_rows(ms_list)
 
@@ -5527,7 +5378,7 @@
                                         message("Please extract mass spectra first.")
                                         return()
                                     }
-                                
+
                                 # Convert the long-format mass spectral data into a wide format
                                 # so that each row corresponds to one peak and columns are m/z values.
                                 ms_data %>%
@@ -5580,7 +5431,7 @@
             }
 
         ## Call the app
-            
+
             if ( jupyter == TRUE) {
 
                 slot <- pick_shiny_port()
@@ -5590,13 +5441,13 @@
                     cat(paste0("Connect at: ", slot$url))
                     runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = slot$port)
                 }
-            
+
             }
 
             if (jupyter == FALSE) {
                 shinyApp(ui = ui, server = server)
             }
-        
+
 
     }
 
