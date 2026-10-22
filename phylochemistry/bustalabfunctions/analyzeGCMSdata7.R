@@ -635,7 +635,7 @@
     ## drawn line covers the same pixels (0.02% of pixels differ, by antialiasing, on
     ## a 20-sample page) at half the draw time, while a full-range
     ## page draws a few thousand points per trace instead of every scan (a 95-sample
-    ## Overview held ~2.5M). Rows are kept as they are (no new values) and stay in
+    ## page held ~2.5M). Rows are kept as they are (no new values) and stay in
     ## their original order. A page with no more than 4 points per column overall
     ## is returned untouched, so a zoomed-in view is drawn exactly as before. Only
     ## the LINE layers use this; the peak ribbons and every area read the full rows.
@@ -753,6 +753,68 @@
         list(samples = samples_ml, peaks = peaks, chrom = chrom, profiles = profiles, offset = new)
     }
 
+    ## Align every sample on one peak (the sidebar's "Align on a peak", 2026-10-22).
+    ## Each sample's peak `n` is found by ITS OWN peak number (the number drawn on
+    ## its panel), and its centre is the middle of its integration window in raw
+    ## rt (Lucas: window centre, not apex). The target is the median of those
+    ## centres, and each sample's offset is SET to target - centre: it replaces
+    ## whatever offset the sample had, so pressing Align twice gives the same
+    ## answer, and the per-panel arrows then nudge on top of it. The two rows of a
+    ## split pair carry consecutive numbers but span the same hump, so either number
+    ## aligns on the hump (and in a sample with a split, every later number is one
+    ## higher than in an unsplit sample, as drawn). Samples with no peak `n`
+    ## are left as they are and listed in `missing`. Returns NULL when no sample has
+    ## a peak `n`.
+    gcms_align_offsets_for_peak <- function(peak_table, samples_ml, n) {
+        if (is.null(n) || length(n) != 1 || !is.finite(n) || is.null(peak_table) || !nrow(peak_table) ||
+            !all(c("peak_number_within_sample", "peak_start", "peak_end", "path_to_cdf_csv") %in% names(peak_table)))
+            return(NULL)
+        r <- peak_table[!is.na(peak_table$peak_number_within_sample) &
+                        peak_table$peak_number_within_sample == round(n) &
+                        is.finite(peak_table$peak_start) & is.finite(peak_table$peak_end), , drop = FALSE]
+        if (!nrow(r)) return(NULL)
+        ctr <- tapply((r$peak_start + r$peak_end) / 2, as.character(r$path_to_cdf_csv), mean)
+        ctr <- ctr[names(ctr) %in% as.character(samples_ml$path_to_cdf_csv)]
+        if (!length(ctr)) return(NULL)
+        target <- stats::median(ctr)
+        offsets <- stats::setNames(round(target - as.numeric(ctr), 6), names(ctr))
+        list(offsets = offsets, target = target,
+             missing = setdiff(as.character(samples_ml$path_to_cdf_csv), names(ctr)))
+    }
+
+    ## Set several samples' offsets at once (Align on a peak, Reset all offsets):
+    ## `offsets` is a named vector, sample -> new rt_offset. The same tables and the
+    ## same rule as gcms_shift_sample_offset() (raw rt and integration windows never
+    ## change, so no area moves), done in one vectorised pass rather than one pass
+    ## over the chromatogram table per sample. Samples not named are untouched.
+    gcms_set_sample_offsets <- function(offsets, samples_ml, peaks = NULL, chrom = NULL, profiles = NULL) {
+        if (is.null(samples_ml) || !length(offsets) || is.null(names(offsets))) return(NULL)
+        offsets <- offsets[is.finite(offsets) & names(offsets) %in% as.character(samples_ml$path_to_cdf_csv)]
+        if (!length(offsets)) return(NULL)
+        old_all <- suppressWarnings(as.numeric(samples_ml$rt_offset)); old_all[!is.finite(old_all)] <- 0
+        old <- stats::setNames(old_all, as.character(samples_ml$path_to_cdf_csv))[names(offsets)]
+        i <- match(as.character(samples_ml$path_to_cdf_csv), names(offsets)); k <- !is.na(i)
+        samples_ml$rt_offset[k] <- unname(offsets[i[k]])
+        if (!is.null(peaks) && nrow(peaks) && "path_to_cdf_csv" %in% names(peaks)) {
+            i <- match(as.character(peaks$path_to_cdf_csv), names(offsets)); k <- !is.na(i)
+            if (any(k)) {
+                peaks$rt_offset[k] <- unname(offsets[i[k]])
+                if ("peak_start_rt_offset" %in% names(peaks)) peaks$peak_start_rt_offset[k] <- peaks$peak_start[k] + peaks$rt_offset[k]
+                if ("peak_end_rt_offset" %in% names(peaks))   peaks$peak_end_rt_offset[k]   <- peaks$peak_end[k] + peaks$rt_offset[k]
+            }
+        }
+        if (!is.null(chrom) && nrow(chrom)) {
+            i <- match(as.character(chrom$path_to_cdf_csv), names(offsets)); k <- !is.na(i)
+            if (any(k)) { chrom$rt_offset[k] <- unname(offsets[i[k]]); chrom$rt_rt_offset[k] <- chrom$rt[k] + chrom$rt_offset[k] }
+        }
+        if (!is.null(profiles) && nrow(profiles) && "rt_rt_offset" %in% names(profiles)) {
+            i <- match(as.character(profiles$path_to_cdf_csv), names(offsets)); k <- !is.na(i)
+            if (any(k)) profiles$rt_rt_offset[k] <- profiles$rt_rt_offset[k] + unname(offsets[i[k]] - old[i[k]])
+        }
+        list(samples = samples_ml, peaks = peaks, chrom = chrom, profiles = profiles,
+             changed = names(offsets)[abs(offsets - old) > 1e-9])
+    }
+
     ## Slide the x window by HALF its width (the Earlier / Later buttons, 2026-10-21;
     ## Lucas: 50% overlap, so 500-600 -> 550-650), so a peak on the edge of one view
     ## is whole in the next. Same width throughout. Clamped to the run [lo, hi] keeping the width, so the
@@ -793,7 +855,7 @@
     }
 
     ## ---- Peak spectra and assignment confidence (phase 3, 2026-10-21) ----------
-    ## Overview mode marks every peak with a square coloured by how well its mass
+    ## Every peak gets a square coloured by how well its mass
     ## spectrum agrees with the other peaks given the same peak_ID in this folder,
     ## so a mis-assigned or co-eluted peak stands out without opening each one.
     ##
@@ -920,8 +982,8 @@
                    score = score, stringsAsFactors = FALSE)
     }
 
-    ## Detail-mode squares (Lucas, 2026-10-22: the Overview squares in Detail too).
-    ## In Detail the ribbons own the plot's fill scale (peak number), so the squares
+    ## The confidence squares as drawn (Lucas, 2026-10-22). The ribbons own the
+    ## plot's fill scale (peak number), so the squares
     ## cannot MAP fill; each confidence class is its own layer with a constant fill,
     ## which needs no scale and adds no legend. Returns a list to add to a ggplot.
     gcms_detail_marker_layers <- function(markers, size = 5) {
@@ -1263,11 +1325,13 @@
         ## used to leave every sample with no TIC ("has 0 scans").
         ions <- unique(c(0, as.numeric(ions)))
 
-        ## compact = TRUE draws thin panels (no y-axis text, sample name beside the
-        ## panel, tight spacing) so a page holds ~3x the samples at the same image
-        ## size, and the page defaults to 50 samples unless samples_per_page is given.
-        compact <- isTRUE(compact)
-        if (compact && missing(samples_per_page)) samples_per_page <- 50
+        ## Overview (compact) mode was removed on 2026-10-22: Detail is fast enough to
+        ## page through a whole folder. The argument is still accepted so an old call
+        ## keeps working; it is ignored.
+        if (isTRUE(compact)) message("analyzeGCMSdata7(): compact / Overview mode has been removed; drawing the normal panels.")
+        ## Likewise zoom_and_scroll_rate: it set the step of the Shift+F/D/V/C pan
+        ## keys, removed on 2026-10-22 (the Earlier / Later buttons pan instead).
+        if (!missing(zoom_and_scroll_rate)) message("analyzeGCMSdata7(): zoom_and_scroll_rate is no longer used; pan with the Earlier / Later buttons.")
 
 
 
@@ -2261,7 +2325,7 @@
             }
 
             ## Phase 3: each peak's background-subtracted spectrum (gcms_peak_spectrum())
-            ## for the Overview confidence markers. Same caching shape as the ion areas:
+            ## for the confidence squares. Same caching shape as the ion areas:
             ## an in-session memo keyed on sample, window and the all-ion store's stamp,
             ## saved to peak_spectra_cache.rds beside the peak table and ignored whole if
             ## the extraction or store code has changed. Pinned by test_confidence.R.
@@ -2759,35 +2823,19 @@
                 predictions <- NULL
                 ## Bounded: never draw more than one page of facets at once, so the
                 ## render can't blow up the graphics device on large sample sets.
-                ## Compact panels (begin) -- test_compact.R extracts this block.
-                ## Overview (compact) vs Detail is a live sidebar switch; `compact` is
-                ## only its starting value, so the sizes are functions of the mode.
-                panel_px_for <- function(overview) if (isTRUE(overview)) 35 else 100
-                peak_label_size_for <- function(overview) if (isTRUE(overview)) 2.2 else 3.88
-                panel_px <- panel_px_for(compact)
-                compact_theme <- ggplot2::theme(
-                    panel.spacing.y = grid::unit(1, "pt"),
-                    strip.background = ggplot2::element_blank(),
-                    strip.text.y = ggplot2::element_text(angle = 0, hjust = 0, size = 7,
-                                                         margin = ggplot2::margin(0, 2, 0, 2)),
-                    axis.text.y = ggplot2::element_blank(),
-                    axis.ticks.y = ggplot2::element_blank(),
-                    axis.title.y = ggplot2::element_blank()
-                )
-                peak_label_size <- peak_label_size_for(compact)
-                ## Page size per mode: the sidebar box shows the current mode's, and
-                ## switching mode brings back the size last used in that mode.
-                ## An explicit samples_per_page sets the starting mode's size only.
-                spp_detail_start   <- if (compact) 20 else samples_per_page
-                spp_overview_start <- if (compact) samples_per_page else 50
-                ## Compact panels (end)
+                ## Panel geometry (begin) -- test_view_switch.R extracts this block.
+                ## Pixel height of one sample's panel (times the sidebar's Panel height)
+                ## and the size of the peak numbers.
+                panel_px <- 100
+                peak_label_size <- 3.88
+                ## Panel geometry (end)
 
                 ## x-axis defaults are resolved HERE, not in the Shift+Q handler, so
-                ## they are never NULL by the time a key handler can fire. The pan/zoom
-                ## keys (F/D/V/C) do `x_axis_start_default <<- x_axis_start_default + rate`;
-                ## NULL + rate is numeric(0), which is NOT NULL, so the Shift+Q
-                ## initialiser's is.null() check would skip it and the renderer's
-                ## dplyr::filter() would then die on a length-0 predicate.
+                ## they are always a finite length-1 number by the time any handler
+                ## reads them: Shift+Q with no brush resets the view to them, and
+                ## NULL or numeric(0) there would hand the renderer's dplyr::filter()
+                ## a length-0 predicate.
+                ## A caller-supplied value is kept as given.
                 if ( is.null(x_axis_start_default) || length(x_axis_start_default) == 0 || !is.finite(x_axis_start_default) ) {
                     x_axis_start_default <- if (nrow(chromatograms) > 0) min(chromatograms$rt, na.rm = TRUE) else 0
                 }
@@ -2848,19 +2896,6 @@
                         @keyframes gcmsPulse { 0%, 100% { transform: scale(0.8); box-shadow: 0 0 3px #f0a30a; }
                                                50% { transform: scale(1.15); box-shadow: 0 0 14px #f0a30a; } }
                         .gcms-unsaved { color: #c62828; font-weight: bold; margin: -4px 0 8px 0; }
-                        .gcms-switch { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
-                        .gcms-switch .checkbox { margin: 0; }
-                        .gcms-switch .checkbox label { padding-left: 0; font-weight: bold; display: flex;
-                                       align-items: center; gap: 8px; }
-                        .gcms-switch-off { font-weight: bold; }
-                        #overview_toggle { -webkit-appearance: none; appearance: none; position: relative;
-                                       margin: 0; width: 38px; height: 20px; border-radius: 10px;
-                                       background: #bdbdbd; cursor: pointer; transition: background .2s; }
-                        #overview_toggle::before { content: ''; position: absolute; top: 2px; left: 2px;
-                                       width: 16px; height: 16px; border-radius: 50%; background: white;
-                                       transition: left .2s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
-                        #overview_toggle:checked { background: #2e7dd7; }
-                        #overview_toggle:checked::before { left: 20px; }
                         .gcms-plot-row { display: flex; align-items: flex-start; }
                         .gcms-plot-cell { flex: 1 1 auto; min-width: 0; }
                         .gcms-align-col { flex: 0 0 38px; position: relative; }
@@ -2933,12 +2968,20 @@
                 ),
                 tags$head(
                     tags$style(HTML("
-                        .gcms-flex-row { display: flex !important; align-items: stretch; }
+                        /* Two independent scroll boxes (Lucas, 2026-10-22): the page itself
+                           never scrolls, so the wheel over the chromatograms moves only the
+                           main column and the sidebar stays put (it scrolls on its own when
+                           the wheel is over it). Sticky .gcms-sticky-top sticks within
+                           .gcms-main, its nearest scrolling ancestor. */
+                        html, body     { height: 100%; overflow: hidden; }
+                        .gcms-flex-row { display: flex !important; align-items: stretch; height: 100vh; }
                         .gcms-sidebar  { flex: 0 0 auto !important; float: none !important;
-                                         max-width: none !important; display: flex; flex-direction: column; }
-                        .gcms-sidebar > .well { flex: 1 1 auto; margin-bottom: 0; }
+                                         max-width: none !important; display: flex; flex-direction: column;
+                                         overflow-y: auto; overscroll-behavior: contain; }
+                        .gcms-sidebar > .well { flex: 1 0 auto; margin-bottom: 0; }
                         .gcms-main     { flex: 1 1 auto !important; float: none !important;
-                                         width: auto !important; min-width: 0; }
+                                         width: auto !important; min-width: 0;
+                                         overflow-y: auto; overscroll-behavior: contain; }
                         .gcms-drag     { flex: 0 0 6px; cursor: col-resize; background: #dcdcdc;
                                          border-radius: 3px; margin: 0 6px; }
                         .gcms-drag:hover { background: #9e9e9e; }
@@ -2992,9 +3035,9 @@
 
                 sidebarLayout(
 
-                    ## No internal scroll box (Lucas, 2026-10-21): the sidebar runs the full
-                    ## height of the page, and its grey well stretches to the bottom of the
-                    ## main column (the peak table), see .gcms-sidebar > .well.
+                    ## The sidebar and the main column scroll independently (Lucas,
+                    ## 2026-10-22), see .gcms-flex-row; the grey well fills the sidebar's
+                    ## full height (.gcms-sidebar > .well).
                     sidebarPanel(
 
                         h4("Busta Lab GCMS Analysis App"),
@@ -3013,7 +3056,8 @@
                         tags$hr(),
                         strong("Keyboard Shortcuts:"),
                         tags$ul(class = "gcms-shortcuts",
-                            tags$li("Shift + Q => Update chromatogram"),
+                            tags$li("Shift + Q => Zoom to the box; no box = full view (recalculates first if anything changed)"),
+                            tags$li("Recalculate button => recalculate, keep the view"),
                             tags$li(class = "gcms-sep", "------------------"),
                             tags$li("Shift + 6 => Detect peaks"),
                             tags$li("Shift + A => Add peak (every panel the brush spans)"),
@@ -3032,11 +3076,6 @@
 
                         tags$hr(),
                         strong("View"),
-                        ## A switch: off = Detail, on = Overview.
-                        tags$div(class = "gcms-switch",
-                            tags$span(class = "gcms-switch-off", "Detail"),
-                            checkboxInput("overview_toggle", "Overview", value = compact)
-                        ),
                         numericInput(
                             "samples_per_page_ui", "Samples per page",
                             value = samples_per_page, min = 1, max = 500, step = 1
@@ -3045,9 +3084,18 @@
                             "panel_height_mult", "Panel height",
                             min = 0.5, max = 4, value = 1, step = 0.25, post = "x"
                         ),
-                        helpText("Overview draws thin panels so a page holds many samples; Detail draws full-height panels for integrating. Each mode remembers its own page size. Zoom is kept when you switch. Panel height stretches every panel in both modes; it redraws when you let go of the slider."),
+                        helpText("Panel height stretches every panel; it redraws when you let go of the slider."),
                         numericInput("align_step", "Align step (the \u25c0 \u25b6 beside each panel)",
                                      value = 1, min = 0.001, step = 0.5, width = "100%"),
+
+                        tags$hr(),
+                        strong("Align on a peak"),
+                        helpText("Give a peak number and press Align: every sample that has that peak is shifted so the centres of their integration windows line up (on the median). This replaces each sample's offset; the \u25c0 \u25b6 arrows then fine-tune from there. Samples without that peak are left as they are. Reset all offsets puts every sample back to zero."),
+                        numericInput("alignall_peak", "Peak number", value = NA, min = 1, step = 1),
+                        fluidRow(
+                            column(6, actionButton("alignall_btn", "Align")),
+                            column(6, actionButton("align_reset_btn", "Reset all offsets"))
+                        ),
 
                         tags$hr(),
                         strong("Chromatogram display"),
@@ -3144,6 +3192,8 @@
                                             ## Step back and forth through past zoom windows.
                                             actionButton("view_back", "\u25c0 Previous view", style = "margin-left:15px;"),
                                             actionButton("view_fwd", "Subsequent view \u25b6"),
+                                            ## Shift+Q's recompute without its zoom: the view on screen stays.
+                                            actionButton("recalc_btn", "Recalculate", style = "margin-left:15px;"),
                                             tags$span(
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
@@ -3265,9 +3315,8 @@
                 ## letter code is the UPPER-case letter (Shift+letter, or Caps Lock) and a
                 ## shifted digit arrives as its symbol. The handlers follow below; Shift+Q/W
                 ## share one observer and the four mass-spectrum keys share another.
-                ##   Shift+F / Shift+D    pan the default x window forward / back     (70 / 68)
-                ##   Shift+V / Shift+C    widen / narrow the default x window         (86 / 67)
-                ##   Shift+Q              recompute if anything changed, else zoom    (81)
+                ##   Shift+Q              recompute if anything changed, then zoom    (81)
+                ##                        (the Recalculate button: the same recompute, view kept)
                 ##   Shift+W              always recompute                            (87)
                 ##   Shift+Z              save peak_ID edits from the table           (90)
                 ##   Shift+A / Shift+G    add the brushed peak: brushed samples / all (65 / 71)
@@ -3280,7 +3329,8 @@
                 ##   Shift+2 (@)          re-plot the mass spectrum                   (64)
                 ##   Shift+3 (#)          subtract the brushed region from it         (35)
                 ##   Shift+4 ($)          classify every peak (ms_classifier.py)      (36)
-                ## Pan/zoom changes take effect on the next Shift+Q.
+                ## Panning is the Earlier / Later buttons (the old Shift+F/D/V/C keys were
+                ## removed on 2026-10-22).
 
                 ## Store console info:
                     message_data <- reactiveVal("")
@@ -3345,18 +3395,6 @@
                         paste("\nstayin' alive ", input$count)
                     })
 
-
-                ## Keys to move chromatogram view - zoom in and out, move L and R
-                    observeEvent(input$keypress, {
-                        if( input$keypress == 70 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Forward on Shift+F
-                        if( input$keypress == 70 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Forward on Shift+F
-                        if( input$keypress == 68 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Backward on Shift+D
-                        if( input$keypress == 68 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Backward on Shift+D
-                        if( input$keypress == 86 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Wider on Shift+V
-                        if( input$keypress == 86 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Wider on Shift+V
-                        if( input$keypress == 67 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Closer on Shift+C
-                        if( input$keypress == 67 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Closer on Shift+C
-                    })
 
                 ## Set up null values for peak detection
                     peakDetectionPlotData <- reactiveVal(NULL)
@@ -3774,14 +3812,18 @@
                           chromatograms = paste(nrow(chromatograms), ncol(chromatograms)))
                     }
 
-                    observeEvent(input$keypress, {
+                    ## One body for Shift+Q, Shift+W and the Recalculate button (Lucas,
+                    ## 2026-10-22). force = TRUE (Shift+W) recomputes even when the
+                    ## fingerprint matches. keep_view = TRUE (Recalculate) recomputes when
+                    ## something changed and redraws the view already on screen: it never
+                    ## reads the brush, so Shift+Q is the zoom and Recalculate the refresh.
+                    shiftq_run <- function(force = FALSE, keep_view = FALSE) {
 
-                        if( input$keypress == 81 || input$keypress == 87 ) { # Shift+Q; Shift+W forces the full recompute
-
-                          shiftq_recompute <- input$keypress == 87 || is.null(chromatograms_updated) ||
+                          shiftq_recompute <- force || is.null(chromatograms_updated) ||
                               !identical(shiftq_fingerprint(), .shiftq_fp)
                           if (!shiftq_recompute) {
-                              cat("Shift+Q: nothing changed since the last recompute, so zoom only (Shift+W recomputes everything).\n")
+                              cat(if (keep_view) "Recalculate: nothing changed since the last recompute (Shift+W forces one).\n" else
+                                  "Shift+Q: nothing changed since the last recompute, so zoom only (Shift+W recomputes everything).\n")
                           }
 
                           if (shiftq_recompute) {
@@ -3888,7 +3930,16 @@
                                 chromatograms_updated <<- chromatograms_updated
                           }
 
-                            ## Subset x_axis according to selection in chromatogram
+                            ## Subset x_axis according to selection in chromatogram.
+                            ## Recalculate skips this whole block once a view exists; before
+                            ## the first one it falls through as a press with no brush.
+
+                          view_ready <- length(x_axis_start) == 1 && length(x_axis_end) == 1 &&
+                              is.finite(x_axis_start) && is.finite(x_axis_end)
+                          brush <- if (keep_view) NULL else input$chromatogram_brush
+                          if (keep_view && view_ready) {
+                              cat(paste0("Recalculate: view kept, x-axis ", signif(x_axis_start, 8), " to ", signif(x_axis_end, 8), "\n"))
+                          } else {
 
                                 ## If null from initial start up, assign extreme values
 
@@ -3904,7 +3955,7 @@
 
                                 ## If brush is null, assign default values to start and end
 
-                                    if ( is.null(input$chromatogram_brush) ) {
+                                    if ( is.null(brush) ) {
                                         x_axis_start <<- x_axis_start_default
                                         x_axis_end <<- x_axis_end_default
                                         y_axis_start <<- 0
@@ -3917,8 +3968,8 @@
 
                                 ## If brush is not null, assign brush values to start and end
 
-                                    if ( !is.null(input$chromatogram_brush) ) {
-                                        peak_points <<- isolate(brushed_chromatogram(chromatograms_updated, input$chromatogram_brush))
+                                    if ( !is.null(brush) ) {
+                                        peak_points <<- isolate(brushed_chromatogram(chromatograms_updated, brush))
 
                                         ## An empty selection used to propagate straight through:
                                         ## min()/max() of nothing return Inf/-Inf, the axis limits
@@ -3992,12 +4043,13 @@
                                 ## or limits that were set correctly and then ignored downstream.
 
                                     cat(paste0(
-                                        "Shift+Q: brush ",
-                                        if (is.null(input$chromatogram_brush)) "ABSENT" else "present",
+                                        if (keep_view) "Recalculate: no view yet, full run" else
+                                            paste0("Shift+Q: brush ", if (is.null(brush)) "ABSENT" else "present"),
                                         "; x-axis now ", signif(x_axis_start, 8), " to ", signif(x_axis_end, 8),
                                         "; y-axis ",
                                         if (is.null(y_zoom)) "auto" else paste0(signif(y_zoom[1], 6), " to ", signif(y_zoom[2], 6)),
                                         "\n"))
+                          }
 
                             ## No plot is assembled here. Shift+Q computes and writes; the
                             ## paginated output$chromatograms below draws. v5 moved the drawing
@@ -4263,9 +4315,14 @@
                                 ## block). Here we only signal that fresh data is ready.
                                 redraw_trigger(isolate(redraw_trigger()) + 1)
 
-                                notify("Chromatogram updated.")
+                                notify(if (keep_view) "Recalculated (view kept)." else "Chromatogram updated.")
+                    }
+                    observeEvent(input$keypress, {
+                        if( input$keypress == 81 || input$keypress == 87 ) { # Shift+Q; Shift+W forces the full recompute
+                            shiftq_run(force = input$keypress == 87)
                         }
                     })
+                    observeEvent(input$recalc_btn, shiftq_run(keep_view = TRUE))
 
                 ## ------------------------------------------------------------------
                 ## Paginated chromatogram renderer + page controls
@@ -4279,18 +4336,11 @@
                 ## baseline / area computation, so moving between views stays snappy.
                 ## ------------------------------------------------------------------
 
-                    ## View mode (Overview / Detail) and page size -- live sidebar controls.
-                    ## The launch arguments (compact, samples_per_page) are only their
-                    ## starting values. Each mode keeps its own page size, so switching
-                    ## brings back the size last used there. The state lives here, not in
-                    ## the inputs: after a mode switch the numeric box only catches up a
-                    ## round trip later, and reading it directly would draw one picture
-                    ## with the new panel height and the old page size.
-                        view_state <- reactiveValues(
-                            mode = if (compact) "overview" else "detail",
-                            detail = spp_detail_start, overview = spp_overview_start)
-                        view_overview <- function() identical(view_state$mode, "overview")
-                        page_size <- function() view_state[[view_state$mode]]
+                    ## Page size -- a live sidebar control; samples_per_page is only its
+                    ## starting value. Held in a reactiveVal rather than read straight off
+                    ## the box, so an emptied or out-of-range entry is ignored.
+                        page_size_val <- reactiveVal(samples_per_page)
+                        page_size <- function() page_size_val()
                         clamp_page_size <- function(v) {
                             v <- suppressWarnings(as.integer(v))
                             if (length(v) != 1 || is.na(v) || v < 1) return(NULL)
@@ -4302,20 +4352,12 @@
                             first <- (current_page() - 1) * old_size + 1
                             current_page(floor((first - 1) / new_size) + 1)
                         }
-                        observeEvent(input$overview_toggle, {
-                            new <- if (isTRUE(input$overview_toggle)) "overview" else "detail"; old <- view_state$mode
-                            if (!(new %in% c("detail", "overview")) || identical(new, old)) return()
-                            repage(view_state[[old]], view_state[[new]])
-                            view_state$mode <- new
-                            updateNumericInput(session, "samples_per_page_ui", value = view_state[[new]])
-                        })
                         observeEvent(input$samples_per_page_ui, {
                             v <- clamp_page_size(input$samples_per_page_ui)
                             if (is.null(v)) return()
-                            m <- view_state$mode
-                            if (v == view_state[[m]]) return()
-                            repage(view_state[[m]], v)
-                            view_state[[m]] <- v
+                            if (v == page_size_val()) return()
+                            repage(page_size_val(), v)
+                            page_size_val(v)
                         })
                         observe({
                             n <- page_size()
@@ -4335,7 +4377,7 @@
                             b <- page_bounds()
                             n_here <- if (!is.null(b) && b$n > 0) b$hi - b$lo + 1 else
                                 min(page_size(), max(1, length(unique(chromatograms$path_to_cdf_csv))))
-                            200 + round(panel_px_for(view_overview()) * panel_height_mult()) * n_here
+                            200 + round(panel_px * panel_height_mult()) * n_here
                         }
 
                     ## Which samples exist, and the current page's slice
@@ -4532,6 +4574,52 @@
                         observeEvent(align_table_quiet(), {
                             if (align_table_quiet() > 0 && !isTRUE(isolate(table_dirty()))) render_peak_table()
                         }, ignoreInit = TRUE)
+                        ## Align on a peak / Reset all offsets: many samples in one pass
+                        ## (gcms_set_sample_offsets()), then the same redraw, debounced table
+                        ## refresh and fingerprint rule as a single nudge.
+                        set_offsets <- function(make_offsets, what) {
+                            fp_was_current <- !is.null(.shiftq_fp) && identical(shiftq_fingerprint(), .shiftq_fp)
+                            if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
+                            if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): aligning redraws it."); return() }
+                            sm <- read.csv("samples_monolist.csv", stringsAsFactors = FALSE)
+                            pk <- if (file.exists("peaks_monolist.csv")) read.csv("peaks_monolist.csv", stringsAsFactors = FALSE) else NULL
+                            plan <- make_offsets(sm, pk)
+                            if (is.null(plan)) return()
+                            pr <- if (file.exists("coelution_profiles.csv")) try(read.csv("coelution_profiles.csv", stringsAsFactors = FALSE), silent = TRUE) else NULL
+                            if (inherits(pr, "try-error")) pr <- NULL
+                            res <- gcms_set_sample_offsets(plan$offsets, sm, pk, chromatograms_updated, pr)
+                            if (is.null(res)) { notify(paste0(what, ": nothing to change.")); return() }
+                            write.table(res$samples, file = "samples_monolist.csv", row.names = FALSE, sep = ",")
+                            if (!is.null(res$peaks)) write.table(res$peaks, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
+                            if (!is.null(res$profiles)) utils::write.csv(res$profiles, "coelution_profiles.csv", row.names = FALSE)
+                            chromatograms_updated <<- res$chrom
+                            session$onFlushed(function() align_table_due(isolate(align_table_due()) + 1), once = TRUE)
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                            if (fp_was_current) .shiftq_fp <<- shiftq_fingerprint()
+                            msg <- paste0(what, ": ", length(res$changed), " sample", if (length(res$changed) == 1) "" else "s", " moved.")
+                            if (length(plan$missing)) {
+                                nm <- basename(plan$missing)
+                                msg <- paste0(msg, " ", length(nm), " without that peak, left as they were: ",
+                                              paste(utils::head(nm, 5), collapse = ", "), if (length(nm) > 5) ", ..." else "", ".")
+                            }
+                            notify(msg)
+                        }
+                        observeEvent(input$alignall_btn, {
+                            n <- input$alignall_peak
+                            set_offsets(function(sm, pk) {
+                                if (is.null(pk) || !("peak_number_within_sample" %in% names(pk))) {
+                                    notify("Align: no numbered peaks yet. Press Shift+Q first."); return(NULL)
+                                }
+                                plan <- gcms_align_offsets_for_peak(pk, sm, n)
+                                if (is.null(plan)) { notify(paste0("Align: no sample has a peak number ", n, ".")); return(NULL) }
+                                cat(sprintf("Align: peak %d, window centres onto %.4f (raw rt median).\n", as.integer(round(n)), plan$target))
+                                plan
+                            }, paste0("Aligned on peak ", n))
+                        })
+                        observeEvent(input$align_reset_btn, {
+                            set_offsets(function(sm, pk) list(offsets = stats::setNames(rep(0, nrow(sm)), as.character(sm$path_to_cdf_csv))),
+                                        "Reset all offsets")
+                        })
                         observeEvent(input$align_nudge, {
                             a <- input$align_nudge
                             smp <- if (is.list(a)) a$sample else NULL
@@ -4556,16 +4644,16 @@
                     ## Shift+Q set from the brush/defaults, so brushing does not itself force
                     ## a redraw (matches v4: press Q to refresh the view).
                         ## Where each panel sits, for the Align arrows beside the plot. Panels
-                        ## are equal height, so the layout is three numbers per mode: the margin
+                        ## are equal height, so the layout is three numbers: the margin
                         ## above the first panel, the gap between panels and the band below the
                         ## last (x axis + title), all fixed in pixels by the theme. They are
-                        ## measured ONCE per mode from a 2-panel skeleton of the real plot (same
+                        ## measured ONCE from a 2-panel skeleton of the real plot (same
                         ## facets, x axis, theme), through panel_fraction(); a full-size skeleton
                         ## agreed with the real plot to 0 px but cost ~3 s at 95 panels.
                         ## test_align.R pins the arithmetic against a full skeleton.
                         .align_layout <- new.env(parent = emptyenv())
-                        align_layout_for <- function(ov) {
-                            k <- if (isTRUE(ov)) "ov" else "detail"
+                        align_layout_for <- function() {
+                            k <- "detail"
                             if (!is.null(.align_layout[[k]])) return(.align_layout[[k]])
                             H0 <- 600
                             sk <- ggplot(data.frame(rt_rt_offset = c(0, 1), abundance = c(0, 1),
@@ -4574,7 +4662,6 @@
                                 scale_x_continuous(name = "Retention (Scan number)") +
                                 scale_y_continuous(name = "Abundance (counts)") +
                                 facet_grid(path_to_cdf_csv ~ ., scales = "free_y", drop = FALSE) + theme_classic()
-                            if (isTRUE(ov)) sk <- sk + compact_theme
                             g <- try(panel_fraction(sk, 1000, H0, view_key = paste0("align-skeleton-", k), n_facets = 2), silent = TRUE)
                             if (inherits(g, "try-error") || is.null(g$panels) || nrow(g$panels) != 2) return(NULL)
                             pn <- g$panels[order(g$panels$y_lo), ]
@@ -4583,8 +4670,8 @@
                             assign(k, out, envir = .align_layout)
                             out
                         }
-                        align_rows_for <- function(samples, height, ov) {
-                            n <- length(samples); L <- align_layout_for(ov)
+                        align_rows_for <- function(samples, height) {
+                            n <- length(samples); L <- align_layout_for()
                             if (!n || is.null(L) || !is.finite(height)) return(list())
                             h <- (height - L[["top"]] - L[["bottom"]] - (n - 1) * L[["gap"]]) / n
                             if (!is.finite(h) || h <= 0) return(list())
@@ -4597,8 +4684,6 @@
 
                             redraw_trigger()
                             b <- page_bounds()
-                            ov <- view_overview()
-                            peak_label_size <- peak_label_size_for(ov)
                             plot_px_h <- chromatogram_height()
                             ## One line column per drawn pixel (gcms_thin_lines()); 2000 until
                             ## the browser has reported the plot's width.
@@ -4905,25 +4990,7 @@
                                             if (nrow(all_vlines)  > 0) all_vlines$path_to_cdf_csv  <- as_page_facet(all_vlines$path_to_cdf_csv)
                                             if (nrow(all_labels)  > 0) all_labels$path_to_cdf_csv  <- as_page_facet(all_labels$path_to_cdf_csv)
                                             if (nrow(all_ribbons) > 0) {
-                                                if (mode_display == "tic" && ov) {
-                                                    ## Overview: one square per peak at its apex, coloured by how
-                                                    ## well its spectrum agrees with the folder's other peaks of
-                                                    ## the same peak_ID. No ribbons or numbers: at 35 px they are
-                                                    ## unreadable, and the ribbons were most of the draw time.
-                                                    markers <- gcms_overview_markers(all_labels, peak_table, confidence_thresholds)
-                                                    chromatogram_plot <- chromatogram_plot +
-                                                        geom_point(data = markers, mapping = aes(x = x, y = y, fill = confidence),
-                                                                   shape = 22, size = 3, stroke = 0.25, colour = "grey20") +
-                                                        scale_fill_manual(values = gcms_confidence_colours, drop = FALSE,
-                                                                          name = "Spectrum agreement",
-                                                                          labels = c(high = sprintf(">= %.2f", confidence_thresholds[2]),
-                                                                                     medium = sprintf("%.2f-%.2f", confidence_thresholds[1], confidence_thresholds[2]),
-                                                                                     low = sprintf("< %.2f", confidence_thresholds[1]),
-                                                                                     none = "not scored")) +
-                                                        ## The TIC base plot hides the fill legend (it was the ribbons'
-                                                        ## peak numbers); in Overview fill is the markers' key, so show it.
-                                                        guides(fill = guide_legend(override.aes = list(size = 3, fill = unname(gcms_confidence_colours))))
-                                                } else if (mode_display == "tic") {
+                                                if (mode_display == "tic") {
                                                     chromatogram_plot <- chromatogram_plot +
                                                         geom_vline(data = all_vlines, mapping = aes(xintercept = rt_rt_offset), alpha = 0.3) +
                                                         geom_ribbon(
@@ -4932,8 +4999,9 @@
                                                                           fill = peak_number_within_sample, group = peak_number_within_sample),
                                                             alpha = 0.8
                                                         ) +
-                                                        ## Detail: the Overview's confidence square at each apex,
-                                                        ## drawn under the peak number so the number stays readable.
+                                                        ## A square at each apex coloured by how well the peak's
+                                                        ## spectrum agrees with the folder's other peaks of the same
+                                                        ## peak_ID, drawn under the peak number so it stays readable.
                                                         gcms_detail_marker_layers(gcms_overview_markers(all_labels, peak_table, confidence_thresholds)) +
                                                         geom_text(data = all_labels, mapping = aes(label = peak_number_within_sample, x = x, y = y), color = "black", size = peak_label_size)
                                                 } else {
@@ -4942,7 +5010,7 @@
                                                 }
                                             }
                                         }
-                                        if (!ov && nrow(split_peaks) > 0 && file.exists("coelution_profiles.csv")) {
+                                        if (nrow(split_peaks) > 0 && file.exists("coelution_profiles.csv")) {
                                             prof <- try(utils::read.csv("coelution_profiles.csv", stringsAsFactors = FALSE), silent = TRUE)
                                             ## Only bands whose row is still in the table: matching on the
                                             ## sample alone drew BOTH bands after one row of a pair had been
@@ -4995,9 +5063,8 @@
                                         )
                                 }
 
-                            ## Compact styling goes on BEFORE the plot is kept for the brush
+                            ## Any theme change goes on BEFORE the plot is kept for the brush
                             ## maths, so panel_fraction() measures the panels as drawn.
-                                if (ov) chromatogram_plot <- chromatogram_plot + compact_theme
 
                             ## Kept so a mapping-less brush can be re-expressed against the
                             ## panel's real bounds. clientData carries the size the browser
@@ -5024,7 +5091,7 @@
                                 ## One Align arrow pair per panel, top to bottom in page order
                                 ## (the facets are a factor over page_samples, drop = FALSE).
                                 session$sendCustomMessage("gcms_align_rows",
-                                    list(height = plot_px_h, rows = align_rows_for(page_samples, plot_px_h, ov)))
+                                    list(height = plot_px_h, rows = align_rows_for(page_samples, plot_px_h)))
 
                             chromatogram_plot
                         }, height = chromatogram_height)
