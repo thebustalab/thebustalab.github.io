@@ -854,6 +854,47 @@
         list(views = hist$views, pos = as.integer(p))
     }
 
+    ## Undo (the Undo button, 2026-10-26; Lucas: undo only, no redo, button only,
+    ## recalculations are not steps). Everything an edit changes lives in these
+    ## files in the working folder, so a step is a copy of their bytes taken just
+    ## before the edit, and undoing writes them back. NULL = the file did not exist.
+    gcms_undo_files <- c("peaks_monolist.csv", "samples_monolist.csv", "coelution_profiles.csv")
+    gcms_undo_capture <- function(files = gcms_undo_files) {
+        stats::setNames(lapply(files, function(f) {
+            if (!file.exists(f)) return(NULL)
+            readBin(f, "raw", n = file.info(f)$size)
+        }), files)
+    }
+    ## Push a step unless the edit changed nothing. A step carrying a `coalesce`
+    ## key equal to the top step's (a run of arrow nudges on one sample) is
+    ## folded into it: the top step already holds the state before the run.
+    gcms_undo_push <- function(stack, step, now, cap = 20L) {
+        if (identical(step$files, now)) return(stack)
+        top <- if (length(stack)) stack[[length(stack)]] else NULL
+        if (!is.null(step$coalesce) && !is.null(top) && identical(top$coalesce, step$coalesce)) return(stack)
+        stack <- c(stack, list(step))
+        if (length(stack) > cap) stack <- stack[(length(stack) - cap + 1):length(stack)]
+        stack
+    }
+    ## Write a step's files back, each atomically (temp file, then rename). The
+    ## peak list is never deleted -- Shift+Q reads it unconditionally -- so a step
+    ## taken before it existed restores an empty one, as Shift+0 writes.
+    gcms_undo_restore <- function(files) {
+        for (f in names(files)) {
+            bytes <- files[[f]]
+            if (is.null(bytes) && f == "peaks_monolist.csv")
+                bytes <- charToRaw("\"peak_start\",\"peak_end\",\"peak_ID\",\"path_to_cdf_csv\",\"area\"\n")
+            if (is.null(bytes)) {
+                if (file.exists(f)) file.remove(f)
+                next
+            }
+            tmp <- tempfile(pattern = paste0(".", basename(f), "."), tmpdir = dirname(f))
+            writeBin(bytes, tmp)
+            if (!file.rename(tmp, f)) { unlink(tmp); stop("Undo: could not write ", f) }
+        }
+        invisible(NULL)
+    }
+
     ## ---- Peak spectra and assignment confidence (phase 3, 2026-10-21) ----------
     ## Every peak gets a square coloured by how well its mass
     ## spectrum agrees with the other peaks given the same peak_ID in this folder,
@@ -999,6 +1040,55 @@
         layers
     }
 
+    ## The key to those squares, shown in the button row (Lucas, 2026-10-26).
+    gcms_confidence_legend <- function(thresholds = c(0.75, 0.90)) {
+        ## R colour names such as "grey60" are not CSS colours: always hand CSS a hex.
+        css_col <- function(x) grDevices::rgb(t(grDevices::col2rgb(x)), maxColorValue = 255)
+        sw <- function(cls) shiny::tags$span(style = paste0(
+            "display:inline-block; width:11px; height:11px; border:1px solid #333; margin:0 3px 0 9px;",
+            " vertical-align:middle; background:", css_col(gcms_confidence_colours[[cls]]), ";"))
+        lo <- format(thresholds[1]); hi <- format(thresholds[2])
+        shiny::tags$span(style = "margin-left:15px; font-size:12px; white-space:nowrap;",
+            title = "Each peak's square: how well its mass spectrum matches the other peaks with the same peak_ID in this folder",
+            "MS agreement with same-named peaks:",
+            sw("high"), paste0("\u2265 ", hi),
+            sw("medium"), paste0(lo, "\u2013", hi),
+            sw("low"), paste0("< ", lo),
+            sw("none"), "no comparison")
+    }
+
+    ## "Zoom to peaks" (Lucas, 2026-10-26). Accepts "12", "12-15", "12 to 15" or
+    ## "15-12"; returns c(lo, hi) as integers, or NULL when it cannot read one.
+    gcms_parse_peak_range <- function(txt) {
+        if (is.null(txt) || length(txt) != 1 || is.na(txt)) return(NULL)
+        n <- suppressWarnings(as.numeric(regmatches(txt, gregexpr("[0-9]+(\\.[0-9]+)?", txt))[[1]]))
+        n <- n[is.finite(n)]
+        if (length(n) < 1 || length(n) > 2) return(NULL)
+        n <- round(n)
+        as.integer(c(min(n), max(n)))
+    }
+    ## The aligned-rt window holding peaks lo..hi: from the earliest start to the
+    ## latest end of each peak's median window (gcms_window_for_peak()), padded by
+    ## `pad` of its width each side. Numbers no sample has are skipped; NULL if none.
+    gcms_peak_range_window <- function(peak_table, lo, hi, pad = 0.1) {
+        w <- lapply(seq(lo, hi), function(n) gcms_window_for_peak(peak_table, n))
+        w <- do.call(rbind, w[!vapply(w, is.null, TRUE)])
+        if (is.null(w) || !nrow(w)) return(NULL)
+        r <- c(min(w[, 1]), max(w[, 2]))
+        r + c(-1, 1) * pad * max(diff(r), 1e-6)
+    }
+
+    ## Right-click > Remove peak (Lucas, 2026-10-26). The row of `peak_table` whose
+    ## bounds (peak_start..peak_end, RAW rt, inclusive) hold `rt` in `sample`, or NA.
+    ## Where peaks nest, the narrowest wins: it is the one the cursor singles out.
+    gcms_peak_at <- function(peak_table, sample, rt) {
+        if (is.null(peak_table) || !nrow(peak_table) || is.null(sample) || length(sample) != 1 ||
+            length(rt) != 1 || !is.finite(rt)) return(NA_integer_)
+        hit <- which(as.character(peak_table$path_to_cdf_csv) == sample &
+                     peak_table$peak_start <= rt & peak_table$peak_end >= rt)
+        if (!length(hit)) return(NA_integer_)
+        hit[which.min(peak_table$peak_end[hit] - peak_table$peak_start[hit])]
+    }
 
 #### Stateless helpers lifted out of analyzeGCMSdata7() (2026-10-22)
 ####
@@ -1655,7 +1745,9 @@
             ## The sample whose panel a plot CLICK landed in (the Align strip picks it
             ## this way). Same trust order as a brush: Shiny's panelvar1 if the coordmap
             ## survived, else the panel geometry of the picture as drawn. NULL if unknown.
-            clicked_sample <- function(click) {
+            ## strict = TRUE (right-click > Remove peak): a click in a gutter or margin is
+            ## NULL rather than snapped to the nearest panel, so it cannot hit a neighbour.
+            clicked_sample <- function(click, strict = FALSE) {
                 if (is.null(click)) return(NULL)
                 if (!is.null(click$panelvar1)) return(as.character(click$panelvar1))
                 if (is.null(last_brush_plot) || length(last_brush_size) != 2 ||
@@ -1667,7 +1759,34 @@
                 fy <- gcms_brush_unit_fraction(list(ymin = click$y, ymax = click$y, domain = click$domain), "y")
                 if (is.null(fy)) return(NULL)
                 idx <- gcms_panel_at_bottom_fraction(pfull, fy[1])
-                if (is.null(idx)) NULL else as.character(pfull$panels$facet[idx])
+                if (is.null(idx)) return(NULL)
+                if (isTRUE(strict) && (fy[1] < 1 - pfull$panels$y_hi[idx] || fy[1] > 1 - pfull$panels$y_lo[idx])) return(NULL)
+                as.character(pfull$panels$facet[idx])
+            }
+
+            ## The ALIGNED rt (the x axis) a plot CLICK landed on (right-click > Remove
+            ## peak). A surviving coordmap reports click$x in data units already; the
+            ## degenerate one reports an image fraction against a unit domain, turned
+            ## into rt here as brushed_chromatogram() turns a brush's x. NULL when that
+            ## cannot be done reliably: a removal refuses rather than guesses.
+            clicked_rt <- function(click) {
+                if (is.null(click) || is.null(click$x)) return(NULL)
+                x <- suppressWarnings(as.numeric(click$x))
+                if (length(x) != 1 || !is.finite(x)) return(NULL)
+                frx <- gcms_brush_unit_fraction(list(xmin = x, xmax = x, domain = click$domain), "x")
+                if (!is.null(click$mapping$x)) return(x)
+                ## No unit domain: x is in data units if Shiny sent a domain at all
+                ## (a coordmap whose mapping was lost); with no domain it is unknown.
+                if (is.null(frx)) return(if (is.null(click$domain)) NULL else x)
+                if (is.null(last_brush_plot) || length(last_brush_size) != 2 ||
+                    !all(is.finite(last_brush_size)) || !all(last_brush_size > 0)) return(NULL)
+                pfull <- panel_fraction(last_brush_plot, last_brush_size[1], last_brush_size[2],
+                                        view_key = last_brush_key, n_facets = last_brush_facets,
+                                        window = last_brush_window, facet_sig = last_brush_facet_sig)
+                if (is.null(pfull) || length(pfull$x) != 2 || length(pfull$x_range) != 2) return(NULL)
+                fr <- (frx[1] - pfull$x[1]) / (pfull$x[2] - pfull$x[1])
+                if (!is.finite(fr) || fr < 0 || fr > 1) return(NULL)
+                pfull$x_range[1] + fr * diff(pfull$x_range)
             }
 
             ## Honour a stored y-zoom only in the view it was taken in; otherwise
@@ -2905,6 +3024,11 @@
                                                   border: 1px solid #bbb; border-radius: 3px; background: #f7f7f7;
                                                   font-size: 9px !important; color: #333; cursor: pointer; }
                         .gcms-align-pair button:hover { background: #2e7dd7; color: #fff; border-color: #2e7dd7; }
+                        .gcms-ctx-menu { position: fixed; display: none; z-index: 10000; min-width: 120px;
+                                         background: #ffffff; border: 1px solid #999999; border-radius: 4px;
+                                         box-shadow: 0 2px 8px rgba(0,0,0,0.25); padding: 3px 0; font-size: 13px; }
+                        .gcms-ctx-item { padding: 4px 14px; cursor: pointer; color: #222222; }
+                        .gcms-ctx-item:hover { background: #2e7dd7; color: #ffffff; }
                     ")),
                     tags$script(HTML("
                         (function () {
@@ -2992,6 +3116,7 @@
                         .gcms-shortcuts li.gcms-sep { list-style: none; }
                         #key, #message_window { margin-bottom: 6px; }
                         /* Pinned spectra + buttons; the chromatograms scroll under them. */
+                        .gcms-zoom-box .form-group { margin-bottom: 0; }
                         .gcms-sticky-top { position: -webkit-sticky; position: sticky; top: 0; z-index: 100;
                                            background: #fff; padding-bottom: 4px;
                                            box-shadow: 0 3px 4px -3px rgba(0,0,0,.25); }
@@ -3063,6 +3188,7 @@
                             tags$li("Shift + A => Add peak (every panel the brush spans)"),
                             tags$li("Shift + G => Add global peak"),
                             tags$li("Shift + E => Excise peak (every panel the brush spans)"),
+                            tags$li("Right-click a peak => Remove it, or split it (that sample only)"),
                             tags$li("Shift + R => Remove global peak"),
                             tags$li("Shift + 0 => Remove ALL peaks"),
                             tags$li("Shift + Z => Save peak table"),
@@ -3149,14 +3275,61 @@
                             });
                         '),
 
+                        ## Right-click menu on the chromatograms (Lucas, 2026-10-26): Remove peak,
+                        ## Split peak... Server side: the Right-click menu block.
+                        tags$script(HTML("
+                            (function () {
+                              var menu = null, at = null;
+                              function hide() { if (menu) menu.style.display = 'none'; at = null; }
+                              function build() {
+                                menu = document.createElement('div');
+                                menu.className = 'gcms-ctx-menu';
+                                [['Remove peak', 'remove'], ['Split peak\u2026', 'split']].forEach(function (it) {
+                                var item = document.createElement('div');
+                                item.className = 'gcms-ctx-item';
+                                item.textContent = it[0];
+                                item.addEventListener('click', function (e) {
+                                  e.stopPropagation();
+                                  var p = at; hide();
+                                  if (!p || !window.Shiny) return;
+                                  // Re-send the right-click's spot through Shiny's own click
+                                  // handler: the same jQuery event Shiny triggers for a left
+                                  // click. Cleared first, because a spot outside every panel
+                                  // sends nothing and would leave an older click standing.
+                                  Shiny.setInputValue('chromatogram_click', null, {priority: 'event'});
+                                  $('#chromatograms').trigger($.Event('mousedown2', {which: 1, pageX: p.pageX, pageY: p.pageY}));
+                                  Shiny.setInputValue('chromatogram_ctx', {action: it[1], n: Date.now()}, {priority: 'event'});
+                                });
+                                menu.appendChild(item);
+                                });
+                                document.body.appendChild(menu);
+                              }
+                              $(document).on('contextmenu', '#chromatograms', function (e) {
+                                e.preventDefault();
+                                if (!menu) build();
+                                at = {pageX: e.pageX, pageY: e.pageY};
+                                menu.style.left = e.clientX + 'px';
+                                menu.style.top = e.clientY + 'px';
+                                menu.style.display = 'block';
+                              });
+                              $(document).on('mousedown', function (e) {
+                                if (menu && !$(e.target).closest('.gcms-ctx-menu').length) hide();
+                              });
+                              $(document).on('keydown', function (e) { if (e.key === 'Escape') hide(); });
+                              document.addEventListener('scroll', hide, true);
+                              $(window).on('blur resize', hide);
+                            })();
+                        ")),
+
 
                         tabsetPanel(type = "tabs",
 
                             tabPanel("Main",
 
-                                ## The two mass-spectrum panels and the button row stay pinned
+                                ## The mass-spectrum panel and the button row stay pinned
                                 ## at the top while the chromatograms scroll beneath them (Lucas,
-                                ## 2026-10-22). Rows built by hand, not with verticalLayout(),
+                                ## 2026-10-22). The second spectrum panel (massSpectra_2, never
+                                ## rendered to) was taken off the screen on 2026-10-26 (Lucas). Rows built by hand, not with verticalLayout(),
                                 ## because that wraps every child in its own row and a sticky
                                 ## element can only stick within its parent: the pinned block
                                 ## has to be ONE row whose parent is the whole tab.
@@ -3166,15 +3339,6 @@
                                         outputId = "massSpectra_1",
                                         brush = brushOpts(
                                             id = "massSpectra_1_brush",
-                                            resetOnNew = TRUE
-                                        ),
-                                        height = 150
-                                    ),
-
-                                    plotOutput(
-                                        outputId = "massSpectra_2",
-                                        brush = brushOpts(
-                                            id = "massSpectra_2_brush",
                                             resetOnNew = TRUE
                                         ),
                                         height = 150
@@ -3194,10 +3358,19 @@
                                             actionButton("view_fwd", "Subsequent view \u25b6"),
                                             ## Shift+Q's recompute without its zoom: the view on screen stays.
                                             actionButton("recalc_btn", "Recalculate", style = "margin-left:15px;"),
+                                            ## Put the peak list and offsets back as they were before the last edit.
+                                            actionButton("undo_btn", "Undo", style = "margin-left:15px;"),
+                                            ## Zoom to a run of peaks by number ("12", "12-15").
+                                            tags$span(class = "gcms-zoom-box", style = "margin-left:15px; display:inline-block; width:90px; vertical-align:middle;",
+                                                textInput("zoom_peaks", label = NULL, placeholder = "e.g. 12-15", width = "90px")),
+                                            actionButton("zoom_peaks_btn", "Zoom to peaks"),
                                             tags$span(
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
-                                            )
+                                            ),
+                                            ## Key to the squares on each peak (the plot cannot carry it:
+                                            ## its fill scale belongs to the peak ribbons).
+                                            gcms_confidence_legend(confidence_thresholds)
                                         )
                                     )
                                 )),
@@ -3329,7 +3502,9 @@
                 ##   Shift+2 (@)          re-plot the mass spectrum                   (64)
                 ##   Shift+3 (#)          subtract the brushed region from it         (35)
                 ##   Shift+4 ($)          classify every peak (ms_classifier.py)      (36)
-                ## Panning is the Earlier / Later buttons (the old Shift+F/D/V/C keys were
+                ## Undo is a button (no key): it reverts the last peak/offset edit, see the
+                ## Undo block below. Right-click on a peak opens a menu (Remove peak; Split
+                ## peak, this sample only), see the Right-click menu block. Panning is the Earlier / Later buttons (the old Shift+F/D/V/C keys were
                 ## removed on 2026-10-22).
 
                 ## Store console info:
@@ -3456,6 +3631,7 @@
 
                     observeEvent(input$keypress, {
                         if (input$keypress == 90 ) {
+                            undo_begin("save peak-ID edits (Shift+Z)"); on.exit(undo_end(), add = TRUE)
                             ## Write out any modifications to peak table (i.e. sample IDs)
                                 hot = isolate(input$peak_table)
                                 if (is.null(hot)) {
@@ -3495,6 +3671,7 @@
                     observeEvent(input$keypress, {
                       # SHIFT+0 => `)` => ASCII code 41
                       if (input$keypress == 41) {
+                          undo_begin("remove all peaks (Shift+0)"); on.exit(undo_end(), add = TRUE)
                         cat("Removing ALL peaks...\n")
                         if (file.exists("peaks_monolist.csv")) {
                           # Overwrite with empty table
@@ -3527,6 +3704,7 @@
                 ## Peak detection
                     observeEvent(input$keypress, {
                       if (input$keypress == 94) {  # '^' = Shift+6
+                          undo_begin("peak detection (Shift+6)"); on.exit(undo_end(), add = TRUE)
                         peakDetectionPlotData(NULL)
                         cat("Starting custom peak detection...\n")
 
@@ -4439,6 +4617,7 @@
                             pt
                         }
                         observeEvent(input$split_btn, {
+                            undo_begin(paste0("split peak ", input$split_peak)); on.exit(undo_end(), add = TRUE)
                             pt <- coelution_table(); if (is.null(pt)) return()
                             ia <- gcms_parse_ions(input$split_ions_a); ib <- gcms_parse_ions(input$split_ions_b)
                             n <- input$split_peak
@@ -4455,6 +4634,7 @@
                             coelution_finish(res$peak_table)
                         })
                         observeEvent(input$unsplit_btn, {
+                            undo_begin(paste0("unsplit peak ", input$split_peak)); on.exit(undo_end(), add = TRUE)
                             pt <- coelution_table(); if (is.null(pt)) return()
                             res <- gcms_unsplit_peak(pt, input$split_peak)
                             notify_log(res$log)
@@ -4528,11 +4708,47 @@
                         observeEvent(input$view_fwd,  step_view(+1))
                     ## View history (end)
 
+                    ## Zoom to peaks (begin) -- test_zoom_peaks.R extracts this block.
+                    ## Zoom to peaks by number (the box and button in the button row).
+                    ## Sets the same globals a Shift+Q brush zoom does; y is fitted to
+                    ## the tallest TIC in the window, any y-zoom cleared.
+                        observeEvent(input$zoom_peaks_btn, {
+                            if (is.null(chromatograms_updated) || !file.exists("peaks_monolist.csv")) {
+                                notify("No chromatograms loaded yet. Press Shift+Q first."); return()
+                            }
+                            rng <- gcms_parse_peak_range(input$zoom_peaks)
+                            if (is.null(rng)) { notify("Zoom to peaks: type a peak number, or a range like 12-15."); return() }
+                            pt <- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
+                            if (!all(c("peak_number_within_sample", "peak_start_rt_offset", "peak_end_rt_offset") %in% names(pt))) {
+                                notify("Zoom to peaks: no numbered peaks yet. Press Shift+Q first."); return()
+                            }
+                            win <- gcms_peak_range_window(pt, rng[1], rng[2])
+                            if (is.null(win)) {
+                                notify(paste0("Zoom to peaks: no sample has peak ",
+                                              if (rng[1] == rng[2]) rng[1] else paste0(rng[1], "-", rng[2]), "."))
+                                return()
+                            }
+                            tic <- chromatograms_updated[!is.na(chromatograms_updated$ion) & chromatograms_updated$ion == 0 &
+                                                         chromatograms_updated$rt_rt_offset >= win[1] &
+                                                         chromatograms_updated$rt_rt_offset <= win[2], , drop = FALSE]
+                            top <- suppressWarnings(max(tic$abundance, na.rm = TRUE))
+                            x_axis_start <<- win[1]; x_axis_end <<- win[2]
+                            y_zoom <<- NULL; y_zoom_key <<- NULL
+                            y_axis_start <<- 0
+                            y_axis_end <<- if (is.finite(top) && top > 0) top * 1.05 else max(chromatograms$abundance)
+                            cat(sprintf("Zoom to peaks %d-%d: x-axis %s to %s\n", rng[1], rng[2], signif(win[1], 8), signif(win[2], 8)))
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                        })
+                    ## Zoom to peaks (end)
+
                     ## Align: move one sample along rt. Same tables Shift+Q would rebuild,
                     ## updated in place (gcms_shift_sample_offset()), so it redraws at once.
                     ## Driven by the arrow pair beside each panel (input$align_nudge, sent by
                     ## the gcms_align_rows script), by the sidebar's Align step.
                         nudge_sample <- function(smp, delta, absolute = FALSE) {
+                            ## A run of arrow presses on one sample is one undo step.
+                            undo_begin(paste0("align ", basename(as.character(smp))), coalesce = paste0("nudge:", smp))
+                            on.exit(undo_end(), add = TRUE)
                             fp_was_current <- !is.null(.shiftq_fp) && identical(shiftq_fingerprint(), .shiftq_fp)
                             if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
                             if (is.null(smp) || !nzchar(smp)) { notify("No sample to align."); return() }
@@ -4578,6 +4794,7 @@
                         ## (gcms_set_sample_offsets()), then the same redraw, debounced table
                         ## refresh and fingerprint rule as a single nudge.
                         set_offsets <- function(make_offsets, what) {
+                            undo_begin(tolower(what)); on.exit(undo_end(), add = TRUE)
                             fp_was_current <- !is.null(.shiftq_fp) && identical(shiftq_fingerprint(), .shiftq_fp)
                             if (is.null(chromatograms_updated)) { notify("No chromatograms loaded yet. Press Shift+Q first."); return() }
                             if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): aligning redraws it."); return() }
@@ -4628,6 +4845,217 @@
                             st <- suppressWarnings(as.numeric(input$align_step)); if (!length(st) || !is.finite(st) || st <= 0) st <- 1
                             nudge_sample(as.character(smp), sign(dir) * st)
                         })
+
+                    ## Undo (begin) -- test_undo.R extracts this block.
+                    ## The Undo button. Each edit handler calls undo_begin() before it
+                    ## touches anything and undo_end() on exit (on.exit, so early returns
+                    ## and errors are covered); an edit that changed no file leaves no step.
+                    ## Recalculations (Shift+Q/W, Recalculate) are not steps. Per browser
+                    ## session, last 20 steps, gone when the app closes.
+                        undo_hist <- new.env(parent = emptyenv())
+                        undo_hist$stack <- list()
+                        undo_hist$pending <- NULL
+                        undo_label_refresh <- function() {
+                            st <- undo_hist$stack
+                            updateActionButton(session, "undo_btn",
+                                label = if (length(st)) paste0("Undo: ", st[[length(st)]]$label) else "Undo")
+                        }
+                        undo_begin <- function(label, coalesce = NULL) {
+                            fp <- shiftq_fingerprint()
+                            undo_hist$pending <- list(label = label, coalesce = coalesce, files = gcms_undo_capture(),
+                                                      fp = fp, fp_current = !is.null(.shiftq_fp) && identical(fp, .shiftq_fp))
+                        }
+                        undo_end <- function() {
+                            step <- undo_hist$pending
+                            undo_hist$pending <- NULL
+                            if (is.null(step)) return(invisible(NULL))
+                            undo_hist$stack <- gcms_undo_push(undo_hist$stack, step, gcms_undo_capture())
+                            undo_label_refresh()
+                        }
+                        observeEvent(input$undo_btn, {
+                            st <- undo_hist$stack
+                            if (!length(st)) { notify("Nothing to undo."); return() }
+                            if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): undoing redraws it."); return() }
+                            step <- st[[length(st)]]
+                            ## The loaded chromatograms carry each sample's rt_offset; put back
+                            ## the offsets of the step being restored, as Align would -- worked
+                            ## out now, applied only once the files are back.
+                            new_chrom <- NULL
+                            old_sm <- step$files[["samples_monolist.csv"]]
+                            if (!is.null(chromatograms_updated) && !is.null(old_sm) && file.exists("samples_monolist.csv")) {
+                                then <- try(utils::read.csv(text = rawToChar(old_sm), stringsAsFactors = FALSE), silent = TRUE)
+                                cur  <- try(utils::read.csv("samples_monolist.csv", stringsAsFactors = FALSE), silent = TRUE)
+                                if (!inherits(then, "try-error") && !inherits(cur, "try-error") &&
+                                    all(c("path_to_cdf_csv", "rt_offset") %in% names(then))) {
+                                    off <- suppressWarnings(as.numeric(then$rt_offset)); off[!is.finite(off)] <- 0
+                                    res <- gcms_set_sample_offsets(stats::setNames(off, as.character(then$path_to_cdf_csv)),
+                                                                   cur, NULL, chromatograms_updated, NULL)
+                                    if (!is.null(res)) new_chrom <- res$chrom
+                                }
+                            }
+                            ok <- try(gcms_undo_restore(step$files), silent = TRUE)
+                            if (inherits(ok, "try-error")) { notify(paste0("Undo failed: ", conditionMessage(attr(ok, "condition")))); return() }
+                            if (!is.null(new_chrom)) chromatograms_updated <<- new_chrom
+                            undo_hist$stack <- st[-length(st)]
+                            ## Restored to a state the last recompute had already seen: the
+                            ## next Shift+Q is a zoom again, as after an Align.
+                            if (isTRUE(step$fp_current) && identical(shiftq_fingerprint(), step$fp)) .shiftq_fp <<- step$fp
+                            render_peak_table()
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                            undo_label_refresh()
+                            notify(paste0("Undid: ", step$label, "."))
+                        })
+                    ## Undo (end)
+
+                    ## Right-click menu (begin) -- test_context_menu.R extracts this block.
+                    ## Right-click on the chromatograms opens a small menu (script beside the
+                    ## keypress one). Picking an item re-sends the right-click's spot as
+                    ## input$chromatogram_click (NULL when it fell outside every panel), then
+                    ## sends input$chromatogram_ctx with the item's action:
+                    ##   remove  the peak under that spot, in that sample, goes;
+                    ##   split   a dialog splits that ONE peak in that ONE sample by ions
+                    ##           (the sidebar's Split does every sample), or re-splits /
+                    ##           unsplits it if it is already a split pair.
+                    ## A split pair is one hump on screen, so both its rows act together.
+                        ctx_target <- new.env(parent = emptyenv())   # the peak the Split dialog is for
+                        ctx_chr <- function(x) if (length(x) != 1 || is.na(x)) "" else as.character(x)
+                        ## The peak row under the right-click: list(pt, i, smp, what), or NULL
+                        ## having said why.
+                        ctx_hit <- function() {
+                            if (is.null(chromatograms_updated) || !file.exists("peaks_monolist.csv")) {
+                                notify("No chromatograms loaded yet. Press Shift+Q first."); return(NULL)
+                            }
+                            click <- input$chromatogram_click
+                            smp <- clicked_sample(click, strict = TRUE)
+                            rt  <- clicked_rt(click)
+                            if (is.null(smp) || is.null(rt)) {
+                                notify("Right-click inside a sample's panel, on a peak."); return(NULL)
+                            }
+                            ## The x axis is aligned rt; the peak list holds raw rt.
+                            off <- suppressWarnings(as.numeric(chromatograms_updated$rt_offset[
+                                       match(smp, as.character(chromatograms_updated$path_to_cdf_csv))]))
+                            if (length(off) != 1 || !is.finite(off)) {
+                                notify("That sample's alignment offset is unknown. Press Shift+Q first."); return(NULL)
+                            }
+                            pt <- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
+                            i <- gcms_peak_at(pt, smp, rt - off)
+                            if (is.na(i)) { notify("No peak there."); return(NULL) }
+                            num <- if ("peak_number_within_sample" %in% names(pt))
+                                       suppressWarnings(as.numeric(pt$peak_number_within_sample[i])) else NA
+                            list(pt = pt, i = i, smp = smp,
+                                 what = if (is.finite(num)) paste0("peak ", num) else "the peak")
+                        }
+                        ## Row i, or both rows of the split pair it belongs to.
+                        ctx_rows <- function(pt, i) {
+                            if (!all(c("coelution_split", "split_id") %in% names(pt)) ||
+                                !(ctx_chr(pt$coelution_split[i]) %in% c("A", "B")) || !nzchar(ctx_chr(pt$split_id[i]))) return(i)
+                            rows <- which(as.character(pt$path_to_cdf_csv) == as.character(pt$path_to_cdf_csv[i]) &
+                                          as.character(pt$split_id) %in% ctx_chr(pt$split_id[i]) &
+                                          pt$coelution_split %in% c("A", "B"))
+                            if (length(rows) == 2) rows else i
+                        }
+                        ## The dialog's peak, found again in the table as it is NOW (by sample and
+                        ## bounds, or by split id): rows, or NULL if it has gone or changed.
+                        ctx_find <- function(pt) {
+                            t <- ctx_target$t
+                            if (is.null(t)) return(NULL)
+                            smp <- as.character(pt$path_to_cdf_csv)
+                            if (nzchar(t$split_id)) {
+                                if (!all(c("coelution_split", "split_id") %in% names(pt))) return(NULL)
+                                rows <- which(smp == t$smp & as.character(pt$split_id) %in% t$split_id &
+                                              pt$coelution_split %in% c("A", "B"))
+                                return(if (length(rows) == 2) rows else NULL)
+                            }
+                            paired <- if ("coelution_split" %in% names(pt)) pt$coelution_split %in% c("A", "B") else FALSE
+                            rows <- which(smp == t$smp & !paired & abs(pt$peak_start - t$start) < 1e-9 & abs(pt$peak_end - t$end) < 1e-9)
+                            if (length(rows) >= 1) rows[1] else NULL
+                        }
+                        ctx_remove <- function() {
+                            undo_begin("remove peak (right-click)"); on.exit(undo_end(), add = TRUE)
+                            h <- ctx_hit(); if (is.null(h)) return()
+                            rows <- ctx_rows(h$pt, h$i)
+                            write.table(
+                              x = h$pt[-rows, , drop = FALSE],
+                              file = "peaks_monolist.csv",
+                              append = FALSE,
+                              row.names = FALSE,
+                              col.names = TRUE,
+                              sep = ","
+                            )
+                            notify(paste0("Removed ", h$what, if (length(rows) > 1) " (both parts of its split)" else "",
+                                          " from ", basename(h$smp), "."))
+                            ## Unsaved table edits stay on screen; Shift+Z then refuses safely
+                            ## (the row count moved) rather than write the peak back.
+                            if (!isTRUE(table_dirty())) render_peak_table()
+                            redraw_trigger(isolate(redraw_trigger()) + 1)
+                        }
+                        ctx_split_dialog <- function() {
+                            h <- ctx_hit(); if (is.null(h)) return()
+                            if (!all(c("peak_start_rt_offset", "peak_number_within_sample") %in% names(h$pt))) {
+                                notify("Split: no numbered peaks yet. Press Shift+Q first."); return()
+                            }
+                            rows <- ctx_rows(h$pt, h$i)
+                            pair <- length(rows) == 2
+                            r1 <- h$pt[rows[1], , drop = FALSE]
+                            ctx_target$t <- list(smp = h$smp, start = r1$peak_start, end = max(h$pt$peak_end[rows]),
+                                                 split_id = if (pair) ctx_chr(r1$split_id) else "")
+                            ia <- if (pair) ctx_chr(r1$split_ions_a) else ctx_chr(isolate(input$split_ions_a))
+                            ib <- if (pair) ctx_chr(r1$split_ions_b) else ctx_chr(isolate(input$split_ions_b))
+                            showModal(modalDialog(
+                                title = paste0(if (pair) "Re-split " else "Split ", h$what, " in ", basename(h$smp)),
+                                helpText(if (pair) "Already split. Change the ions and press Split to redo it, or Unsplit to make it one peak again. This sample only."
+                                         else "Split this peak into two compounds by their diagnostic ions, in this sample only (the sidebar's Split does every sample). Pick ions that are strong in every scan of the hump."),
+                                textInput("ctx_split_ions_a", "Ions, compound 1 (e.g. 282, 281)", value = ia),
+                                textInput("ctx_split_ions_b", "Ions, compound 2 (e.g. 111, 125)", value = ib),
+                                footer = tagList(
+                                    if (pair) actionButton("ctx_unsplit_go", "Unsplit"),
+                                    modalButton("Cancel"),
+                                    actionButton("ctx_split_go", "Split")),
+                                easyClose = TRUE))
+                        }
+                        observeEvent(input$chromatogram_ctx, {
+                            a <- input$chromatogram_ctx
+                            act <- if (is.list(a) && is.character(a$action) && length(a$action) == 1) a$action else ""
+                            if (act == "remove") ctx_remove() else if (act == "split") ctx_split_dialog()
+                        })
+                        observeEvent(input$ctx_split_go, {
+                            undo_begin("split one peak (right-click)"); on.exit(undo_end(), add = TRUE)
+                            if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): splitting redraws it."); return() }
+                            pt <- coelution_table(); if (is.null(pt)) return()
+                            rows <- ctx_find(pt)
+                            if (is.null(rows)) { removeModal(); notify("Split: that peak has changed since you right-clicked it; right-click it again."); return() }
+                            ia <- gcms_parse_ions(input$ctx_split_ions_a); ib <- gcms_parse_ions(input$ctx_split_ions_b)
+                            if (length(ia) == 0 || length(ib) == 0 || length(intersect(ia, ib))) {
+                                notify("Split: give ions for both compounds, with no ion in both."); return()
+                            }
+                            removeModal()
+                            t <- ctx_target$t
+                            sub <- pt[rows, , drop = FALSE]
+                            wnd <- c(min(sub$peak_start_rt_offset), max(sub$peak_end_rt_offset))
+                            id <- if (nzchar(t$split_id)) t$split_id else sprintf("split@%.4f-%.4f %s", wnd[1], wnd[2], basename(t$smp))
+                            res <- gcms_apply_coelution_split(sub, coelution_traces, wnd, ia, ib,
+                                                              crosstalk = coelution_crosstalk, k_mode = "sample", split_id = id)
+                            notify_log(res$log)
+                            np <- res$peak_table
+                            done <- sum(np$split_id %in% id & np$coelution_split %in% c("A", "B") &
+                                        np$split_ions_a %in% paste(ia, collapse = ", ") &
+                                        np$split_ions_b %in% paste(ib, collapse = ", ")) == 2
+                            if (!done) return()
+                            coelution_finish(.gcms_renumber(rbind(.gcms_ensure_split_cols(pt)[-rows, , drop = FALSE], np)))
+                        })
+                        observeEvent(input$ctx_unsplit_go, {
+                            undo_begin("unsplit one peak (right-click)"); on.exit(undo_end(), add = TRUE)
+                            removeModal()
+                            if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): unsplitting redraws it."); return() }
+                            pt <- coelution_table(); if (is.null(pt)) return()
+                            rows <- ctx_find(pt)
+                            if (length(rows) != 2) { notify("Unsplit: that split has changed since you right-clicked it; right-click it again."); return() }
+                            sub <- pt[rows, , drop = FALSE]
+                            res <- gcms_unsplit_peak(sub, sub$peak_number_within_sample[1])
+                            notify_log(res$log)
+                            coelution_finish(.gcms_renumber(rbind(.gcms_ensure_split_cols(pt)[-rows, , drop = FALSE], res$peak_table)))
+                        })
+                    ## Right-click menu (end)
 
                     ## Page indicator text (e.g. "Page 2 / 8   (samples 21-40 of 152)")
                         output$page_indicator <- renderText({
@@ -5119,6 +5547,7 @@
                 ## Single-peak remove => SHIFT+E => ASCII code 69
                       observeEvent(input$keypress, {
                         if( input$keypress == 69 ) { # Shift+E, "excise"
+                            undo_begin("remove peak, brushed samples (Shift+E)"); on.exit(undo_end(), add = TRUE)
 
                           cat("Excising single peak...\n")
                           if ( !is.null(input$chromatogram_brush )) {
@@ -5169,6 +5598,7 @@
                 ## Global peak remove => SHIFT+R => ASCII code 82
                       observeEvent(input$keypress, {
                         if (input$keypress == 82) { # Shift+R, "remove" globally
+                            undo_begin("remove peak, all samples (Shift+R)"); on.exit(undo_end(), add = TRUE)
 
                           cat("Removing selected peaks GLOBALLY...\n")
                           if ( !is.null(input$chromatogram_brush )) {
@@ -5243,6 +5673,7 @@
 
                         # If selection and "a" is pressed, add the selection to the peak table
                             if( input$keypress == 65 ) {
+                                undo_begin("add peak, brushed samples (Shift+A)"); on.exit(undo_end(), add = TRUE)
 
                                 ## Evaluate the brush ONCE. It was called four times here,
                                 ## each re-running the whole coordinate conversion and printing
@@ -5304,6 +5735,7 @@
 
                         # If selection and "G" is pressed, add the selection to the peak table
                             if( input$keypress == 71 ) {
+                                undo_begin("add peak, all samples (Shift+G)"); on.exit(undo_end(), add = TRUE)
 
                                 ## Evaluate the brush once (see Shift+A) and refuse an empty one.
                                 pp <- brushed_chromatogram(chromatograms_updated, input$chromatogram_brush)
@@ -5551,6 +5983,7 @@
                         ## Extract and classify mass spectra on Shift+4
 
                             if (input$keypress == 36) {
+                                undo_begin("classify peaks (Shift+4)"); on.exit(undo_end(), add = TRUE)
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){

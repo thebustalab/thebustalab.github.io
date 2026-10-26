@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-10-21"
+date: "2026-10-26"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4639,9 +4639,11 @@ There are many different types of statistical tests. Below is a flow chart illus
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/stats.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modeled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If our data can be reasonably modeled by a normal distribution, then we can use "parametric" tests. Under those conditions they are the most powerful choice, meaning they can detect smaller differences as statistically significant. If they cannot, the p-values from parametric tests may no longer be accurate, especially with small samples, so we switch to "non-parametric" tests, whose p-values hold up whatever the shape of the data. Non-parametric tests are not simply weaker versions of the parametric ones: with skewed data or a few outliers, they are often the more powerful choice as well.
 
-We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
+A helpful way to think about the non-parametric tests in this chapter is that each one ranks all of the values, then does something close to its parametric partner on those ranks. The Wilcox test behaves much like a t-test run on ranks, and the Dunn test (for more than two groups) much like a set of pairwise comparisons run on ranks. This is an approximation rather than exactly what the software computes, but it explains why these tests do not need normally distributed data: ranks always run from 1 to N, whatever the measurements looked like, so a skewed distribution or an extreme value cannot distort them.
+
+We can check our data for normality using the Shapiro test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
 
 ``` r
@@ -4696,7 +4698,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-425-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
+Are these data normally distributed? Let's get a first approximation by looking at a plot:
 
 
 ``` r
@@ -4723,23 +4725,11 @@ K_data_1_6 %>%
 ## 2 aquifer_6    values       0.914 0.239
 ```
 
-Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to `group_by(aquifer_code)` and should specify a `y ~ x` formula instead:
-
-
-``` r
-K_data_1_6 %>%
-  leveneTest(abundance ~ aquifer_code)
-## # A tibble: 1 × 4
-##     df1   df2 statistic     p
-##   <int> <int>     <dbl> <dbl>
-## 1     1    22     0.289 0.596
-```
-
-The p-value from this test is 0.596! This means that their variances are not significantly different. If their shape is the same (normality) and their variances are the same (equal variances), then the only thing that can be different is their means. This allows us to set up our null hypothesis and calculate the probability of obtaining these different means if the two sets of observations come from an identical source.
+Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the spread of the two groups? The t-test used in this course is Welch's t-test, which does not assume the two groups have equal variances, so for two groups there is no need to test the variances before choosing a test. (Student's t-test, the older version, does assume equal variances. It is barely more powerful when that assumption holds and can give badly misleading p-values when it does not, which is why Welch's version is the default.)
 
 ## two means {-}
 
-Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
+Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Let's try it out:
 
 
 ``` r
@@ -4751,7 +4741,7 @@ K_data_1_6 %>%
 ## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121
 ```
 
-A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
+A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. When the data really are normal, this makes it a less powerful test than the t-test, meaning it is less likely to detect a difference between the groups, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
 
 
 ``` r
@@ -4763,7 +4753,63 @@ K_data_1_6 %>%
 ## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0252
 ```
 
-A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist. Interpreting the number in the same way, if the two groups really had identical distributions, we would get results this extreme only about 2.8% of the time.
+A p-value of 0.028! This is higher than the value given by the t-test (0.012), because the Wilcox test works with less information. Instead of using the measured values, it pools both groups, ranks every observation from smallest to largest, and asks whether one group's ranks sit consistently higher than the other's. Its null hypothesis is that both groups come from the same distribution, so that a value drawn from one group is equally likely to be larger or smaller than a value drawn from the other. Interpreting the number as before, if the two aquifers really had identical distributions, we would see results this extreme only about 2.8% of the time.
+
+### what the Wilcox test compares {-}
+
+Strictly speaking, the Wilcox test compares neither means nor medians. It asks whether values from one group tend to be larger than values from the other. If the two distributions have the same shape and differ only by a shift, that question is the same as asking whether their medians differ, which is why the median is the usual summary to report with a Wilcox result. When the shapes clearly differ, report the medians as a description, but phrase the conclusion as "values in group A tend to be higher than values in group B."
+
+Because it works on ranks, the Wilcox test is barely moved by a few extreme values. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. For this reason the Wilcox test is less powerful than the t-test when the data truly are normal, but often more powerful when a few outliers are present. It also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:
+
+
+``` r
+orchards <- tibble(
+  orchard = rep(c("north", "south"), each = 30),
+  nitrate = c(seq(13, 17, length.out = 30),
+              seq(8, 12, length.out = 22), seq(80, 120, length.out = 8))
+)
+
+ggplot(orchards, aes(x = orchard, y = nitrate)) +
+  geom_jitter(width = 0.1, height = 0)
+```
+
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-430-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-430)Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.</p>
+</div>
+
+``` r
+
+orchards %>%
+  group_by(orchard) %>%
+  summarize(mean = mean(nitrate), median = median(nitrate))
+## # A tibble: 2 × 3
+##   orchard  mean median
+##   <chr>   <dbl>  <dbl>
+## 1 north      15   15  
+## 2 south      34   10.8
+```
+
+The south orchard has the higher mean (34 vs 15) but the lower median (10.8 vs 15). Now both tests:
+
+
+``` r
+orchards %>%
+  tTest(nitrate ~ orchard)
+## # A tibble: 1 × 8
+##   .y.     group1 group2    n1    n2 statistic    df     p
+## * <chr>   <chr>  <chr>  <int> <int>     <dbl> <dbl> <dbl>
+## 1 nitrate north  south     30    30     -2.53  29.1 0.017
+
+orchards %>%
+  wilcoxTest(nitrate ~ orchard)
+## # A tibble: 1 × 7
+##   .y.     group1 group2    n1    n2 statistic       p
+## * <chr>   <chr>  <chr>  <int> <int>     <dbl>   <dbl>
+## 1 nitrate north  south     30    30       660 0.00161
+```
+
+Both p-values are below 0.05, and the two results point in opposite directions. The t-test says the south orchard has significantly more nitrate on average, because eight very high readings raise its mean. The Wilcox test says north samples tend to be higher, because 22 of the 30 south samples sit below every north sample. Neither test is wrong. They are answering different questions, and a plot of the raw points shows which question matters for the data at hand: here, whether the concern is the total nitrate load (the mean) or the condition of a typical bed (the ranks).
 
 ## more than two means {-}
 
@@ -4796,7 +4842,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-431-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-432-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -4810,9 +4856,9 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-432-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-433-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
+Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
 
 ``` r
@@ -4844,25 +4890,13 @@ K_data %>%
 ## 1     9    96      2.95 0.00387
 ```
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p < 0.05).
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p < 0.05), and the variances are certainly different from one another (Levene test p < 0.05).
 
-Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
+With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Tukey test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)
 
-### ANOVA, Tukey tests {-}
+### Tukey test {-}
 
-We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
-
-
-``` r
-K_data %>%
-  anovaTest(abundance ~ aquifer_code)
-## ANOVA Table (type II tests)
-## 
-##         Effect DFn DFd     F        p p<.05   ges
-## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
-```
-
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukeyTest`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use Tukey's Honest Significant Difference test (implemented using `tukeyTest`). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 
 ``` r
@@ -4921,21 +4955,9 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
-### Kruskal, Dunn tests {-}
+### Dunn test {-}
 
-The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modeled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
-
-
-``` r
-K_data %>%
-  kruskalTest(abundance ~ aquifer_code)
-## # A tibble: 1 × 6
-##   .y.           n statistic    df             p method      
-## * <chr>     <int>     <dbl> <int>         <dbl> <chr>       
-## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…
-```
-
-A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that data this extreme would be rare if all group medians were identical. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
+The above Tukey example is great, but remember - our data did not pass the Shapiro or Levene tests, so the Tukey test's p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Tukey test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair's average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair's ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let's try:
 
 
 ``` r
@@ -4987,9 +5009,9 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-441-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-440-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Note that these groupings are different from those generated by ANOVA/Tukey.
+Note that these groupings are different from those generated by the Tukey test.
 
 ## pairs of means {-}
 
@@ -5002,7 +5024,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-442-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-441-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -5154,7 +5176,21 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-447-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-446-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+## exercises {-}
+
+
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/cover.png" alt="Seedfall cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Seedfall</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing means &middot; t-tests, Tukey + rank-based tests &middot; two players</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A city of rooftop orchards climbs five levels up a sea cliff, and the first snow is on its way. Play as a pair: one of you starts at the harbor, the other at the lighthouse. You will test the same soil survey two different ways, and you will have to compare notes before you can light the city for winter.</div>
+</div>
+</div>
+</div>
 
 ## {-}
 

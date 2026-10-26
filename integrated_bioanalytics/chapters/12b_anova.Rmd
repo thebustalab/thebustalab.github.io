@@ -1,0 +1,115 @@
+<!--
+  DRAFT CHAPTER, NOT REGISTERED in ../index.Rmd, so it does not render into the book.
+  Split out of 11_comparing_means.Rmd on 2026-10-25: comparing means now goes straight to Tukey / Dunn,
+  and ANOVA (with its rank cousin, the Kruskal test) lives here alongside the other questions ANOVA answers.
+  Plan, open decisions and what is still missing: ../notes/anova_chapter_plan.md
+  Register it only once the planned sections have worked examples, an opening image and further reading.
+  Render check (it reuses K_data from chapter 11): _render_check.R 11 12b
+-->
+
+# analysis of variance {-}
+
+<!-- TODO opening image: no title plate exists yet for this chapter. -->
+
+**"How much of the variation does each factor explain?"**
+
+## {-}
+
+The comparing means chapter asked whether groups differ, and which pairs. Analysis of variance (ANOVA) asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine? That question is the backbone of designed experiments, where several things are varied at once, where samples are processed in batches, and where several responses are measured on the same subjects.
+
+## ANOVA is a linear model {-}
+
+The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, scaled for the number of groups and measurements, and a large F means the groups differ by more than chance would allow.
+
+This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a continuous covariate) can appear in an ANOVA too.
+
+### one factor {-}
+
+Using the potassium data from the comparing means chapter, a one-way ANOVA asks whether the aquifers differ at all:
+
+```{r}
+K_data %>%
+  anovaTest(abundance ~ aquifer_code)
+```
+
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ; that is the job of the Tukey test from the comparing means chapter. What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
+
+The ANOVA and the Tukey test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Tukey test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
+
+### the Kruskal test {-}
+
+The rank-based cousin of the ANOVA is the Kruskal test. It is the Wilcox test extended to more than two groups: it pools every value from every group, ranks them all together, and asks whether the groups' average ranks differ by more than chance would allow. It behaves much like an ANOVA run on the ranks, which is why it does not need normally distributed data. It answers only the "any difference at all?" question for a single factor. Rank-based versions of the designs in the rest of this chapter do exist, but they are more specialized and are not covered here.
+
+```{r}
+K_data %>%
+  kruskalTest(abundance ~ aquifer_code)
+```
+
+## two factors and interactions {-}
+
+Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA estimates the effect of each factor and asks whether the two **interact**, meaning whether the effect of one factor depends on the level of the other. As an example, consider sodium and chloride in four of the aquifers:
+
+```{r}
+nacl <- hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl"),
+         aquifer_code %in% c("aquifer_1", "aquifer_2", "aquifer_3", "aquifer_4"))
+
+nacl %>%
+  anovaTest(abundance ~ analyte * aquifer_code)
+```
+
+The `*` in the formula asks for both factors and their interaction. The output has one row for each. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
+
+```{r, fig.cap = "Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.", fig.width = 6, fig.height = 4}
+nacl %>%
+  group_by(aquifer_code, analyte) %>%
+  summarize(mean_abundance = mean(abundance)) %>%
+  ggplot(aes(x = aquifer_code, y = mean_abundance, color = analyte, group = analyte)) +
+    geom_point(size = 3) +
+    geom_line() +
+    theme_bw()
+```
+
+When an interaction is real, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
+
+## blocking {-}
+
+Laboratory measurements are rarely made all at once. Samples are run on different days, on different plates, or in different instrument batches, and those batches can shift the readings by themselves. A **block** is a factor that is not of interest but is known to add variation, such as plate, batch or day. Including it in the model removes its variation from the error term, which makes the factor of interest easier to detect. The formula simply gains a term: `response ~ treatment + batch`.
+
+<!-- TODO worked example: a dataset with a treatment run across several plates or days, showing the treatment p-value with and without the block term. No suitable teaching dataset exists yet. -->
+
+## adjusting for a covariate {-}
+
+Sometimes groups differ in something other than the factor being tested. Plants given different treatments may also differ in size, and size alone affects how much of a compound they make. Analysis of covariance (ANCOVA) compares the groups while adjusting for a continuous variable, the **covariate**: in effect, it asks whether the groups differ once the covariate is held constant. Because ANOVA is a linear model, this is just a categorical factor and a numeric predictor in the same formula, `response ~ treatment + plant_size`, which ties this chapter directly back to the regression chapter.
+
+<!-- TODO worked example: treatment groups that differ in a covariate, where the raw comparison and the adjusted one disagree. -->
+
+## repeated measures {-}
+
+When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. Repeated measures designs account for this by tracking which measurements belong to which subject. The general tool for these designs is the mixed model, which is beyond the scope of this chapter; the key habit here is to recognize when measurements share a subject.
+
+<!-- TODO decide: a short paired / repeated-measures example, or a pointer only. -->
+
+## many responses at once {-}
+
+Chemical data often have many responses measured on each sample: a whole metabolite profile rather than a single compound. Multivariate analysis of variance (MANOVA) extends ANOVA to several response variables at once, asking whether the groups differ in their combined profile. It assumes the responses together follow a multivariate normal distribution, which large chemical profiles rarely do.
+
+For profile data, a more common choice is PERMANOVA (permutational multivariate analysis of variance). It works from a distance matrix, the same kind of object built in the networks, clustering and dimensionality reduction chapters, and asks whether samples within a group are more similar to each other than to samples in other groups. Instead of assuming a distribution, it gets its p-value by repeatedly shuffling the group labels and asking how often the shuffled data look as separated as the real data. It is widely used for metabolomics and ecological community data.
+
+<!-- TODO: PERMANOVA usually runs through vegan::adonis2. Check that vegan installs and runs in WebR before planning any cell or escape room on it. -->
+
+## checking the model {-}
+
+An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement's distance from its group mean) should be roughly normal and have similar spread across groups. The `check_model()` habit from the regression chapter applies here unchanged. When the spreads clearly differ, a Welch ANOVA and the Games-Howell pairwise test are the unequal-variance counterparts of the ANOVA and the Tukey test.
+
+<!-- TODO decide whether to add course wrappers for rstatix::welch_anova_test and rstatix::games_howell_test (both exist in rstatix), which would also need the WebR shim. -->
+
+<!-- ## exercises {-}
+
+TODO: two escape-room scenarios, following the course pattern. Candidates: an interaction puzzle (the effect of one factor flips across the levels of another) and a PERMANOVA puzzle (profiles that differ as a whole while no single compound does), the latter only if vegan runs in WebR. -->
+
+## {-}
+
+## further reading {-}
+
+<!-- TODO: 3-5 annotated links, each verified before it goes in. -->

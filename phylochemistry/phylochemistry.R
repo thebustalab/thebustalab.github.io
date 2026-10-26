@@ -379,8 +379,33 @@
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
         anovaTest <- function( data, ... ) {rstatix::anova_test( data = ungroup(data), ... )}
         tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data, ... )}  # tukey_hsd's first argument is x, not data
-        kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = ungroup(data), ... )}
-        dunnTest <- function( data, ... ) {rstatix::dunn_test( data = ungroup(data), ... )}
+        # kruskalTest() and dunnTest() refuse a backwards formula. rstatix's kruskal_test and dunn_test
+        # do NOT error on `garden ~ value`: they rank the text column and return a confident, meaningless
+        # p-value, so a student never learns the formula was reversed (the t and Wilcoxon tests do error,
+        # and the console explains that error). The check is inlined in each wrapper, not a shared
+        # helper, because the WebR shim generator carries only the ...Test functions themselves.
+        kruskalTest <- function( data, formula, ... ) {
+            lhs <- if (length(formula) == 3) all.vars(formula[[2]]) else character(0)
+            rhs <- if (length(formula) == 3) all.vars(formula[[3]]) else character(0)
+            if (length(lhs) == 1 && lhs %in% rhs) {
+                stop("kruskalTest(): the formula has `", lhs, "` on both sides of the ~. It reads measurement ~ groups: the numeric column you measured on the left, the column naming the groups on the right.", call. = FALSE)
+            }
+            if (length(lhs) == 1 && lhs %in% names(data) && !is.numeric(data[[lhs]])) {
+                stop("kruskalTest(): `", lhs, "`, on the left of the ~, is not numeric. The formula reads measurement ~ groups: the numeric column you measured on the left, the column naming the groups on the right.", call. = FALSE)
+            }
+            rstatix::kruskal_test( data = ungroup(data), formula = formula, ... )
+        }
+        dunnTest <- function( data, formula, ... ) {
+            lhs <- if (length(formula) == 3) all.vars(formula[[2]]) else character(0)
+            rhs <- if (length(formula) == 3) all.vars(formula[[3]]) else character(0)
+            if (length(lhs) == 1 && lhs %in% rhs) {
+                stop("dunnTest(): the formula has `", lhs, "` on both sides of the ~. It reads measurement ~ groups: the numeric column you measured on the left, the column naming the groups on the right.", call. = FALSE)
+            }
+            if (length(lhs) == 1 && lhs %in% names(data) && !is.numeric(data[[lhs]])) {
+                stop("dunnTest(): `", lhs, "`, on the left of the ~, is not numeric. The formula reads measurement ~ groups: the numeric column you measured on the left, the column naming the groups on the right.", call. = FALSE)
+            }
+            rstatix::dunn_test( data = ungroup(data), formula = formula, ... )
+        }
         # pairwiseWilcoxTest() makes the same cross-group correction as pairwiseTTest() below (see
         # that comment): on grouped data every p-value is adjusted together, not group by group.
         pairwiseWilcoxTest <- function( data, ..., p.adjust.method = "holm" ) {
