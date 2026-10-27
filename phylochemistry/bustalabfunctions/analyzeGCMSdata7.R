@@ -3478,7 +3478,10 @@
                         ## Typing in a text or number box must not fire the Shift shortcuts
                         ## (a capital A in an ion box added peaks). The peak table is exempt:
                         ## Shift+Z saves it straight after an edit there.
-                        tags$script('
+                        ## HTML() is load-bearing: a bare string is HTML-escaped, so && arrives
+                        ## as &amp;&amp;, the script fails to parse and no shortcut works
+                        ## (2026-10-27, test_shortcut_text_inputs.R).
+                        tags$script(HTML('
                             function gcmsTypingInField(t) {
                                if (!t || !t.tagName) return false;
                                if (t.closest && t.closest(".handsontable, .HandsontableCopyPaste")) return false;
@@ -3486,9 +3489,11 @@
                             }
                             $(document).on("keypress", function (e) {
                                if (gcmsTypingInField(e.target)) return;
-                               Shiny.onInputChange("keypress", e.which);
+                               // priority "event": Shiny otherwise drops a value equal to the
+                               // last one sent, so a second Shift+Q in a row did nothing.
+                               Shiny.setInputValue("keypress", e.which, {priority: "event"});
                             });
-                        '),
+                        ')),
 
                         ## Right-click menu on the chromatograms (Lucas, 2026-10-26): Remove peak,
                         ## Split peak... Server side: the Right-click menu block.
