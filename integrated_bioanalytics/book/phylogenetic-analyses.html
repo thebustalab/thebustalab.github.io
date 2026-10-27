@@ -14,14 +14,14 @@
     })();
   </script><title>phylogenetic analyses | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content='We use a wrapper function to run phylogenetic comparative analyses. It chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path =...'>
+<meta name="description" content="Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="phylogenetic analyses | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content='We use a wrapper function to run phylogenetic comparative analyses. It chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path =...'>
+<meta property="og:description" content="Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phylogenetic analyses | Integrated Bioanalytics">
-<meta name="twitter:description" content='We use a wrapper function to run phylogenetic comparative analyses. It chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path =...'>
+<meta name="twitter:description" content="Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -70,6 +70,7 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
@@ -106,15 +107,13 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phylogenetic-analyses" class="section level1 unnumbered">
 <h1>phylogenetic analyses<a class="anchor" aria-label="anchor" href="#phylogenetic-analyses"><i class="fas fa-link"></i></a>
 </h1>
-<p>We use a wrapper function to run phylogenetic comparative analyses. It</p>
-<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<p>Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic signal), are two traits related once shared ancestry is taken into account (independent contrasts), and what trait values did the ancestors probably have (ancestral trait reconstruction)? These questions matter because related species are not independent data points: two sister species may share a compound simply because both inherited it from the same ancestor. This chapter answers all three with the chemical bloom data and the angiosperm tree from the previous chapter. We start with a wrapper function, <code>runPhylogeneticAnalyses()</code>, that runs these phylogenetic comparative analyses in one call, then take each analysis in turn.</p>
+<div class="sourceCode" id="cb223"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
 <span>  members <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">$</span><span class="va">label</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.</span></span>
-<span><span class="co">## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.</span></span>
 <span></span>
 <span><span class="fu">runPhylogeneticAnalyses</span><span class="op">(</span></span>
 <span>    traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"trait"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
@@ -123,7 +122,6 @@
 <span>    column_w_values_for_traits <span class="op">=</span> <span class="st">"value"</span>,</span>
 <span>    tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## Joining with `by = join_by(trait)`</span></span>
 <span><span class="co">## # A tibble: 310 × 17</span></span>
 <span><span class="co">##    parent  node branch.length label isTip     x     y branch</span></span>
 <span><span class="co">##     &lt;int&gt; &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
@@ -144,8 +142,8 @@
 <span><span class="co">## #   phylogenetic_signal_k_p_value &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   phylogenetic_signal_lambda_value &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   phylogenetic_signal_lambda_p_value &lt;dbl&gt;, pic &lt;dbl&gt;</span></span></code></pre></div>
-<p>For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don’t have to be in the same order), for example:</p>
-<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<p>For all the below, there are some structural requirements: (i) the tree needs to be a phylo object, (ii) the traits need to be a long-format data.frame, with one column of species names, one column naming the trait and one column holding its value (<code>pivot_longer()</code> makes this from a wide table, as in the examples below), and (iii) the species names must exactly match the tip labels of the tree (though they don’t have to be in the same order), for example:</p>
+<div class="sourceCode" id="cb224"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
@@ -157,7 +155,7 @@
 <h2>phylogeneticSignal<a class="anchor" aria-label="anchor" href="#phylogeneticsignal"><i class="fas fa-link"></i></a>
 </h2>
 <p>Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species’ evolutionary history. <code>phylochemistry</code> provides the <code>phylogeneticSignal</code> function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:</p>
-<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">phylogeneticSignal</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"compound"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -216,17 +214,17 @@
 <span><span class="co">## 8                                        NA</span></span>
 <span><span class="co">## 9                                        NA</span></span>
 <span><span class="co">##   phylogenetic_signal_k_value phylogenetic_signal_k_p_value</span></span>
-<span><span class="co">## 1                 0.066016688                         0.167</span></span>
+<span><span class="co">## 1                 0.060905743                         0.186</span></span>
 <span><span class="co">## 2                 2.045611108                         0.001</span></span>
 <span><span class="co">## 3                 0.029719595                         0.711</span></span>
-<span><span class="co">## 4                 0.069056092                         0.292</span></span>
-<span><span class="co">## 5                 0.053761730                         0.354</span></span>
+<span><span class="co">## 4                 0.067575546                         0.318</span></span>
+<span><span class="co">## 5                 0.053729903                         0.353</span></span>
 <span><span class="co">## 6                 0.566806846                         0.001</span></span>
 <span><span class="co">## 7                 0.239488396                         0.030</span></span>
 <span><span class="co">## 8                 0.018420367                         0.868</span></span>
-<span><span class="co">## 9                 0.008613879                         0.928</span></span>
+<span><span class="co">## 9                 0.008596969                         0.928</span></span>
 <span><span class="co">##   phylogenetic_signal_lambda_value</span></span>
-<span><span class="co">## 1                           0.0001</span></span>
+<span><span class="co">## 1                           0.4522</span></span>
 <span><span class="co">## 2                           0.9999</span></span>
 <span><span class="co">## 3                           0.0001</span></span>
 <span><span class="co">## 4                           0.0001</span></span>
@@ -236,21 +234,21 @@
 <span><span class="co">## 8                           0.0001</span></span>
 <span><span class="co">## 9                           0.0001</span></span>
 <span><span class="co">##   phylogenetic_signal_lambda_p_value</span></span>
-<span><span class="co">## 1                              1.000</span></span>
-<span><span class="co">## 2                              0.000</span></span>
-<span><span class="co">## 3                              1.000</span></span>
-<span><span class="co">## 4                              1.000</span></span>
-<span><span class="co">## 5                              1.000</span></span>
-<span><span class="co">## 6                              0.000</span></span>
-<span><span class="co">## 7                              0.045</span></span>
-<span><span class="co">## 8                              1.000</span></span>
-<span><span class="co">## 9                              1.000</span></span></code></pre></div>
+<span><span class="co">## 1                             0.3748</span></span>
+<span><span class="co">## 2                             0.0000</span></span>
+<span><span class="co">## 3                             1.0000</span></span>
+<span><span class="co">## 4                             1.0000</span></span>
+<span><span class="co">## 5                             1.0000</span></span>
+<span><span class="co">## 6                             0.0000</span></span>
+<span><span class="co">## 7                             0.0450</span></span>
+<span><span class="co">## 8                             1.0000</span></span>
+<span><span class="co">## 9                             1.0000</span></span></code></pre></div>
 </div>
 <div id="independentcontrasts" class="section level2 unnumbered">
 <h2>independentContrasts<a class="anchor" aria-label="anchor" href="#independentcontrasts"><i class="fas fa-link"></i></a>
 </h2>
-<p>Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to “independent contrasts” to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. <code>phylochemistry</code> provides the <code>independentContrasts</code> function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.</p>
-<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
+<p>Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data into “independent contrasts” to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. <code>phylochemistry</code> provides the <code>independentContrasts</code> function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset.</p>
+<div class="sourceCode" id="cb226"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrasts</span> <span class="op">&lt;-</span> <span class="fu">independentContrasts</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"compound"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -271,8 +269,8 @@
 <div id="ancestraltraits" class="section level2 unnumbered">
 <h2>ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
 </h2>
-<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.</p>
-<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
+<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>’s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.</p>
+<div class="sourceCode" id="cb227"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">anc_traits_tree</span> <span class="op">&lt;-</span> <span class="fu">ancestralTraits</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -291,8 +289,8 @@
 <span><span class="co">## 5     80     1          290. Ginkg… TRUE   352.     1   207.</span></span>
 <span><span class="co">## 6     80     1          290. Ginkg… TRUE   352.     1   207.</span></span>
 <span><span class="co">## # ℹ 3 more variables: angle &lt;dbl&gt;, trait &lt;chr&gt;, value &lt;dbl&gt;</span></span></code></pre></div>
-<p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. Note that <code>cols</code> is a vector of column numbers that correspond to the traits of interest. <code>pie_size</code> is the size of the pie chart that will be plotted at each node. <code>geom_ancestral_pie</code> relies on having columns in its input called <code>trait</code> and <code>value</code>, such as those output by <code>ancestralTraits</code>. Note that an object passed to ggtree() with duplicate node names requires the <code>distinct</code> function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.</p>
-<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
+<p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. <code>pie_size</code> is the size of the pie chart that will be plotted at each node. <code>geom_ancestral_pie</code> relies on having columns in its input called <code>trait</code> and <code>value</code>, such as those output by <code>ancestralTraits</code>. Note that an object passed to ggtree() with duplicate node names requires the <code>distinct</code> function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.</p>
+<div class="sourceCode" id="cb228"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span></span>
 <span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">anc_traits_tree</span>, <span class="va">node</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
@@ -303,7 +301,57 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>offset <span class="op">=</span> <span class="fl">20</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">650</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-647-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-698-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="chapter-summary-16" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-16"><i class="fas fa-link"></i></a>
+</h2>
+<p>The four analysis functions in this chapter take the same inputs: a tree as a <code>phylo</code> object, and a long table of traits with one column of species names that match the tree’s tip labels exactly. Choosing among the analyses is a matter of choosing the question. <strong>Phylogenetic signal</strong> asks whether related species share similar trait values. <strong>Independent contrasts</strong> remove the effects of shared ancestry before two traits are compared. <strong>Ancestral trait reconstruction</strong> estimates the trait values of ancestors at the tree’s nodes. It is not the same as <code>buildTree()</code>’s <code>ancestral_states</code> in the phylogenies chapter, which computes ancestral sequences.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/19_phylogenetic_analysis.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Question it answers</th>
+<th>Settings students vary</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>runPhylogeneticAnalyses()</code></td>
+<td>the comparative analyses in one call</td>
+<td>
+<code>traits</code>, <code>column_w_names_of_tiplabels</code>, <code>column_w_names_of_traits</code>, <code>column_w_values_for_traits</code>, <code>tree</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>phylogeneticSignal()</code></td>
+<td>do close relatives have similar trait values?</td>
+<td>the same five arguments</td>
+</tr>
+<tr class="odd">
+<td><code>independentContrasts()</code></td>
+<td>are two traits related once shared ancestry is removed?</td>
+<td>the same five arguments</td>
+</tr>
+<tr class="even">
+<td><code>ancestralTraits()</code></td>
+<td>what trait values did the ancestors have?</td>
+<td>the same five arguments</td>
+</tr>
+<tr class="odd">
+<td><code>geom_ancestral_pie()</code></td>
+<td>pie charts of the ancestral estimates at each node of a <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree()</a></code> plot</td>
+<td>
+<code>data = filter(anc_traits_tree, isTip == FALSE)</code>, <code>pie_size</code>, <code>pie_alpha</code>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p>The long trait table is made with <code>pivot_longer()</code>, and a tree passed to <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree()</a></code> for ancestral pies first needs duplicate nodes removed with <code>distinct(anc_traits_tree, node, .keep_all = TRUE)</code>.</p>
 <hr>
 <hr>
 <hr>
@@ -383,6 +431,7 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 <li><a class="nav-link" href="#phylogeneticsignal">phylogeneticSignal</a></li>
 <li><a class="nav-link" href="#independentcontrasts">independentContrasts</a></li>
 <li><a class="nav-link" href="#ancestraltraits">ancestralTraits</a></li>
+<li><a class="nav-link" href="#chapter-summary-16">chapter summary</a></li>
 </ul>
 
       <div class="book-extra">
@@ -404,7 +453,7 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

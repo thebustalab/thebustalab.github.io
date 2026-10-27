@@ -880,5 +880,23 @@
     },
     "source_topic": "pks",
     "discovered": "2026-10-20"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_3de8593b8388",
+    "title": "FabI-targeting pentacyclic triterpenoid celastrol resensitizes multidrug-resistant Gram-negative bacteria to polymyxins",
+    "authors": "Zewen Wen; Xiaoju Liu; Junhua Ma; Chengchun Chen; Kewei Fan; Jinxin Zheng; Zhong Chen; Shibo Jiang; Tieying Hou; Yu Zz",
+    "journal": "Phytomedicine",
+    "year": 2026,
+    "doi": "10.1016/j.phymed.2026.158649",
+    "link": "https://doi.org/10.1016/j.phymed.2026.158649",
+    "abstract": "BACKGROUND: Pentacyclic triterpenoids are diverse class of plant-derived bioactive scaffolds, but their potential to resensitize resistant Gram-negative pathogens to antibiotics remains underexplored. Polymyxins are last-line drugs for multidrug-resistant (MDR) Gram-negative infections, yet the global dissemination of mcr genes and chromosomal mutations in pmrAB/phoPQ compromise their efficacy. PURPOSE: This study aimed to evaluate the antibacterial potential of the natural triterpenoid celastrol (CEL, derived from Tripterygium wilfordii). We specifically investigated its ability to function as a polymyxin adjuvant to potentiate polymyxin activity against MDR Gram-negative pathogens and elucidated the underlying molecular mechanism. STUDY DESIGN/METHODS: Antibacterial activity and potentiation efficacy with polymyxins were assessed in vitro by MIC determination, checkerboard assays, and time-kill analyses against clinical isolates and engineered resistant strains. To elucidate the precise mechanism, biophysical target validations, comprising drug affinity responsive target stability (DARTS), biolayer interferometry (BLI), limited proteolysis-MS (LiP-MS), molecular dynamics (MD) simulations, and FabI enzymatic assays, were systematically coupled with cellular and omics analyses, such as intracellular accumulation, genetic validation, metabolic rescue, lipidomics, and qPCR. Therapeutic efficacy was tested in murine peritonitis and cutaneous abscess models. RESULTS: CEL effectively potentiated polymyxin activity and resensitized Escherichia coli and Klebsiella pneumoniae harboring mcr-1 or pmrAB/phoPQ mutations to polymyxins. Mechanistically, biophysical and structural analyses demonstrated that CEL directly binds to and inhibits the enoyl-ACP reductase FabI. Furthermore, genetic validations and metabolic rescue assays confirmed that FabI-mediated type II fatty acid synthesis (FASII) pathway disruption triggers perturbation of lipid homeostasis. In vivo assays confirmed that the combination therapy significantly reduced bacterial burden in infected mice. CONCLUSION: Our findings demonstrate that the plant-derived pentacyclic triterpenoid CEL targets FabI and functions as an effective polymyxin adjuvant. By inhibiting the FASII pathway, CEL potentiates polymyxin activity and resensitizes multidrug-resistant Gram-negative pathogens to polymyxins, highlighting a promising phytopharmacological strategy to restore the clinical utility of last-resort antibiotics against MDR infections.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.phymed.2026.158649"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-10-27"
   }
 ]

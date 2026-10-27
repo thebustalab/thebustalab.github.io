@@ -14,14 +14,14 @@
     })();
   </script><title>regression models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values...">
+<meta name="description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="regression models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values...">
+<meta property="og:description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="regression models | Integrated Bioanalytics">
-<meta name="twitter:description" content="A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values...">
+<meta name="twitter:description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -70,6 +70,7 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
@@ -107,12 +108,12 @@
 <h1>regression models<a class="anchor" aria-label="anchor" href="#regression-models"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted.</p>
+<p>A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient’s blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
-</script><div id="section-16" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
+</script><div id="section-18" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="model-use" class="section level2 unnumbered">
 <h2>model use<a class="anchor" aria-label="anchor" href="#model-use"><i class="fas fa-link"></i></a>
@@ -129,14 +130,14 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","perfor
 <li><p><code>output_variable</code>: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).</p></li>
 </ul>
 <p>For model building, we also need to handle missing data. <code>buildModel2()</code> stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the <code>impute()</code> function from the <code>Hmisc</code> package:</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [1] TRUE</span></span>
 <span><span class="va">metabolomics_data</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">impute</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [1] FALSE</span></span></code></pre></div>
-<div id="concept-check-37" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-37"><i class="fas fa-link"></i></a>
+<div id="concept-check-43" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-43"><i class="fas fa-link"></i></a>
 </h4>
 <p>The cells on this page start from a copy of <code>metabolomics_data</code> whose missing values have already been filled in this way.</p>
 <div class="selfcheck" data-answer="2" data-explain="An inferential use is about understanding the relationship itself: which inputs matter, in which direction, and how strongly. Forecasting new samples or chasing the most accurate predictions are predictive uses, where the inner workings matter less.">
@@ -154,17 +155,17 @@ Self-check: which of these is an inferential use of a model?
 <h2>single linear regression<a class="anchor" aria-label="anchor" href="#single-linear-regression"><i class="fas fa-link"></i></a>
 </h2>
 <p>We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use <code>buildModel2()</code>, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-482"></span>
-<img src="index_files/figure-html/unnamed-chunk-482-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-523"></span>
+<img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>It looks like there might be a relationship! Let’s build a linear regression model and use it inferentially to examine the details of that relationship:</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
@@ -174,7 +175,7 @@ Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot 
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">basic_regression_model</span><span class="op">)</span></span>
 <span><span class="co">## [1] "model_type" "model"      "metrics"</span></span></code></pre></div>
 <p>The output of <code>buildModel2()</code> consists of three things: the model_type, the model itself, and the metrics describing the model and its performance. Let’s look at the model:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">model</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Call:</span></span>
@@ -184,8 +185,8 @@ Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot 
 <span><span class="co">## Coefficients:</span></span>
 <span><span class="co">##   (Intercept)  `iso-Leucine`  </span></span>
 <span><span class="co">##         2.784          0.508</span></span></code></pre></div>
-<p>This is a linear model stored inside a special object type inside R called an <code>lm</code>. They can be a bit tricky to work with, but the metrics table makes the important parts easy to reach. Let’s look at the metrics:</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<p>This is a linear model stored inside a special object type inside R called an <code>lm</code>. These objects can be a bit tricky to work with, but the metrics table makes the important parts easy to reach. Let’s look at the metrics:</p>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span></span>
 <span><span class="co">##               variable  value std_err        type p_value</span></span>
 <span><span class="co">## 1            r_squared 0.4034      NA   statistic      NA</span></span>
@@ -200,7 +201,7 @@ Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot 
 <span><span class="co">## 4           0</span></span>
 <span><span class="co">## 5           0</span></span></code></pre></div>
 <p>It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for iso-Leucine (i.e. the slope, m), as well as some other things (we will talk about them in a second). The <code>type</code> column separates the two kinds of row, so <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> pulls out just the coefficients:</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span><span class="op">)</span></span>
 <span><span class="co">##        variable  value std_err        type p_value</span></span>
@@ -211,13 +212,13 @@ Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot 
 <span><span class="co">## 2           0</span></span></code></pre></div>
 <p>Note that a variable whose name contains a space or a hyphen, like iso-Leucine, is listed in the <code>variable</code> column with backticks around it (<code>`iso-Leucine`</code>), so filtering on <code>type</code> is the more reliable way to find a coefficient. The slope here says that for every one-unit increase in iso-Leucine abundance, the model expects Valine abundance to rise by about 0.51.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-487"></span>
+<span style="display:block;" id="fig:unnamed-chunk-528"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png" alt="Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one." width="100%"><p class="caption">
 Figure: Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one.
 </p>
 </div>
 <p>We can also use a function called <code>predictWithModel()</code> to make predictions using the model. We give it the model and the data we want predictions for. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance, and store the predictions as a new column next to the measured values:</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictions_from_basic_linear_model</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
@@ -238,62 +239,62 @@ Figure: Using a model to make predictions. A fitted model takes values of the in
 <span><span class="co">## 5          3.69   4.54             4.66</span></span>
 <span><span class="co">## 6          3.75   4.67             4.69</span></span></code></pre></div>
 <p><code>predictWithModel()</code> returns a table with one column, <code>value</code>, so <code>$value</code> pulls out the predictions themselves. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-489"></span>
-<img src="index_files/figure-html/unnamed-chunk-489-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-530"></span>
+<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals: the distance between each of our points and our line.</p>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span>, xend <span class="op">=</span> <span class="va">`iso-Leucine`</span>, yend <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-490"></span>
-<img src="index_files/figure-html/unnamed-chunk-490-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-531"></span>
+<img src="index_files/figure-html/unnamed-chunk-531-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model’s line; each vertical segment joins a measured value to the model’s prediction for it, so its length is that patient’s residual. Data: metabolomics_data.
 </p>
 </div>
 <p>We can calculate the sum of the squared residuals:</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">Valine</span> <span class="op">-</span> <span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">predicted_Valine</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">## [1] 1.285459</span></span></code></pre></div>
 <p>Let’s call that the “residual sum of the squares”. Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let’s compare it to a super simple model that is just defined by the mean y value of the input data.</p>
-<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-492"></span>
-<img src="index_files/figure-html/unnamed-chunk-492-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-533"></span>
+<img src="index_files/figure-html/unnamed-chunk-533-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>A pretty bad model. How much better is our linear model than the flat line model? Let’s measure the distance between each point and the flat line:</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span>, xend <span class="op">=</span> <span class="va">`iso-Leucine`</span>, yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Valine</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-493"></span>
-<img src="index_files/figure-html/unnamed-chunk-493-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-534"></span>
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">Valine</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">Valine</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">## [1] 2.154464</span></span></code></pre></div>
 <p>Let’s call that the “total sum of the squares”, and now we can compare it to our “residual sum of the squares”:</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">residual_sum_of_squares</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
 <span>  <span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">Valine</span> <span class="op">-</span> <span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">predicted_Valine</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">)</span></span>
@@ -308,7 +309,7 @@ Figure: Residuals of the mean-only model of valine abundance. Scatter plot of va
 <li>How much better the line of best fit describes the data than the flat line.</li>
 </ul>
 <p>Now, let’s put it all together and make it pretty:</p>
-<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -330,13 +331,13 @@ Figure: Residuals of the mean-only model of valine abundance. Scatter plot of va
 <span></span>
 <span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">top</span>, <span class="va">bottom</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-495"></span>
-<img src="index_files/figure-html/unnamed-chunk-495-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-536"></span>
+<img src="index_files/figure-html/unnamed-chunk-536-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model’s metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-38" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-38"><i class="fas fa-link"></i></a>
+<div id="concept-check-44" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-44"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the variable the model should predict, then press Run to see its coefficients.</p>
 <div class="webr-cell">
@@ -366,7 +367,7 @@ Self-check: what does the iso-Leucine coefficient of about 0.51 tell us?
 </h2>
 <p>A fitted model is not tied to the data it was built from. It can predict the output for any table that has the same input columns, including samples whose output was never measured. That is the predictive use of a model, and it is often the reason for building one.</p>
 <p><code>metabolomics_unknown</code> holds measurements from seven new patients. It has every metabolite column that <code>metabolomics_data</code> has, so our iso-Leucine model can predict a Valine abundance for each of them. The table has no column identifying the patients, though, so first we number the rows. Then <code>predictWithModel()</code> can carry that column through to its output with the <code>id_cols</code> argument, which keeps every prediction attached to the patient it belongs to:</p>
-<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">unknown_patients</span> <span class="op">&lt;-</span> <span class="va">metabolomics_unknown</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>patient <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -386,13 +387,13 @@ Self-check: what does the iso-Leucine coefficient of about 0.51 tell us?
 <span><span class="co">## 6       6 4.651151</span></span>
 <span><span class="co">## 7       7 4.594742</span></span></code></pre></div>
 <p>The output is an ordinary table, so the verbs from the wrangling chapter work on it. We can read off the prediction for a single patient:</p>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">unknown_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">patient</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">##   patient    value</span></span>
 <span><span class="co">## 1       3 4.563589</span></span></code></pre></div>
 <p>Or sort the patients by their predicted value, or keep only those predicted to be above some level:</p>
-<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">unknown_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##   patient    value</span></span>
@@ -411,8 +412,8 @@ Self-check: what does the iso-Leucine coefficient of about 0.51 tell us?
 <span><span class="co">## 2       2 4.686246</span></span>
 <span><span class="co">## 3       5 4.751102</span></span></code></pre></div>
 <p>A prediction is only as good as the model behind it. This model explains about 40% of the variation in Valine (its r-squared is 0.40), so these predictions are rough. Using more of what was measured is the next step.</p>
-<div id="concept-check-39" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-39"><i class="fas fa-link"></i></a>
+<div id="concept-check-45" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-45"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the column that keeps each prediction attached to its patient, then press Run. This cell uses <code>basic_regression_model</code> from the previous check, so run that one first.</p>
 <div class="webr-cell">
@@ -445,8 +446,8 @@ Self-check: which of the seven new patients does the model predict to have the h
 <div id="multiple-linear-regression" class="section level2 unnumbered">
 <h2>multiple linear regression<a class="anchor" aria-label="anchor" href="#multiple-linear-regression"><i class="fas fa-link"></i></a>
 </h2>
-<p>Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + … + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let’s try it with the first 30 metabolites in our data set:</p>
-<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<p>Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression uses one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + … + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let’s try it with the first 30 metabolites in our data set:</p>
+<div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_input_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
@@ -473,7 +474,7 @@ Self-check: which of the seven new patients does the model predict to have the h
 <span><span class="co">## 2          NA</span></span>
 <span><span class="co">## 3          NA</span></span></code></pre></div>
 <p>The 30-input model explains far more of the variation in Valine than the iso-Leucine model does (an r-squared of 0.89 against 0.40). Comparing each model’s predictions with the measured values shows the same thing:</p>
-<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_comparison_data</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
 <span>    single_input_predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
@@ -496,13 +497,13 @@ Self-check: which of the seven new patients does the model predict to have the h
 <span></span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, nrow <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-500"></span>
-<img src="index_files/figure-html/unnamed-chunk-500-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-541"></span>
+<img src="index_files/figure-html/unnamed-chunk-541-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-40" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-40"><i class="fas fa-link"></i></a>
+<div id="concept-check-46" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-46"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the metric that measures how much of the variation in Valine a model explains, then press Run.</p>
 <div class="webr-cell">
@@ -536,7 +537,7 @@ Self-check: what does the higher r-squared of the 30-input model tell us?
 <code>p_value</code> (or <code>p_value_adj</code>, adjusted for testing many inputs at once) is the p-value from testing whether that input’s coefficient is different from zero. Small p-values highlight inputs that are likely to matter after accounting for the rest.</li>
 </ul>
 <p>It is tempting to rank the inputs by the size of their coefficients, but a coefficient is measured in the units of its own input, so raw coefficients cannot be compared with each other. Let’s see what goes wrong, with a model of Valine built from four metabolites:</p>
-<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">four_input_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
@@ -558,8 +559,8 @@ Self-check: what does the higher r-squared of the 30-input model tell us?
 <span><span class="co">## 3  0.00012740</span></span>
 <span><span class="co">## 4  0.15333178</span></span></code></pre></div>
 <p>Phenylalanine has by far the largest coefficient. But Phenylalanine barely varies from patient to patient: its standard deviation is about 0.12, against about 0.4 for 2-Aminoadipate and Propionate. A one-unit change in Phenylalanine is therefore an enormous change, far bigger than anything seen in the data, so its coefficient is large simply because its unit is large.</p>
-<p>The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the networks chapter). Each coefficient then means “the change in the output for a one-standard-deviation change in this input”, which can be compared across inputs:</p>
-<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
+<p>The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). Each coefficient then means “the change in the output for a one-standard-deviation change in this input”, which can be compared across inputs:</p>
+<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scaled_metabolomics_data</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Phenylalanine</span>, <span class="va">`2-Aminoadipate`</span>, <span class="va">Tryptophan</span>, <span class="va">Propionate</span><span class="op">)</span>, <span class="va">scale</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -588,7 +589,7 @@ Self-check: what does the higher r-squared of the 30-input model tell us?
 <li>The intercept is left out of the ranking with <code>variable != "(Intercept)"</code>. It is not a measurement but the model’s baseline (after scaling it is simply the mean Valine abundance), so it does not belong in a list of inputs.</li>
 <li>Scaling changes the units of the coefficients, not the fit. Both models have the same r-squared and make the same predictions:</li>
 </ul>
-<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb179"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">four_input_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">variable</span> <span class="op">==</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
 <span><span class="co">##    variable  value std_err      type p_value p_value_adj</span></span>
 <span><span class="co">## 1 r_squared 0.5278      NA statistic      NA          NA</span></span>
@@ -598,8 +599,8 @@ Self-check: what does the higher r-squared of the 30-input model tell us?
 <ul>
 <li>Use the scaled model to compare inputs, and the model built on the data as measured to make predictions. A model fitted on scaled inputs expects scaled inputs, so giving it the raw columns of a new table, such as <code>metabolomics_unknown</code>, produces nonsense.</li>
 </ul>
-<div id="concept-check-41" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-41"><i class="fas fa-link"></i></a>
+<div id="concept-check-47" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-47"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the function that puts each input on a mean of zero and a standard deviation of one, then press Run to rank the inputs.</p>
 <div class="webr-cell">
@@ -639,7 +640,7 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 <ul>
 <li><p>Linearity: examines if residuals show a random scatter around zero, indicating a linear relationship between the inputs and the output variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.</p></li>
 <li><p>Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.</p></li>
-<li><p>Normality of residuals: assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.</p></li>
+<li><p>Normality of residuals: assesses whether residuals follow a normal distribution, which matters for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.</p></li>
 </ul>
 </li>
 <li>
@@ -657,7 +658,7 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 </li>
 </ol>
 <p>We can assess all of these using:</p>
-<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb180"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
@@ -667,13 +668,13 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 <span></span>
 <span><span class="fu">check_model</span><span class="op">(</span><span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-504"></span>
-<img src="index_files/figure-html/unnamed-chunk-504-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-545"></span>
+<img src="index_files/figure-html/unnamed-chunk-545-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%"><p class="caption">
 Figure: Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-42" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-42"><i class="fas fa-link"></i></a>
+<div id="concept-check-48" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-48"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the part of the <code>buildModel2()</code> output that holds the fitted model, then press Run. Drawing the six panels takes about ten seconds.</p>
 <div class="webr-cell">
@@ -695,7 +696,80 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 <label><input type="radio"> That the residuals follow a normal distribution</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><!-- ## exercises {-}
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+</div>
+</div>
+<div id="chapter-summary-9" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-9"><i class="fas fa-link"></i></a>
+</h2>
+<p>Every regression model starts with its use. An <strong>inferential</strong> use reads the model’s inner workings (the coefficients, their p-values and r-squared) to describe how the output relates to the inputs. A <strong>predictive</strong> use applies the model to a table whose output was never measured. Three decisions follow. <strong>How many inputs:</strong> more inputs can explain more of the variation in the output, which r-squared shows. <strong>Whether to scale:</strong> scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. <strong>Whether to trust it:</strong> check the residuals, the inputs and any influential points with <code>check_model()</code>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-546"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%"><p class="caption">
+Figure: Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.
+</p>
+</div>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function or step</th>
+<th>What it is for</th>
+<th>What we set or vary</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">Hmisc::impute()</a></code></td>
+<td>filling in missing values, because <code>buildModel2()</code> stops on any</td>
+<td>the fill value (here each column’s median)</td>
+</tr>
+<tr class="even">
+<td><code>buildModel2()</code></td>
+<td>fitting a model</td>
+<td>
+<code>data</code>, <code>model_type = "linear_regression"</code>, <code>input_variables</code> (one column or several), <code>output_variable</code>
+</td>
+</tr>
+<tr class="odd">
+<td>
+<code>$model</code>, <code>$metrics</code>
+</td>
+<td>the fitted model, and a table of its r-squared, coefficients and p-values</td>
+<td>
+<code>filter(type == "coefficient")</code>, <code>filter(type == "statistic")</code>, <code>filter(variable == "r_squared")</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>predictWithModel()</code></td>
+<td>predictions for any table with the same input columns, returned in the column <code>value</code>
+</td>
+<td>
+<code>data</code>, <code>model_type</code>, <code>model</code>, and <code>id_cols</code> to keep each prediction attached to its sample</td>
+</tr>
+<tr class="odd">
+<td><code>mutate(across(c(...), scale))</code></td>
+<td>putting inputs on a mean of zero and a standard deviation of one before comparing coefficients</td>
+<td>which inputs to scale</td>
+</tr>
+<tr class="even">
+<td><code>arrange(desc(abs(value)))</code></td>
+<td>ranking coefficients by size</td>
+<td>drop the intercept first with <code>variable != "(Intercept)"</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>check_model()</code></td>
+<td>diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations</td>
+<td>given <code>model$model</code>
+</td>
+</tr>
+</tbody>
+</table></div>
+<!-- ## exercises {-}
 
 To practice creating models, try the following:
 
@@ -711,12 +785,11 @@ To practice creating models, try the following:
 
 -->
 </div>
+<div id="section-19" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="section-17" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a></h2>
-</div>
-<div id="further-reading-8" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-8"><i class="fas fa-link"></i></a>
+<div id="further-reading-9" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://github.com/easystats/performance">performance R package</a>. Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.</p></li>
@@ -735,7 +808,7 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#regression-models">regression models</a></li>
-<li><a class="nav-link" href="#section-16"></a></li>
+<li><a class="nav-link" href="#section-18"></a></li>
 <li><a class="nav-link" href="#model-use">model use</a></li>
 <li><a class="nav-link" href="#single-linear-regression">single linear regression</a></li>
 <li><a class="nav-link" href="#predicting-with-a-model">predicting with a model</a></li>
@@ -743,8 +816,9 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 <a class="nav-link" href="#multiple-linear-regression">multiple linear regression</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#which-inputs-matter-most">which inputs matter most</a></li></ul>
 </li>
 <li><a class="nav-link" href="#assessing-regression-models">assessing regression models</a></li>
-<li><a class="nav-link" href="#section-17"></a></li>
-<li><a class="nav-link" href="#further-reading-8">further reading</a></li>
+<li><a class="nav-link" href="#chapter-summary-9">chapter summary</a></li>
+<li><a class="nav-link" href="#section-19"></a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -762,7 +836,7 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

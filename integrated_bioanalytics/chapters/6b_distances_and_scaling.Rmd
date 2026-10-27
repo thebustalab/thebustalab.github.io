@@ -1,0 +1,502 @@
+# distances and scaling {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
+
+Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a **distance matrix**: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. **Scaling decides which variables count. The distance metric decides what "similar" means.** Neither choice has a single right answer, but both change the result, so both should be made on purpose.
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "wood_smoke", url: "/phylochemistry/sample_data/wood_smoke_data.csv" }, { name: "hops_components", url: "/phylochemistry/sample_data/hops_components.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- alaska_lake_data %>% select(-element_type) %>% pivot_wider(names_from = 'element', values_from = 'mg_per_L'); wood_smoke_wide <- wood_smoke %>% select(wood_type, species, compound, abundance_mg_g) %>% pivot_wider(names_from = 'compound', values_from = 'abundance_mg_g')" };
+</script>
+
+## {-}
+
+## distance matrices {-}
+
+A distance matrix compares every sample with every other sample across all of the measured variables at once, and boils each comparison down to a single number, as in the illustration at the top of this chapter. Small numbers mean similar samples.
+
+First, we need our data set in wide format, with one row per sample and one column per variable:
+
+```{r}
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+head(alaska_lake_data_wide)
+```
+
+Now we can compute a distance matrix. Here is the traditional way, using base R:
+
+```{r}
+dist(alaska_lake_data_wide[,3:15])
+```
+
+We can also get distances directly from `runMatrixAnalysis()`, this course's matrix-analysis function, by specifying `analysis = "dist"`. The argument `output_format = "long"` asks for the distances as a **long table**, one row per pair of lakes, rather than as the compact triangle `dist()` printed above. The long shape is the one we usually want, because it can be filtered, sorted and plotted like any other tidy table, and because it is exactly the shape a network's edge list needs.
+
+```{r}
+alaska_dist_long <- runMatrixAnalysis(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    output_format = "long",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+head(alaska_dist_long)
+```
+
+Because the long table is tidy, finding the samples most like a given sample is just a filter and a sort. These are the lakes closest to Lake Narvakrak:
+
+```{r}
+alaska_dist_long %>%
+  filter(sample_unique_ID_sample_1 == "Lake_Narvakrak_NOAT") %>%
+  arrange(distance) %>%
+  head(3)
+```
+
+Let's look at all the distances at once. Why is North Killeak Lake so distant from everyone? Wasn't that lake the one with such high chloride?
+
+```{r fig.height = 5.5, fig.width = 6.5, fig.align = "center", fig.cap = "Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+plot1 <- ggplot(
+  alaska_dist_long,
+  aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
+) +
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+plot1
+```
+
+#### concept check {-}
+
+Fill in the blank so that the distances come back as one row per pair of lakes. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+    data = alaska_lake_data_wide,
+    analysis = "dist",
+    output_format = "____",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = "lake"
+) %>% head()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="A distance matrix holds one number per PAIR of samples. Twenty lakes give 20 x 19 = 380 ordered pairs, and the long format lists each one as a row, so it can be filtered, sorted and plotted like any other table.">
+<p class="scq">Self-check: in the long format, what does one row represent?</p>
+<label><input type="radio"> One lake</label>
+<label><input type="radio"> One measured variable</label>
+<label><input type="radio"> One pair of lakes</label>
+</div>
+
+<hr>
+
+## scaling {-}
+
+Back to North Killeak Lake. Let's look at the averages and spreads of each analyte, and then at chloride specifically:
+
+```{r}
+alaska_lake_data %>%
+  group_by(element) %>%
+  summarize(
+    mean_mg_per_L = mean(mg_per_L),
+    sd_mg_per_L = sd(mg_per_L)
+  )
+```
+
+```{r fig.height = 4, fig.width = 6, fig.align = "center", fig.cap = "Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+alaska_lake_data %>% filter(element == "Cl") %>%
+  ggplot(aes(x = mg_per_L, y = lake)) + geom_col()
+```
+
+Chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
+
+```{r}
+alaska_scaled <- scale(alaska_lake_data_wide[,3:15])
+head(round(alaska_scaled, 2))
+```
+
+`runMatrixAnalysis()` scales for us with `scale_variance = TRUE`, which is its default. Importantly, scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. Some distance metrics, which we will meet below, also need the raw values and must not be scaled at all. But whenever the columns are measurements in different units, scale first.
+
+```{r fig.height = 10, fig.width = 6.5, fig.align = "center", fig.cap = "The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+runMatrixAnalysis(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    output_format = "long",
+    scale_variance = TRUE,
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) %>% ggplot(
+  aes(x = sample_unique_ID_sample_1, y = sample_unique_ID_sample_2, fill = distance)
+) +
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) -> plot2
+
+plot_grid(plot1, plot2, ncol = 1, labels = c("A", "B"))
+```
+
+#### concept check {-}
+
+Fill in the blank with the command that centers each column and divides it by its standard deviation. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">round(head(____(alaska_lake_data_wide[,3:15])), 2)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Scaling puts every analyte on the same footing, so a one-standard-deviation difference counts the same in chloride as it does in phosphorus. Without it, the analyte reported in the largest numbers controls the distances almost on its own.">
+<p class="scq">Self-check: why does scaling change which lakes come out looking similar?</p>
+<label><input type="radio"> Because it removes outlying lakes from the data set</label>
+<label><input type="radio"> Because it puts every analyte on the same footing, so no single large-valued analyte can dominate the distance</label>
+<label><input type="radio"> Because it converts distances into similarities</label>
+</div>
+
+<hr>
+
+## distance metrics {-}
+
+Everything so far has used **euclidean distance**, the straight-line distance between two points, extended to as many dimensions as there are variables. It is the default nearly everywhere, and for measurements in different units, once they are scaled, it is usually a sensible choice. But it carries assumptions: that every variable is a continuous number, that an absolute difference means the same thing anywhere on the scale, and that a value of zero is nothing special. When the data break those assumptions, euclidean distance can give a confident and wrong answer about which samples are alike. `runMatrixAnalysis()` offers several other metrics through its `distance_method` argument. Each one is a different definition of "similar", and the sections below pair each with the kind of data it suits.
+
+### euclidean and manhattan {-}
+
+Euclidean distance squares each difference before adding them up (and then takes the square root of the total). **Manhattan distance**, also called city-block distance, simply adds up the absolute differences. The name comes from walking a city grid: the distance between two corners is the blocks walked east plus the blocks walked north, not the straight line through the buildings.
+
+The squaring matters. Consider two pairs of samples. In the first pair, the samples differ by 1 unit in each of four variables. In the second, they differ by 4 units in one variable and not at all in the other three:
+
+```{r}
+small_spread <- c(1, 1, 1, 1)
+one_big      <- c(4, 0, 0, 0)
+
+tibble(
+  pair      = c("small_spread", "one_big"),
+  euclidean = c(sqrt(sum(small_spread^2)), sqrt(sum(one_big^2))),
+  manhattan = c(sum(abs(small_spread)),     sum(abs(one_big)))
+)
+```
+
+Manhattan distance calls the two pairs equally different, since the total difference is 4 in both. Euclidean distance calls the second pair twice as far apart, because squaring rewards a single large difference over several small ones. Neither is wrong. But when one extreme value in one variable (a contaminated sample, an instrument spike) should not be allowed to decide which samples are alike, Manhattan distance is the more forgiving choice. It is requested with `distance_method = "manhattan"`, and it should be scaled for the same reasons euclidean distance is.
+
+#### concept check {-}
+
+Fill in the blank to compute the Manhattan distance between these two samples. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">sample_a <- c(2, 5, 1, 7)
+sample_b <- c(3, 5, 4, 6)
+
+sqrt(sum((sample_a - sample_b)^2))   # euclidean
+sum(____(sample_a - sample_b))       # manhattan</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Euclidean distance squares each difference before summing, so one large difference grows much faster than several small ones. Manhattan distance adds the absolute differences, so a difference of 4 in one variable counts exactly as much as differences of 1 in four variables.">
+<p class="scq">Self-check: which metric is pulled harder by a single very large difference in one variable?</p>
+<label><input type="radio"> Euclidean, because it squares each difference</label>
+<label><input type="radio"> Manhattan, because it adds up absolute differences</label>
+<label><input type="radio"> Neither; the two always rank pairs of samples the same way</label>
+</div>
+
+<hr>
+
+### correlation and cosine {-}
+
+Sometimes two samples have the same pattern across the variables but at different overall sizes. A diluted extract and a concentrated one, a small leaf and a large one, a long burn and a short one: the profile is the same, but every number in one sample is larger. Euclidean and Manhattan distances treat that size difference as dissimilarity. If the question is about the *pattern*, we want a metric that ignores size.
+
+**Correlation distance** is 1 minus the Pearson correlation between two samples across all the variables (`distance_method = "correlation"`). Two samples whose values rise and fall together have a correlation near 1 and so a distance near 0, however different their totals are. **Cosine distance** (`distance_method = "cosine"`) treats each sample as an arrow pointing out from the origin and measures the angle between two arrows: arrows pointing the same way are at distance 0 no matter how long they are. The two are close cousins. The difference is that correlation first subtracts each sample's own mean, while cosine does not. Cosine is the standard choice for comparing the embeddings we will meet in the language model chapters, where each sample is described by hundreds of numbers and the direction of the arrow carries the meaning.
+
+The `wood_smoke` data set holds the abundances of 254 compounds in smoke from six tree species, three hardwoods and three softwoods. The species produce different total amounts of smoke compounds:
+
+```{r}
+wood_smoke %>%
+  group_by(wood_type, species) %>%
+  summarize(total_mg_g = sum(abundance_mg_g), .groups = "drop") %>%
+  arrange(total_mg_g)
+```
+
+Let's ask which species is most like red maple, first by euclidean distance and then by correlation distance:
+
+```{r}
+wood_smoke %>%
+  select(wood_type, species, compound, abundance_mg_g) %>%
+  pivot_wider(names_from = "compound", values_from = "abundance_mg_g") -> wood_smoke_wide
+
+closest_to_red_maple <- function(method) {
+  runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = method,
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = c("species", "wood_type")
+  ) %>%
+    filter(sample_unique_ID_sample_1 == "red_maple_hardwood") %>%
+    arrange(distance) %>%
+    head(2)
+}
+
+closest_to_red_maple("euclidean")
+closest_to_red_maple("correlation")
+```
+
+By euclidean distance, red maple's nearest neighbor is eastern hemlock, a softwood whose main similarity to red maple is that it produces a similar total amount of smoke compounds. By correlation distance, the nearest neighbor is northern red oak, a fellow hardwood with a similar profile at a different overall level. Here, scaling is off on purpose: every column is in the same units (mg of compound per g of wood), and z-scaling each compound would let the hundreds of trace compounds count as much as the major ones.
+
+#### concept check {-}
+
+Fill in the blank with the metric that compares the pattern of compounds rather than the amounts, and see which species comes out closest to paper birch. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = c("species", "wood_type")
+) %>%
+  filter(sample_unique_ID_sample_1 == "paper_birch_hardwood") %>%
+  arrange(distance)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Correlation distance compares how the values rise and fall across the variables. If every value in one sample is exactly twice the matching value in another, the correlation is 1 and the distance is 0, even though the euclidean distance between them could be large.">
+<p class="scq">Self-check: sample B is exactly sample A with every value doubled. What is the correlation distance between them?</p>
+<label><input type="radio"> Large, because every value differs</label>
+<label><input type="radio"> Zero, because the pattern across the variables is identical</label>
+<label><input type="radio"> Exactly 2, because the values were doubled</label>
+</div>
+
+<hr>
+
+### abundance and composition data {-}
+
+A great deal of chemical and biological data records **how much of each component** a sample contains: compound abundances from GC-MS, percentages of each compound class in a wax, counts of each species in a sample. Two things make this kind of data awkward for euclidean distance.
+
+The first is zeros. In abundance data, a zero usually means "not present", and many samples share many zeros. Euclidean distance can produce a strange result here, sometimes called the abundance paradox. Consider three sites and three species:
+
+```{r}
+paradox <- tibble(
+  site      = c("site_1", "site_2", "site_3"),
+  species_A = c(0, 1, 0),
+  species_B = c(1, 0, 4),
+  species_C = c(1, 0, 4)
+)
+paradox
+```
+
+Sites 1 and 3 contain exactly the same species. Site 3 just has more of each. Site 2 shares no species at all with site 1. Yet euclidean distance says site 1 is closer to site 2:
+
+```{r}
+runMatrixAnalysis(
+    data = paradox,
+    analysis = "dist",
+    distance_method = "euclidean",
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("species_A", "species_B", "species_C"),
+    columns_w_sample_ID_info = "site"
+) %>% filter(sample_unique_ID_sample_1 == "site_1")
+```
+
+**Bray-Curtis dissimilarity** (`distance_method = "bray_curtis"`) was built for this kind of data. It adds up the absolute differences between two samples and divides by the total amount in both, so it runs from 0 (identical) to 1 (nothing in common). A component absent from both samples adds nothing to either part of that fraction, so shared absences never make two samples look alike. On the same three sites, it puts site 1 with site 3, where it belongs:
+
+```{r}
+runMatrixAnalysis(
+    data = paradox,
+    analysis = "dist",
+    distance_method = "bray_curtis",
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("species_A", "species_B", "species_C"),
+    columns_w_sample_ID_info = "site"
+) %>% filter(sample_unique_ID_sample_1 == "site_1")
+```
+
+When each sample's values are percentages that add up to 100, Bray-Curtis has a particularly plain reading: it is the fraction of the composition that the two samples do **not** have in common. The `chemical_blooms` data set records the percentage of each compound class in the leaf waxes of 78 plant species, and nearly three quarters of its entries are zero. Let's compare two members of the mint family, *Monarda fistulosa* and *Salvia apiana*, with a stonecrop, *Crassula perfoliata*:
+
+```{r}
+mint_comparison <- chemical_blooms %>%
+  filter(label %in% c("Monarda_fistulosa", "Salvia_apiana", "Crassula_perfoliata"))
+mint_comparison
+
+compare_waxes <- function(method) {
+  runMatrixAnalysis(
+    data = mint_comparison,
+    analysis = "dist",
+    distance_method = method,
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = colnames(chemical_blooms)[-1],
+    columns_w_sample_ID_info = "label"
+  ) %>% filter(sample_unique_ID_sample_1 == "Monarda_fistulosa")
+}
+
+compare_waxes("euclidean")
+compare_waxes("bray_curtis")
+```
+
+Euclidean distance calls *Monarda* very slightly closer to the stonecrop than to the other mint, largely because the two mints differ by about 30 percentage points in triterpenoids, and squaring makes that one large difference count heavily. Bray-Curtis puts the two mints together: they share about two thirds of their wax composition, whereas *Monarda* and the stonecrop share about 60%.
+
+The second awkward feature is that percentages are not independent. If one component goes up, the others must go down, because the total is fixed at 100. Data with this property are called **compositional**, and the principled way to compare them is the **Aitchison distance** (`distance_method = "aitchison"`). It replaces each value with the logarithm of its ratio to the sample's geometric mean, then takes the euclidean distance between the results. Working with ratios means a component going from 1% to 2% counts as much as one going from 20% to 40%: both doubled. And it means two samples in the same proportions are identical, whatever their totals. The catch is that the logarithm of zero is undefined. `runMatrixAnalysis()` replaces zeros with half the smallest positive value and says so, but in data as zero-heavy as `chemical_blooms` those stand-in values end up driving the result. Aitchison distance is the right tool for compositions in which most components are present in most samples (the major fatty acids of a set of seed oils, for example). For zero-heavy composition data, Bray-Curtis is the safer choice.
+
+**None of these three metrics can be used on scaled data.** Bray-Curtis, Aitchison and the Jaccard distance below all need the raw, non-negative values, and scaling centers every column on zero, which produces negative numbers. `runMatrixAnalysis()` stops with a message if they are combined with scaling, so each of them needs `scale_variance = FALSE`.
+
+#### concept check {-}
+
+Fill in the two blanks so that the paradox sites are compared with Bray-Curtis dissimilarity. Press Run, then try changing the second blank to `TRUE` to see what happens.
+
+<div class="webr-cell"><textarea class="webr-code">paradox <- tibble(
+  site      = c("site_1", "site_2", "site_3"),
+  species_A = c(0, 1, 0),
+  species_B = c(1, 0, 4),
+  species_C = c(1, 0, 4)
+)
+
+runMatrixAnalysis(
+    data = paradox,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = ____,
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("species_A", "species_B", "species_C"),
+    columns_w_sample_ID_info = "site"
+)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Bray-Curtis compares amounts of components and needs them as they were measured. Scaling centers each column on zero, which creates negative values that have no meaning as an amount, so runMatrixAnalysis refuses the combination.">
+<p class="scq">Self-check: why must scaling be turned off for Bray-Curtis?</p>
+<label><input type="radio"> Because it needs the raw, non-negative amounts, and scaling creates negative values</label>
+<label><input type="radio"> Because Bray-Curtis already divides every column by its standard deviation</label>
+<label><input type="radio"> Because scaling would make every distance exactly zero</label>
+</div>
+
+<hr>
+
+### presence and absence {-}
+
+Sometimes the amounts are not trustworthy or not interesting, and the only question is whether each thing is there: which compounds were detected, which genes are present in a genome, which species were seen at a site. For this, the **Jaccard distance** (`distance_method = "jaccard"`) treats every value above zero as "present", then compares the two sets: it is the number of things present in only one of the two samples, divided by the number present in either. Things absent from both are ignored, just as in Bray-Curtis. Here is the Jaccard distance between every pair of wood smoke samples:
+
+```{r}
+runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = "jaccard",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = "species"
+)
+```
+
+The three softwoods are all within about 0.23 of one another: on which compounds their smoke contains at all, they are nearly interchangeable, and each of them is further from every hardwood than from the other two softwoods. Note that this is the default `"wide"` output format, a triangle like the one `dist()` printed at the start of the chapter.
+
+#### concept check {-}
+
+Fill in the blank to compare the wood smoke samples on which compounds are present, ignoring how much of each there is. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = "species"
+)</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Jaccard turns every value into present or absent before comparing, so a compound at 0.1 mg/g counts exactly as much as one at 50 mg/g. That is the point when detection is all that can be trusted, and a loss of information when the amounts matter.">
+<p class="scq">Self-check: two smoke samples contain exactly the same compounds, but every compound is ten times more abundant in one of them. What is their Jaccard distance?</p>
+<label><input type="radio"> 10</label>
+<label><input type="radio"> 0.9</label>
+<label><input type="radio"> 0</label>
+</div>
+
+<hr>
+
+### mixed data types {-}
+
+Every metric so far needs numbers. Real data sets often mix numbers with categories: a habitat, a country of origin, a growth form, a yes or no. **Gower distance** (`distance_method = "gower"`) handles the mixture. For each variable it computes a difference between 0 and 1: for a number, the absolute difference divided by that variable's range, and for a category, 0 if the two samples match and 1 if they do not. The Gower distance is the average of those differences. Because each numeric variable is divided by its own range, Gower distance does its own scaling, so `runMatrixAnalysis()` leaves `scale_variance` out of it.
+
+The `hops_components` data set describes 38 hop varieties by their oil and acid chemistry and by two categories: country of origin and brewing use (aroma, bittering or dry hopping). Let's find the varieties closest to Chinook, first on chemistry alone and then on chemistry plus the two categories:
+
+```{r}
+hop_chemistry <- c(
+  "total_oil", "alpha_acids", "beta_acids", "humulene",
+  "myrcene", "humulone", "caryophyllene", "farnesene"
+)
+
+closest_to_chinook <- function(columns) {
+  runMatrixAnalysis(
+    data = hops_components,
+    analysis = "dist",
+    distance_method = "gower",
+    output_format = "long",
+    columns_w_values_for_single_analyte = columns,
+    columns_w_sample_ID_info = "hop_variety"
+  ) %>%
+    filter(sample_unique_ID_sample_1 == "Chinook") %>%
+    arrange(distance) %>%
+    head(3)
+}
+
+closest_to_chinook(hop_chemistry)
+closest_to_chinook(c("hop_origin", "hop_brewing_usage", hop_chemistry))
+```
+
+On chemistry alone, Chinook's nearest neighbor is Nugget. Once origin and brewing use count, it is Centennial, which like Chinook is an American variety used for dry hopping. Whether the categories *should* count is a decision about the question being asked, not something the metric can settle.
+
+#### concept check {-}
+
+Fill in the blank with the metric that can compare hop varieties on a mix of numbers and categories. Press Run.
+
+<div class="webr-cell"><textarea class="webr-code">runMatrixAnalysis(
+    data = hops_components,
+    analysis = "dist",
+    distance_method = "____",
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("hop_origin", "hop_brewing_usage", "alpha_acids", "beta_acids", "myrcene"),
+    columns_w_sample_ID_info = "hop_variety"
+) %>%
+  filter(sample_unique_ID_sample_1 == "Saaz") %>%
+  arrange(distance) %>%
+  head(3)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Gower scores each variable separately on a 0 to 1 scale (a range-scaled difference for numbers, match or mismatch for categories) and averages them. Euclidean and Manhattan distances need every column to be a number, so they cannot use a column like country of origin at all.">
+<p class="scq">Self-check: how does Gower distance score a categorical variable such as country of origin?</p>
+<label><input type="radio"> By converting each country to a number and subtracting</label>
+<label><input type="radio"> 0 if the two samples match and 1 if they differ</label>
+<label><input type="radio"> It ignores categorical variables</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+
+## chapter summary {-}
+
+Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when the metric needs them. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png', dpi = NA)
+```
+
+| `distance_method` | Similar means... | Typical data | Scale first? |
+|---|---|---|---|
+| `"euclidean"` | close values in every variable, with large single differences counting heavily | measurements in different units (pH, mg/L, temperature) | yes, when units differ |
+| `"manhattan"` | close values in every variable, with one extreme difference counting less | as euclidean, when outliers or spikes are a concern | yes, when units differ |
+| `"correlation"` | the same pattern across the variables, regardless of size | profiles at different concentrations or totals | optional |
+| `"cosine"` | pointing in the same direction, regardless of length | embeddings and other high-dimensional data | optional |
+| `"bray_curtis"` | sharing the same amounts of the same components | abundances and percentages, especially with many zeros | no |
+| `"aitchison"` | the same proportions between components | compositions summing to 100% with few zeros | no |
+| `"jaccard"` | containing the same things, amounts ignored | presence/absence, detected or not | no |
+| `"gower"` | matching across a mix of numbers and categories | tables with categorical columns | handled internally |
+
+<!-- ## exercises {-}
+
+Escape-room cards go here once this chapter has rooms.
+
+-->
+
+## {-}
+
+## further reading {-}
+
+- [Legendre and Gallagher (2001), Ecologically meaningful transformations for ordination of species data](https://doi.org/10.1007/s004420100716). The classic account of why euclidean distance misbehaves on abundance data (the abundance paradox above is their kind of example), and of which distances and transformations avoid the problem.
+
+- [Gower (1971), A general coefficient of similarity and some of its properties](https://doi.org/10.2307/2528823). The original description of the Gower coefficient for data sets that mix numeric and categorical variables.
+
+- [Greenacre (2021), Compositional data analysis](https://doi.org/10.1146/annurev-statistics-042720-124436). A readable review of why percentages and other parts-of-a-whole data need log-ratio methods such as the Aitchison distance, including a frank discussion of what to do about zeros.
+
+- [Aggarwal, Hinneburg and Keim (2001), On the surprising behavior of distance metrics in high dimensional space](https://doi.org/10.1007/3-540-44503-X_27). Shows how distances lose contrast as the number of variables grows, which is part of why direction-based measures such as cosine are favored for embeddings.
+
+<!-- end -->

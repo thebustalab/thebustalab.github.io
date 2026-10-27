@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>distances and scaling | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
+<meta property="og:title" content="distances and scaling | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="distances and scaling | Integrated Bioanalytics">
+<meta name="twitter:description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="active" href="distances-and-scaling.html">distances and scaling</a></li>
+<li><a class="" href="networks.html">networks</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="specialized-plots-and-maps.html">specialized plots and maps</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="distances-and-scaling" class="section level1 unnumbered">
+<h1>distances and scaling<a class="anchor" aria-label="anchor" href="#distances-and-scaling"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a <strong>distance matrix</strong>: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. <strong>Scaling decides which variables count. The distance metric decides what “similar” means.</strong> Neither choice has a single right answer, but both change the result, so both should be made on purpose.</p>
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "wood_smoke", url: "/phylochemistry/sample_data/wood_smoke_data.csv" }, { name: "hops_components", url: "/phylochemistry/sample_data/hops_components.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- alaska_lake_data %>% select(-element_type) %>% pivot_wider(names_from = 'element', values_from = 'mg_per_L'); wood_smoke_wide <- wood_smoke %>% select(wood_type, species, compound, abundance_mg_g) %>% pivot_wider(names_from = 'compound', values_from = 'abundance_mg_g')" };
+</script><div id="section-6" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="distance-matrices" class="section level2 unnumbered">
+<h2>distance matrices<a class="anchor" aria-label="anchor" href="#distance-matrices"><i class="fas fa-link"></i></a>
+</h2>
+<p>A distance matrix compares every sample with every other sample across all of the measured variables at once, and boils each comparison down to a single number, as in the illustration at the top of this chapter. Small numbers mean similar samples.</p>
+<p>First, we need our data set in wide format, with one row per sample and one column per variable:</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 15</span></span>
+<span><span class="co">##   lake       park  water_temp    pH     C     N     P     Cl</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Devil_Mou… BELA        6.46  7.69   3.4 0.028 0      10.4 </span></span>
+<span><span class="co">## 2 Imuruk_La… BELA       17.4   6.44   4.7 0.013 0       1.18</span></span>
+<span><span class="co">## 3 Kuzitrin_… BELA        8.06  7.45   2   0     0       0.67</span></span>
+<span><span class="co">## 4 Lava_Lake  BELA       20.2   7.42   8.3 0.017 0.001   2.53</span></span>
+<span><span class="co">## 5 North_Kil… BELA       11.3   8.04   4.3 0.037 0.001 337.  </span></span>
+<span><span class="co">## 6 White_Fis… BELA       12.0   7.82  12.3 0.034 0.006 105.  </span></span>
+<span><span class="co">## # ℹ 7 more variables: S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
+<p>Now we can compute a distance matrix. Here is the traditional way, using base R:</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">##             1          2          3          4          5</span></span>
+<span><span class="co">## 2   17.249885                                            </span></span>
+<span><span class="co">## 3   13.914769   9.825572                                 </span></span>
+<span><span class="co">## 4   18.650639  12.114748  17.376585                      </span></span>
+<span><span class="co">## 5  363.367406 375.484304 376.096169 372.814170           </span></span>
+<span><span class="co">## 6  107.196874 119.469450 120.216457 116.204115 257.046356</span></span>
+<span><span class="co">## 7   39.939919  43.719116  42.365857  34.754470 375.000861</span></span>
+<span><span class="co">## 8   19.404912  21.984690  20.063580  18.697259 373.762458</span></span>
+<span><span class="co">## 9   35.533288  39.789532  38.784007  30.645412 372.279208</span></span>
+<span><span class="co">## 10  18.962699  14.634495  15.666485  10.483673 375.971844</span></span>
+<span><span class="co">## 11  18.453129  11.246167  14.445096   6.035171 375.825483</span></span>
+<span><span class="co">## 12  15.859597   8.463470   6.549584  14.247034 408.973609</span></span>
+<span><span class="co">## 13  53.990906  57.852872  56.692667  47.946077 375.976344</span></span>
+<span><span class="co">## 14  27.647239  27.763703  27.745856  19.099653 375.370523</span></span>
+<span><span class="co">## 15  53.952032  58.544454  57.044065  50.265090 375.483212</span></span>
+<span><span class="co">## 16  13.653806  15.851229   7.656391  19.617519 375.983281</span></span>
+<span><span class="co">## 17  14.509806  16.700167  10.740051  19.120889 375.673721</span></span>
+<span><span class="co">## 18  13.153727  13.931840   8.987793  15.893494 375.157921</span></span>
+<span><span class="co">## 19  18.520826  10.826147  14.818691   4.351309 375.348981</span></span>
+<span><span class="co">## 20  13.122339  13.918487   9.649135  14.221515 374.915449</span></span>
+<span><span class="co">##             6          7          8          9         10</span></span>
+<span><span class="co">## 2                                                        </span></span>
+<span><span class="co">## 3                                                        </span></span>
+<span><span class="co">## 4                                                        </span></span>
+<span><span class="co">## 5                                                        </span></span>
+<span><span class="co">## 6                                                        </span></span>
+<span><span class="co">## 7  121.114036                                            </span></span>
+<span><span class="co">## 8  117.766213  26.564153                                 </span></span>
+<span><span class="co">## 9  117.707763   7.201256  22.418984                      </span></span>
+<span><span class="co">## 10 119.608791  30.092744  10.637359  26.116748           </span></span>
+<span><span class="co">## 11 119.365204  33.019096  15.336409  29.255482   5.952777</span></span>
+<span><span class="co">## 12 130.491702  41.856664  17.229544  37.778483  11.140371</span></span>
+<span><span class="co">## 13 125.047466  18.551858  43.715031  22.853050  45.370561</span></span>
+<span><span class="co">## 14 119.711970  17.822205  17.140450  15.116676  15.261002</span></span>
+<span><span class="co">## 15 124.815436  19.456110  38.576517  21.589961  44.248959</span></span>
+<span><span class="co">## 16 120.008119  37.645002  16.021790  34.347377  15.155177</span></span>
+<span><span class="co">## 17 119.635012  35.256225  12.522921  32.181857  13.699739</span></span>
+<span><span class="co">## 18 118.629445  37.805337  17.533849  34.070348  14.570844</span></span>
+<span><span class="co">## 19 118.831349  33.976175  16.986590  30.206181   7.697126</span></span>
+<span><span class="co">## 20 118.308513  35.461496  15.850232  31.733081  12.479645</span></span>
+<span><span class="co">##            11         12         13         14         15</span></span>
+<span><span class="co">## 2                                                        </span></span>
+<span><span class="co">## 3                                                        </span></span>
+<span><span class="co">## 4                                                        </span></span>
+<span><span class="co">## 5                                                        </span></span>
+<span><span class="co">## 6                                                        </span></span>
+<span><span class="co">## 7                                                        </span></span>
+<span><span class="co">## 8                                                        </span></span>
+<span><span class="co">## 9                                                        </span></span>
+<span><span class="co">## 10                                                       </span></span>
+<span><span class="co">## 11                                                       </span></span>
+<span><span class="co">## 12  10.180989                                            </span></span>
+<span><span class="co">## 13  46.940423  57.993866                                 </span></span>
+<span><span class="co">## 14  16.757819  25.552154  30.739429                      </span></span>
+<span><span class="co">## 15  48.524147  57.622278  27.204181  35.158036           </span></span>
+<span><span class="co">## 16  16.018137   9.916751  52.513357  25.306954  51.656812</span></span>
+<span><span class="co">## 17  15.475985  10.697363  51.133725  23.902339  48.735302</span></span>
+<span><span class="co">## 18  14.167245  10.455806  52.153491  25.115004  52.172107</span></span>
+<span><span class="co">## 19   2.178394  11.082962  47.508028  17.698579  49.659940</span></span>
+<span><span class="co">## 20  12.209922   9.846948  49.759392  22.485011  50.153277</span></span>
+<span><span class="co">##            16         17         18         19</span></span>
+<span><span class="co">## 2                                             </span></span>
+<span><span class="co">## 3                                             </span></span>
+<span><span class="co">## 4                                             </span></span>
+<span><span class="co">## 5                                             </span></span>
+<span><span class="co">## 6                                             </span></span>
+<span><span class="co">## 7                                             </span></span>
+<span><span class="co">## 8                                             </span></span>
+<span><span class="co">## 9                                             </span></span>
+<span><span class="co">## 10                                            </span></span>
+<span><span class="co">## 11                                            </span></span>
+<span><span class="co">## 12                                            </span></span>
+<span><span class="co">## 13                                            </span></span>
+<span><span class="co">## 14                                            </span></span>
+<span><span class="co">## 15                                            </span></span>
+<span><span class="co">## 16                                            </span></span>
+<span><span class="co">## 17   5.535921                                 </span></span>
+<span><span class="co">## 18   7.313364   9.643066                      </span></span>
+<span><span class="co">## 19  16.910716  16.591947  14.272415           </span></span>
+<span><span class="co">## 20   7.593005   9.322022   2.664249  12.413960</span></span></code></pre></div>
+<p>We can also get distances directly from <code>runMatrixAnalysis()</code>, this course’s matrix-analysis function, by specifying <code>analysis = "dist"</code>. The argument <code>output_format = "long"</code> asks for the distances as a <strong>long table</strong>, one row per pair of lakes, rather than as the compact triangle <code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> printed above. The long shape is the one we usually want, because it can be filtered, sorted and plotted like any other tidy table, and because it is exactly the shape a network’s edge list needs.</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_dist_long</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 7</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Devil_Mountain_Lake_BELA  Imuruk_Lake_BELA            17.2</span></span>
+<span><span class="co">## 2 Devil_Mountain_Lake_BELA  Kuzitrin_Lake_BELA          13.9</span></span>
+<span><span class="co">## 3 Devil_Mountain_Lake_BELA  Lava_Lake_BELA              18.7</span></span>
+<span><span class="co">## 4 Devil_Mountain_Lake_BELA  North_Killeak_Lake_BELA    363. </span></span>
+<span><span class="co">## 5 Devil_Mountain_Lake_BELA  White_Fish_Lake_BELA       107. </span></span>
+<span><span class="co">## 6 Devil_Mountain_Lake_BELA  Iniakuk_Lake_GAAR           39.9</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="co">## # ℹ 4 more variables: lake_sample_1 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   park_sample_1 &lt;chr&gt;, lake_sample_2 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   park_sample_2 &lt;chr&gt;</span></span></code></pre></div>
+<p>Because the long table is tidy, finding the samples most like a given sample is just a filter and a sort. These are the lakes closest to Lake Narvakrak:</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Lake_Narvakrak_NOAT"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 3 × 7</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Lake_Narvakrak_NOAT       Nutavukti_Lake_GAAR         2.18</span></span>
+<span><span class="co">## 2 Lake_Narvakrak_NOAT       Lava_Lake_BELA              4.35</span></span>
+<span><span class="co">## 3 Lake_Narvakrak_NOAT       Lake_Selby_GAAR             7.70</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="co">## # ℹ 4 more variables: lake_sample_1 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   park_sample_1 &lt;chr&gt;, lake_sample_2 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   park_sample_2 &lt;chr&gt;</span></span></code></pre></div>
+<p>Let’s look at all the distances at once. Why is North Killeak Lake so distant from everyone? Wasn’t that lake the one with such high chloride?</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>  <span class="va">alaska_dist_long</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, y <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span>, fill <span class="op">=</span> <span class="va">distance</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">plot1</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-250"></span>
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+</p>
+</div>
+<div id="concept-check-16" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-16"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank so that the distances come back as one row per pair of lakes. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+    data = alaska_lake_data_wide,
+    analysis = "dist",
+    output_format = "____",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = "lake"
+) %&gt;% head()</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="A distance matrix holds one number per PAIR of samples. Twenty lakes give 20 x 19 = 380 ordered pairs, and the long format lists each one as a row, so it can be filtered, sorted and plotted like any other table.">
+<p class="scq">
+Self-check: in the long format, what does one row represent?
+</p>
+<p><label><input type="radio"> One lake</label>
+<label><input type="radio"> One measured variable</label>
+<label><input type="radio"> One pair of lakes</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="scaling" class="section level2 unnumbered">
+<h2>scaling<a class="anchor" aria-label="anchor" href="#scaling"><i class="fas fa-link"></i></a>
+</h2>
+<p>Back to North Killeak Lake. Let’s look at the averages and spreads of each analyte, and then at chloride specifically:</p>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    mean_mg_per_L <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>,</span>
+<span>    sd_mg_per_L <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 11 × 3</span></span>
+<span><span class="co">##    element mean_mg_per_L sd_mg_per_L</span></span>
+<span><span class="co">##    &lt;chr&gt;           &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 Br            NA         NA      </span></span>
+<span><span class="co">##  2 C              4.66       2.84   </span></span>
+<span><span class="co">##  3 Ca            18.2       16.4    </span></span>
+<span><span class="co">##  4 Cl            23.1       77.5    </span></span>
+<span><span class="co">##  5 F             NA         NA      </span></span>
+<span><span class="co">##  6 K              1.01       1.87   </span></span>
+<span><span class="co">##  7 Mg             7.12       8.62   </span></span>
+<span><span class="co">##  8 N              0.0382     0.0567 </span></span>
+<span><span class="co">##  9 Na            12.6       37.1    </span></span>
+<span><span class="co">## 10 P              0.0006     0.00135</span></span>
+<span><span class="co">## 11 S              5.21       7.03</span></span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"Cl"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mg_per_L</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-252"></span>
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+</p>
+</div>
+<p>Chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to <strong>scale</strong> each variable before computing distances: subtract the column’s mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R’s <code><a href="https://rdrr.io/r/base/scale.html">scale()</a></code> does it like this:</p>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">alaska_scaled</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">##      water_temp    pH     C     N     P    Cl     S     F</span></span>
+<span><span class="co">## [1,]      -0.87  1.32 -0.44 -0.18 -0.44 -0.16 -0.65  0.80</span></span>
+<span><span class="co">## [2,]       1.29 -1.41  0.02 -0.44 -0.44 -0.28 -0.71  0.06</span></span>
+<span><span class="co">## [3,]      -0.55  0.79 -0.93 -0.67 -0.44 -0.29 -0.70 -0.31</span></span>
+<span><span class="co">## [4,]       1.85  0.73  1.28 -0.37  0.30 -0.27 -0.66  0.80</span></span>
+<span><span class="co">## [5,]       0.10  2.08 -0.12 -0.02  0.30  4.05 -0.74  3.38</span></span>
+<span><span class="co">## [6,]       0.24  1.60  2.69 -0.07  3.99  1.06 -0.72  1.16</span></span>
+<span><span class="co">##         Br    Na     K    Ca    Mg</span></span>
+<span><span class="co">## [1,] -0.22 -0.10  0.10 -0.76 -0.36</span></span>
+<span><span class="co">## [2,] -0.30 -0.30 -0.37 -1.05 -0.73</span></span>
+<span><span class="co">## [3,] -0.30 -0.31 -0.44 -1.00 -0.80</span></span>
+<span><span class="co">## [4,] -0.26 -0.26 -0.24 -0.39 -0.50</span></span>
+<span><span class="co">## [5,]  3.94  4.03  3.90  0.71  3.55</span></span>
+<span><span class="co">## [6,]  1.00  1.12  1.32  0.03  1.05</span></span></code></pre></div>
+<p><code>runMatrixAnalysis()</code> scales for us with <code>scale_variance = TRUE</code>, which is its default. Importantly, scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. Some distance metrics, which we will meet below, also need the raw values and must not be scaled at all. But whenever the columns are measurements in different units, scale first.</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, y <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span>, fill <span class="op">=</span> <span class="va">distance</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">plot2</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-254"></span>
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Figure: The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+</p>
+</div>
+<div id="concept-check-17" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-17"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the command that centers each column and divides it by its standard deviation. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">round(head(____(alaska_lake_data_wide[,3:15])), 2)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Scaling puts every analyte on the same footing, so a one-standard-deviation difference counts the same in chloride as it does in phosphorus. Without it, the analyte reported in the largest numbers controls the distances almost on its own.">
+<p class="scq">
+Self-check: why does scaling change which lakes come out looking similar?
+</p>
+<p><label><input type="radio"> Because it removes outlying lakes from the data set</label>
+<label><input type="radio"> Because it puts every analyte on the same footing, so no single large-valued analyte can dominate the distance</label>
+<label><input type="radio"> Because it converts distances into similarities</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="distance-metrics" class="section level2 unnumbered">
+<h2>distance metrics<a class="anchor" aria-label="anchor" href="#distance-metrics"><i class="fas fa-link"></i></a>
+</h2>
+<p>Everything so far has used <strong>euclidean distance</strong>, the straight-line distance between two points, extended to as many dimensions as there are variables. It is the default nearly everywhere, and for measurements in different units, once they are scaled, it is usually a sensible choice. But it carries assumptions: that every variable is a continuous number, that an absolute difference means the same thing anywhere on the scale, and that a value of zero is nothing special. When the data break those assumptions, euclidean distance can give a confident and wrong answer about which samples are alike. <code>runMatrixAnalysis()</code> offers several other metrics through its <code>distance_method</code> argument. Each one is a different definition of “similar”, and the sections below pair each with the kind of data it suits.</p>
+<div id="euclidean-and-manhattan" class="section level3 unnumbered">
+<h3>euclidean and manhattan<a class="anchor" aria-label="anchor" href="#euclidean-and-manhattan"><i class="fas fa-link"></i></a>
+</h3>
+<p>Euclidean distance squares each difference before adding them up (and then takes the square root of the total). <strong>Manhattan distance</strong>, also called city-block distance, simply adds up the absolute differences. The name comes from walking a city grid: the distance between two corners is the blocks walked east plus the blocks walked north, not the straight line through the buildings.</p>
+<p>The squaring matters. Consider two pairs of samples. In the first pair, the samples differ by 1 unit in each of four variables. In the second, they differ by 4 units in one variable and not at all in the other three:</p>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">small_spread</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">one_big</span>      <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  pair      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"small_spread"</span>, <span class="st">"one_big"</span><span class="op">)</span>,</span>
+<span>  euclidean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">small_spread</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">one_big</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  manhattan <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">small_spread</span><span class="op">)</span><span class="op">)</span>,     <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">one_big</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 3</span></span>
+<span><span class="co">##   pair         euclidean manhattan</span></span>
+<span><span class="co">##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 small_spread         2         4</span></span>
+<span><span class="co">## 2 one_big              4         4</span></span></code></pre></div>
+<p>Manhattan distance calls the two pairs equally different, since the total difference is 4 in both. Euclidean distance calls the second pair twice as far apart, because squaring rewards a single large difference over several small ones. Neither is wrong. But when one extreme value in one variable (a contaminated sample, an instrument spike) should not be allowed to decide which samples are alike, Manhattan distance is the more forgiving choice. It is requested with <code>distance_method = "manhattan"</code>, and it should be scaled for the same reasons euclidean distance is.</p>
+<div id="concept-check-18" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-18"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank to compute the Manhattan distance between these two samples. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">sample_a &lt;- c(2, 5, 1, 7)
+sample_b &lt;- c(3, 5, 4, 6)
+
+sqrt(sum((sample_a - sample_b)^2))   # euclidean
+sum(____(sample_a - sample_b))       # manhattan</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="Euclidean distance squares each difference before summing, so one large difference grows much faster than several small ones. Manhattan distance adds the absolute differences, so a difference of 4 in one variable counts exactly as much as differences of 1 in four variables.">
+<p class="scq">
+Self-check: which metric is pulled harder by a single very large difference in one variable?
+</p>
+<p><label><input type="radio"> Euclidean, because it squares each difference</label>
+<label><input type="radio"> Manhattan, because it adds up absolute differences</label>
+<label><input type="radio"> Neither; the two always rank pairs of samples the same way</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="correlation-and-cosine" class="section level3 unnumbered">
+<h3>correlation and cosine<a class="anchor" aria-label="anchor" href="#correlation-and-cosine"><i class="fas fa-link"></i></a>
+</h3>
+<p>Sometimes two samples have the same pattern across the variables but at different overall sizes. A diluted extract and a concentrated one, a small leaf and a large one, a long burn and a short one: the profile is the same, but every number in one sample is larger. Euclidean and Manhattan distances treat that size difference as dissimilarity. If the question is about the <em>pattern</em>, we want a metric that ignores size.</p>
+<p><strong>Correlation distance</strong> is 1 minus the Pearson correlation between two samples across all the variables (<code>distance_method = "correlation"</code>). Two samples whose values rise and fall together have a correlation near 1 and so a distance near 0, however different their totals are. <strong>Cosine distance</strong> (<code>distance_method = "cosine"</code>) treats each sample as an arrow pointing out from the origin and measures the angle between two arrows: arrows pointing the same way are at distance 0 no matter how long they are. The two are close cousins. The difference is that correlation first subtracts each sample’s own mean, while cosine does not. Cosine is the standard choice for comparing the embeddings we will meet in the language model chapters, where each sample is described by hundreds of numbers and the direction of the arrow carries the meaning.</p>
+<p>The <code>wood_smoke</code> data set holds the abundances of 254 compounds in smoke from six tree species, three hardwoods and three softwoods. The species produce different total amounts of smoke compounds:</p>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>total_mg_g <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">abundance_mg_g</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">total_mg_g</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 3</span></span>
+<span><span class="co">##   wood_type species            total_mg_g</span></span>
+<span><span class="co">##   &lt;chr&gt;     &lt;chr&gt;                   &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 softwood  eastern_white_pine       209.</span></span>
+<span><span class="co">## 2 hardwood  red_maple                240.</span></span>
+<span><span class="co">## 3 softwood  eastern_hemlock          293.</span></span>
+<span><span class="co">## 4 hardwood  paper_birch              346.</span></span>
+<span><span class="co">## 5 softwood  balsam_fir               379.</span></span>
+<span><span class="co">## 6 hardwood  northern_red_oak         424.</span></span></code></pre></div>
+<p>Let’s ask which species is most like red maple, first by euclidean distance and then by correlation distance:</p>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span>, <span class="va">compound</span>, <span class="va">abundance_mg_g</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"compound"</span>, values_from <span class="op">=</span> <span class="st">"abundance_mg_g"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">wood_smoke_wide</span></span>
+<span></span>
+<span><span class="va">closest_to_red_maple</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">method</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">wood_smoke_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="va">method</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wood_smoke_wide</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"wood_type"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"red_maple_hardwood"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">closest_to_red_maple</span><span class="op">(</span><span class="st">"euclidean"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 7</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 red_maple_hardwood        eastern_hemlock_softwo…     56.4</span></span>
+<span><span class="co">## 2 red_maple_hardwood        paper_birch_hardwood        61.6</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="co">## # ℹ 4 more variables: species_sample_1 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   wood_type_sample_1 &lt;chr&gt;, species_sample_2 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   wood_type_sample_2 &lt;chr&gt;</span></span>
+<span><span class="fu">closest_to_red_maple</span><span class="op">(</span><span class="st">"correlation"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 7</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 red_maple_hardwood        northern_red_oak_hardw…   0.0177</span></span>
+<span><span class="co">## 2 red_maple_hardwood        eastern_hemlock_softwo…   0.125 </span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="co">## # ℹ 4 more variables: species_sample_1 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   wood_type_sample_1 &lt;chr&gt;, species_sample_2 &lt;chr&gt;,</span></span>
+<span><span class="co">## #   wood_type_sample_2 &lt;chr&gt;</span></span></code></pre></div>
+<p>By euclidean distance, red maple’s nearest neighbor is eastern hemlock, a softwood whose main similarity to red maple is that it produces a similar total amount of smoke compounds. By correlation distance, the nearest neighbor is northern red oak, a fellow hardwood with a similar profile at a different overall level. Here, scaling is off on purpose: every column is in the same units (mg of compound per g of wood), and z-scaling each compound would let the hundreds of trace compounds count as much as the major ones.</p>
+<div id="concept-check-19" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-19"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the metric that compares the pattern of compounds rather than the amounts, and see which species comes out closest to paper birch. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = FALSE,
+    output_format = "long",
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = c("species", "wood_type")
+) %&gt;%
+  filter(sample_unique_ID_sample_1 == "paper_birch_hardwood") %&gt;%
+  arrange(distance)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Correlation distance compares how the values rise and fall across the variables. If every value in one sample is exactly twice the matching value in another, the correlation is 1 and the distance is 0, even though the euclidean distance between them could be large.">
+<p class="scq">
+Self-check: sample B is exactly sample A with every value doubled. What is the correlation distance between them?
+</p>
+<p><label><input type="radio"> Large, because every value differs</label>
+<label><input type="radio"> Zero, because the pattern across the variables is identical</label>
+<label><input type="radio"> Exactly 2, because the values were doubled</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="abundance-and-composition-data" class="section level3 unnumbered">
+<h3>abundance and composition data<a class="anchor" aria-label="anchor" href="#abundance-and-composition-data"><i class="fas fa-link"></i></a>
+</h3>
+<p>A great deal of chemical and biological data records <strong>how much of each component</strong> a sample contains: compound abundances from GC-MS, percentages of each compound class in a wax, counts of each species in a sample. Two things make this kind of data awkward for euclidean distance.</p>
+<p>The first is zeros. In abundance data, a zero usually means “not present”, and many samples share many zeros. Euclidean distance can produce a strange result here, sometimes called the abundance paradox. Consider three sites and three species:</p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">paradox</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  site      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"site_1"</span>, <span class="st">"site_2"</span>, <span class="st">"site_3"</span><span class="op">)</span>,</span>
+<span>  species_A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  species_B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  species_C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">paradox</span></span>
+<span><span class="co">## # A tibble: 3 × 4</span></span>
+<span><span class="co">##   site   species_A species_B species_C</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 site_1         0         1         1</span></span>
+<span><span class="co">## 2 site_2         1         0         0</span></span>
+<span><span class="co">## 3 site_3         0         4         4</span></span></code></pre></div>
+<p>Sites 1 and 3 contain exactly the same species. Site 3 just has more of each. Site 2 shares no species at all with site 1. Yet euclidean distance says site 1 is closer to site 2:</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">paradox</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species_A"</span>, <span class="st">"species_B"</span>, <span class="st">"species_C"</span><span class="op">)</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"site"</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 site_1                    site_2                      1.73</span></span>
+<span><span class="co">## 2 site_1                    site_3                      4.24</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
+<p><strong>Bray-Curtis dissimilarity</strong> (<code>distance_method = "bray_curtis"</code>) was built for this kind of data. It adds up the absolute differences between two samples and divides by the total amount in both, so it runs from 0 (identical) to 1 (nothing in common). A component absent from both samples adds nothing to either part of that fraction, so shared absences never make two samples look alike. On the same three sites, it puts site 1 with site 3, where it belongs:</p>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">paradox</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="st">"bray_curtis"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species_A"</span>, <span class="st">"species_B"</span>, <span class="st">"species_C"</span><span class="op">)</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"site"</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 site_1                    site_2                       1  </span></span>
+<span><span class="co">## 2 site_1                    site_3                       0.6</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
+<p>When each sample’s values are percentages that add up to 100, Bray-Curtis has a particularly plain reading: it is the fraction of the composition that the two samples do <strong>not</strong> have in common. The <code>chemical_blooms</code> data set records the percentage of each compound class in the leaf waxes of 78 plant species, and nearly three quarters of its entries are zero. Let’s compare two members of the mint family, <em>Monarda fistulosa</em> and <em>Salvia apiana</em>, with a stonecrop, <em>Crassula perfoliata</em>:</p>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mint_comparison</span> <span class="op">&lt;-</span> <span class="va">chemical_blooms</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">label</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Monarda_fistulosa"</span>, <span class="st">"Salvia_apiana"</span>, <span class="st">"Crassula_perfoliata"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">mint_comparison</span></span>
+<span><span class="co">## # A tibble: 3 × 10</span></span>
+<span><span class="co">##   label     Alkanes Sec_Alcohols Others Fatty_acids Alcohols</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;        &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Monarda_…    0               0      0        12.5     37.6</span></span>
+<span><span class="co">## 2 Salvia_a…    0               0      0        16.4     10.7</span></span>
+<span><span class="co">## 3 Crassula…    9.81            0      0        22.8     30.9</span></span>
+<span><span class="co">## # ℹ 4 more variables: Triterpenoids &lt;dbl&gt;, Ketones &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   Other_compounds &lt;dbl&gt;, Aldehydes &lt;dbl&gt;</span></span>
+<span></span>
+<span><span class="va">compare_waxes</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">method</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">mint_comparison</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="va">method</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"label"</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Monarda_fistulosa"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">compare_waxes</span><span class="op">(</span><span class="st">"euclidean"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Monarda_fistulosa         Salvia_apiana               40.6</span></span>
+<span><span class="co">## 2 Monarda_fistulosa         Crassula_perfoliata         39.9</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="fu">compare_waxes</span><span class="op">(</span><span class="st">"bray_curtis"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Monarda_fistulosa         Salvia_apiana              0.334</span></span>
+<span><span class="co">## 2 Monarda_fistulosa         Crassula_perfoliata        0.404</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
+<p>Euclidean distance calls <em>Monarda</em> very slightly closer to the stonecrop than to the other mint, largely because the two mints differ by about 30 percentage points in triterpenoids, and squaring makes that one large difference count heavily. Bray-Curtis puts the two mints together: they share about two thirds of their wax composition, whereas <em>Monarda</em> and the stonecrop share about 60%.</p>
+<p>The second awkward feature is that percentages are not independent. If one component goes up, the others must go down, because the total is fixed at 100. Data with this property are called <strong>compositional</strong>, and the principled way to compare them is the <strong>Aitchison distance</strong> (<code>distance_method = "aitchison"</code>). It replaces each value with the logarithm of its ratio to the sample’s geometric mean, then takes the euclidean distance between the results. Working with ratios means a component going from 1% to 2% counts as much as one going from 20% to 40%: both doubled. And it means two samples in the same proportions are identical, whatever their totals. The catch is that the logarithm of zero is undefined. <code>runMatrixAnalysis()</code> replaces zeros with half the smallest positive value and says so, but in data as zero-heavy as <code>chemical_blooms</code> those stand-in values end up driving the result. Aitchison distance is the right tool for compositions in which most components are present in most samples (the major fatty acids of a set of seed oils, for example). For zero-heavy composition data, Bray-Curtis is the safer choice.</p>
+<p><strong>None of these three metrics can be used on scaled data.</strong> Bray-Curtis, Aitchison and the Jaccard distance below all need the raw, non-negative values, and scaling centers every column on zero, which produces negative numbers. <code>runMatrixAnalysis()</code> stops with a message if they are combined with scaling, so each of them needs <code>scale_variance = FALSE</code>.</p>
+<div id="concept-check-20" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-20"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the two blanks so that the paradox sites are compared with Bray-Curtis dissimilarity. Press Run, then try changing the second blank to <code>TRUE</code> to see what happens.</p>
+<div class="webr-cell">
+<textarea class="webr-code">paradox &lt;- tibble(
+  site      = c("site_1", "site_2", "site_3"),
+  species_A = c(0, 1, 0),
+  species_B = c(1, 0, 4),
+  species_C = c(1, 0, 4)
+)
+
+runMatrixAnalysis(
+    data = paradox,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = ____,
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("species_A", "species_B", "species_C"),
+    columns_w_sample_ID_info = "site"
+)</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="Bray-Curtis compares amounts of components and needs them as they were measured. Scaling centers each column on zero, which creates negative values that have no meaning as an amount, so runMatrixAnalysis refuses the combination.">
+<p class="scq">
+Self-check: why must scaling be turned off for Bray-Curtis?
+</p>
+<p><label><input type="radio"> Because it needs the raw, non-negative amounts, and scaling creates negative values</label>
+<label><input type="radio"> Because Bray-Curtis already divides every column by its standard deviation</label>
+<label><input type="radio"> Because scaling would make every distance exactly zero</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="presence-and-absence" class="section level3 unnumbered">
+<h3>presence and absence<a class="anchor" aria-label="anchor" href="#presence-and-absence"><i class="fas fa-link"></i></a>
+</h3>
+<p>Sometimes the amounts are not trustworthy or not interesting, and the only question is whether each thing is there: which compounds were detected, which genes are present in a genome, which species were seen at a site. For this, the <strong>Jaccard distance</strong> (<code>distance_method = "jaccard"</code>) treats every value above zero as “present”, then compares the two sets: it is the number of things present in only one of the two samples, divided by the number present in either. Things absent from both are ignored, just as in Bray-Curtis. Here is the Jaccard distance between every pair of wood smoke samples:</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">wood_smoke_wide</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="st">"jaccard"</span>,</span>
+<span>    scale_variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wood_smoke_wide</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"species"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##                    red_maple northern_red_oak paper_birch</span></span>
+<span><span class="co">## northern_red_oak   0.4230769                             </span></span>
+<span><span class="co">## paper_birch        0.3902439        0.2602041            </span></span>
+<span><span class="co">## eastern_white_pine 0.5177665        0.3956522   0.3679245</span></span>
+<span><span class="co">## eastern_hemlock    0.5226131        0.3584071   0.4394619</span></span>
+<span><span class="co">## balsam_fir         0.5023923        0.2969432   0.3616071</span></span>
+<span><span class="co">##                    eastern_white_pine eastern_hemlock</span></span>
+<span><span class="co">## northern_red_oak                                     </span></span>
+<span><span class="co">## paper_birch                                          </span></span>
+<span><span class="co">## eastern_white_pine                                   </span></span>
+<span><span class="co">## eastern_hemlock             0.2009569                </span></span>
+<span><span class="co">## balsam_fir                  0.2286996       0.2117117</span></span></code></pre></div>
+<p>The three softwoods are all within about 0.23 of one another: on which compounds their smoke contains at all, they are nearly interchangeable, and each of them is further from every hardwood than from the other two softwoods. Note that this is the default <code>"wide"</code> output format, a triangle like the one <code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> printed at the start of the chapter.</p>
+<div id="concept-check-21" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-21"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank to compare the wood smoke samples on which compounds are present, ignoring how much of each there is. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+    data = wood_smoke_wide,
+    analysis = "dist",
+    distance_method = "____",
+    scale_variance = FALSE,
+    columns_w_values_for_single_analyte = colnames(wood_smoke_wide)[-(1:2)],
+    columns_w_sample_ID_info = "species"
+)</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="Jaccard turns every value into present or absent before comparing, so a compound at 0.1 mg/g counts exactly as much as one at 50 mg/g. That is the point when detection is all that can be trusted, and a loss of information when the amounts matter.">
+<p class="scq">
+Self-check: two smoke samples contain exactly the same compounds, but every compound is ten times more abundant in one of them. What is their Jaccard distance?
+</p>
+<p><label><input type="radio"> 10</label>
+<label><input type="radio"> 0.9</label>
+<label><input type="radio"> 0</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="mixed-data-types" class="section level3 unnumbered">
+<h3>mixed data types<a class="anchor" aria-label="anchor" href="#mixed-data-types"><i class="fas fa-link"></i></a>
+</h3>
+<p>Every metric so far needs numbers. Real data sets often mix numbers with categories: a habitat, a country of origin, a growth form, a yes or no. <strong>Gower distance</strong> (<code>distance_method = "gower"</code>) handles the mixture. For each variable it computes a difference between 0 and 1: for a number, the absolute difference divided by that variable’s range, and for a category, 0 if the two samples match and 1 if they do not. The Gower distance is the average of those differences. Because each numeric variable is divided by its own range, Gower distance does its own scaling, so <code>runMatrixAnalysis()</code> leaves <code>scale_variance</code> out of it.</p>
+<p>The <code>hops_components</code> data set describes 38 hop varieties by their oil and acid chemistry and by two categories: country of origin and brewing use (aroma, bittering or dry hopping). Let’s find the varieties closest to Chinook, first on chemistry alone and then on chemistry plus the two categories:</p>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hop_chemistry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"total_oil"</span>, <span class="st">"alpha_acids"</span>, <span class="st">"beta_acids"</span>, <span class="st">"humulene"</span>,</span>
+<span>  <span class="st">"myrcene"</span>, <span class="st">"humulone"</span>, <span class="st">"caryophyllene"</span>, <span class="st">"farnesene"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">closest_to_chinook</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">columns</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">hops_components</span>,</span>
+<span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
+<span>    distance_method <span class="op">=</span> <span class="st">"gower"</span>,</span>
+<span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">columns</span>,</span>
+<span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"hop_variety"</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Chinook"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">closest_to_chinook</span><span class="op">(</span><span class="va">hop_chemistry</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 3 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Chinook                   Nugget                    0.0950</span></span>
+<span><span class="co">## 2 Chinook                   Millennium                0.104 </span></span>
+<span><span class="co">## 3 Chinook                   Herkules                  0.116 </span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span>
+<span><span class="fu">closest_to_chinook</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hop_origin"</span>, <span class="st">"hop_brewing_usage"</span>, <span class="va">hop_chemistry</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 3 × 3</span></span>
+<span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
+<span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Chinook                   Centennial                 0.118</span></span>
+<span><span class="co">## 2 Chinook                   Nugget                     0.176</span></span>
+<span><span class="co">## 3 Chinook                   Millennium                 0.183</span></span>
+<span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
+<p>On chemistry alone, Chinook’s nearest neighbor is Nugget. Once origin and brewing use count, it is Centennial, which like Chinook is an American variety used for dry hopping. Whether the categories <em>should</em> count is a decision about the question being asked, not something the metric can settle.</p>
+<div id="concept-check-22" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-22"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the metric that can compare hop varieties on a mix of numbers and categories. Press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">runMatrixAnalysis(
+    data = hops_components,
+    analysis = "dist",
+    distance_method = "____",
+    output_format = "long",
+    columns_w_values_for_single_analyte = c("hop_origin", "hop_brewing_usage", "alpha_acids", "beta_acids", "myrcene"),
+    columns_w_sample_ID_info = "hop_variety"
+) %&gt;%
+  filter(sample_unique_ID_sample_1 == "Saaz") %&gt;%
+  arrange(distance) %&gt;%
+  head(3)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Gower scores each variable separately on a 0 to 1 scale (a range-scaled difference for numbers, match or mismatch for categories) and averages them. Euclidean and Manhattan distances need every column to be a number, so they cannot use a column like country of origin at all.">
+<p class="scq">
+Self-check: how does Gower distance score a categorical variable such as country of origin?
+</p>
+<p><label><input type="radio"> By converting each country to a number and subtracting</label>
+<label><input type="radio"> 0 if the two samples match and 1 if they differ</label>
+<label><input type="radio"> It ignores categorical variables</label></p>
+</div>
+<hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+</div>
+</div>
+</div>
+<div id="chapter-summary-3" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-3"><i class="fas fa-link"></i></a>
+</h2>
+<p>Two decisions go into every distance matrix. <strong>Scaling decides which variables count</strong>: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when the metric needs them. <strong>The distance metric decides what “similar” means</strong>: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-264"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%"><p class="caption">
+Figure: Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.
+</p>
+</div>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th><code>distance_method</code></th>
+<th>Similar means…</th>
+<th>Typical data</th>
+<th>Scale first?</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>"euclidean"</code></td>
+<td>close values in every variable, with large single differences counting heavily</td>
+<td>measurements in different units (pH, mg/L, temperature)</td>
+<td>yes, when units differ</td>
+</tr>
+<tr class="even">
+<td><code>"manhattan"</code></td>
+<td>close values in every variable, with one extreme difference counting less</td>
+<td>as euclidean, when outliers or spikes are a concern</td>
+<td>yes, when units differ</td>
+</tr>
+<tr class="odd">
+<td><code>"correlation"</code></td>
+<td>the same pattern across the variables, regardless of size</td>
+<td>profiles at different concentrations or totals</td>
+<td>optional</td>
+</tr>
+<tr class="even">
+<td><code>"cosine"</code></td>
+<td>pointing in the same direction, regardless of length</td>
+<td>embeddings and other high-dimensional data</td>
+<td>optional</td>
+</tr>
+<tr class="odd">
+<td><code>"bray_curtis"</code></td>
+<td>sharing the same amounts of the same components</td>
+<td>abundances and percentages, especially with many zeros</td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td><code>"aitchison"</code></td>
+<td>the same proportions between components</td>
+<td>compositions summing to 100% with few zeros</td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td><code>"jaccard"</code></td>
+<td>containing the same things, amounts ignored</td>
+<td>presence/absence, detected or not</td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td><code>"gower"</code></td>
+<td>matching across a mix of numbers and categories</td>
+<td>tables with categorical columns</td>
+<td>handled internally</td>
+</tr>
+</tbody>
+</table></div>
+<!-- ## exercises {-}
+
+Escape-room cards go here once this chapter has rooms.
+
+-->
+</div>
+<div id="section-7" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-3" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://doi.org/10.1007/s004420100716">Legendre and Gallagher (2001), Ecologically meaningful transformations for ordination of species data</a>. The classic account of why euclidean distance misbehaves on abundance data (the abundance paradox above is their kind of example), and of which distances and transformations avoid the problem.</p></li>
+<li><p><a href="https://doi.org/10.2307/2528823">Gower (1971), A general coefficient of similarity and some of its properties</a>. The original description of the Gower coefficient for data sets that mix numeric and categorical variables.</p></li>
+<li><p><a href="https://doi.org/10.1146/annurev-statistics-042720-124436">Greenacre (2021), Compositional data analysis</a>. A readable review of why percentages and other parts-of-a-whole data need log-ratio methods such as the Aitchison distance, including a frank discussion of what to do about zeros.</p></li>
+<li><p><a href="https://doi.org/10.1007/3-540-44503-X_27">Aggarwal, Hinneburg and Keim (2001), On the surprising behavior of distance metrics in high dimensional space</a>. Shows how distances lose contrast as the number of variables grows, which is part of why direction-based measures such as cosine are favored for embeddings.</p></li>
+</ul>
+<!-- end -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="wrangling-and-summaries.html">wrangling and summaries</a></div>
+<div class="next"><a href="networks.html">networks</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#distances-and-scaling">distances and scaling</a></li>
+<li><a class="nav-link" href="#section-6"></a></li>
+<li><a class="nav-link" href="#distance-matrices">distance matrices</a></li>
+<li><a class="nav-link" href="#scaling">scaling</a></li>
+<li>
+<a class="nav-link" href="#distance-metrics">distance metrics</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#euclidean-and-manhattan">euclidean and manhattan</a></li>
+<li><a class="nav-link" href="#correlation-and-cosine">correlation and cosine</a></li>
+<li><a class="nav-link" href="#abundance-and-composition-data">abundance and composition data</a></li>
+<li><a class="nav-link" href="#presence-and-absence">presence and absence</a></li>
+<li><a class="nav-link" href="#mixed-data-types">mixed data types</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#chapter-summary-3">chapter summary</a></li>
+<li><a class="nav-link" href="#section-7"></a></li>
+<li><a class="nav-link" href="#further-reading-3">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
+</body>
+</html>

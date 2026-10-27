@@ -6,7 +6,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-A regression model predicts a number from one or more measured inputs. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted.
+A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -79,7 +79,7 @@ The output of `buildModel2()` consists of three things: the model_type, the mode
 basic_regression_model$model
 ```
 
-This is a linear model stored inside a special object type inside R called an `lm`. They can be a bit tricky to work with, but the metrics table makes the important parts easy to reach. Let's look at the metrics:
+This is a linear model stored inside a special object type inside R called an `lm`. These objects can be a bit tricky to work with, but the metrics table makes the important parts easy to reach. Let's look at the metrics:
 
 ```{r}
 basic_regression_model$metrics
@@ -289,7 +289,7 @@ unknown_predictions %>%
 
 ## multiple linear regression {-}
 
-Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let's try it with the first 30 metabolites in our data set:
+Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression uses one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let's try it with the first 30 metabolites in our data set:
 
 ```{r}
 multiple_input_regression_model <- buildModel2(
@@ -376,7 +376,7 @@ four_input_model$metrics %>%
 
 Phenylalanine has by far the largest coefficient. But Phenylalanine barely varies from patient to patient: its standard deviation is about 0.12, against about 0.4 for 2-Aminoadipate and Propionate. A one-unit change in Phenylalanine is therefore an enormous change, far bigger than anything seen in the data, so its coefficient is large simply because its unit is large.
 
-The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the networks chapter). Each coefficient then means "the change in the output for a one-standard-deviation change in this input", which can be compared across inputs:
+The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). Each coefficient then means "the change in the output for a one-standard-deviation change in this input", which can be compared across inputs:
 
 ```{r}
 scaled_metabolomics_data <- metabolomics_data %>%
@@ -443,7 +443,7 @@ There are three aspects of a regression model that we should check on, to make s
 
     - Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.
 
-    - Normality of residuals: assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
+    - Normality of residuals: assesses whether residuals follow a normal distribution, which matters for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
 
 2. Input relationships. This check pertains to relationships among the input variables themselves, rather than their relationship with the output variable. In this case:
 
@@ -491,6 +491,26 @@ check_model(multiple_regression_model$____)</textarea></div>
 <hr>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+
+## chapter summary {-}
+
+Every regression model starts with its use. An **inferential** use reads the model's inner workings (the coefficients, their p-values and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs and any influential points with `check_model()`.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
+```
+
+| Function or step | What it is for | What we set or vary |
+|---|---|---|
+| `Hmisc::impute()` | filling in missing values, because `buildModel2()` stops on any | the fill value (here each column's median) |
+| `buildModel2()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable` |
+| `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
+| `predictWithModel()` | predictions for any table with the same input columns, returned in the column `value` | `data`, `model_type`, `model`, and `id_cols` to keep each prediction attached to its sample |
+| `mutate(across(c(...), scale))` | putting inputs on a mean of zero and a standard deviation of one before comparing coefficients | which inputs to scale |
+| `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
+| `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |
 
 <!-- ## exercises {-}
 

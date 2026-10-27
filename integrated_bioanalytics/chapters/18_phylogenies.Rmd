@@ -1,8 +1,10 @@
 # phylogenies {-}
 
+A phylogeny is a tree of evolutionary relationships, and it answers a question that comes up whenever chemistry is compared across species or genes: which of these are close relatives, and which share a common ancestor only far back? Chemical traits are inherited along those branches, so a tree is the backdrop for asking where in the plant kingdom a group of compounds appears, as in the chemical bloom example at the end of this chapter. Trees of species can be built from an existing published phylogeny, while trees of genes, such as an enzyme family found with the homology searches and aligned in the alignments chapter, are built from the sequences themselves. This chapter covers both routes with `buildTree()`, then shows how to plot a tree, collapse it to a higher taxonomic level, and draw traits beside it. The next chapter uses these trees to ask how the traits evolved.
+
 ## buildTree {-}
 
-This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
+This function is a Swiss Army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum likelihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
 
 ### newick input {-}
 
@@ -11,7 +13,7 @@ Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to bu
 ```{r}
 tree <- buildTree(
   scaffold_type = "newick",
-  scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
 )
 
@@ -42,8 +44,8 @@ Arguments in this case are:
 
 * "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
 * "scaffold_in_path": path to the fasta file that contains the alignment from which the tree will be built.
-* "ml": Logical, TRUE to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
-* "model_test": if "ml" is TRUE, should buildTree test different maximum liklihood models and then use the "best" one? 
+* "ml": Logical, TRUE to use maximum likelihood, FALSE if not, in which case neighbor joining will be used.
+* "model_test": if "ml" is TRUE, should buildTree test different maximum likelihood models and then use the "best" one? 
 * "bootstrap": TRUE or FALSE, whether bootstrap values should appear on the nodes.
 * "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
 * "root": NULL, or the name of an accession that should form the root of the tree.
@@ -87,19 +89,19 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
+One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so we recommend it:
 
 ```{r, message = FALSE}
 ggtree(test_tree_big)
 ```
 
-Another convenient fucntion is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
+Another convenient function is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
 ```{r}
 test_tree_big_fortified <- fortify(test_tree_big)
 test_tree_big_fortified
 ```
-`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (as in the example below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
 
 ```{r, fig.height = 8, fig.width = 7}
 
@@ -128,7 +130,7 @@ ggtree(test_tree_big_fortified_w_data) +
 
 ## collapseTree {-}
 
-Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
+Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column is the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
 
 ```{r}
 collapseTree(
@@ -146,7 +148,7 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:
 
-```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+```{r, fig.height = 14, fig.width = 7, message = FALSE}
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
@@ -161,7 +163,7 @@ head(data)
 ```
 
 Now we can plot the tree:
-```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+```{r, fig.height = 14, fig.width = 7, message = FALSE}
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -172,7 +174,7 @@ tree_plot <- ggtree(data) +
 
 IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the `reorder` function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the `y` column of the data frame that we created when we fortified the tree. We can then plot the traits:
 
-```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+```{r, fig.height = 14, fig.width = 7, message = FALSE}
 trait_plot <- ggplot(
     data = pivot_longer(
       dplyr::filter(data, isTip == TRUE),
@@ -189,7 +191,7 @@ trait_plot <- ggplot(
 
 Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
 
-```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+```{r, fig.height = 14, fig.width = 7, message = FALSE}
 plot_grid(
   tree_plot,
   trait_plot,
@@ -200,7 +202,7 @@ plot_grid(
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
 
-```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+```{r, fig.height = 14, fig.width = 7, message = FALSE}
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -228,3 +230,24 @@ plot_grid(
   nrow = 1, align = "h", axis = "tb"
 )
 ```
+
+## chapter summary {-}
+
+Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/18_phylogenies.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing how to build a tree. A decision flowchart that starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png', dpi = NA)
+```
+
+| Function | What it is for | Settings students vary |
+|---|---|---|
+| `buildTree()` from a newick scaffold | a tree of species pruned from an existing phylogeny | `scaffold_type = "newick"`, `scaffold_in_path`, `members` |
+| `buildTree()` from an alignment | a tree built from aligned sequences | `scaffold_type` (`"amin_alignment"` or `"nucl_alignment"`), `scaffold_in_path`, `ml` (`TRUE` for maximum likelihood, `FALSE` for neighbor joining), `model_test`, `bootstrap`, `ancestral_states`, `root` |
+| `plot()` | a quick look at a small tree | none |
+| `ggtree()` | plotting a tree with ggplot layers | add `geom_tiplab()` with `offset`, `align`, `size` |
+| `fortify()` + `left_join()` | turning a tree into a data frame and adding metadata by tip label | `by = c("label" = ...)` |
+| `collapseTree()` | one tip per higher group (for example, per family) | `tree`, `associations` (tip labels, then group) |
+| `reorder(label, y)` | putting trait rows in the same order as the tree tips | the column to reorder and the tree's `y` |
+| `plot_grid()` | the tree and the trait plot side by side | `nrow = 1`, `align = "h"`, `axis = "tb"` |

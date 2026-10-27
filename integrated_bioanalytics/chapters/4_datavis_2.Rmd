@@ -1,6 +1,6 @@
 # data visualization II {-}
 
-In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a huge range of plots, but there is much more that can be done. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
+In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a quick plot for ourselves, but a figure for a lab report, a poster or a paper has to do more: show the trend through two continuous measurements, lay out a whole table of abundances as a heat map, compare subsets side by side in panels, and read cleanly to someone who has never seen the data. These tools come back in many of the later chapters, wherever a result has to be shown to someone else. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -15,7 +15,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RCol
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg', dpi = NA)
 ```
 
-We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
+We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. These examples introduce two new geoms. The first, `geom_smooth()`, is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
@@ -72,7 +72,7 @@ Stack the points on top of the smoothed line by filling in the blank with the ge
 
 ## facets {-}
 
-As alluded to in Exercises 1, it is possible to map variables in the dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of the plot, each of which shows a different subset of the data based on a chosen categorical variable. Let's check it out.
+It is possible to map variables in the dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of the plot, each of which shows a different subset of the data based on a chosen categorical variable. Let's check it out.
 
 Here, we can facet in the horizontal direction:
 ```{r, fig.width = 6}
@@ -123,7 +123,7 @@ Fill in the blank so the heat map is split into one panel per `replicate`, arran
 
 ## scales {-}
 
-Every aesthetic mapping (e.g. aes(x = algae_strain)) defines a new scale that is added to the plot. The `scale_*` family of commands controls these scales. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that typing `?scale_fill_` into the console will point to relevant help topics that provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+Every aesthetic mapping (e.g. aes(x = algae_strain)) defines a new scale that is added to the plot. The `scale_*` family of commands controls these scales. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that typing `?scale_fill_` into the console will point to relevant help topics that provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will turn up a wealth of help.
 
 ```{r, fig.width = 7}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
@@ -133,7 +133,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-One particularly useful type of scale are the color scales provided by RColorBrewer:
+The color scales provided by RColorBrewer are a particularly useful type of scale:
 
 ```{r, fig.height = 8}
 display.brewer.all()
@@ -168,7 +168,7 @@ The fill is mapped to a continuous variable, so its scale is a color gradient. F
 
 So far we've just looked at how to control the means by which the *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
-`ggplot` comes with a handful of built in "complete themes". These will change the appearance of plots with respect to the non-data ink. Compare the following plots:
+`ggplot` comes with a handful of built-in "complete themes". These will change the appearance of plots with respect to the non-data ink. Compare the following plots:
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
@@ -204,7 +204,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
-```{r, fig.height = 4, fig.cap = "Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725."}
+```{r, fig.height = 4, fig.cap = "Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725."}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth(color = "#4daf4a") +
   scale_x_continuous(
@@ -229,7 +229,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 #### concept check {-}
 
-Complete the plot with a built-in complete theme that strips away the grey background and gridlines (its name starts with `theme_`). Press Run.
+Complete the plot with a built-in complete theme that strips away the gray background and gridlines (its name starts with `theme_`). Press Run.
 
 <div class="webr-cell"><textarea class="webr-code">ggplot(solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_point() +
@@ -292,6 +292,30 @@ plot_grid(____, ____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## chapter summary {-}
+
+The kind of data being plotted points toward the geom: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When it matters which point is which, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png', dpi = NA)
+```
+
+| Function | What it is for | What we vary |
+|---|---|---|
+| `geom_smooth()` | a trend line through two continuous variables | `color` |
+| `geom_tile()` | a heat map: two discrete variables and one continuous | `aes(fill = ...)`, border `color`, `linewidth` |
+| `geom_text()`, `geom_text_repel()` | text at each point (the repel version nudges labels apart) | `aes(label = ...)` |
+| `facet_grid()` | small multiples in a row, a column, or both | `. ~ var`, `var ~ .`, `var1 ~ var2` |
+| `facet_wrap()` | small multiples when there are many panels | `var ~ .` |
+| `scale_fill_gradient()` | the color gradient of a continuous fill | `low`, `high` |
+| `scale_fill_brewer()` | RColorBrewer colors for a discrete fill | `palette` |
+| `scale_x_continuous()`, `scale_y_continuous()` | axis title, tick marks and range | `name`, `breaks`, `limits` |
+| `theme_classic()`, `theme_bw()`, `theme_dark()`, `theme_void()` | complete themes for the non-data ink | which one |
+| `theme()` | individual non-data components | `text = element_text(size = ..., color = ...)`, `axis.text` |
+| `plot_grid()` | arranges finished plot objects into one figure | the plot objects, `ncol` |
+
 ## exercises {-}
 
 ```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
@@ -353,7 +377,7 @@ Some pointers:
 
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/). The official ggplot2 book by Hadley Wickham, covering the grammar of graphics and providing in-depth explanations of layers, scales, coordinates, and themes.
 
-- [R Graph Gallery](https://r-graph-gallery.com/). A curated collection of R graphics with reproducible code, organized by chart type, making it easy to find inspiration and implementation patterns for attractive figures.
+- [R Graph Gallery](https://r-graph-gallery.com/). A curated collection of R graphics with reproducible code, organized by chart type, making it easy to find inspiration and example code for attractive figures.
 
 - [ColorBrewer2](https://colorbrewer2.org/). An interactive tool for selecting perceptually appropriate color schemes for maps and charts, with options filtered by colorblind safety, print friendliness, and data type (sequential, diverging, qualitative).
 

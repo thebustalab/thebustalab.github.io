@@ -14,14 +14,14 @@
     })();
   </script><title>wrangling and summaries | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
+<meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="wrangling and summaries | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
+<meta property="og:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="wrangling and summaries | Integrated Bioanalytics">
-<meta name="twitter:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look...">
+<meta name="twitter:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -70,6 +70,7 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="active" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
@@ -107,7 +108,7 @@
 <h1>wrangling and summaries<a class="anchor" aria-label="anchor" href="#wrangling-and-summaries"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an <em>outside</em> data set into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
+<p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter’s escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an <em>outside</em> data set into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
@@ -117,12 +118,12 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <div id="viewing-data" class="section level2 unnumbered">
 <h2>viewing data<a class="anchor" aria-label="anchor" href="#viewing-data"><i class="fas fa-link"></i></a>
 </h2>
-<p>Before a data set can be wrangled, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, use <code>view()</code>:</p>
+<p>Before a data set can be wrangled, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, there is <code>view()</code>:</p>
 <div class="webr-cell">
 <textarea class="webr-code">view(alaska_lake_data)</textarea>
 </div>
-<p>That opens the whole table as a scrollable grid. Each column shows its name with its <strong>type</strong> underneath — <code>chr</code> for text, <code>dbl</code> for numbers with decimals, <code>int</code> for whole numbers, <code>lgl</code> for TRUE/FALSE, <code>fct</code> for a factor. Knowing a column’s type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as <code>chr</code> is one of the most common reasons a calculation can fail.</p>
-<p>In this book’s webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with <code>view(alaska_lake_data, n = 5000)</code>. In addition, <code>view()</code> is not limited to data sets that were loaded in advance — it will show anything, including a table just built:</p>
+<p>That opens the whole table as a scrollable grid. Each column shows its name with its <strong>type</strong> underneath (<code>chr</code> for text, <code>dbl</code> for numbers with decimals, <code>int</code> for whole numbers, <code>lgl</code> for TRUE/FALSE, <code>fct</code> for a factor). Knowing a column’s type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as <code>chr</code> is one of the most common reasons a calculation can fail.</p>
+<p>In this book’s webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with <code>view(alaska_lake_data, n = 5000)</code>. In addition, <code>view()</code> is not limited to data sets that were loaded in advance. It will show anything, including a table just built:</p>
 <div class="webr-cell">
 <textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea>
 </div>
@@ -244,7 +245,7 @@ Self-check: which verb chooses <em>columns</em>?
 <span><span class="co">## #   Ximenia_americana &lt;dbl&gt;, Ongokea_gore &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
-<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. This function can be thought of as transforming both the data’s column names (or some of the column names) and the data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
+<p>While this format is very nice for filling in by hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. This function can be thought of as transforming both the data’s column names (or some of the column names) and the data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pivot_longer</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">fadb_sample</span>,</span>
@@ -267,11 +268,11 @@ Self-check: which verb chooses <em>columns</em>?
 <span><span class="co">## 10 Hexadecanoic acid Nuytsia_floribunda                  3.8</span></span>
 <span><span class="co">## # ℹ 60 more rows</span></span></code></pre></div>
 <p>Brilliant! Now we have a long-style table that can be used with ggplot.</p>
-<p>Occasionally you need to go the other way. Some functions — particularly the clustering and
-dimensional-reduction ones we meet later in the book — want a <strong>numeric matrix</strong>: one row per sample,
-one column per measured variable. That is a wide table again, and <code>pivot_wider()</code> is how you get back
+<p>Occasionally we need to go the other way. Some functions (particularly the clustering and
+dimensional-reduction ones we meet later in the book) want a <strong>numeric matrix</strong>: one row per sample,
+one column per measured variable. That is a wide table again, and <code>pivot_wider()</code> is how we get back
 to one. It is the exact inverse of <code>pivot_longer()</code>, and it takes the mirror-image arguments: instead
-of saying which columns to gather up and what to <em>name</em> the two new variables, you say which existing
+of saying which columns to gather up and what to <em>name</em> the two new variables, we say which existing
 variable holds the names that should become column headers (<code>names_from</code>) and which one holds the
 values that should fill the matrix (<code>values_from</code>).</p>
 <p>Let’s take the long table we just made and fold it back up. We’ll save the long version first so we
@@ -304,7 +305,7 @@ have something to hand to <code>pivot_wider()</code>:</p>
 <span><span class="co">## #   Ximenia_americana &lt;dbl&gt;, Ongokea_gore &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
-<p>That should look familiar — it is <code>fadb_sample</code> again. Any column you do <em>not</em> name in <code>names_from</code> or
+<p>That should look familiar. It is <code>fadb_sample</code> again. Any column <em>not</em> named in <code>names_from</code> or
 <code>values_from</code> is left alone and used to identify the rows, which is why <code>fatty_acid</code> comes back as the
 first column without our having to mention it.</p>
 <div id="concept-check-11" class="section level4 unnumbered">
@@ -336,13 +337,13 @@ Self-check: when you pivot a table longer, what happens to the old column names?
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-187-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-190-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-188-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-191-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Neat! Another way to think about the pipe:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
@@ -369,7 +370,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <div id="summary-statistics" class="section level2 unnumbered">
 <h2>summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
 </h2>
-<p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
+<p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics: things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly 400,000 trees in New York City (this is after considerable filtering and simplification):</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ny_trees</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 14</span></span>
@@ -385,8 +386,8 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## #   spc_latin &lt;chr&gt;, spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;,</span></span>
 <span><span class="co">## #   zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
-<p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
-<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
+<p>Nearly 400,000 observations of 14 variables! That’s more than 5M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? It is hard to know how one would even begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
+<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in the first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
@@ -441,7 +442,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## 10 QUERCUS RUBRA                          10020</span></span>
 <span><span class="co">## 11 TILIA CORDATA                          25970</span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA                        13221</span></span></code></pre></div>
-<p>Cool! <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
+<p>Cool! <code>summarize()</code> is more powerful, though. We can do many summary statistics at once:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -465,7 +466,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## 10 QUERCUS RUBRA                111.         20.7 </span></span>
 <span><span class="co">## 11 TILIA CORDATA                 98.8        32.6 </span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA              101.         10.7</span></span></code></pre></div>
-<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> for variation along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
+<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> for variation along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectively. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_summ</span> <span class="op">%&gt;%</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -477,7 +478,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>        xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-195-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-198-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
@@ -502,7 +503,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">##  9 ACER SACCHARINUM Bronx         19.7       10.5 </span></span>
 <span><span class="co">## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 </span></span>
 <span><span class="co">## # ℹ 38 more rows</span></span></code></pre></div>
-<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
+<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to the y axis and facet over tree species, which used to be on the y axis. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -518,7 +519,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-197-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-200-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
@@ -551,7 +552,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    plot.caption <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-198-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-201-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 <div id="concept-check-13" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-13"><i class="fas fa-link"></i></a>
@@ -647,7 +648,7 @@ Self-check: on its own, <code>arrange()</code> sorts in which order?
 <div id="mutate" class="section level2 unnumbered">
 <h2>mutate<a class="anchor" aria-label="anchor" href="#mutate"><i class="fas fa-link"></i></a>
 </h2>
-<p>One last thing before our exercises… there is another command called <code>mutate()</code>. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside <code>mutate()</code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
+<p>One last thing before our exercises… there is another command called <code>mutate()</code>. It is like summarize in that it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller. In fact, it makes it bigger, by creating a new column for each new variable defined inside <code>mutate()</code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -700,6 +701,100 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 </div>
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
+</div>
+<div id="chapter-summary-2" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-2"><i class="fas fa-link"></i></a>
+</h2>
+<p>Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. <code>group_by()</code> with <code>summarize()</code> collapses each group to a single row, while <code>mutate()</code> keeps every row and adds a column. The pipe (<code>%&gt;%</code>) chains these steps together, and <code>view()</code> on the result is the quickest way to check that each step did what was intended.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-206"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it." width="100%"><p class="caption">
+Figure: Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it.
+</p>
+</div>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>What it does</th>
+<th>What to set</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>view()</code></td>
+<td>opens a whole table as a scrollable grid, with each column’s type</td>
+<td>the table, plus <code>n = 5000</code> to see past the first 1000 rows (<code><a href="https://rdrr.io/r/utils/View.html">View()</a></code> in RStudio)</td>
+</tr>
+<tr class="even">
+<td><code>select()</code></td>
+<td>keeps only the named columns</td>
+<td>the column names</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code></td>
+<td>keeps only the rows that meet a condition</td>
+<td>the condition, such as <code>park == "BELA"</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>pivot_longer()</code></td>
+<td>wide to long: column names and values each become a new column</td>
+<td>
+<code>cols</code>, <code>names_to</code>, <code>values_to</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>pivot_wider()</code></td>
+<td>long to wide, the exact inverse of <code>pivot_longer()</code>
+</td>
+<td>
+<code>names_from</code>, <code>values_from</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>%&gt;%</code></td>
+<td>passes the result on the left to the function on the right as its first argument</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>
+<code>group_by()</code> + <code>summarize()</code>
+</td>
+<td>one row per group, holding the statistics asked for</td>
+<td>the grouping columns, with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>, <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>, <code>n()</code> inside <code>summarize()</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>arrange()</code></td>
+<td>sorts rows, smallest first</td>
+<td>the column, wrapped in <code>desc()</code> for largest first</td>
+</tr>
+<tr class="odd">
+<td><code>slice()</code></td>
+<td>keeps the first n rows (of each group, after <code>group_by()</code>)</td>
+<td>n, as in <code>slice(1)</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>mutate()</code></td>
+<td>adds a new column and keeps every row, and works within groups after <code>group_by()</code>
+</td>
+<td>the new column, as in <code>percent_S = mg_per_L/sum(mg_per_L)*100</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange()</a></code></td>
+<td>plots a summary point with a range around it</td>
+<td>
+<code>x</code> and <code>y</code>, plus <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code>)</td>
+</tr>
+</tbody>
+</table></div>
 </div>
 <div id="exercises-2" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
@@ -788,7 +883,7 @@ Some pointers:
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="data-visualization-ii.html">data visualization II</a></div>
-<div class="next"><a href="networks.html">networks</a></div>
+<div class="next"><a href="distances-and-scaling.html">distances and scaling</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -801,6 +896,7 @@ Some pointers:
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
 <li><a class="nav-link" href="#mutate">mutate</a></li>
+<li><a class="nav-link" href="#chapter-summary-2">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-2">exercises</a></li>
 <li><a class="nav-link" href="#section-5"></a></li>
 <li><a class="nav-link" href="#further-reading-2">further reading</a></li>
@@ -821,7 +917,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

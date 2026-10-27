@@ -10267,8 +10267,16 @@
             #' @param columns_w_additional_analyte_info Per-analyte metadata to carry through.
             #' @param columns_w_sample_ID_info The columns that together identify a sample.
             #' @param transpose Analyse analytes as rows rather than samples. Default FALSE.
-            #' @param distance_method "euclidean", "manhattan" or "gower". Gower is computed with
-            #'   cluster::daisy; the other two with stats::dist.
+            #' @param distance_method What "similar" means. "euclidean" (default) and "manhattan"
+            #'   (absolute differences; less pulled by one extreme variable); "gower" (mixed numeric
+            #'   and categorical columns, via cluster::daisy); "correlation" (1 - Pearson r between
+            #'   samples: same pattern, regardless of size) and "cosine" (1 - cosine similarity: same
+            #'   direction, regardless of length); "bray_curtis" (abundance data; shared absences do
+            #'   not count as similarity), "jaccard" (presence/absence: any value > 0 is present) and
+            #'   "aitchison" (compositional data: euclidean on centred log-ratios; zeros are replaced
+            #'   with half the smallest positive value, with a message). bray_curtis, jaccard and
+            #'   aitchison need raw non-negative values, so pass scale_variance = FALSE with them.
+            #'   All are computed in base R (no vegan), so every one also runs in WebR.
             #' @param agglomeration_method The linkage rule for hierarchical clustering. Only used
             #'   when tree_method = "linkage_dendrogram".
             #' @param tree_method How a tree is built for "hclust"/"hclust_phylo".
@@ -10393,7 +10401,11 @@
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
-                                            distance_method = c("euclidean", "manhattan", "gower"),
+                                            distance_method = c(
+                                                "euclidean", "manhattan", "gower",
+                                                "correlation", "cosine",
+                                                "bray_curtis", "jaccard", "aitchison"
+                                            ),
                                             agglomeration_method = c(
                                                 "ward.D2", "ward.D", "single", "complete",
                                                 "average", # (= UPGMA)
@@ -10449,6 +10461,22 @@
                                 "..."
                             ))
                         ) {stop("One of your argument names is misspelled, please double check spelling.")}
+
+                    # distance_method must be one we can compute
+
+                        ## Checked up front: an unknown name used to reach stats::dist(), which
+                        ## either errors deep inside a branch or (for its own extra methods such
+                        ## as "maximum") quietly computes something the course never teaches.
+                        .rma_distance_methods <- c(
+                            "euclidean", "manhattan", "gower", "correlation", "cosine",
+                            "bray_curtis", "jaccard", "aitchison"
+                        )
+                        if (!distance_method[1] %in% .rma_distance_methods) {
+                            stop(paste0(
+                                "distance_method = \"", distance_method[1], "\" is not available. ",
+                                "Choose one of: ", paste0("\"", .rma_distance_methods, "\"", collapse = ", "), "."
+                            ))
+                        }
 
                     # parameters = "elbow" is a k-means-only request
 
@@ -10757,7 +10785,10 @@
                                 scale_variance <- TRUE
                             }
 
-                            if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
+                            ## Gower range-normalizes every column itself, so z-scaling first changes
+                            ## nothing -- and scale() cannot take the categorical columns Gower is
+                            ## for. So Gower always gets the matrix as it is (2026-10-27).
+                            if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim") & distance_method[1] != "gower") {
                                 
                                 scaled_matrix <- scale(matrix)
 
@@ -10768,7 +10799,7 @@
 
                             }
 
-                            if( scale_variance == FALSE ) {
+                            if( scale_variance == FALSE | distance_method[1] == "gower" ) {
                                 scaled_matrix <- matrix
                             }
 
@@ -10799,6 +10830,63 @@
                             )
                         }
 
+                        ## ONE DISTANCE FUNCTION FOR EVERY BRANCH (2026-10-27).
+                        ## The dist output, neighbour joining and the bootstrapped linkage tree
+                        ## all call this, so a metric means the same thing wherever it is asked
+                        ## for. Base R only: vegan has no guaranteed WebR build, and these are a
+                        ## few lines each. Rows are samples, columns are variables.
+                        .rma_distance <- function(m, method) {
+                            if (method == "gower") {
+                                ## Gower exists for MIXED columns, but daisy() rejects character
+                                ## (and treats logical as asymmetric binary): hand it factors.
+                                m <- as.data.frame(m)
+                                for (j in seq_along(m)) {
+                                    if (is.character(m[[j]]) || is.logical(m[[j]])) m[[j]] <- factor(m[[j]])
+                                }
+                                return(cluster::daisy(m, metric = "gower"))
+                            }
+                            x <- as.matrix(m)
+                            if (method %in% c("bray_curtis", "jaccard", "aitchison") && any(x < 0, na.rm = TRUE)) {
+                                stop(paste0(
+                                    "distance_method = \"", method, "\" needs raw, non-negative values, but this ",
+                                    "matrix has negative ones. Scaling (scale_variance = TRUE, the default) ",
+                                    "centres every column on zero, so pass scale_variance = FALSE with this metric."
+                                ))
+                            }
+                            d <- switch(method,
+                                euclidean = stats::dist(x, method = "euclidean"),
+                                manhattan = stats::dist(x, method = "manhattan"),
+                                correlation = stats::as.dist(1 - stats::cor(t(x))),
+                                cosine = {
+                                    len <- sqrt(rowSums(x^2))
+                                    stats::as.dist(1 - tcrossprod(x) / outer(len, len))
+                                },
+                                bray_curtis = {
+                                    num <- as.matrix(stats::dist(x, method = "manhattan"))
+                                    den <- outer(rowSums(x), rowSums(x), "+")
+                                    bc <- num / den
+                                    bc[den == 0] <- 0  # two all-zero samples: identical
+                                    stats::as.dist(bc)
+                                },
+                                jaccard = stats::dist(x > 0, method = "binary"),
+                                aitchison = {
+                                    if (any(x == 0, na.rm = TRUE)) {
+                                        pseudo <- min(x[x > 0], na.rm = TRUE) / 2
+                                        message("Aitchison distance cannot take the log of zero; zeros were replaced with ",
+                                                signif(pseudo, 3), " (half the smallest positive value).")
+                                        x[x == 0] <- pseudo
+                                    }
+                                    lx <- log(x)
+                                    stats::dist(lx - rowMeans(lx), method = "euclidean")
+                                }
+                            )
+                            if (any(is.na(d))) {
+                                message("Some distances are NA. With \"correlation\" or \"cosine\" this means a sample whose ",
+                                        "values are all identical (or all zero), which has no pattern to compare.")
+                            }
+                            d
+                        }
+
                         ## HCLUST, HCLUST_PHYLO ##
 
                             if( analysis == "hclust" | analysis == "hclust_phylo") {
@@ -10816,6 +10904,14 @@
                                         bclust <- Bclust(
                                             scaled_matrix, method.d = distance_method[1],
                                             method.c = agglomeration_method[1],
+                                            ## Bclust's own default FUN calls stats::dist, which
+                                            ## knows none of correlation/cosine/bray_curtis/
+                                            ## jaccard/aitchison (or gower). Every bootstrap
+                                            ## replicate goes through the shared helper instead.
+                                            FUN = function(.x) hclust(
+                                                .rma_distance(.x, distance_method[1]),
+                                                method = agglomeration_method[1]
+                                            ),
                                             monitor = FALSE
                                         )
                                         phylo <- ape::as.phylo(bclust$hclust)
@@ -10824,11 +10920,7 @@
 
                                     ## The distance matrix is computed further down for the other
                                     ## analyses, so neighbour joining makes its own here.
-                                    if (distance_method[1] == "gower") {
-                                        nj_dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
-                                    } else {
-                                        nj_dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                                    }
+                                    nj_dist_matrix <- .rma_distance(scaled_matrix, distance_method[1])
                                     phylo <- ape::nj(nj_dist_matrix)
 
                                 } else {
@@ -10996,14 +11088,10 @@
 
                             if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
-                                ## `gower` is in distance_method's list and stats::dist cannot compute
-                                ## it -- it needs cluster::daisy. Without this branch, asking for gower
-                                ## silently gave you a euclidean distance instead.
-                                if (distance_method[1] == "gower") {
-                                    dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
-                                } else {
-                                    dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                                }
+                                ## Through the shared helper (defined above the hclust branch), so
+                                ## every metric -- gower via cluster::daisy, the rest in base R --
+                                ## is computed the same way here as in the trees.
+                                dist_matrix <- .rma_distance(scaled_matrix, distance_method[1])
 
                                 if( analysis == "dist") {
 
@@ -11015,7 +11103,11 @@
                                     if( output_format[1] == "long" ) {
                                         df <- as.data.frame(as.table(as.matrix(dist_matrix)))
                                         names(df) <- c("sample_1", "sample_2", "distance")
-                                        df <- filter(df, distance != 0)
+                                        ## Drop each sample paired with ITSELF, not every zero:
+                                        ## under jaccard, correlation or cosine two DIFFERENT
+                                        ## samples are routinely at distance 0, and filtering on
+                                        ## the value silently deleted those pairs (2026-10-27).
+                                        df <- filter(df, as.character(sample_1) != as.character(sample_2))
                                         clustering <- df
 
                                         ## WITH A SINGLE columns_w_sample_ID_info, THAT COLUMN NO LONGER EXISTS.

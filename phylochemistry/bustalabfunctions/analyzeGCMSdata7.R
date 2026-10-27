@@ -76,95 +76,152 @@
 #### and kB are properties of the compounds, so they should agree across
 #### samples run on the same method; a sample whose fitted k is an outlier is
 #### the better tell.
+####
+#### Three compounds (one diagnostic ion set each) use the same model with a
+#### third column, TIC(t) = kA*a + kB*b + kC*c, and no cross-talk (each ion
+#### set is taken to belong to its own compound). A compound whose ions have
+#### no signal at all in one sample's hump keeps its row there with area 0,
+#### so every sample carries the same peaks and the numbers line up. So does
+#### one whose per-sample fit comes out non-positive (background only on its
+#### ions): it is flagged CHECK and stored with no factor, so refresh keeps it 0.
 
     ## Signed per-scan sum (the v6 `area` convention: a rectangle sum over
     ## scans, not scaled by the scan interval).
     .gcms_scan_sum <- function(x) sum(x, na.rm = TRUE)
 
-    ## Split the TIC across one co-eluting pair.
-    ##
-    ##   rt        scan retention times
-    ##   tic_net   baseline-corrected TIC per scan (signed; v6's TIC - baseline)
-    ##   ion_a     baseline-corrected diagnostic trace for compound 1 (one ion,
-    ##             or the sum of several), same scans; order of elution does not matter
-    ##   ion_b     the same for compound 2
-    ##   crosstalk c(xA, xB): A's signal on ion_b per unit of its signal on
-    ##             ion_a, and B's on ion_a per unit on ion_b. Default 0, 0.
-    ##   scale     optional c(kA, kB) to use instead of fitting them (e.g.
-    ##             from library spectra: 1 / fraction of TIC on the ion).
-    ##
-    ## Returns a list: area_a, area_b (sum to sum(tic_net)), share_a per scan,
-    ## kA/kB used, fit_r2, the ion-guided drop-line answer for comparison
-    ## (drop_rt, area_a_drop, area_b_drop) and `status` ("ok" or a reason).
-    ## On failure the areas are NA, never 0.
-    gcms_split_coeluting <- function(rt, tic_net, ion_a, ion_b,
-                                     crosstalk = c(0, 0),
-                                     scale = NULL) {
+    ## Unmix the diagnostic traces (a list, one per compound) into each
+    ## compound's own signal. Cross-talk (see the model above) is defined for a
+    ## pair only; with three compounds each ion set is taken to belong to its
+    ## own compound. NULL when the ions cannot discriminate the compounds.
+    .gcms_unmix <- function(ions, crosstalk = c(0, 0)) {
+        if (length(ions) == 2) {
+            um <- gcms_unmix_pair(ions[[1]], ions[[2]], crosstalk)
+            return(if (is.null(um)) NULL else list(um$a, um$b))
+        }
+        if (any(crosstalk != 0)) return(NULL)
+        lapply(ions, function(x) pmax(x, 0))
+    }
 
-        fail <- function(why) list(
-            area_a = NA_real_, area_b = NA_real_, share_a = NULL,
-            k_a = NA_real_, k_b = NA_real_, fit_r2 = NA_real_,
-            drop_rt = NA_real_, area_a_drop = NA_real_, area_b_drop = NA_real_,
-            status = why)
-
+    ## Split the TIC across two or three co-eluting compounds. The model above,
+    ## with one column per compound: TIC(t) = sum_j k_j * s_j(t).
+    ##
+    ##   rt            scan retention times
+    ##   tic_net       baseline-corrected TIC per scan (signed; v6's TIC - baseline)
+    ##   ions          list of baseline-corrected diagnostic traces, one per
+    ##                 compound (one ion, or the sum of several), same scans; the
+    ##                 order of elution does not matter
+    ##   crosstalk     c(xA, xB), two compounds only. Default 0, 0.
+    ##   scale         optional k per compound to use instead of fitting them
+    ##   allow_absent  TRUE: a compound with no diagnostic signal at all in the
+    ##                 window gets area 0 (and its k may be NA) instead of failing
+    ##                 the split, so the sample still gets one row per compound
+    ##                 and the peak numbers line up across samples. At least one
+    ##                 compound must be present.
+    ##
+    ## Returns list(areas (sum to sum(tic_net)), shares (scans x compounds, in rt
+    ## order), contrib (k_j * s_j per scan), k, present, fit_r2, status ("ok" or
+    ## a reason)). On failure the areas are NA, never 0.
+    gcms_split_coeluting_n <- function(rt, tic_net, ions, crosstalk = c(0, 0),
+                                       scale = NULL, allow_absent = FALSE) {
+        m <- length(ions)
+        fail <- function(why) list(areas = rep(NA_real_, m), shares = NULL, contrib = NULL,
+                                   k = rep(NA_real_, m), present = rep(NA, m),
+                                   fit_r2 = NA_real_, status = why)
+        if (!(m %in% 2:3)) return(fail("give ions for two or three compounds"))
         n <- length(rt)
-        if (n < 5 || length(tic_net) != n || length(ion_a) != n || length(ion_b) != n)
+        if (n < 5 || length(tic_net) != n || any(lengths(ions) != n))
             return(fail("traces missing or of unequal length"))
-        if (any(!is.finite(c(rt, tic_net, ion_a, ion_b))))
+        if (any(!is.finite(c(rt, tic_net, unlist(ions)))))
             return(fail("non-finite values in the traces"))
         o <- order(rt)
-        rt <- rt[o]; tic_net <- tic_net[o]; ion_a <- ion_a[o]; ion_b <- ion_b[o]
-        if (max(ion_a) <= 0 || max(ion_b) <= 0)
+        rt <- rt[o]; tic_net <- tic_net[o]; ions <- lapply(ions, `[`, o)
+        if (!allow_absent && any(vapply(ions, max, numeric(1)) <= 0))
             return(fail("a diagnostic ion has no signal in the window"))
         if (length(crosstalk) != 2 || any(!is.finite(crosstalk)) || any(crosstalk < 0))
             return(fail("crosstalk must be two non-negative numbers"))
+        if (m == 3 && any(crosstalk != 0))
+            return(fail("cross-talk is supported for two compounds only"))
 
-        ## Unmix the diagnostic traces into each compound's own signal.
-        um <- gcms_unmix_pair(ion_a, ion_b, crosstalk)
+        um <- .gcms_unmix(ions, crosstalk)
         if (is.null(um))
-            return(fail("diagnostic ions do not discriminate the two compounds"))
-        a <- um$a; b <- um$b
-
-        if (sum(a) <= 0 || sum(b) <= 0)
+            return(fail("diagnostic ions do not discriminate the compounds"))
+        S <- do.call(cbind, um)
+        present <- colSums(S) > 0
+        if (!any(present)) return(fail("no compound has diagnostic signal in the window"))
+        if (!allow_absent && !all(present))
             return(fail("a compound has no diagnostic signal after unmixing"))
+        P <- which(present)
 
         if (is.null(scale)) {
-            ## The two profiles must differ, or the fit cannot tell their
-            ## scales apart. Two real peaks at 90% overlap correlate at ~0.98
-            ## and still fit exactly, so only near-proportional traces (the
-            ## same compound on both ions) are refused.
-            if (stats::cor(a, b) > 0.999)
-                return(fail("diagnostic ions do not discriminate the two compounds"))
-            fit <- stats::lm.fit(cbind(a, b), tic_net)
-            k <- unname(fit$coefficients)
-            if (any(!is.finite(k)) || any(k <= 0))
+            ## The profiles must differ, or the fit cannot tell their scales
+            ## apart. Two real peaks at 90% overlap correlate at ~0.98 and still
+            ## fit exactly, so only near-proportional traces (the same compound
+            ## on two ion sets) are refused.
+            if (length(P) > 1) {
+                cr <- suppressWarnings(stats::cor(S[, P, drop = FALSE]))
+                if (any(!is.finite(cr)) || max(cr[upper.tri(cr)]) > 0.999)
+                    return(fail("diagnostic ions do not discriminate the compounds"))
+            }
+            kp <- unname(stats::lm.fit(S[, P, drop = FALSE], tic_net)$coefficients)
+            if (any(!is.finite(kp)) || any(kp <= 0))
                 return(fail(sprintf(
-                    "TIC fit gave a non-positive scale (kA %.3g, kB %.3g); check the ions or supply `scale`",
-                    k[1], k[2])))
+                    "TIC fit gave a non-positive scale (%s); check the ions or supply `scale`",
+                    paste(sprintf("k%s %.3g", .gcms_split_labels[P], kp), collapse = ", "))))
+            k <- rep(NA_real_, m); k[P] <- kp
         } else {
             k <- as.numeric(scale)
-            if (length(k) != 2 || any(!is.finite(k)) || any(k <= 0))
-                return(fail("scale must be two positive numbers"))
+            if (length(k) != m) return(fail("scale must give one factor per compound"))
+            ## A compound stored with no factor (it was absent, or only background,
+            ## when the split was made) stays absent: area 0.
+            if (allow_absent) {
+                present <- present & is.finite(k)
+                if (!any(present)) return(fail("no compound has both diagnostic signal and a response factor"))
+                P <- which(present)
+            }
+            if (any(!is.finite(k[P])) || any(k[P] <= 0))
+                return(fail("scale must be a positive number for every compound"))
         }
 
-        cA <- k[1] * a; cB <- k[2] * b; tot <- cA + cB
+        C <- S
+        for (j in seq_len(m)) C[, j] <- if (present[j]) k[j] * S[, j] else 0
+        tot <- rowSums(C)
         resid <- tic_net - tot
         fit_r2 <- 1 - sum(resid^2) / sum((tic_net - mean(tic_net))^2)
 
-        share_a <- ifelse(tot > 0, cA / tot, NA_real_)
-        ## Scans with no diagnostic signal (the window's edges) take the
-        ## share of the nearest scan that has some.
-        ok <- which(!is.na(share_a))
+        ## Scans with no diagnostic signal (the window's edges) take the shares
+        ## of the nearest scans that have some.
+        ok <- which(tot > 0)
         if (length(ok) < 2) return(fail("no scans carry diagnostic signal"))
-        share_a <- stats::approx(rt[ok], share_a[ok], xout = rt,
-                                 method = "constant", rule = 2, f = 0.5)$y
+        shares <- matrix(0, n, m)
+        for (j in P)
+            shares[, j] <- stats::approx(rt[ok], C[ok, j] / tot[ok], xout = rt,
+                                         method = "constant", rule = 2, f = 0.5)$y
+        areas <- vapply(seq_len(m), function(j) .gcms_scan_sum(tic_net * shares[, j]), numeric(1))
 
-        area_a <- .gcms_scan_sum(tic_net * share_a)
-        area_b <- .gcms_scan_sum(tic_net * (1 - share_a))
+        list(areas = areas, shares = shares, contrib = C, k = k, present = present,
+             fit_r2 = fit_r2, status = "ok")
+    }
+
+    ## The two-compound form, kept for its drop-line comparison. Returns a list:
+    ## area_a, area_b (sum to sum(tic_net)), share_a per scan, kA/kB used,
+    ## fit_r2, the ion-guided drop-line answer for comparison (drop_rt,
+    ## area_a_drop, area_b_drop) and `status` ("ok" or a reason). On failure
+    ## the areas are NA, never 0.
+    gcms_split_coeluting <- function(rt, tic_net, ion_a, ion_b,
+                                     crosstalk = c(0, 0),
+                                     scale = NULL) {
+        s <- gcms_split_coeluting_n(rt, tic_net, list(ion_a, ion_b), crosstalk = crosstalk, scale = scale)
+        if (s$status != "ok") return(list(
+            area_a = NA_real_, area_b = NA_real_, share_a = NULL,
+            k_a = NA_real_, k_b = NA_real_, fit_r2 = NA_real_,
+            drop_rt = NA_real_, area_a_drop = NA_real_, area_b_drop = NA_real_,
+            status = s$status))
+        o <- order(rt); rt <- rt[o]; tic_net <- tic_net[o]; n <- length(rt)
+        share_a <- s$shares[, 1]
 
         ## Drop-line comparison: the first scan after A's apex where B takes
         ## the majority of the TIC.
-        after <- which(seq_len(n) > which.max(cA) & share_a < 0.5)
+        after <- which(seq_len(n) > which.max(s$contrib[, 1]) & share_a < 0.5)
         if (length(after)) {
             j <- after[1]
             drop_rt <- rt[j]
@@ -174,8 +231,8 @@
             drop_rt <- NA_real_; area_a_drop <- NA_real_; area_b_drop <- NA_real_
         }
 
-        list(area_a = area_a, area_b = area_b, share_a = share_a,
-             k_a = k[1], k_b = k[2], fit_r2 = fit_r2,
+        list(area_a = s$areas[1], area_b = s$areas[2], share_a = share_a,
+             k_a = s$k[1], k_b = s$k[2], fit_r2 = s$fit_r2,
              drop_rt = drop_rt, area_a_drop = area_a_drop, area_b_drop = area_b_drop,
              status = "ok")
     }
@@ -201,20 +258,22 @@
         unique(as.integer(round(v)))
     }
 
-    ## Build the traces gcms_split_coeluting() needs for one sample's hump.
+    ## Build the traces gcms_split_coeluting_n() needs for one sample's hump.
     ##
     ##   chrom_rows  that sample's rows of chromatograms_updated (long format:
     ##               ion == 0 is the TIC, ion == "baseline" the baseline)
     ##   allions     that sample's all-ion store (rt, mz, abundance)
     ##   start, end  the hump, in the sample's NATIVE rt
+    ##   ion_sets    list of integer ion vectors, one per compound
     ##
     ## tic_net is TIC minus baseline scan by scan, so its sum is exactly the
     ## v6 `area` of [start, end]. Each diagnostic trace gets its own baseline:
     ## the median of the trace over a flank as wide as the hump on each side,
     ## interpolated across, the same idea as peak_ion_area(). The traces are
     ## put onto the TIC's scans (the grids are the same acquisition, so this
-    ## is a lookup in practice, not a resampling).
-    gcms_pair_traces <- function(chrom_rows, allions, start, end, ions_a, ions_b) {
+    ## is a lookup in practice, not a resampling). Returns list(rt, tic_net,
+    ## base, ions), `ions` one trace per ion set.
+    gcms_split_traces <- function(chrom_rows, allions, start, end, ion_sets) {
         ion_col <- as.character(chrom_rows$ion)
         in_w <- chrom_rows$rt >= start & chrom_rows$rt <= end
         tic <- chrom_rows[in_w & ion_col == "0", c("rt", "abundance")]
@@ -261,7 +320,7 @@
             net <- pmax(y - bl_y, 0)
             stats::approx(grid, net, xout = tic$rt, rule = 2)$y
         }
-        list(rt = tic$rt, tic_net = tic_net, base = base, ion_a = trace(ions_a), ion_b = trace(ions_b))
+        list(rt = tic$rt, tic_net = tic_net, base = base, ions = lapply(ion_sets, trace))
     }
 
     ## The Split button names the hump by its peak number. Numbers differ between
@@ -280,13 +339,19 @@
         c(stats::median(r$peak_start_rt_offset), stats::median(r$peak_end_rt_offset))
     }
 
-    ## Columns a split writes onto its two rows. Everything needed to redo the
-    ## split later lives on the rows themselves (ions, response factors, an id),
-    ## so Shift+Q can refresh it without the sidebar, and two different humps can
-    ## be split with different ions.
+    ## A split's rows are labelled A, B (and C for three compounds), in the
+    ## order of the ion fields.
+    .gcms_split_labels <- c("A", "B", "C")
+
+    ## Columns a split writes onto its rows. Everything needed to redo the split
+    ## later lives on the rows themselves (ions, response factors, an id), so
+    ## Shift+Q can refresh it without the sidebar, and two different humps can
+    ## be split with different ions. split_ions_c / split_k_c are blank for a
+    ## two-compound split; that blank is what says how many rows it has.
     .gcms_split_cols <- list(coelution_split = NA_character_, split_id = NA_character_,
                              split_status = NA_character_, split_ions_a = NA_character_,
-                             split_ions_b = NA_character_, split_k_a = NA_real_, split_k_b = NA_real_,
+                             split_ions_b = NA_character_, split_ions_c = NA_character_,
+                             split_k_a = NA_real_, split_k_b = NA_real_, split_k_c = NA_real_,
                              area_tic_window = NA_real_, split_fit_r2 = NA_real_, split_k_dev = NA_real_)
     .gcms_ensure_split_cols <- function(pt) {
         for (col in names(.gcms_split_cols)) {
@@ -297,27 +362,59 @@
         pt
     }
 
-    ## Rewrite one pair's rows from a finished split. BOTH rows keep the whole
-    ## hump's bounds (Lucas, 2026-10-16): the shares are symmetric in the two
-    ## compounds, so nothing needs to know which elutes first - an earlier version
-    ## cut the rows at a drop line, which needed an elution order the data often
-    ## cannot give. `area` = each compound's split area. Returns the two rows.
-    .gcms_pair_rows <- function(tmpl, tr, s) {
-        if (nrow(tmpl) == 1) tmpl <- tmpl[c(1, 1), , drop = FALSE]
-        tmpl$peak_start <- rep(min(tr$rt), 2)
-        tmpl$peak_end   <- rep(max(tr$rt), 2)
+    ## How many compounds (rows) the split that row `r` belongs to has: three
+    ## when it stores a third ion set, else two.
+    .gcms_split_size <- function(pt, r) {
+        ic <- if ("split_ions_c" %in% names(pt)) as.character(pt$split_ions_c[r]) else NA_character_
+        if (length(ic) && !is.na(ic[1]) && nzchar(trimws(ic[1]))) 3L else 2L
+    }
+
+    ## The Split ion fields -> a list of ion sets (two, or three when the third
+    ## field is filled), or a character message saying what is wrong.
+    gcms_split_ion_sets <- function(a, b, c = NULL) {
+        sets <- list(gcms_parse_ions(a), gcms_parse_ions(b))
+        if (!is.null(c) && length(c) && !is.na(c[1]) && nzchar(trimws(c[1]))) {
+            ic <- gcms_parse_ions(c)
+            if (length(ic) == 0) return("Split: the ions for compound 3 could not be read; give numbers, or leave it empty for two compounds.")
+            sets[[3]] <- ic
+        }
+        if (any(lengths(sets) == 0) || anyDuplicated(unlist(sets)))
+            return("Split: give ions for compounds 1 and 2 (and 3 if there is one), with no ion in two compounds.")
+        sets
+    }
+
+    ## Rewrite one split's rows from a finished split. EVERY row keeps the whole
+    ## hump's bounds (Lucas, 2026-10-16): the shares are symmetric in the
+    ## compounds, so nothing needs to know which elutes first - an earlier
+    ## version cut the rows at a drop line, which needed an elution order the
+    ## data often cannot give. `area` = each compound's split area (0 for a
+    ## compound with no signal in this sample). Existing rows of the split keep
+    ## their own other columns (a peak_ID typed in, say), matched by label.
+    ## Returns one row per compound.
+    .gcms_split_rows <- function(tmpl, tr, s) {
+        m <- length(s$areas)
+        labs <- .gcms_split_labels[seq_len(m)]
+        idx <- rep(1L, m)
+        if ("coelution_split" %in% names(tmpl)) {
+            hit <- match(labs, as.character(tmpl$coelution_split))
+            idx[!is.na(hit)] <- hit[!is.na(hit)]
+        }
+        tmpl <- tmpl[idx, , drop = FALSE]
+        tmpl$peak_start <- rep(min(tr$rt), m)
+        tmpl$peak_end   <- rep(max(tr$rt), m)
         tmpl$peak_start_rt_offset <- tmpl$peak_start + tmpl$rt_offset
         tmpl$peak_end_rt_offset   <- tmpl$peak_end   + tmpl$rt_offset
-        tmpl$area <- c(s$area_a, s$area_b)
+        tmpl$area <- s$areas
         if ("area_peak_ions" %in% names(tmpl)) tmpl$area_peak_ions <- NA_real_
         if ("peak_ions" %in% names(tmpl))      tmpl$peak_ions      <- NA_character_
-        ## A whole-hump spectrum belongs to neither compound, so no agreement score.
+        ## A whole-hump spectrum belongs to no one compound, so no agreement score.
         for (cc in c("spectrum_agreement", "spectrum_signal_frac"))
             if (cc %in% names(tmpl)) tmpl[[cc]] <- NA_real_
-        tmpl$coelution_split <- c("A", "B")
+        tmpl$coelution_split <- labs
         tmpl$split_status    <- "split"
-        tmpl$area_tic_window <- s$area_a + s$area_b
+        tmpl$area_tic_window <- sum(s$areas)
         tmpl$split_fit_r2    <- s$fit_r2
+        rownames(tmpl) <- NULL
         tmpl
     }
 
@@ -332,23 +429,32 @@
         pt
     }
 
+    ## Largest |x| over the finite entries; NA when there are none.
+    .gcms_max_dev <- function(x) { x <- x[is.finite(x)]; if (length(x)) max(abs(x)) else NA_real_ }
+
     ## SPLIT (the sidebar button). In each sample the hump is the ONE peak
     ## touching `window`; two or more touching is refused, never merged (merging
-    ## swallowed a neighbouring peak and the gap before it into B). A pair already
-    ## split with this same id is re-split (new ions, say); a pair belonging to a
-    ## different split is left alone and reported.
+    ## swallowed a neighbouring peak and the gap before it into B). A split
+    ## already made with this same id is re-split (new ions, or a third compound,
+    ## say); a split with a different id is left alone and reported.
     ##
-    ##   get_traces  function(sample, start, end, ions_a, ions_b) -> gcms_pair_traces()
+    ##   get_traces  function(sample, start, end, ion_sets) -> gcms_split_traces()
     ##   window      c(start, end) in ALIGNED rt
-    ##   k_mode      "sample": each sample fits its own kA, kB (TIC per unit diagnostic
-    ##               signal); "batch": one kA, kB across every sample's hump, with
-    ##               samples whose own fit is > k_dev_flag off excluded and refitted.
-    ##               The compound RATIO is free per sample in both modes: it comes from
-    ##               each sample's own ion signals. k only converts ion signal to TIC.
+    ##   ion_sets    list of two or three integer ion vectors, one per compound
+    ##   k_mode      "sample": each sample fits its own k per compound (TIC per unit
+    ##               diagnostic signal); "batch": one set of k across every sample's
+    ##               hump, with samples whose own fit is > k_dev_flag off excluded and
+    ##               refitted. The compound RATIO is free per sample in both modes:
+    ##               it comes from each sample's own ion signals. k only converts ion
+    ##               signal to TIC.
     ##
-    ## Only the pair's rows are touched; every other row, and every other split,
-    ## is left exactly as it was. Returns list(peak_table, log).
-    gcms_apply_coelution_split <- function(peak_table, get_traces, window, ions_a, ions_b,
+    ## A sample in which a compound's ions have no signal at all still gets that
+    ## compound's row, with area 0, so every sample carries the same peaks and
+    ## the numbers line up. A compound with no signal in ANY sample refuses the
+    ## split (its ions are wrong). Only the split's rows are touched; every other
+    ## row, and every other split, is left exactly as it was. Returns
+    ## list(peak_table, log).
+    gcms_apply_coelution_split <- function(peak_table, get_traces, window, ion_sets,
                                            crosstalk = c(0, 0), k_mode = c("sample", "batch"),
                                            split_id = NULL, k_dev_flag = 0.25, r2_flag = 0.98) {
         k_mode <- match.arg(k_mode)
@@ -357,18 +463,22 @@
         peak_table <- .gcms_ensure_split_cols(peak_table)
         out <- function() list(peak_table = peak_table, log = log)
         if (nrow(peak_table) == 0) return(out())
+        m <- length(ion_sets)
+        if (!(m %in% 2:3)) { say("Split: give ions for two or three compounds."); return(out()) }
+        if (m == 3 && any(crosstalk != 0)) { say("Split: cross-talk is supported for two compounds only."); return(out()) }
+        labs <- .gcms_split_labels[seq_len(m)]
         ws <- min(window); we <- max(window)
         if (is.null(split_id)) split_id <- sprintf("split@%.2f", ws)
-        ions_a_txt <- paste(ions_a, collapse = ", "); ions_b_txt <- paste(ions_b, collapse = ", ")
+        ions_txt <- vapply(ion_sets, paste, character(1), collapse = ", ")
 
         smp_col <- as.character(peak_table$path_to_cdf_csv)
         ps <- peak_table$peak_start_rt_offset; pe <- peak_table$peak_end_rt_offset
         no_off <- unique(smp_col[is.na(ps) | is.na(pe)])
         for (smp in no_off) say("  skipped ", basename(smp), ": no rt_offset, so the window cannot be placed")
         touches <- !is.na(ps) & !is.na(pe) & pe >= ws & ps <= we
-        lab <- peak_table$coelution_split %in% c("A", "B")
+        lab <- peak_table$coelution_split %in% .gcms_split_labels
 
-        pairs <- list()
+        groups <- list()
         for (smp in setdiff(unique(smp_col[touches]), no_off)) {
             here <- which(smp_col == smp)
             mine <- here[lab[here] & peak_table$split_id[here] %in% split_id]
@@ -378,9 +488,13 @@
                     paste(unique(peak_table$split_id[other]), collapse = ", "), "; unsplit those first")
                 next
             }
-            if (length(mine) == 2) { pairs[[smp]] <- mine[order(peak_table$peak_start[mine])]; next }
-            if (length(mine) == 1) {
-                say("  skipped ", basename(smp), ": only one row of its earlier split remains; delete it and integrate the hump as one peak")
+            if (length(mine)) {
+                if (length(mine) >= 2 && length(mine) == .gcms_split_size(peak_table, mine[1])) {
+                    groups[[smp]] <- mine; next
+                }
+                say("  skipped ", basename(smp), if (length(mine) == 1)
+                        ": only one row of its earlier split remains; delete it and integrate the hump as one peak"
+                    else ": only some rows of its earlier split remain; delete them and integrate the hump as one peak")
                 next
             }
             cand <- here[touches[here]]
@@ -399,39 +513,71 @@
                     " peaks touch the window; integrate the hump as ONE peak")
                 next
             }
-            pairs[[smp]] <- cand
+            groups[[smp]] <- cand
         }
-        if (length(pairs) == 0) {
+        if (length(groups) == 0) {
             say("Split: no sample has a single peak at ", round(ws, 2), "-", round(we, 2), "; nothing split.")
             return(out())
         }
 
         humps <- list()
-        for (smp in names(pairs)) {
-            rows <- pairs[[smp]]
+        for (smp in names(groups)) {
+            rows <- groups[[smp]]
             st <- min(peak_table$peak_start[rows]); en <- max(peak_table$peak_end[rows])
-            tr <- try(get_traces(smp, st, en, ions_a, ions_b), silent = TRUE)
+            tr <- try(get_traces(smp, st, en, ion_sets), silent = TRUE)
             if (identical(tr, "not_loaded")) { say("  skipped ", basename(smp), ": not loaded this session"); next }
             if (inherits(tr, "try-error") || is.null(tr)) {
                 say("  skipped ", basename(smp), ": could not build the TIC/ion traces"); next
             }
-            um <- gcms_unmix_pair(tr$ion_a, tr$ion_b, crosstalk)
-            if (is.null(um) || sum(um$a) <= 0 || sum(um$b) <= 0) {
-                say("  skipped ", basename(smp), ": a diagnostic ion has no signal in this sample's hump"); next
+            um <- .gcms_unmix(tr$ions, crosstalk)
+            if (is.null(um)) {
+                say("  skipped ", basename(smp), ": the diagnostic ions do not discriminate the compounds"); next
             }
-            r <- suppressWarnings(stats::cor(um$a, um$b))
-            own <- unname(stats::lm.fit(cbind(um$a, um$b), tr$tic_net)$coefficients)
-            humps[[smp]] <- list(rows = rows, tr = tr, a = um$a, b = um$b, r = r,
-                                 own = if (all(is.finite(own)) && all(own > 0)) own else NULL)
+            S <- do.call(cbind, um)
+            present <- colSums(S) > 0
+            if (!any(present)) {
+                say("  skipped ", basename(smp), ": none of the diagnostic ions has signal in this sample's hump"); next
+            }
+            P <- which(present)
+            r <- if (length(P) > 1) {
+                cr <- suppressWarnings(stats::cor(S[, P, drop = FALSE]))
+                if (any(!is.finite(cr))) NA_real_ else max(abs(cr[upper.tri(cr)]))
+            } else 0
+            own_p <- unname(stats::lm.fit(S[, P, drop = FALSE], tr$tic_net)$coefficients)
+            own <- rep(NA_real_, m); own[P] <- own_p
+            own_ok <- all(is.finite(own_p)) && all(own_p > 0)
+            ## Per-sample fallback (Lucas, 2026-10-26): a compound the fit gives a
+            ## non-positive factor has only background on its ions in this sample.
+            ## Treat it as absent (area 0, no stored factor) and refit the rest, so
+            ## the sample keeps every row and the peak numbers still line up.
+            weak <- integer(0); own_fb <- if (own_ok) own else NULL
+            if (!own_ok) {
+                Pf <- P; kf <- own_p
+                while (length(Pf) && !(all(is.finite(kf)) && all(kf > 0))) {
+                    bad <- Pf[!is.finite(kf) | kf <= 0]
+                    weak <- c(weak, bad); Pf <- setdiff(Pf, bad)
+                    if (length(Pf)) kf <- unname(stats::lm.fit(S[, Pf, drop = FALSE], tr$tic_net)$coefficients)
+                }
+                if (length(Pf)) { own_fb <- rep(NA_real_, m); own_fb[Pf] <- kf }
+            }
+            humps[[smp]] <- list(rows = rows, tr = tr, S = S, present = present, r = r,
+                                 own = if (own_ok) own else NULL, own_fb = own_fb, weak = sort(weak))
         }
         if (length(humps) == 0) { say("Split: no sample could be split."); return(out()) }
+        seen <- Reduce(`|`, lapply(humps, `[[`, "present"))
+        if (!all(seen)) {
+            say("Split: compound ", paste(which(!seen), collapse = " and "),
+                " has no signal on its ions in any sample; check its ions. Nothing split.")
+            return(out())
+        }
 
         fit_k <- function(hs) {
-            A <- unlist(lapply(hs, `[[`, "a")); B <- unlist(lapply(hs, `[[`, "b"))
+            S <- do.call(rbind, lapply(hs, `[[`, "S"))
             Y <- unlist(lapply(hs, function(h) h$tr$tic_net))
-            r <- suppressWarnings(stats::cor(A, B))
-            if (!is.finite(r) || abs(r) > 0.999) return(NULL)
-            k <- unname(stats::lm.fit(cbind(A, B), Y)$coefficients)
+            if (any(colSums(S) <= 0)) return(NULL)
+            cr <- suppressWarnings(stats::cor(S))
+            if (any(!is.finite(cr)) || max(abs(cr[upper.tri(cr)])) > 0.999) return(NULL)
+            k <- unname(stats::lm.fit(S, Y)$coefficients)
             if (any(!is.finite(k)) || any(k <= 0)) NULL else k
         }
         batch_k <- NULL
@@ -441,7 +587,7 @@
                 say("Split: the batch fit failed (ions do not discriminate, or a non-positive factor); check the ions and the hump.")
                 return(out())
             }
-            devs <- vapply(humps, function(h) if (is.null(h$own)) NA_real_ else max(abs(h$own / batch_k - 1)), numeric(1))
+            devs <- vapply(humps, function(h) if (is.null(h$own)) NA_real_ else .gcms_max_dev(h$own / batch_k - 1), numeric(1))
             outl <- names(humps)[is.na(devs) | devs > k_dev_flag]
             keep <- setdiff(names(humps), outl)
             if (length(outl) && length(keep)) {
@@ -451,41 +597,51 @@
                     say("  excluded from the batch fit (own fit too far off): ", paste(basename(outl), collapse = ", "))
                 }
             }
-            say(sprintf("Split: kA = %.4g, kB = %.4g across the batch.", batch_k[1], batch_k[2]))
+            say("Split: ", paste(sprintf("k%s = %.4g", labs, batch_k), collapse = ", "), " across the batch.")
         }
 
-        ## kA, kB are properties of the two compounds, so per-sample fits should
-        ## agree; a sample far from the median is the tell for a third compound or
-        ## a wrong window, even when its own fit looks fine.
+        ## The k are properties of the compounds, so per-sample fits should
+        ## agree; a sample far from the median is the tell for an extra compound
+        ## or a wrong window, even when its own fit looks fine.
         med_k <- NULL
         if (k_mode == "sample") {
             ks <- do.call(rbind, lapply(humps, function(h) if (!is.null(h$own)) h$own))
-            if (!is.null(ks) && nrow(ks) >= 3) med_k <- apply(ks, 2, stats::median)
+            if (!is.null(ks) && nrow(ks) >= 3) med_k <- apply(ks, 2, stats::median, na.rm = TRUE)
         }
         new_rows <- list(); drop_rows <- integer(0)
         for (smp in names(humps)) {
             h <- humps[[smp]]
             if (k_mode == "sample") {
-                if (!is.finite(h$r) || abs(h$r) > 0.999 || is.null(h$own)) {
-                    say("  skipped ", basename(smp), ": this sample's own response factors could not be fitted ",
-                        "(one compound too small, or the ions rise together); try the batch fit")
+                if (!is.finite(h$r) || h$r > 0.999 || is.null(h$own_fb)) {
+                    say("  skipped ", basename(smp), ": this sample's own response factors could not be fitted (",
+                        if (!is.finite(h$r) || h$r > 0.999) "the ions rise together" else "no compound's factor came out positive",
+                        "); try the batch fit")
                     next
                 }
-                k <- h$own
+                k <- h$own_fb
             } else k <- batch_k
-            s <- gcms_split_coeluting(h$tr$rt, h$tr$tic_net, h$tr$ion_a, h$tr$ion_b,
-                                      crosstalk = crosstalk, scale = k)
+            s <- gcms_split_coeluting_n(h$tr$rt, h$tr$tic_net, h$tr$ions, crosstalk = crosstalk,
+                                        scale = k, allow_absent = TRUE)
             if (s$status != "ok") { say("  skipped ", basename(smp), ": ", s$status); next }
-            tmpl <- .gcms_pair_rows(peak_table[h$rows, , drop = FALSE], h$tr, s)
+            tmpl <- .gcms_split_rows(peak_table[h$rows, , drop = FALSE], h$tr, s)
             tmpl$split_id <- split_id
-            tmpl$split_ions_a <- ions_a_txt; tmpl$split_ions_b <- ions_b_txt
+            tmpl$split_ions_a <- ions_txt[1]; tmpl$split_ions_b <- ions_txt[2]
+            tmpl$split_ions_c <- if (m == 3) ions_txt[3] else NA_character_
             tmpl$split_k_a <- k[1]; tmpl$split_k_b <- k[2]
-            tmpl$split_k_dev <- if (k_mode == "batch" && !is.null(h$own)) max(abs(h$own / k - 1))
-                                else if (k_mode == "sample" && !is.null(med_k)) max(abs(k / med_k - 1)) else NA_real_
+            tmpl$split_k_c <- if (m == 3) k[3] else NA_real_
+            tmpl$split_k_dev <- if (k_mode == "batch" && !is.null(h$own)) .gcms_max_dev(h$own / k - 1)
+                                else if (k_mode == "sample" && !is.null(med_k)) .gcms_max_dev(k / med_k - 1) else NA_real_
             new_rows[[smp]] <- tmpl
             drop_rows <- c(drop_rows, h$rows)
+            if (any(!h$present))
+                say(sprintf("  %s: compound %s has no signal on its ions here, so it is kept as a peak with area 0",
+                            basename(smp), paste(which(!h$present), collapse = " and ")))
+            if (k_mode == "sample" && length(h$weak))
+                say(sprintf("  CHECK %s: compound %s shows only background on its ions here (its fitted factor was not positive), so it is kept as a peak with area 0",
+                            basename(smp), paste(h$weak, collapse = " and ")))
             if (k_mode == "sample")
-                say(sprintf("  %s: kA %.4g, kB %.4g, fit_r2 %.3f", basename(smp), k[1], k[2], s$fit_r2))
+                say(sprintf("  %s: %s, fit_r2 %.3f", basename(smp),
+                            paste(sprintf("k%s %.4g", labs, k), collapse = ", "), s$fit_r2))
             if (k_mode == "sample" && !is.na(tmpl$split_k_dev[1]) && tmpl$split_k_dev[1] > k_dev_flag)
                 say(sprintf("  CHECK %s: its factors are %.0f%% off the median across samples", basename(smp), 100 * tmpl$split_k_dev[1]))
             if ((k_mode == "batch" && (is.na(tmpl$split_k_dev[1]) || tmpl$split_k_dev[1] > k_dev_flag)) ||
@@ -498,12 +654,12 @@
             peak_table <- peak_table[-drop_rows, , drop = FALSE]
             peak_table <- .gcms_renumber(rbind(peak_table, do.call(rbind, new_rows)))
         }
-        say(sprintf("Split (%s): %d sample(s) split as %s.", k_mode, length(new_rows), split_id))
+        say(sprintf("Split (%s, %d compounds): %d sample(s) split as %s.", k_mode, m, length(new_rows), split_id))
         out()
     }
 
     ## REFRESH (every Shift+Q). Redoes every existing split from what is stored on
-    ## its rows - same ions, same response factors - over the pair's current
+    ## its rows - same ions, same response factors - over the split's current
     ## extent, after the area recompute has just given those rows plain drop-line
     ## areas. Never creates a split. Returns list(peak_table, profiles, log);
     ## `profiles` holds each split's per-scan stacked bands for the plot.
@@ -512,52 +668,60 @@
         say <- function(...) log <<- c(log, paste0(...))
         peak_table <- .gcms_ensure_split_cols(peak_table)
         profiles <- list()
-        lab <- which(peak_table$coelution_split %in% c("A", "B"))
+        lab <- which(peak_table$coelution_split %in% .gcms_split_labels)
         if (length(lab) == 0) return(list(peak_table = peak_table, profiles = NULL, log = log))
         key <- paste(peak_table$path_to_cdf_csv[lab], peak_table$split_id[lab], sep = "\r")
         new_rows <- list(); drop_rows <- integer(0)
         for (g in unique(key)) {
             rows <- lab[key == g]
-            rows <- rows[order(peak_table$peak_start[rows])]
+            rows <- rows[order(peak_table$coelution_split[rows])]
             smp <- as.character(peak_table$path_to_cdf_csv[rows[1]])
-            if (length(rows) != 2 || !setequal(peak_table$coelution_split[rows], c("A", "B"))) {
-                peak_table$split_status[rows] <- "not split: only one row of the pair remains"
-                say("  ", basename(smp), ": only one row of split ", peak_table$split_id[rows[1]],
-                    " remains; delete it and integrate the hump as one peak")
+            m <- .gcms_split_size(peak_table, rows[1])
+            labs <- .gcms_split_labels[seq_len(m)]
+            if (length(rows) != m || !setequal(peak_table$coelution_split[rows], labs)) {
+                peak_table$split_status[rows] <- if (length(rows) == 1) "not split: only one row of the pair remains"
+                                                 else "not split: only some rows of the split remain"
+                say("  ", basename(smp), ": only ", if (length(rows) == 1) "one row" else "some rows",
+                    " of split ", peak_table$split_id[rows[1]],
+                    " remain", if (length(rows) == 1) "s" else "", "; delete ",
+                    if (length(rows) == 1) "it" else "them", " and integrate the hump as one peak")
                 next
             }
-            k <- c(peak_table$split_k_a[rows[1]], peak_table$split_k_b[rows[1]])
-            ia <- gcms_parse_ions(peak_table$split_ions_a[rows[1]])
-            ib <- gcms_parse_ions(peak_table$split_ions_b[rows[1]])
+            k <- c(peak_table$split_k_a[rows[1]], peak_table$split_k_b[rows[1]], peak_table$split_k_c[rows[1]])[seq_len(m)]
+            ion_sets <- lapply(c(peak_table$split_ions_a[rows[1]], peak_table$split_ions_b[rows[1]],
+                                 peak_table$split_ions_c[rows[1]])[seq_len(m)], gcms_parse_ions)
             fail <- function(why) {
                 peak_table$split_status[rows] <<- paste("not split:", why)
-                ## Both rows span the whole hump, so the recompute has just given EACH
-                ## of them the whole hump's area. Blank them, so nothing that sums the
-                ## column counts the hump twice.
+                ## Every row spans the whole hump, so the recompute has just given
+                ## EACH of them the whole hump's area. Blank them, so nothing that
+                ## sums the column counts the hump more than once.
                 peak_table$area[rows] <<- NA_real_
                 say("  ", basename(smp), ": split ", peak_table$split_id[rows[1]], " not refreshed (", why,
                     "); its areas are blank until it is fixed or unsplit")
             }
-            if (any(!is.finite(k)) || length(ia) == 0 || length(ib) == 0) { fail("its stored settings are missing"); next }
-            tr <- try(get_traces(smp, min(peak_table$peak_start[rows]), max(peak_table$peak_end[rows]), ia, ib), silent = TRUE)
+            if (!any(is.finite(k)) || any(lengths(ion_sets) == 0)) { fail("its stored settings are missing"); next }
+            tr <- try(get_traces(smp, min(peak_table$peak_start[rows]), max(peak_table$peak_end[rows]), ion_sets), silent = TRUE)
             ## Not loaded this session (samples_monolist_subset): its areas were not
-            ## recomputed either, so leave the pair exactly as it was.
+            ## recomputed either, so leave the split exactly as it was.
             if (identical(tr, "not_loaded")) next
             if (inherits(tr, "try-error") || is.null(tr)) { fail("no TIC/ion traces"); next }
-            s <- gcms_split_coeluting(tr$rt, tr$tic_net, tr$ion_a, tr$ion_b, crosstalk = crosstalk, scale = k)
+            s <- gcms_split_coeluting_n(tr$rt, tr$tic_net, tr$ions, crosstalk = crosstalk,
+                                        scale = k, allow_absent = TRUE)
             if (s$status != "ok") { fail(s$status); next }
-            tmpl <- .gcms_pair_rows(peak_table[rows, , drop = FALSE], tr, s)
+            tmpl <- .gcms_split_rows(peak_table[rows, , drop = FALSE], tr, s)
             new_rows[[g]] <- tmpl
             drop_rows <- c(drop_rows, rows)
-            ## Stacked bands: A from the baseline up to its share, B on top of it up
-            ## to the TIC, so every part of the hump is coloured by its owner.
+            ## Stacked bands: A from the baseline up to its share, B on top of it,
+            ## then C up to the TIC, so every part of the hump is coloured by its
+            ## owner. A compound with no signal here is a band of zero height.
             b0 <- if (is.null(tr$base)) rep(0, length(tr$rt)) else tr$base
-            a_top <- b0 + tr$tic_net * s$share_a
+            cum <- b0 + tr$tic_net * t(apply(s$shares, 1, cumsum))
+            lo <- cbind(b0, cum[, -m, drop = FALSE])
             profiles[[g]] <- data.frame(
                 path_to_cdf_csv = smp, split_id = tmpl$split_id[1],
-                rt_rt_offset = rep(tr$rt + tmpl$rt_offset[1], 2),
-                part = rep(c("A", "B"), each = length(tr$rt)),
-                ymin = c(b0, a_top), top = c(a_top, b0 + tr$tic_net),
+                rt_rt_offset = rep(tr$rt + tmpl$rt_offset[1], m),
+                part = rep(labs, each = length(tr$rt)),
+                ymin = as.vector(lo), top = as.vector(cum),
                 stringsAsFactors = FALSE)
         }
         if (length(drop_rows)) {
@@ -568,19 +732,19 @@
              profiles = if (length(profiles)) do.call(rbind, profiles) else NULL, log = log)
     }
 
-    ## UNSPLIT (the sidebar button). Every split pair that peak `n` belongs to, in
-    ## any sample, goes back to one peak spanning both rows, its area the sum of
-    ## the two (the whole hump's TIC area). Returns list(peak_table, log).
+    ## UNSPLIT (the sidebar button). Every split that peak `n` belongs to, in
+    ## any sample, goes back to one peak spanning all its rows, its area the sum
+    ## of theirs (the whole hump's TIC area). Returns list(peak_table, log).
     gcms_unsplit_peak <- function(peak_table, n) {
         log <- character(0)
         peak_table <- .gcms_ensure_split_cols(peak_table)
         hit <- !is.na(peak_table$peak_number_within_sample) & peak_table$peak_number_within_sample == round(n) &
-               peak_table$coelution_split %in% c("A", "B")
+               peak_table$coelution_split %in% .gcms_split_labels
         ids <- unique(peak_table$split_id[hit])
         if (length(ids) == 0)
             return(list(peak_table = peak_table, log = sprintf("Unsplit: peak %s is not part of a split.", n)))
         merged <- list(); drop_rows <- integer(0)
-        rows_all <- which(peak_table$split_id %in% ids & peak_table$coelution_split %in% c("A", "B"))
+        rows_all <- which(peak_table$split_id %in% ids & peak_table$coelution_split %in% .gcms_split_labels)
         key <- paste(peak_table$path_to_cdf_csv[rows_all], peak_table$split_id[rows_all], sep = "\r")
         for (g in unique(key)) {
             rows <- rows_all[key == g]
@@ -597,6 +761,45 @@
         list(peak_table = peak_table,
              log = sprintf("Unsplit: %s merged back to one peak in %d sample(s).",
                            paste(ids, collapse = ", "), length(merged)))
+    }
+
+    ## Labels for a split's zero-area peaks (a compound with no signal in that
+    ## sample: its stacked band has no height). `prof` is the band table as the
+    ## plot builds it (path_to_cdf_csv, split_id, part, rt_rt_offset, ymin, top,
+    ## peak_number_within_sample). One row per split with any zero-area part: x
+    ## at the middle of the hump, y at the lowest point of its bottom edge (the
+    ## text is hung below it), label the peak number(s), e.g. "4" or "4, 5".
+    gcms_split_zero_labels <- function(prof) {
+        empty <- data.frame(path_to_cdf_csv = character(0), rt_rt_offset = numeric(0),
+                            y = numeric(0), label = character(0), stringsAsFactors = FALSE)
+        if (is.null(prof) || nrow(prof) == 0) return(empty)
+        split_key <- paste(prof$path_to_cdf_csv, prof$split_id, sep = "\r")
+        out <- lapply(split(prof, split_key), function(g) {
+            thick <- tapply(g$top - g$ymin, g$part, function(x) max(abs(x)))
+            zero <- names(thick)[thick <= 0]
+            if (!length(zero)) return(NULL)
+            nums <- unique(g$peak_number_within_sample[g$part %in% zero])
+            nums <- sort(nums[!is.na(nums)])
+            if (!length(nums)) return(NULL)
+            data.frame(path_to_cdf_csv = g$path_to_cdf_csv[1],
+                       rt_rt_offset = mean(range(g$rt_rt_offset)),
+                       y = min(g$ymin), label = paste(nums, collapse = ", "),
+                       stringsAsFactors = FALSE)
+        })
+        out <- do.call(rbind, out)
+        if (is.null(out)) empty else out
+    }
+
+    ## Hard-wrap labels every `width` characters, mid-word if need be (sample
+    ## names rarely have spaces, so a word wrap would not wrap them at all).
+    gcms_wrap_hard <- function(x, width = 14) {
+        x <- as.character(x)
+        if (!is.finite(width) || width < 1) return(x)
+        vapply(x, function(s) {
+            if (is.na(s) || nchar(s) <= width) return(s)
+            starts <- seq(1, nchar(s), by = width)
+            paste(substring(s, starts, pmin(starts + width - 1, nchar(s))), collapse = "\n")
+        }, character(1), USE.NAMES = FALSE)
     }
 
     ## The peak table on screen. read.csv() reads a column with no values in it
@@ -1405,6 +1608,8 @@
         score_peak_confidence = TRUE,
         confidence_thresholds = c(0.75, 0.90),
         coelution_crosstalk = c(0, 0),
+        facet_label_size = 12,
+        facet_label_wrap = 14,
         n_cores = NULL,
         ms_classifier_path = "/project_data/shared/mass_spectral_library/ms_classifier.py",
         jupyter = FALSE
@@ -3253,10 +3458,11 @@
 
                         tags$hr(),
                         strong("Co-elution split"),
-                        helpText("Integrate the hump as ONE peak and press Shift+Q. Then give its peak number and a diagnostic ion (or several) for each of the two compounds, in either order, and press Split. Pick ions that are strong in every scan of the hump: a sparse ion gives a noisy split. The hump becomes two peaks in every sample, its TIC shared scan by scan by the ions. Each split keeps its own settings, and Shift+Q only refreshes it. Unsplit merges the pair a peak number belongs to back into one peak."),
+                        helpText("Integrate the hump as ONE peak and press Shift+Q. Then give its peak number and a diagnostic ion (or several) for each of the two compounds, in any order, and press Split; fill compound 3 as well to split it three ways. Pick ions that are strong in every scan of the hump: a sparse ion gives a noisy split. The hump becomes two (or three) peaks in every sample, its TIC shared scan by scan by the ions; a sample with no signal on one compound's ions still gets that peak, with area 0, so the numbers line up. Each split keeps its own settings, and Shift+Q only refreshes it. Unsplit merges the split a peak number belongs to back into one peak."),
                         numericInput("split_peak", "Peak number", value = NA, min = 1, step = 1),
                         textInput("split_ions_a", "Ions, compound 1 (e.g. 282, 281)", value = ""),
                         textInput("split_ions_b", "Ions, compound 2 (e.g. 111, 125)", value = ""),
+                        textInput("split_ions_c", "Ions, compound 3 (optional)", value = ""),
                         radioButtons("split_k_mode", "Response factors",
                                      choices = c("Fit per sample" = "sample", "Fit across the batch" = "batch"),
                                      selected = "sample", inline = TRUE),
@@ -3269,8 +3475,17 @@
 
                     mainPanel(
 
+                        ## Typing in a text or number box must not fire the Shift shortcuts
+                        ## (a capital A in an ion box added peaks). The peak table is exempt:
+                        ## Shift+Z saves it straight after an edit there.
                         tags$script('
+                            function gcmsTypingInField(t) {
+                               if (!t || !t.tagName) return false;
+                               if (t.closest && t.closest(".handsontable, .HandsontableCopyPaste")) return false;
+                               return /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || !!t.isContentEditable;
+                            }
                             $(document).on("keypress", function (e) {
+                               if (gcmsTypingInField(e.target)) return;
                                Shiny.onInputChange("keypress", e.which);
                             });
                         '),
@@ -4583,11 +4798,11 @@
                     ## v7 co-elution split: the Split / Unsplit buttons. Both work on the
                     ## table and chromatograms the last Shift+Q produced, then refresh every
                     ## split (which also rebuilds the stacked-band file) and redraw.
-                        coelution_traces <- function(smp, st, en, ions_a, ions_b) {
+                        coelution_traces <- function(smp, st, en, ion_sets) {
                             if (!(smp %in% chromatograms_updated$path_to_cdf_csv)) return("not_loaded")
-                            gcms_pair_traces(
+                            gcms_split_traces(
                                 chromatograms_updated[chromatograms_updated$path_to_cdf_csv == smp, ],
-                                load_allions(smp), st, en, ions_a, ions_b)
+                                load_allions(smp), st, en, ion_sets)
                         }
                         write_coelution_profiles <- function(profiles) {
                             if (!is.null(profiles)) {
@@ -4619,15 +4834,13 @@
                         observeEvent(input$split_btn, {
                             undo_begin(paste0("split peak ", input$split_peak)); on.exit(undo_end(), add = TRUE)
                             pt <- coelution_table(); if (is.null(pt)) return()
-                            ia <- gcms_parse_ions(input$split_ions_a); ib <- gcms_parse_ions(input$split_ions_b)
+                            ion_sets <- gcms_split_ion_sets(input$split_ions_a, input$split_ions_b, input$split_ions_c)
                             n <- input$split_peak
-                            if (length(ia) == 0 || length(ib) == 0 || length(intersect(ia, ib))) {
-                                notify("Split: give ions for both compounds, with no ion in both."); return()
-                            }
+                            if (is.character(ion_sets)) { notify(ion_sets); return() }
                             wnd <- gcms_window_for_peak(pt, n)
                             if (is.null(wnd)) { notify(paste0("Split: no sample has a peak number ", n, ".")); return() }
                             cat(sprintf("Split: peak %d is at %.2f-%.2f (aligned rt).\n", as.integer(round(n)), wnd[1], wnd[2]))
-                            res <- gcms_apply_coelution_split(pt, coelution_traces, wnd, ia, ib,
+                            res <- gcms_apply_coelution_split(pt, coelution_traces, wnd, ion_sets,
                                                               crosstalk = coelution_crosstalk,
                                                               k_mode = if (is.null(input$split_k_mode)) "sample" else input$split_k_mode)
                             notify_log(res$log)
@@ -4945,14 +5158,14 @@
                             list(pt = pt, i = i, smp = smp,
                                  what = if (is.finite(num)) paste0("peak ", num) else "the peak")
                         }
-                        ## Row i, or both rows of the split pair it belongs to.
+                        ## Row i, or every row of the split it belongs to.
                         ctx_rows <- function(pt, i) {
                             if (!all(c("coelution_split", "split_id") %in% names(pt)) ||
-                                !(ctx_chr(pt$coelution_split[i]) %in% c("A", "B")) || !nzchar(ctx_chr(pt$split_id[i]))) return(i)
+                                !(ctx_chr(pt$coelution_split[i]) %in% .gcms_split_labels) || !nzchar(ctx_chr(pt$split_id[i]))) return(i)
                             rows <- which(as.character(pt$path_to_cdf_csv) == as.character(pt$path_to_cdf_csv[i]) &
                                           as.character(pt$split_id) %in% ctx_chr(pt$split_id[i]) &
-                                          pt$coelution_split %in% c("A", "B"))
-                            if (length(rows) == 2) rows else i
+                                          pt$coelution_split %in% .gcms_split_labels)
+                            if (length(rows) >= 2 && length(rows) == .gcms_split_size(pt, rows[1])) rows else i
                         }
                         ## The dialog's peak, found again in the table as it is NOW (by sample and
                         ## bounds, or by split id): rows, or NULL if it has gone or changed.
@@ -4963,10 +5176,10 @@
                             if (nzchar(t$split_id)) {
                                 if (!all(c("coelution_split", "split_id") %in% names(pt))) return(NULL)
                                 rows <- which(smp == t$smp & as.character(pt$split_id) %in% t$split_id &
-                                              pt$coelution_split %in% c("A", "B"))
-                                return(if (length(rows) == 2) rows else NULL)
+                                              pt$coelution_split %in% .gcms_split_labels)
+                                return(if (length(rows) >= 2 && length(rows) == .gcms_split_size(pt, rows[1])) rows else NULL)
                             }
-                            paired <- if ("coelution_split" %in% names(pt)) pt$coelution_split %in% c("A", "B") else FALSE
+                            paired <- if ("coelution_split" %in% names(pt)) pt$coelution_split %in% .gcms_split_labels else FALSE
                             rows <- which(smp == t$smp & !paired & abs(pt$peak_start - t$start) < 1e-9 & abs(pt$peak_end - t$end) < 1e-9)
                             if (length(rows) >= 1) rows[1] else NULL
                         }
@@ -4982,7 +5195,7 @@
                               col.names = TRUE,
                               sep = ","
                             )
-                            notify(paste0("Removed ", h$what, if (length(rows) > 1) " (both parts of its split)" else "",
+                            notify(paste0("Removed ", h$what, if (length(rows) == 2) " (both parts of its split)" else if (length(rows) > 2) " (all three parts of its split)" else "",
                                           " from ", basename(h$smp), "."))
                             ## Unsaved table edits stay on screen; Shift+Z then refuses safely
                             ## (the row count moved) rather than write the peak back.
@@ -4995,18 +5208,20 @@
                                 notify("Split: no numbered peaks yet. Press Shift+Q first."); return()
                             }
                             rows <- ctx_rows(h$pt, h$i)
-                            pair <- length(rows) == 2
+                            pair <- length(rows) >= 2
                             r1 <- h$pt[rows[1], , drop = FALSE]
                             ctx_target$t <- list(smp = h$smp, start = r1$peak_start, end = max(h$pt$peak_end[rows]),
                                                  split_id = if (pair) ctx_chr(r1$split_id) else "")
                             ia <- if (pair) ctx_chr(r1$split_ions_a) else ctx_chr(isolate(input$split_ions_a))
                             ib <- if (pair) ctx_chr(r1$split_ions_b) else ctx_chr(isolate(input$split_ions_b))
+                            ic <- if (pair) ctx_chr(r1$split_ions_c) else ctx_chr(isolate(input$split_ions_c))
                             showModal(modalDialog(
                                 title = paste0(if (pair) "Re-split " else "Split ", h$what, " in ", basename(h$smp)),
                                 helpText(if (pair) "Already split. Change the ions and press Split to redo it, or Unsplit to make it one peak again. This sample only."
                                          else "Split this peak into two compounds by their diagnostic ions, in this sample only (the sidebar's Split does every sample). Pick ions that are strong in every scan of the hump."),
                                 textInput("ctx_split_ions_a", "Ions, compound 1 (e.g. 282, 281)", value = ia),
                                 textInput("ctx_split_ions_b", "Ions, compound 2 (e.g. 111, 125)", value = ib),
+                                textInput("ctx_split_ions_c", "Ions, compound 3 (optional)", value = ic),
                                 footer = tagList(
                                     if (pair) actionButton("ctx_unsplit_go", "Unsplit"),
                                     modalButton("Cancel"),
@@ -5024,22 +5239,21 @@
                             pt <- coelution_table(); if (is.null(pt)) return()
                             rows <- ctx_find(pt)
                             if (is.null(rows)) { removeModal(); notify("Split: that peak has changed since you right-clicked it; right-click it again."); return() }
-                            ia <- gcms_parse_ions(input$ctx_split_ions_a); ib <- gcms_parse_ions(input$ctx_split_ions_b)
-                            if (length(ia) == 0 || length(ib) == 0 || length(intersect(ia, ib))) {
-                                notify("Split: give ions for both compounds, with no ion in both."); return()
-                            }
+                            ion_sets <- gcms_split_ion_sets(input$ctx_split_ions_a, input$ctx_split_ions_b, input$ctx_split_ions_c)
+                            if (is.character(ion_sets)) { notify(ion_sets); return() }
                             removeModal()
                             t <- ctx_target$t
                             sub <- pt[rows, , drop = FALSE]
                             wnd <- c(min(sub$peak_start_rt_offset), max(sub$peak_end_rt_offset))
                             id <- if (nzchar(t$split_id)) t$split_id else sprintf("split@%.4f-%.4f %s", wnd[1], wnd[2], basename(t$smp))
-                            res <- gcms_apply_coelution_split(sub, coelution_traces, wnd, ia, ib,
+                            res <- gcms_apply_coelution_split(sub, coelution_traces, wnd, ion_sets,
                                                               crosstalk = coelution_crosstalk, k_mode = "sample", split_id = id)
                             notify_log(res$log)
                             np <- res$peak_table
-                            done <- sum(np$split_id %in% id & np$coelution_split %in% c("A", "B") &
-                                        np$split_ions_a %in% paste(ia, collapse = ", ") &
-                                        np$split_ions_b %in% paste(ib, collapse = ", ")) == 2
+                            ions_txt <- vapply(ion_sets, paste, character(1), collapse = ", ")
+                            done <- sum(np$split_id %in% id & np$coelution_split %in% .gcms_split_labels &
+                                        np$split_ions_a %in% ions_txt[1] & np$split_ions_b %in% ions_txt[2] &
+                                        (if (length(ion_sets) == 3) np$split_ions_c %in% ions_txt[3] else is.na(np$split_ions_c))) == length(ion_sets)
                             if (!done) return()
                             coelution_finish(.gcms_renumber(rbind(.gcms_ensure_split_cols(pt)[-rows, , drop = FALSE], np)))
                         })
@@ -5049,7 +5263,7 @@
                             if (isTRUE(table_dirty())) { notify("Save the peak table first (Shift+Z): unsplitting redraws it."); return() }
                             pt <- coelution_table(); if (is.null(pt)) return()
                             rows <- ctx_find(pt)
-                            if (length(rows) != 2) { notify("Unsplit: that split has changed since you right-clicked it; right-click it again."); return() }
+                            if (length(rows) < 2) { notify("Unsplit: that split has changed since you right-clicked it; right-click it again."); return() }
                             sub <- pt[rows, , drop = FALSE]
                             res <- gcms_unsplit_peak(sub, sub$peak_number_within_sample[1])
                             notify_log(res$log)
@@ -5191,6 +5405,7 @@
                                 ## table -- two gsub passes and a names<- over ~1-2M elements on
                                 ## every redraw, including every page flip.
                                 facet_labels <- gcms_sample_id_from_path(page_samples)
+                                facet_labels <- gcms_wrap_hard(facet_labels, facet_label_wrap)
                                 names(facet_labels) <- page_samples
 
                             ## Gather the all-ion data for the page, one sample at a time.
@@ -5449,16 +5664,30 @@
                                                 prof$peak_number_within_sample <- split_peaks$peak_number_within_sample[match(key_pr, key_pk)]
                                                 prof <- prof[!is.na(prof$peak_number_within_sample) &
                                                              prof$rt_rt_offset >= xs & prof$rt_rt_offset <= xe, , drop = FALSE]
+                                                ## The topmost band of each split, which needs no dividing line.
+                                                prof$top_part <- stats::ave(prof$part, paste(prof$path_to_cdf_csv, prof$split_id, sep = "\r"), FUN = max)
                                             } else prof <- NULL
                                             if (!is.null(prof) && nrow(prof) > 0) {
                                                 prof$grp <- paste(prof$path_to_cdf_csv, prof$split_id, prof$part, sep = "\r")
                                                 ## Label each band where it is thickest, halfway up it.
+                                                ## A zero-area band (no signal for that compound in this sample) has
+                                                ## nowhere to sit, so it gets no label here; zero_labels below put its
+                                                ## number in grey just under the hump instead.
                                                 split_labels <- do.call(rbind, lapply(split(prof, prof$grp), function(g) {
+                                                    if (max(g$top - g$ymin) <= 0) return(NULL)
                                                     i <- which.max(g$top - g$ymin)
                                                     data.frame(path_to_cdf_csv = g$path_to_cdf_csv[i], rt_rt_offset = g$rt_rt_offset[i],
                                                                y = (g$top[i] + g$ymin[i]) / 2,
                                                                peak_number_within_sample = g$peak_number_within_sample[i])
                                                 }))
+                                                if (is.null(split_labels))
+                                                    split_labels <- data.frame(path_to_cdf_csv = character(0), rt_rt_offset = numeric(0),
+                                                                               y = numeric(0), peak_number_within_sample = numeric(0))
+                                                ## Zero-area peaks of a split (Lucas, 2026-10-26): their numbers, in grey,
+                                                ## centred just below the bottom of the hump, so the user sees the peak
+                                                ## was made. One label per split ("4" or "4, 5").
+                                                zero_labels <- gcms_split_zero_labels(prof)
+                                                zero_labels$path_to_cdf_csv <- as_page_facet(zero_labels$path_to_cdf_csv)
                                                 prof$path_to_cdf_csv <- as_page_facet(prof$path_to_cdf_csv)
                                                 split_labels$path_to_cdf_csv <- as_page_facet(split_labels$path_to_cdf_csv)
                                                 if (mode_display == "tic") {
@@ -5467,12 +5696,15 @@
                                                                     mapping = aes(x = rt_rt_offset, ymin = ymin, ymax = top,
                                                                                   fill = peak_number_within_sample, group = grp),
                                                                     alpha = 0.6) +
-                                                        geom_line(data = prof[prof$part == "A", , drop = FALSE],
+                                                        geom_line(data = prof[prof$part != prof$top_part, , drop = FALSE],
                                                                   mapping = aes(x = rt_rt_offset, y = top, group = grp),
                                                                   colour = "black", linewidth = 0.3) +
                                                         geom_text(data = split_labels,
                                                                   mapping = aes(label = peak_number_within_sample, x = rt_rt_offset, y = y),
-                                                                  colour = "black", size = peak_label_size)
+                                                                  colour = "black", size = peak_label_size) +
+                                                        geom_text(data = zero_labels,
+                                                                  mapping = aes(label = label, x = rt_rt_offset, y = y),
+                                                                  colour = "#999999", size = peak_label_size, vjust = 1.3)
                                                 }
                                             }
                                         }
@@ -5493,6 +5725,10 @@
 
                             ## Any theme change goes on BEFORE the plot is kept for the brush
                             ## maths, so panel_fraction() measures the panels as drawn.
+                            ## Sample names (the strips on the right): horizontal, larger, and
+                            ## wrapped by facet_labels above (Lucas, 2026-10-26).
+                                chromatogram_plot <- chromatogram_plot +
+                                    theme(strip.text.y = element_text(angle = 0, hjust = 0, size = facet_label_size))
 
                             ## Kept so a mapping-less brush can be re-expressed against the
                             ## panel's real bounds. clientData carries the size the browser

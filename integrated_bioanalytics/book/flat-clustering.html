@@ -14,14 +14,14 @@
     })();
   </script><title>flat clustering | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into...">
+<meta name="description" content="Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="flat clustering | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into...">
+<meta property="og:description" content="Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flat clustering | Integrated Bioanalytics">
-<meta name="twitter:description" content="Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into...">
+<meta name="twitter:description" content="Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -70,6 +70,7 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
@@ -107,19 +108,19 @@
 <h1>flat clustering<a class="anchor" aria-label="anchor" href="#flat-clustering"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Do my samples fall into definable clusters? In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for.</p>
+<p>Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples into sources that share a chemistry, or plant extracts into chemotypes. Once samples have groups, those groups can be counted and summarized, compared with the statistical tests in the next chapter, or used to color an ordination plot such as a PCA. Some samples are interesting precisely because they fit no group at all. In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for and when a sample is better left out of every group.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
-</script><div id="section-12" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-12"><i class="fas fa-link"></i></a></h2>
+</script><div id="section-14" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="kmeans" class="section level2 unnumbered">
 <h2>kmeans<a class="anchor" aria-label="anchor" href="#kmeans"><i class="fas fa-link"></i></a>
 </h2>
 <p>K-means is the first of the two methods. It sorts samples into however many clusters we ask for, placing each sample in the cluster whose center it sits closest to.</p>
 <p>For the examples in this chapter we will use <code>meteorite_fragments</code>, which loads along with the rest of the course datasets. It describes 37 meteorite fragments recovered from four places where meteorite hunters search: the Atacama and Sahara deserts, the Nullarbor Plain in Australia, and the Antarctic ice fields. Each fragment was measured for its iron content (<code>iron_percent</code>), its density (<code>density_g_per_cm3</code>), and two more measurements we will come back to at the end of the chapter, <code>nickel_percent</code> and <code>silica_percent</code>. (These are simulated data, built with realistic values for each kind of meteorite.)</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_fragments</span></span>
 <span><span class="co">## # A tibble: 37 × 6</span></span>
 <span><span class="co">##    fragment find_site         iron_percent density_g_per_cm3</span></span>
@@ -138,19 +139,19 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span><span class="co">## # ℹ 2 more variables: nickel_percent &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   silica_percent &lt;dbl&gt;</span></span></code></pre></div>
 <p>Before clustering anything, it is worth simply plotting two of the measurements against each other:</p>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">meteorite_fragments</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, fill <span class="op">=</span> <span class="st">"grey70"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-374"></span>
-<img src="index_files/figure-html/unnamed-chunk-374-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-411"></span>
+<img src="index_files/figure-html/unnamed-chunk-411-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%"><p class="caption">
 Figure: Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps.
 </p>
 </div>
 <p>Three groups stand out right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what the eye just did. Let’s try it using <code>runMatrixAnalysis</code>. We set <code>analysis = "kmeans"</code>, name the columns to cluster on, and give the number of clusters we want to the <code>parameters</code> argument as <code>n_clusters</code> (the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter). Below we ask for three clusters, and the next section shows how to arrive at that number. (With <code>parameters</code> left out altogether, desktop R opens a small application for choosing the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, the number of clusters always has to be given explicitly.)</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
@@ -176,7 +177,7 @@ Figure: Iron content and density of 37 meteorite fragments. A scatter plot with 
 <span><span class="co">## # ℹ 27 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: density_g_per_cm3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output has one row per fragment: its ID columns, the <code>cluster</code> k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, <code>runMatrixAnalysis</code> scales each column before it clusters (<code>scale_variance = TRUE</code> is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using <code>geom_mark_ellipse</code>. Note that it is recommended to specify both <code>fill</code> and <code>label</code> for geom_mark_ellipse:</p>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_clusters</span>,</span>
@@ -190,14 +191,14 @@ Figure: Iron content and density of 37 meteorite fragments. A scatter plot with 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-376"></span>
-<img src="index_files/figure-html/unnamed-chunk-376-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-413"></span>
+<img src="index_files/figure-html/unnamed-chunk-413-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%"><p class="caption">
 Figure: The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster.
 </p>
 </div>
-<p>The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixedin, iron meteorites are almost solid iron-nickel metal (and so are more than twice as dense), and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. K-means has no way to say “this one does not belong to any group”, and that is one of the things the dbscan method below does differently.</p>
-<div id="concept-check-32" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-32"><i class="fas fa-link"></i></a>
+<p>The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixed in, iron meteorites are almost solid iron-nickel metal (and so are more than twice as dense), and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. K-means has no way to say “this one does not belong to any group”, and that is one of the things the dbscan method below does differently.</p>
+<div id="concept-check-38" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-38"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the analysis that sorts the fragments into a set number of clusters. Press Run.</p>
 <div class="webr-cell">
@@ -228,7 +229,7 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 <h2>choosing k<a class="anchor" aria-label="anchor" href="#choosing-k"><i class="fas fa-link"></i></a>
 </h2>
 <p>Above we simply asserted that three clusters was the right number. How would we know? Fewer clusters are generally easier to interpret, but too few leave a lot of variance inside each cluster, so the goal is a balance between the two. The elbow method, illustrated in the image at the top of this chapter, is a way of finding that balance. In that image, the same points are clustered into one, two, three, and more clusters (panel <strong>A</strong>), the within-cluster variance is measured for each number of clusters (<strong>B</strong>), and those values are plotted against the number of clusters (<strong>C</strong>). The best balance sits at the “elbow”, the point where the line bends most sharply (the point with the smallest angle theta). The elbow point indicates the number of clusters we can use to get the smallest within-cluster variance before diminishing returns set in. We can ask <code>runMatrixAnalysis</code> for the numbers it needs by setting <code>parameters = "elbow"</code>:</p>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_elbow</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
@@ -252,21 +253,21 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 <span><span class="co">##  9     9                   0.141</span></span>
 <span><span class="co">## 10    10                   0.118</span></span></code></pre></div>
 <p>The elbow follows the same <code>scale_variance</code> setting as the clustering, so the elbow on the plot always belongs to the clusters that could then be requested by changing the <code>parameters</code> argument to <code>c(n_clusters = 3)</code>, or whatever number is chosen. This gives us one row for each number of clusters it tried: <code>k</code>, and the <code>within_cluster_variance</code> that number of clusters leaves behind. Notice that the within-cluster variance <em>always</em> falls as we add clusters. At the extreme, where every sample is its own cluster, there is no within-cluster variance left at all. What we are after is the bend:</p>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">meteorite_elbow</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">k</span>, y <span class="op">=</span> <span class="va">within_cluster_variance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"number of clusters (k)"</span>, y <span class="op">=</span> <span class="st">"within-cluster variance"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-378"></span>
-<img src="index_files/figure-html/unnamed-chunk-378-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-415"></span>
+<img src="index_files/figure-html/unnamed-chunk-415-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%"><p class="caption">
 Figure: Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.
 </p>
 </div>
 <p>Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice). Even a sharp elbow belongs to the columns that were clustered, not to the samples alone: the same samples clustered on a different set of measurements can bend just as sharply at a different number of groups, and both answers can be right.</p>
 <p>By default <code>runMatrixAnalysis</code> tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:</p>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
@@ -274,8 +275,8 @@ Figure: Elbow plot for the meteorite fragments. Within-cluster variance falls st
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"iron_percent"</span>, <span class="st">"density_g_per_cm3"</span><span class="op">)</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"fragment"</span>, <span class="st">"find_site"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="concept-check-33" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-33"><i class="fas fa-link"></i></a>
+<div id="concept-check-39" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-39"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank so that runMatrixAnalysis returns the within-cluster variance for each number of clusters instead of the clusters themselves. Press Run and find the bend.</p>
 <div class="webr-cell">
@@ -307,7 +308,7 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <h2>dbscan<a class="anchor" aria-label="anchor" href="#dbscan"><i class="fas fa-link"></i></a>
 </h2>
 <p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters. dbscan grows a cluster outwards from points that have at least “k” neighbors within a “threshold” distance of them, and a point that is not close enough to any cluster is left unassigned. In interactive mode, <code>runMatrixAnalysis()</code> will again load an interactive means of selecting these two parameters. In the context of a markdown document, escape room, or sandbox, simply provide “k” and “threshold” to the <code>parameters</code> argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:</p>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,</span>
@@ -316,7 +317,7 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"fragment"</span>, <span class="st">"find_site"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We can make the plot in the same way, but please note that to get <code>geom_mark_ellipse</code> to omit the ellipse for NAs it needs data without NAs:</p>
-<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_dbscan</span>,</span>
@@ -330,14 +331,14 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"iron (%)"</span>, y <span class="op">=</span> <span class="st">"density (g/cm³)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-381"></span>
-<img src="index_files/figure-html/unnamed-chunk-381-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-418"></span>
+<img src="index_files/figure-html/unnamed-chunk-418-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%"><p class="caption">
 Figure: The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse.
 </p>
 </div>
 <p>dbscan finds the same three groups, but this time the two in-between fragments are left out, with <code>NA</code> as their cluster. For a meteorite hunter that is the more useful answer: a fragment that fits none of the known kinds is exactly the one worth a closer look.</p>
-<div id="concept-check-34" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-34"><i class="fas fa-link"></i></a>
+<div id="concept-check-40" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-40"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the function that tests for missing values, so that only the fragments dbscan left unassigned are kept. Press Run.</p>
 <div class="webr-cell">
@@ -367,7 +368,7 @@ Self-check: k-means was run on the same two fragments earlier in the chapter. Wh
 <h2>summarize by cluster<a class="anchor" aria-label="anchor" href="#summarize-by-cluster"><i class="fas fa-link"></i></a>
 </h2>
 <p>One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the <code>cluster</code> column and use <code>n()</code>, which counts the rows in each group:</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -379,8 +380,8 @@ Self-check: k-means was run on the same two fragments earlier in the chapter. Wh
 <span><span class="co">## 3 cluster_3     9</span></span>
 <span><span class="co">## 4 &lt;NA&gt;          2</span></span></code></pre></div>
 <p>Each real cluster gets a row with its size, and the two fragments dbscan left unassigned are counted together in an <code>NA</code> row. A count like this is often the question itself: which kind of meteorite turned up most often, or how big is the largest group?</p>
-<div id="concept-check-35" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-35"><i class="fas fa-link"></i></a>
+<div id="concept-check-41" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-41"><i class="fas fa-link"></i></a>
 </h4>
 <p>Using meteorite_dbscan from the previous concept check, fill in the blank with the function that counts the rows in each group. Press Run.</p>
 <div class="webr-cell">
@@ -402,14 +403,14 @@ Self-check: what does the row with NA in the cluster column count?
 <h3>joining data<a class="anchor" aria-label="anchor" href="#joining-data"><i class="fas fa-link"></i></a>
 </h3>
 <p>We can also ask how the two measurements we did <em>not</em> cluster on, nickel and silica, differ among the clusters. The clustering output only carries the ID columns and the columns we clustered on, so nickel and silica have to be brought back from <code>meteorite_fragments</code>. Combining two tables like this is called a join. <code>left_join(x, y, by = ...)</code> keeps every row of <code>x</code>, finds the row of <code>y</code> with the same value in the <code>by</code> column(s), and adds that row’s other columns alongside. Each fragment has its own ID in the <code>fragment</code> column of both tables, so we match on that, and take only the two columns we need from <code>meteorite_fragments</code>:</p>
-<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span></span>
 <span>  <span class="va">meteorite_dbscan</span>,</span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">meteorite_fragments</span>, <span class="va">fragment</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="st">"fragment"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Selecting first matters: any column that is in both tables but not in <code>by</code> comes back twice, renamed with <code>.x</code> and <code>.y</code> endings, and code that refers to it by its old name stops working. Naming <code>by</code> is worth it too: left out, <code>left_join</code> matches on every column the two tables share, which is not always what was intended. (The networks chapter used <code>full_join()</code>, which works the same way but also keeps rows of <code>y</code> that have no match in <code>x</code>.) With nickel and silica back in place, we can summarize them by cluster:</p>
-<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">cluster</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"measurement"</span>, values_to <span class="op">=</span> <span class="st">"percent"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -458,14 +459,14 @@ Self-check: what does the row with NA in the cluster column count?
 <span></span>
 <span><span class="va">plot_1</span> <span class="op">+</span> <span class="va">plot_2</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-384"></span>
-<img src="index_files/figure-html/unnamed-chunk-384-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-421"></span>
+<img src="index_files/figure-html/unnamed-chunk-421-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%"><p class="caption">
 Figure: Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.
 </p>
 </div>
 <p>The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artifact of the method.</p>
-<div id="concept-check-36" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-36"><i class="fas fa-link"></i></a>
+<div id="concept-check-42" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-42"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the column that identifies a fragment in both tables, so that each fragment’s nickel content is matched up with its cluster. Press Run.</p>
 <div class="webr-cell">
@@ -483,10 +484,79 @@ Self-check: what does the by argument tell left_join?
 <label><input type="radio"> Which column to sort the joined table by</label></p>
 </div>
 <hr>
-<p>Finally, nothing limits clustering to two columns: any number of columns can be listed in <code>columns_w_values_for_single_analyte</code> and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, which we will look at in the next chapter.</p>
+<p>Finally, nothing limits clustering to two columns: any number of columns can be listed in <code>columns_w_values_for_single_analyte</code> and k-means and dbscan work exactly the same way. The only difficulty is drawing the result, since a scatter plot shows two measurements at a time. One common answer is to cluster on all of the columns and then color a principal components plot by cluster, using the PCA from the dimensional reduction chapter.</p>
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+</div>
+<div id="chapter-summary-7" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-7"><i class="fas fa-link"></i></a>
+</h2>
+<p>Flat clustering sorts samples straight into groups. <strong>K-means</strong> places every sample in the cluster whose center it sits closest to, so it needs the number of clusters and can never leave a sample out. <strong>Dbscan</strong> grows clusters outwards from points with enough close neighbors and leaves a sample that fits no cluster as <code>NA</code>. To choose the number of clusters for k-means, plot the within-cluster variance against k and read the bend (the elbow), not the lowest value: a sharp elbow means the number of groups is a property of the data, and a gentle one means it is largely a choice. Both methods scale the columns first by default. Once samples have clusters, the <code>cluster</code> column works like any other grouping column, and a grouping that also separates measurements it was never clustered on (nickel and silica, in the meteorite example) supports the idea that the groups are real.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/10_flat_clustering.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-422"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/10_flat_clustering_flowchart.png" alt="Choosing a flat clustering method. A decision flowchart that starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings." width="100%"><p class="caption">
+Figure: Choosing a flat clustering method. A decision flowchart that starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings.
+</p>
+</div>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function or setting</th>
+<th>What it does</th>
+<th>What to vary</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>runMatrixAnalysis(analysis = "kmeans", parameters = c(n_clusters = 3))</code></td>
+<td>sorts every sample into the number of clusters asked for</td>
+<td><code>n_clusters</code></td>
+</tr>
+<tr class="even">
+<td><code>analysis = "kmeans", parameters = "elbow"</code></td>
+<td>returns <code>k</code> and <code>within_cluster_variance</code> for one to ten clusters, for an elbow plot</td>
+<td>
+<code>c("elbow", 6)</code> sets a different maximum</td>
+</tr>
+<tr class="odd">
+<td><code>analysis = "dbscan", parameters = c(4, 0.3)</code></td>
+<td>grows clusters from samples with at least k neighbors within a threshold distance, and leaves the rest as <code>NA</code>
+</td>
+<td>k (the number of neighbors), then the threshold (measured on the scaled columns)</td>
+</tr>
+<tr class="even">
+<td><code>columns_w_values_for_single_analyte</code></td>
+<td>names the columns to cluster on</td>
+<td>any number of columns</td>
+</tr>
+<tr class="odd">
+<td><code>scale_variance</code></td>
+<td>scales each column before clustering (<code>TRUE</code> by default)</td>
+<td>leave on when columns are in different units</td>
+</tr>
+<tr class="even">
+<td><code>group_by(cluster) %&gt;% summarize(n = n())</code></td>
+<td>counts the samples in each cluster (the <code>NA</code> row counts unassigned samples, not a cluster)</td>
+<td>other summary statistics</td>
+</tr>
+<tr class="odd">
+<td><code>left_join(x, y, by = "fragment")</code></td>
+<td>brings back columns that were not clustered on</td>
+<td>
+<code>by</code>, and <code>select()</code> the needed columns of <code>y</code> first</td>
+</tr>
+<tr class="even">
+<td><code>geom_mark_ellipse(aes(fill = cluster, label = cluster))</code></td>
+<td>draws an ellipse around each cluster</td>
+<td>use <code>drop_na()</code> on dbscan output to skip the <code>NA</code> samples</td>
+</tr>
+</tbody>
+</table></div>
 </div>
 <div id="exercises-6" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-6"><i class="fas fa-link"></i></a>
@@ -518,11 +588,11 @@ Sixty robberies in three years, and nobody can say how many thieving crews are b
 </div>
 </div>
 </div>
-<div id="section-13" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a></h2>
+<div id="section-15" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
 </div>
-<div id="further-reading-6" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
+<div id="further-reading-7" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-7"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://www.naftaliharris.com/blog/visualizing-k-means-clustering/">Visualizing K-Means Clustering</a>. Naftali Harris’s interactive page runs k-means one step at a time on a choice of point patterns, including ones where it fails, and lets the reader place the starting centers by hand to see how much the answer depends on them.</p></li>
@@ -641,16 +711,17 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#flat-clustering">flat clustering</a></li>
-<li><a class="nav-link" href="#section-12"></a></li>
+<li><a class="nav-link" href="#section-14"></a></li>
 <li><a class="nav-link" href="#kmeans">kmeans</a></li>
 <li><a class="nav-link" href="#choosing-k">choosing k</a></li>
 <li><a class="nav-link" href="#dbscan">dbscan</a></li>
 <li>
 <a class="nav-link" href="#summarize-by-cluster">summarize by cluster</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#joining-data">joining data</a></li></ul>
 </li>
+<li><a class="nav-link" href="#chapter-summary-7">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-6">exercises</a></li>
-<li><a class="nav-link" href="#section-13"></a></li>
-<li><a class="nav-link" href="#further-reading-6">further reading</a></li>
+<li><a class="nav-link" href="#section-15"></a></li>
+<li><a class="nav-link" href="#further-reading-7">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -668,7 +739,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

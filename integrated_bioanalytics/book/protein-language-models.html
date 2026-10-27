@@ -14,14 +14,14 @@
     })();
   </script><title>protein language models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Running the analyses in this chapter requires three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="protein language models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Running the analyses in this chapter requires three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta property="og:description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="protein language models | Integrated Bioanalytics">
-<meta name="twitter:description" content="Running the analyses in this chapter requires three things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="twitter:description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -70,6 +70,7 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
@@ -107,11 +108,12 @@
 <h1>protein language models<a class="anchor" aria-label="anchor" href="#protein-language-models"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.</p>
 <p>Running the analyses in this chapter requires three things.</p>
 <ol style="list-style-type: decimal">
 <li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
 </ol>
-<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R"</span><span class="op">)</span></span>
 <span><span class="co">## Loading language model module...</span></span>
 <span><span class="co">## Loading dgx module...</span></span>
@@ -119,28 +121,27 @@
 <span><span class="co">## Done with language model loading!</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Please create an account at and obtain an API key from <a href="https://biolm.ai/" class="uri">https://biolm.ai/</a> (Login &gt; Account &gt; API Tokens)</li>
-<li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
+<li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get an API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
 </ol>
 <p>Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.</p>
-<p>In the last chapter, we saw how language models can convert text into numerical vectors, allowing us to apply statistical and machine learning methods to language data. The same fundamental idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and learn to convert amino acid sequences into numerical embeddings that capture biologically meaningful patterns — including evolutionary relationships, structural features, and functional properties.</p>
 <div id="pre-reading-1" class="section level2 unnumbered">
 <h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>Please read over the following:</p>
 <ul>
 <li>
-<a href="https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution">ESM3: Simulating 500 million years of evolution with a language model</a>. The 2024 blog article “ESM3: Simulating 500 million years of evolution with a language model” by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural natural variants. The article highlights the model’s potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the “Open Model” section of the blog, which highlights applications of ESM models in the natural sciences.</li>
+<a href="https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution">ESM3: Simulating 500 million years of evolution with a language model</a>. The 2024 blog article “ESM3: Simulating 500 million years of evolution with a language model” by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model’s potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the “Open Model” section of the blog, which highlights applications of ESM models in the natural sciences.</li>
 </ul>
 </div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
 </h2>
-<p>Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
-<p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
-<p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
+<p>Autoencoders can be trained to accept various types of inputs, such as text (as in the previous chapter), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
+<p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Protein language models can also capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
+<p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play key roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
 <p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code works well here, though the <code>searchNCBI()</code> function can also retrieve a different set of sequences. For example:</p>
-<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" .*"</span>, <span class="st">""</span>, <span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span><span class="op">)</span>, <span class="st">"__diterpene_synthase"</span><span class="op">)</span></span>
 <span></span>
@@ -149,8 +150,8 @@
 <span></span>
 <span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
 <span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="va">all_sequences</span><span class="op">[</span><span class="va">all_sequences</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">width</span> <span class="op">&lt;</span> <span class="fl">1024</span><span class="op">]</span></span></code></pre></div>
-<p>Once some sequences are in hand, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.</p>
-<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<p>Once some sequences are in hand, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA API key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.</p>
+<div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
 <span>  amino_acid_stringset <span class="op">=</span> <span class="va">all_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"path/to/biolm_api_key.txt"</span><span class="op">)</span>,</span>
@@ -162,7 +163,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="st">"data/protein_embeddings_example.rds"</span><span class="op">)</span></span>
 <span><span class="va">all_sequences_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></code></pre></div>
 <p>Nice! Once we’ve got the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
-<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">all_sequences_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -177,13 +178,65 @@
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"maroon"</span>, <span class="st">"gold"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-583-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-628-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="section-21" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-21"><i class="fas fa-link"></i></a></h2>
+<div id="chapter-summary-12" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-12"><i class="fas fa-link"></i></a>
+</h2>
+<p>A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer’s attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf">Download this summary as a one-page PDF</a>.</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th>Step</th>
+<th>Function</th>
+<th>What it is for</th>
+<th>Arguments and settings used in this chapter</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>searchNCBI()</code></td>
+<td>retrieve protein sequences from NCBI as an AAStringSet</td>
+<td>
+<code>search_term</code>, <code>retmax</code>
+</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>(subsetting)</td>
+<td>keep sequences short enough to embed whole, since esm2 truncates long sequences (the chapter keeps those under 1024 amino acids)</td>
+<td><code>all_sequences[all_sequences@ranges@width &lt; 1024]</code></td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td><code>embedAminoAcids()</code></td>
+<td>embed each sequence with a pre-trained protein language model</td>
+<td>
+<code>amino_acid_stringset</code>, <code>platform</code> (<code>"nvidia"</code> runs esm2-650m, bioLM offers several models), <code>nvidia_api_key</code> or <code>biolm_api_key</code>
+</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td><code>runMatrixAnalysis()</code></td>
+<td>PCA on the embedding columns to see which proteins group together</td>
+<td>
+<code>analysis = "pca"</code>, <code>columns_w_values_for_single_analyte</code> (the embedding columns), <code>columns_w_sample_ID_info</code>
+</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div id="further-reading-11" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-11"><i class="fas fa-link"></i></a>
+<div id="section-23" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-23"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-12" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-12"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3">using protein embeddings in biochemical research</a>. This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.</p></li>
@@ -212,8 +265,9 @@
 <li><a class="nav-link" href="#protein-language-models">protein language models</a></li>
 <li><a class="nav-link" href="#pre-reading-1">pre-reading</a></li>
 <li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
-<li><a class="nav-link" href="#section-21"></a></li>
-<li><a class="nav-link" href="#further-reading-11">further reading</a></li>
+<li><a class="nav-link" href="#chapter-summary-12">chapter summary</a></li>
+<li><a class="nav-link" href="#section-23"></a></li>
+<li><a class="nav-link" href="#further-reading-12">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -231,7 +285,7 @@
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

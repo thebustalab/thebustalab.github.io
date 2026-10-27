@@ -4,7 +4,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png', dpi = NA)
 ```
 
-BLAST and HMMER are two different means of using homology to answer scientific questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.
+Homology searching asks which sequences, in a public database or in a set of genomes, are related to the one in hand. It is the first step in annotating a newly sequenced gene, in pulling every member of an enzyme family out of a group of genomes or transcriptomes, and in the workflow of the chapters that follow, where the hits from a search are aligned and then built into phylogenetic trees. BLAST and HMMER are two different means of using homology to answer such questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.
 
 HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequence alignments of a protein family or domain. These profiles capture position-specific conservation and variability, which makes HMMER more sensitive for detecting distant homology and for identifying shared domains or motifs (including catalytic domains) even when overall sequence identity is low. As a result, BLAST is typically the first pass for close matches and rapid annotation, while HMMER is preferred for domain-centric searches, remote homolog discovery, and functional inference based on conserved motifs.
 
@@ -30,7 +30,7 @@ blastNCBI(
 
 ## local blast {-}
 
-On NCBI, various sequence collections can be searched with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. The function can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
+On NCBI, various sequence collections can be searched with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. The function can search multiple sequence libraries at once using multiple queries, and three blast configurations are available (the equivalents of blastn, tblastn and blastp, chosen with `blast_mode` below). Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
 
 Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
 
@@ -38,12 +38,12 @@ Let's check out `polyBlast()` by looking at an example. For this example, we nee
 * "query_in_path": One or more queries, all listed in a single fasta file.
 * "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
 * "blast_module_directory_path": The path to the folder of BLAST+ executable.
-* "blast_mode": The default shorthand is XYblastZ where X describes the subject type (`n` for nucleotide, `p` for amino acid), Y indicates whether subjects are translated (`t`) or not (`n`), and Z describes the query type (`n` or `p`). For example, `ntblastp` translates nucleotide subjects and compares them to protein queries. Specific BLAST+ presets such as `megablast`, `dc-megablast`, `blastx`, `tblastn`, or `tblastx` can also be supplied to let BLAST manage the translation behavior.
+* "blast_mode": The default shorthand is XYblastZ where X describes the subject type (`n` for nucleotide, `p` for amino acid), Y indicates whether subjects are translated (`t`) or not (`n`), and Z describes the query type (`n` or `p`). For example, `ntblastp` translates nucleotide subjects and compares them to protein queries.
 * "e_value_cutoff": Hits with an e-value greater than this cutoff are discarded. Default = 1.
 * "queries_in_output": TRUE/FALSE, should the queries be included in the output? Set to TRUE when the query sequences are needed for downstream analyses like tree building.
 * "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
 
-Different BLAST modes tailor the search to the molecule types being compared. In the XYblastZ naming scheme, `nnblastn` reproduces the classic nucleotide-vs-nucleotide search (`blastn`), `ntblastp` lines up with `tblastn`, and `pnblastp` matches `blastp`. Preset names such as `blastx`, `megablast`, or `dc-megablast` extend these basics to translated queries or alternate nucleotide heuristics, while `tblastx` translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of the query and target sequences so the scoring and heuristics work in the analyst’s favor.
+Different BLAST modes tailor the search to the molecule types being compared. In the XYblastZ naming scheme, `nnblastn` reproduces the classic nucleotide-vs-nucleotide search (`blastn`), `ntblastp` lines up with `tblastn`, and `pnblastp` matches `blastp`. `polyBlast()` accepts only these three modes. NCBI's other programs, such as `blastx`, `megablast`, `dc-megablast` and `tblastx`, are not available through it (`megablast` can be requested from `blastNCBI()` instead). Pick the mode that matches the biology of the query and target sequences so the scoring and heuristics work in the analyst’s favor.
 
 Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
@@ -65,7 +65,7 @@ polyBlast(
   query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
   sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
   blast_module_directory_path = "/path_to/the_blast_module/", # on bustalab server this is /project_data/shared/general_lab_resources/blast/
-  blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
+  blast_mode = "nnblastn", # one of "nnblastn", "ntblastp" or "pnblastp"
   e_value_cutoff = 1,
   queries_in_output = TRUE,
   monolist_out_path = "/path_to/a_csv_file_that_will_list_all_blast_hits.csv"
@@ -74,11 +74,11 @@ polyBlast(
 
 ## hmmer {-}
 
-HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
+HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologs. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
 
 Here's a general idea of how HMMs are used for sequence similarity searching:
 
-1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once an alignment is in hand, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of a library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once an alignment is in hand, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
 
 2. Predict domains in unknown sequences: After training, the HMMs can then score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. The HMM can search databases of uncharacterized sequences. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
 
@@ -109,7 +109,7 @@ Bitscore versus e-value: when the expected value becomes extremely small (for ex
 
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
-The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb from the CLC Genomics Workbench documentation—treat them as approximate, database-dependent guidelines:
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that about 0.05 hits that good are expected by chance alone in a search of this size. For small values like this, that is close to a 5 in 100 chance. E-values are very dependent on the query sequence length and the database size. Short identical sequences may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb from the CLC Genomics Workbench documentation (treat them as approximate, database-dependent guidelines):
 
 * E-value < 1e-100 Identical sequences. Long alignments span the entire query and hit sequence.
 * 1e-100 < E-value < 1e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
@@ -129,3 +129,26 @@ E-values are dependent on the size of the database searched, so we use a second 
 * Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
+
+## chapter summary {-}
+
+A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/16_homology.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a homology search. A decision flowchart that starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png', dpi = NA)
+```
+
+| Function | What it does | Arguments students vary |
+|---|---|---|
+| `blastNCBI()` | remote BLAST of one sequence on NCBI's servers, returning a tibble of hits | `query_sequence`, `program` (`"blastn"`, `"megablast"`), `database` (`"core_nt"`) |
+| `polyBlast()` | local BLAST+ search of one or more queries against several sequence collections, writing a hit list and one file per hit (returns nothing) | `named_subjects_list`, `query_in_path`, `blast_mode`, `e_value_cutoff` (default 1), `queries_in_output`, plus the paths `sequences_of_interest_directory_path`, `monolist_out_path`, `blast_module_directory_path` |
+| `buildDomainLibrary()` | trains profile HMMs from multiple sequence alignments into a domain library | `alignment_in_paths`, `domain_library_out_path` |
+| `predictDomains()` | scores sequences against a domain library to find likely family members | `fasta_in_path`, `domain_library_in_path` |
+
+| Query | Subjects | `blast_mode` |
+|---|---|---|
+| nucleotide | nucleotide | `"nnblastn"` (classic blastn) |
+| protein | nucleotide, translated | `"ntblastp"` (like tblastn) |
+| protein | protein | `"pnblastp"` (like blastp) |

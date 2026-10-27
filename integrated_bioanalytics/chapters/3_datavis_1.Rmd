@@ -4,7 +4,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg', dpi = NA)
 ```
 
-Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google "data visualization" and see what happens). Data visualization is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
+Visualization is one of the most fun parts of working with data, and it is usually the first thing we do with a new data set: a plot shows at a glance which samples stand out, which groups differ, and whether the measurements look the way we expected. Most later chapters in this book produce plots (a heat map, a dendrogram, an ordination, a regression line), and in research, figures are how results reach readers in papers, posters and talks. In this chapter we will jump into visualization as quickly as possible, after just a few prerequisites: storing data in objects and filtering it with functions. Then we will learn the core grammar of `ggplot2`, which every one of those later plots is built on. Data visualization is a whole field in and of itself, and it is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -57,7 +57,7 @@ Excellent - we've got data. Now we need to manipulate it. For this we need funct
 * A function begins and ends with parentheses: `this_is_a_function()`
 * The stuff inside the parentheses are the details of how the function should perform its action: `run_this_analysis(on_this_data)`
 
-Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
+Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `>=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) are preserved. This will look like `chemical_species == "FAs"`. Here we go:
 
 ```{r, message = FALSE}
 filter(algae_data, chemical_species == "FAs")
@@ -90,7 +90,7 @@ Here are a variety of ways to filter:
 
 #### concept check {-}
 
-Fill in the the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run to see the output of the filter.
+Fill in the blank below so that only rows where `chemical_species` equals `"FAs"` are kept, then press Run to see the output of the filter.
 
 <div class="webr-cell"><textarea class="webr-code">filter(algae_data, chemical_species == ____)</textarea></div>
 
@@ -111,7 +111,7 @@ There are three steps to setting up a ggplot:
 
 1. **Define the data to be used.**
 
-We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
+We do this using the ggplot function's data argument. When we run that line, it just shows a gray plot space. Why is this? It's because all we've done is tell ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small)
@@ -141,7 +141,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-#### Concept check {-}
+#### concept check {-}
 
 First make the small algae table by filling in the blank (first window below), then plot it (second window below). Edit the code and press Run.
 
@@ -159,7 +159,7 @@ head(algae_data_small)</textarea></div>
 <label><input type="radio"> the abundance</label>
 </div>
 
-In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
+In the plot above, the points are a bit small. How could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data (as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
 ```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
@@ -214,7 +214,7 @@ Now that we are able to filter our data and make plots, we are ready to make rep
 
 Customize this document by modifying the title, and add `author: "your_name"` to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.
 
-You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a "chunk" or R code. That looks like this:
+You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown document you create. You can do this by adding a "chunk" of R code. That looks like this:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png', dpi = NA)
@@ -228,6 +228,23 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 -->
+
+## chapter summary {-}
+
+Objects store data (`<-`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `chemical_species == "FAs"`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. The one decision to get right every time is where a feature of a shape goes. A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** it (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot brings out the trend best.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf).
+
+| Function or operator | What it does | What we vary |
+|---|---|---|
+| `<-` | stores a value or a result in an object | the object name on the left |
+| `filter()` | keeps only the rows that meet a condition | the condition: `==`, `!=`, `<`, `<=`, `>`, `>=`, `%in% c(...)` |
+| `ggplot()` | starts a plot and names the data | `data =` |
+| `aes()` | maps variables onto the axes and onto features of the shapes | `x`, `y`, `color`, `size`, `fill` |
+| `+` | adds a geom to the plot, and several geoms can be stacked | end the line with `+` to continue on the next |
+| `geom_point()` | draws one point per observation | `aes(color = ...)`, `aes(size = ...)`, or constants such as `size = 5`, `color = "black"` |
+| `geom_violin()` | draws the spread of values in each group | `aes(fill = ...)` |
+| `geom_boxplot()` | draws a box plot for each group | nothing extra in this chapter |
 
 ## exercises {-}
 

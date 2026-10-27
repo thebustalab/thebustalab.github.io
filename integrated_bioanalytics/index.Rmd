@@ -102,6 +102,9 @@ ________________________________________________________________________________
 ```{r child="chapters/6_wrangling_summaries.Rmd"}
 ```
 
+```{r child="chapters/6b_distances_and_scaling.Rmd"}
+```
+
 ```{r child="chapters/7_networks.Rmd"}
 ```
 

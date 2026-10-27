@@ -17,12 +17,15 @@
   Standard structure — keep this order (see any existing chapter for a live example):
     1. Chapter heading            # title {-}
     2. Opening image              HTML-only include_graphics chunk
-    3. Opening paragraph          1–3 sentences orienting the reader
+    3. Opening paragraph          a few sentences: what questions these methods answer and where
+                                  they are used, so the reader knows why before how
     4. Separator                  ## {-}
     5. Content sections           ## section {-}  /  ### subsection {-}
-    6. Exercises                  ## exercises {-}  (usually commented out)
-    7. Separator                  ## {-}
-    8. Further reading            ## further reading {-}  (3–5 annotated links)
+    6. Chapter summary            ## chapter summary {-}  recap + decision flowchart + table, with a
+                                  link to summary_sheets/<file stem>.pdf (build_summary_sheets.py)
+    7. Exercises                  ## exercises {-}  (usually commented out)
+    8. Separator                  ## {-}
+    9. Further reading            ## further reading {-}  (3–5 annotated links)
 
   Conventions:
     - The {-} after every heading suppresses bookdown's automatic numbering.
@@ -38,7 +41,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/REPLACE_ME.png', dpi = NA)
 ```
 
-One to three sentences introducing the chapter's topic and what the reader will be able to do by the end.
+A few sentences on when these methods are used: the questions they answer, where they show up in research and in other chapters, and what the reader will be able to do by the end.
 
 ## {-}
 
@@ -50,6 +53,12 @@ and `### subsection {-}` for subsections.
 ```{r}
 # example code chunk
 ```
+
+## chapter summary {-}
+
+A short recap of the chapter's decisions, ideally with a decision flowchart (graphviz source in notes/, PNG in images/) and a table.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/<N>_<short_name>.pdf).
 
 <!-- ## exercises {-}
 

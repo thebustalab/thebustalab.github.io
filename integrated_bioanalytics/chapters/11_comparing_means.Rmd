@@ -4,13 +4,13 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
 ```
 
-**"Are these two things the same?"**
+**"Are these two things the same?"** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in their leaf chemistry? Questions like these come up whenever measurements from two or more groups are compared, which makes them some of the most common questions in experimental science and a feature of many research figures. A difference between two averages on its own does not answer them, because some difference is expected by chance alone. Statistical tests ask how likely it would be to get data this extreme if the groups' distributions were the same. This chapter covers how to look at the distributions first, how to choose a test for two groups or for more than two, and how to mark the results on a plot. The groups can come from anywhere: sites, treatments, species, or the clusters found in the flat clustering chapter.
 
 ## {-}
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
-I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set - we have 990 measurements of 9 different analytes in multiple wells that draw on a set of 10 aquifers.
 
 ```{r}
 hawaii_aquifers
@@ -42,17 +42,17 @@ library(multcompView)
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
-2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference bewteen the means (hence the name "null"). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
+2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference between the means (which is where the name "null" comes from). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
 
-3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same magneisum levels (i.e. assuming the null hypothesis is true), there is a 4% chance that we would get the measured values that we did. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
+3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same potassium levels (i.e. assuming the null hypothesis is true), there is a 4% chance of getting values at least as extreme as the ones we measured. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
 
-Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
+Please note that the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
 ## looking at the distribution first {-}
 
 Before comparing two means, look at the two distributions. This is not a formality. Every test in this
-chapter makes assumptions about the *shape* of the data — whether it is roughly normal, whether the
-groups have comparable spread — and a mean on its own reveals nothing about either. Two groups can
+chapter makes assumptions about the *shape* of the data (whether it is roughly normal, whether the
+groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can
 have identical means and completely different distributions, and a bar chart of the means will hide
 that perfectly.
 
@@ -61,7 +61,7 @@ So it is worth knowing how to draw a distribution in full rather than summarizin
 ### distributions in full {-}
 
 Combining geoms shows the summary, the density and the raw observations at once. The half-eye
-gives the density, the boxplot the quartiles, and the dots every actual measurement — showing
+gives the density, the boxplot the quartiles, and the dots every actual measurement, showing
 the shape, the spread and the sample size in one picture:
 
 ```{r}
@@ -229,7 +229,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
+Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`, and with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
 ```{r}
 K_data %>%
@@ -255,7 +255,7 @@ K_data %>%
   tukeyTest(abundance ~ aquifer_code)
 ```
 
-Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
+Using the output from our Tukey test, we can determine which means are similar. We can do this using the pGroups function:
 
 ```{r, message = FALSE}
 groups_based_on_tukey <- K_data %>%
@@ -313,7 +313,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
+Fortunately, we can use an approach that is very similar to what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
 ```{r}
 hawaii_aquifers %>%
@@ -322,7 +322,7 @@ hawaii_aquifers %>%
   shapiroTest(abundance)
 ```
 
-Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
+Looks like some of those distributions are significantly different from normal! Let's run the Levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
 
 ```{r, message = FALSE}
 hawaii_aquifers %>%
@@ -331,7 +331,7 @@ hawaii_aquifers %>%
   leveneTest(abundance ~ analyte)
 ```
 
-It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use `wilcoxTest`, but we have many pairs, so we will use `pairwiseWilcoxTest` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?rstatix::pairwise_wilcox_test`):
+It looks like the pair in aquifer 1 has significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use `wilcoxTest`, but we have many pairs, so we will use `pairwiseWilcoxTest` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?rstatix::pairwise_wilcox_test`):
 
 ```{r}
 hawaii_aquifers %>%
@@ -342,7 +342,7 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwiseTTest` of course!
+What would we have done if our Shapiro and Levene tests had revealed no significant differences? Well, a `pairwiseTTest` of course!
 
 ```{r}
 hawaii_aquifers %>%
@@ -388,6 +388,28 @@ hawaii_aquifers %>%
     )
 
 ```
+
+## chapter summary {-}
+
+Look at the distributions before comparing means: a mean on its own hides the shape, the spread and the number of observations. The *p* value is the likelihood of getting data this extreme if the distributions are the same, and it is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If so, use a parametric test. If not, use a rank test, which asks whether values in one group tend to be higher than values in the other. The t-test here is Welch's, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check it with the Levene test, as the chapter also does before `pairwiseTTest`. A t-test and a rank test can disagree because they answer different questions, and a plot of the raw points shows which question matters.
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf).
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a test for comparing means. A decision flowchart that starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png', dpi = NA)
+```
+
+| Function | What it is for | How it is used in this chapter |
+|---|---|---|
+| `shapiroTest(abundance)` | is each group roughly normal? (p > 0.05 means not significantly different from normal) | after `group_by()` on the grouping column(s) |
+| `leveneTest(abundance ~ aquifer_code)` | do the groups have similar variances? | before `tukeyTest` or `pairwiseTTest` |
+| `tTest(abundance ~ aquifer_code)` | two groups, roughly normal (Welch's t-test) | `y ~ x` formula |
+| `wilcoxTest(abundance ~ aquifer_code)` | two groups, not normal (rank test) | `y ~ x` formula |
+| `tukeyTest(abundance ~ aquifer_code)` | more than two groups, every pair, normal with similar variances | read `p.adj` |
+| `dunnTest(abundance ~ aquifer_code)` | more than two groups, every pair, rank-based | read `p.adj` |
+| `pGroups()` | letters for each group from Tukey or Dunn output (a shared letter means no significant difference) | piped after `tukeyTest` or `dunnTest`, then drawn with `geom_text()` |
+| `pairwiseTTest(abundance ~ analyte)`, `pairwiseWilcoxTest(abundance ~ analyte)` | one comparison within each of several groups | after `group_by(aquifer_code)`, with `p.adj` corrected across all the groups |
+| `geomSignif()` | draws brackets and stars from pairwise test output | `data =` a table built from the test output |
 
 ## exercises {-}
 
