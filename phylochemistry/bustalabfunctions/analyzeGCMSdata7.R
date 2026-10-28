@@ -1260,6 +1260,21 @@
             sw("none"), "no comparison")
     }
 
+    ## The TIC view's ion key, moved off the plot into the button row beside the
+    ## agreement key (Lucas, 2026-10-28). `pal` is the named ion -> colour map the
+    ## plot's colour scale is built from, so the two cannot disagree. NULL hides it.
+    gcms_ion_legend <- function(pal) {
+        if (is.null(pal) || !length(pal)) return(NULL)
+        css_col <- function(x) grDevices::rgb(t(grDevices::col2rgb(x)), maxColorValue = 255)
+        keys <- lapply(names(pal), function(ion) shiny::tagList(
+            shiny::tags$span(style = paste0(
+                "display:inline-block; width:16px; height:3px; margin:0 3px 0 9px;",
+                " vertical-align:middle; background:", css_col(pal[[ion]]), ";")),
+            ion))
+        shiny::tags$span(style = "margin-left:15px; font-size:12px; white-space:nowrap;",
+            "ion:", keys)
+    }
+
     ## "Zoom to peaks" (Lucas, 2026-10-26). Accepts "12", "12-15", "12 to 15" or
     ## "15-12"; returns c(lo, hi) as integers, or NULL when it cannot read one.
     gcms_parse_peak_range <- function(txt) {
@@ -3588,6 +3603,8 @@
                                                 style = "margin-left:15px; font-weight:bold;",
                                                 textOutput("page_indicator", inline = TRUE)
                                             ),
+                                            ## The TIC view's ion key (filled by the renderer).
+                                            uiOutput("ion_legend", inline = TRUE),
                                             ## Key to the squares on each peak (the plot cannot carry it:
                                             ## its fill scale belongs to the peak ribbons).
                                             gcms_confidence_legend(confidence_thresholds)
@@ -3783,6 +3800,11 @@
                 ## plot recomputes only when the data actually changes, not on every brush.
                     current_page   <- reactiveVal(1)
                     redraw_trigger <- reactiveVal(0)
+
+                ## The ion key in the button row: the renderer sets the named ion -> colour
+                ## map it drew the TIC view with (NULL in the all-ion views).
+                    ion_legend_pal <- reactiveVal(NULL)
+                    output$ion_legend <- renderUI(gcms_ion_legend(ion_legend_pal()))
 
                 ## Don't let it time out
                     output$keepAlive <- renderText({
@@ -5280,7 +5302,7 @@
                         output$page_indicator <- renderText({
                             redraw_trigger(); current_page()
                             b <- page_bounds()
-                            if (is.null(b)) return("Press Shift+Q to load chromatograms")
+                            if (is.null(b)) return("")
                             if (b$n == 0) return("No samples loaded")
                             paste0("Page ", b$pg, " / ", b$n_pages,
                                    "   (samples ", b$lo, "–", b$hi, " of ", b$n, ")")
@@ -5588,6 +5610,12 @@
 
                                 } else {
 
+                                    ## Named, so the key in the button row (gcms_ion_legend())
+                                    ## shows exactly these colours. Same order as the unnamed
+                                    ## scale gave: sorted as character.
+                                    ion_lv  <- sort(unique(as.character(cuf$ion[as.character(cuf$ion) != "baseline"])))
+                                    ion_pal <- stats::setNames(rep_len(discrete_palette, length(ion_lv)), ion_lv)
+
                                     chromatogram_plot <- ggplot() +
                                         geom_line(
                                             data = gcms_thin_lines(filter(cuf, ion == "baseline"), xs, xe, thin_bins),
@@ -5601,9 +5629,10 @@
                                         theme_classic() +
                                         guides(fill = "none") +
                                         scale_fill_continuous(type = "viridis") +
-                                        scale_color_manual(values = discrete_palette)
+                                        scale_color_manual(values = ion_pal, guide = "none")
 
                                 }
+                                ion_legend_pal(if (mode_display == "tic") ion_pal else NULL)
 
                             ## Peak overlay (read the table Shift+Q wrote), page + x-axis filtered.
                             ## The shaded ribbons are drawn in raw counts, so they only make sense
