@@ -6,5 +6,5 @@ language:
   ui:
     chapter_name: "Chapter "
   label:
-    fig: !expr "function(i) 'Figure: '"
+    fig: !expr "function(i) ''"
 output_dir: "book"

@@ -1,5 +1,9 @@
 # phylogenies {-}
 
+Phylogenetic tree building uses the concept of a branching model of descent to represent the evolutionary relationships among species or genes, either by pruning an existing published tree to the species of interest or by inferring a tree from a sequence alignment with neighbor joining or maximum likelihood, after which the tree can be plotted, collapsed to a higher taxonomic level, and displayed alongside trait data. This analysis can be used to answer questions such as "Which of these sequences are most closely related in the inferred tree?" or "In which clades of this tree does this compound class occur?"
+
+## {-}
+
 A phylogeny is a tree of evolutionary relationships, and it answers a question that comes up whenever chemistry is compared across species or genes: which of these are close relatives, and which share a common ancestor only far back? Chemical traits are inherited along those branches, so a tree is the backdrop for asking where in the plant kingdom a group of compounds appears, as in the chemical bloom example at the end of this chapter. Trees of species can be built from an existing published phylogeny, while trees of genes, such as an enzyme family found with the homology searches and aligned in the alignments chapter, are built from the sequences themselves. This chapter covers both routes with `buildTree()`, then shows how to plot a tree, collapse it to a higher taxonomic level, and draw traits beside it. The next chapter uses these trees to ask how the traits evolved.
 
 ## buildTree {-}
@@ -231,15 +235,21 @@ plot_grid(
 )
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/18_phylogenies.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/18_phylogenies.pdf).
+::: {.summary-top}
 
 ```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing how to build a tree. A decision flowchart that starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png', dpi = NA)
 ```
+
+Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
+
+:::
 
 | Function | What it is for | Settings students vary |
 |---|---|---|
@@ -251,3 +261,4 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `collapseTree()` | one tip per higher group (for example, per family) | `tree`, `associations` (tip labels, then group) |
 | `reorder(label, y)` | putting trait rows in the same order as the tree tips | the column to reorder and the tree's `y` |
 | `plot_grid()` | the tree and the trait plot side by side | `nrow = 1`, `align = "h"`, `axis = "tb"` |
+

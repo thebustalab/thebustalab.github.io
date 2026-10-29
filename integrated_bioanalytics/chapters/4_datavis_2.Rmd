@@ -1,5 +1,9 @@
 # data visualization II {-}
 
+Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets, controlling axes, colors, and non-data elements with scales and themes, and combining multiple plots into one figure with subplots. This chapter's content can be used to answer questions such as "Does the relationship between these two variables appear the same in each subset of the data?" or "Which samples have high or low values of which variables?"
+
+## {-}
+
 In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a quick plot for ourselves, but a figure for a lab report, a poster or a paper has to do more: show the trend through two continuous measurements, lay out a whole table of abundances as a heat map, compare subsets side by side in panels, and read cleanly to someone who has never seen the data. These tools come back in many of the later chapters, wherever a result has to be shown to someone else. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -292,15 +296,21 @@ plot_grid(____, ____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-The kind of data being plotted points toward the geom: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When it matters which point is which, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png', dpi = NA)
 ```
+
+The kind of data being plotted can help you choose which geom to use: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
+
+:::
 
 | Function | What it is for | What we vary |
 |---|---|---|
@@ -315,6 +325,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `theme_classic()`, `theme_bw()`, `theme_dark()`, `theme_void()` | complete themes for the non-data ink | which one |
 | `theme()` | individual non-data components | `text = element_text(size = ..., color = ...)`, `axis.text` |
 | `plot_grid()` | arranges finished plot objects into one figure | the plot objects, `ncol` |
+
+<hr>
 
 ## exercises {-}
 
@@ -369,7 +381,7 @@ Some pointers:
 
 6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

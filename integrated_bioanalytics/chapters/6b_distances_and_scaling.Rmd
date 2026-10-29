@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
 ```
 
+Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of samples and variables into a distance matrix holding one value for every pair of samples, with scaling determining how much each variable contributes to those values. This analysis can be used to answer questions such as "Under the chosen metric, which sample in this reference set is closest to the unknown?" or "Does scaling the variables change which pairs of samples are closest?"
+
+## {-}
+
 Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a **distance matrix**: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. **Scaling decides which variables count. The distance metric decides what "similar" means.** Neither choice has a single right answer, but both change the result, so both should be made on purpose.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -460,15 +464,21 @@ Fill in the blank with the metric that can compare hop varieties on a mix of num
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when the metric needs them. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png', dpi = NA)
 ```
+
+Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when you want distances to reflect potential differences in the scales that your variables occupy. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
+
+:::
 
 | `distance_method` | Similar means... | Typical data | Scale first? |
 |---|---|---|---|
@@ -487,7 +497,7 @@ Escape-room cards go here once this chapter has rooms.
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

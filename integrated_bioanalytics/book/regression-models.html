@@ -14,14 +14,14 @@
     })();
   </script><title>regression models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
+<meta name="description" content="Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="regression models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
+<meta property="og:description" content="Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="regression models | Integrated Bioanalytics">
-<meta name="twitter:description" content="A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by...">
+<meta name="twitter:description" content="Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,12 +108,17 @@
 <h1>regression models<a class="anchor" aria-label="anchor" href="#regression-models"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as “By how much does the response change per unit increase in this predictor?”, “What concentration does this calibration curve predict for a sample with this detector signal?”, or “Which predictors have coefficients significantly different from zero?”</p>
+<div id="section-27" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-27"><i class="fas fa-link"></i></a></h2>
 <p>A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient’s blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
-</script><div id="section-18" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-28" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-28"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="model-use" class="section level2 unnumbered">
 <h2>model use<a class="anchor" aria-label="anchor" href="#model-use"><i class="fas fa-link"></i></a>
@@ -161,7 +166,7 @@ Self-check: which of these is an inferential use of a model?
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-523"></span>
 <img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.
+Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>It looks like there might be a relationship! Let’s build a linear regression model and use it inferentially to examine the details of that relationship:</p>
@@ -214,7 +219,7 @@ Figure: Valine and iso-leucine abundance in patient blood samples. Scatter plot 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-528"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png" alt="Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one." width="100%"><p class="caption">
-Figure: Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one.
+Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one.
 </p>
 </div>
 <p>We can also use a function called <code>predictWithModel()</code> to make predictions using the model. We give it the model and the data we want predictions for. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance, and store the predictions as a new column next to the measured values:</p>
@@ -247,7 +252,7 @@ Figure: Using a model to make predictions. A fitted model takes values of the in
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-530"></span>
 <img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.
+Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals: the distance between each of our points and our line.</p>
@@ -259,7 +264,7 @@ Figure: Measured and predicted valine abundance. Scatter plot with iso-leucine a
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-531"></span>
 <img src="index_files/figure-html/unnamed-chunk-531-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model’s line; each vertical segment joins a measured value to the model’s prediction for it, so its length is that patient’s residual. Data: metabolomics_data.
+Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model’s line; each vertical segment joins a measured value to the model’s prediction for it, so its length is that patient’s residual. Data: metabolomics_data.
 </p>
 </div>
 <p>We can calculate the sum of the squared residuals:</p>
@@ -274,7 +279,7 @@ Figure: Residuals of the linear model of valine on iso-leucine. Scatter plot of 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-533"></span>
 <img src="index_files/figure-html/unnamed-chunk-533-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.
+A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>A pretty bad model. How much better is our linear model than the flat line model? Let’s measure the distance between each point and the flat line:</p>
@@ -286,7 +291,7 @@ Figure: A mean-only model of valine abundance. Scatter plot of valine against is
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-534"></span>
 <img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.
+Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
@@ -333,7 +338,7 @@ Figure: Residuals of the mean-only model of valine abundance. Scatter plot of va
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-536"></span>
 <img src="index_files/figure-html/unnamed-chunk-536-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model’s metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.
+A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model’s metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.
 </p>
 </div>
 <div id="concept-check-44" class="section level4 unnumbered">
@@ -499,7 +504,7 @@ Self-check: which of the seven new patients does the model predict to have the h
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-541"></span>
 <img src="index_files/figure-html/unnamed-chunk-541-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.
+Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <div id="concept-check-46" class="section level4 unnumbered">
@@ -670,7 +675,7 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-545"></span>
 <img src="index_files/figure-html/unnamed-chunk-545-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.
+Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.
 </p>
 </div>
 <div id="concept-check-48" class="section level4 unnumbered">
@@ -699,16 +704,21 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="section-29" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-29"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-9" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-9"><i class="fas fa-link"></i></a>
 </h2>
-<p>Every regression model starts with its use. An <strong>inferential</strong> use reads the model’s inner workings (the coefficients, their p-values and r-squared) to describe how the output relates to the inputs. A <strong>predictive</strong> use applies the model to a table whose output was never measured. Three decisions follow. <strong>How many inputs:</strong> more inputs can explain more of the variation in the output, which r-squared shows. <strong>Whether to scale:</strong> scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. <strong>Whether to trust it:</strong> check the residuals, the inputs and any influential points with <code>check_model()</code>.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-546"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%"><p class="caption">
-Figure: Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%"><p class="caption">
+Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.
 </p>
+</div>
+<p>Building a regression model starts with determining what the model will be used for. An <strong>inferential</strong> use reads the model’s inner workings (the coefficients, their p-values, and r-squared) to describe how the output relates to the inputs. A <strong>predictive</strong> use applies the model to a table whose output was never measured. Three decisions follow. <strong>How many inputs:</strong> more inputs can explain more of the variation in the output, which r-squared shows. <strong>Whether to scale:</strong> scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. <strong>Whether to trust it:</strong> check the residuals, the inputs, and any influential points with <code>check_model()</code>.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -783,10 +793,7 @@ To practice creating models, try the following:
 
 5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
 
--->
-</div>
-<div id="section-19" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a></h2>
+--><hr>
 </div>
 <div id="further-reading-9" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
@@ -808,7 +815,8 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#regression-models">regression models</a></li>
-<li><a class="nav-link" href="#section-18"></a></li>
+<li><a class="nav-link" href="#section-27"></a></li>
+<li><a class="nav-link" href="#section-28"></a></li>
 <li><a class="nav-link" href="#model-use">model use</a></li>
 <li><a class="nav-link" href="#single-linear-regression">single linear regression</a></li>
 <li><a class="nav-link" href="#predicting-with-a-model">predicting with a model</a></li>
@@ -816,8 +824,8 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 <a class="nav-link" href="#multiple-linear-regression">multiple linear regression</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#which-inputs-matter-most">which inputs matter most</a></li></ul>
 </li>
 <li><a class="nav-link" href="#assessing-regression-models">assessing regression models</a></li>
+<li><a class="nav-link" href="#section-29"></a></li>
 <li><a class="nav-link" href="#chapter-summary-9">chapter summary</a></li>
-<li><a class="nav-link" href="#section-19"></a></li>
 <li><a class="nav-link" href="#further-reading-9">further reading</a></li>
 </ul>
 
@@ -836,7 +844,7 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

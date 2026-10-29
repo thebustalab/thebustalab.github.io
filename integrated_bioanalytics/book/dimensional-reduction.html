@@ -14,14 +14,14 @@
     })();
   </script><title>dimensional reduction | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be...">
+<meta name="description" content="Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="dimensional reduction | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be...">
+<meta property="og:description" content="Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="dimensional reduction | Integrated Bioanalytics">
-<meta name="twitter:description" content="In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be...">
+<meta name="twitter:description" content="Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,6 +108,9 @@
 <h1>dimensional reduction<a class="anchor" aria-label="anchor" href="#dimensional-reduction"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear combinations of the original variables ordered by the variance they explain (PCA), or as nonlinear embeddings that preserve each sample’s nearest neighbors (UMAP and t-SNE). This analysis can be used to answer questions such as “Which variables contribute most to the first two principal components?” (PCA), “What fraction of the total variance do the first two principal components explain?” (PCA), or “Which samples are nearest neighbors when all of the variables are considered?” (UMAP and t-SNE).</p>
+<div id="section-18" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a></h2>
 <p>In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as “which samples resemble each other across all of the variables at once?” and, with principal components analysis (PCA), “which variables are driving the differences among the samples, and which are correlated?” PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using <code>runMatrixAnalysis()</code>, a function that is loaded into the R Session by the source() command.</p>
 <p>Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for <code>runMatrixAnalysis()</code> (see below) and (ii) it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaska lakes data set:</p>
 <div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
@@ -131,8 +134,10 @@
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')" };
-</script><div id="section-12" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-12"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-19" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="pca" class="section level2 unnumbered">
 <h2>pca<a class="anchor" aria-label="anchor" href="#pca"><i class="fas fa-link"></i></a>
@@ -146,7 +151,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-369"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%"><p class="caption">
-Figure: Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.
+Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.
 </p>
 </div>
 <p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
@@ -210,7 +215,7 @@ Figure: Principal component rotation illustrated. The bold axes denote the new p
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-371"></span>
 <img src="index_files/figure-html/unnamed-chunk-371-1.png" alt="Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
+Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
@@ -282,7 +287,7 @@ Self-check: two BELA lakes sit far to the right of all the others along Dim_1. W
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-373"></span>
 <img src="index_files/figure-html/unnamed-chunk-373-1.png" alt="Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
+Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Great! Here is how to read the ordination plot:</p>
@@ -329,7 +334,7 @@ Figure: Which analytes drive each principal component of the Alaskan lake chemis
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-375"></span>
 <img src="index_files/figure-html/unnamed-chunk-375-1.png" alt="Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
+Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:</p>
@@ -342,7 +347,7 @@ Figure: Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, w
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-376"></span>
 <img src="index_files/figure-html/unnamed-chunk-376-1.png" alt="Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
+Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-35" class="section level4 unnumbered">
@@ -403,7 +408,7 @@ Self-check: which analytes are the main drivers of the second principal componen
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-377"></span>
 <img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
+How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding <code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed()</a></code> to a ggplot.</p>
@@ -446,7 +451,7 @@ Self-check: the first component explains about 49% of the variance and the secon
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-379"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%"><p class="caption">
-Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
+Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
 </p>
 </div>
 <p>The function takes three key arguments:</p>
@@ -505,7 +510,7 @@ Figure: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the lin
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-382"></span>
 <img src="index_files/figure-html/unnamed-chunk-382-1.png" alt="Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
+Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.</p>
@@ -526,7 +531,7 @@ Figure: Red and white wines separated by their chemistry, using a linear method.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-383"></span>
 <img src="index_files/figure-html/unnamed-chunk-383-1.png" alt="Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
+Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.</p>
@@ -569,16 +574,21 @@ Self-check: the picture changes a little each time the cell runs. What can you s
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="section-20" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-20"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-6" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-6"><i class="fas fa-link"></i></a>
 </h2>
-<p>Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. <strong>PCA is the one to use when the axes need explaining</strong>: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each holds. PCA scales every analyte first, and the scores plot needs <code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed()</a></code> so that distances in the two directions can be compared. <strong>UMAP and t-SNE are non-linear</strong> and can reveal clusters or curved gradients that PCA misses, but their axes have no chemical meaning and each run can come out a little differently, so read only which samples sit near each other. The flowchart and the table below summarize the choices.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-385"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png" alt="Choosing a dimensionality reduction. A decision flowchart that starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses." width="100%"><p class="caption">
-Figure: Choosing a dimensionality reduction. A decision flowchart that starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png" alt="Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses." width="100%"><p class="caption">
+Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.
 </p>
+</div>
+<p>Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. <strong>PCA is the one to use when the axes need explaining</strong>: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each principal component describes. PCA scales every analyte first, and the ordination plot needs <code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_fixed()</a></code> so that distances in the two directions can be compared. <strong>UMAP and t-SNE are non-linear</strong> and can reveal clusters or curved gradients that PCA misses, but their axes have no quantitative meaning and each run can come out a little differently, so these should only be used to interpret local structures, not data set-wide layout.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -638,6 +648,7 @@ Figure: Choosing a dimensionality reduction. A decision flowchart that starts fr
 </tr>
 </tbody>
 </table></div>
+<hr>
 </div>
 <div id="exercises-5" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
@@ -673,9 +684,7 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
 
 - What are the top two markers for red versus white wine in the wine_quality dataset? Note that you may need to assign each bottle a unique ID as follows: `wine_quality <- select(mutate(wine_quality, ID = seq(1,6497,1)), ID, everything())`.
 -->
-</div>
-<div id="section-13" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a></h2>
+<hr>
 </div>
 <div id="further-reading-6" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
@@ -694,7 +703,8 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#dimensional-reduction">dimensional reduction</a></li>
-<li><a class="nav-link" href="#section-12"></a></li>
+<li><a class="nav-link" href="#section-18"></a></li>
+<li><a class="nav-link" href="#section-19"></a></li>
 <li>
 <a class="nav-link" href="#pca">pca</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#theory">theory</a></li>
@@ -704,9 +714,9 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
 </ul>
 </li>
 <li><a class="nav-link" href="#umap-and-tsne">umap and tsne</a></li>
+<li><a class="nav-link" href="#section-20"></a></li>
 <li><a class="nav-link" href="#chapter-summary-6">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-5">exercises</a></li>
-<li><a class="nav-link" href="#section-13"></a></li>
 <li><a class="nav-link" href="#further-reading-6">further reading</a></li>
 </ul>
 
@@ -725,7 +735,7 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

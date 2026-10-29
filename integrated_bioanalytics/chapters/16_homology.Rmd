@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png', dpi = NA)
 ```
 
+Homology searching uses the concept of a statistically scored sequence alignment to find sequences in a database or set of genomes that are similar to a query, either with BLAST, which extends short local matches between the query and individual sequences, or with HMMER, which scores sequences against a profile hidden Markov model built from an alignment of a protein family or domain. This analysis can be used to answer questions such as "Which sequences in this database align to the query with an E-value below the chosen cutoff?" or "Which proteins in these genomes match the profile of this domain?"
+
+## {-}
+
 Homology searching asks which sequences, in a public database or in a set of genomes, are related to the one in hand. It is the first step in annotating a newly sequenced gene, in pulling every member of an enzyme family out of a group of genomes or transcriptomes, and in the workflow of the chapters that follow, where the hits from a search are aligned and then built into phylogenetic trees. BLAST and HMMER are two different means of using homology to answer such questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.
 
 HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequence alignments of a protein family or domain. These profiles capture position-specific conservation and variability, which makes HMMER more sensitive for detecting distant homology and for identifying shared domains or motifs (including catalytic domains) even when overall sequence identity is low. As a result, BLAST is typically the first pass for close matches and rapid annotation, while HMMER is preferred for domain-centric searches, remote homolog discovery, and functional inference based on conserved motifs.
@@ -130,15 +134,21 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
+## {-}
+
 ## chapter summary {-}
 
-A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/16_homology.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/16_homology.pdf).
+::: {.summary-top}
 
 ```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a homology search. A decision flowchart that starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png', dpi = NA)
 ```
+
+A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
+
+:::
 
 | Function | What it does | Arguments students vary |
 |---|---|---|
@@ -152,3 +162,4 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | nucleotide | nucleotide | `"nnblastn"` (classic blastn) |
 | protein | nucleotide, translated | `"ntblastp"` (like tblastn) |
 | protein | protein | `"pnblastp"` (like blastp) |
+

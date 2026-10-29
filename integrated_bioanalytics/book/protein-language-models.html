@@ -14,14 +14,14 @@
     })();
   </script><title>protein language models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
+<meta name="description" content="Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="protein language models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
+<meta property="og:description" content="Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="protein language models | Integrated Bioanalytics">
-<meta name="twitter:description" content="In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein...">
+<meta name="twitter:description" content="Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,6 +108,9 @@
 <h1>protein language models<a class="anchor" aria-label="anchor" href="#protein-language-models"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a dataset into vectors that can be compared and examined with PCA without first building a multiple sequence alignment. This analysis can be used to answer questions such as “Which proteins in this set have the most similar embeddings?” or “Do diterpene synthases and monoterpene synthases occupy separate regions of a PCA of their embeddings?”</p>
+<div id="section-35" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-35"><i class="fas fa-link"></i></a></h2>
 <p>In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.</p>
 <p>Running the analyses in this chapter requires three things.</p>
 <ol style="list-style-type: decimal">
@@ -124,6 +127,7 @@
 <li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get an API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
 </ol>
 <p>Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.</p>
+</div>
 <div id="pre-reading-1" class="section level2 unnumbered">
 <h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading-1"><i class="fas fa-link"></i></a>
 </h2>
@@ -180,11 +184,14 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-628-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 </div>
+<div id="section-36" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-36"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-12" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-12"><i class="fas fa-link"></i></a>
 </h2>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
 <p>A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer’s attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf">Download this summary as a one-page PDF</a>.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="25%">
@@ -231,9 +238,7 @@
 </tr>
 </tbody>
 </table></div>
-</div>
-<div id="section-23" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-23"><i class="fas fa-link"></i></a></h2>
+<hr>
 </div>
 <div id="further-reading-12" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-12"><i class="fas fa-link"></i></a>
@@ -263,10 +268,11 @@
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#protein-language-models">protein language models</a></li>
+<li><a class="nav-link" href="#section-35"></a></li>
 <li><a class="nav-link" href="#pre-reading-1">pre-reading</a></li>
 <li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
+<li><a class="nav-link" href="#section-36"></a></li>
 <li><a class="nav-link" href="#chapter-summary-12">chapter summary</a></li>
-<li><a class="nav-link" href="#section-23"></a></li>
 <li><a class="nav-link" href="#further-reading-12">further reading</a></li>
 </ul>
 
@@ -285,7 +291,7 @@
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

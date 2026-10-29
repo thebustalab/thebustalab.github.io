@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
 ```
 
+Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear combinations of the original variables ordered by the variance they explain (PCA), or as nonlinear embeddings that preserve each sample's nearest neighbors (UMAP and t-SNE). This analysis can be used to answer questions such as "Which variables contribute most to the first two principal components?" (PCA), "What fraction of the total variance do the first two principal components explain?" (PCA), or "Which samples are nearest neighbors when all of the variables are considered?" (UMAP and t-SNE).
+
+## {-}
+
 In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 
 Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
@@ -372,15 +376,21 @@ ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. **PCA is the one to use when the axes need explaining**: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each holds. PCA scales every analyte first, and the scores plot needs `coord_fixed()` so that distances in the two directions can be compared. **UMAP and t-SNE are non-linear** and can reveal clusters or curved gradients that PCA misses, but their axes have no chemical meaning and each run can come out a little differently, so read only which samples sit near each other. The flowchart and the table below summarize the choices.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a dimensionality reduction. A decision flowchart that starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png', dpi = NA)
 ```
+
+Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. **PCA is the one to use when the axes need explaining**: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each principal component describes. PCA scales every analyte first, and the ordination plot needs `coord_fixed()` so that distances in the two directions can be compared. **UMAP and t-SNE are non-linear** and can reveal clusters or curved gradients that PCA misses, but their axes have no quantitative meaning and each run can come out a little differently, so these should only be used to interpret local structures, not data set-wide layout.
+
+:::
 
 | `analysis` or function | What it returns or does | What to set or watch |
 |---|---|---|
@@ -391,6 +401,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `pcaVisualizer()` | linked scores, ordination and heat map panels | `data` plus the two column arguments, desktop R only |
 | `"umap"` | non-linear embedding | axes have no meaning, runs vary, does not run in browser cells |
 | `"tsne"` | non-linear embedding that favors local clusters | remove samples with duplicate analyte values first, runs vary |
+
+<hr>
 
 ## exercises {-}
 
@@ -423,7 +435,7 @@ cat('
 - What are the top two markers for red versus white wine in the wine_quality dataset? Note that you may need to assign each bottle a unique ID as follows: `wine_quality <- select(mutate(wine_quality, ID = seq(1,6497,1)), ID, everything())`.
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

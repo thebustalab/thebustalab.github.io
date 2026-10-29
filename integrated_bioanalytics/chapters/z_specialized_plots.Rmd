@@ -1,5 +1,7 @@
 # specialized plots and maps {-}
 
+Specialized plots use the concept of nonstandard coordinate systems to display data that standard plots represent poorly: three continuous variables in 3D scatter plots, overlaps among sets in Venn diagrams, three-part compositions in ternary plots, and geographic positions on maps. This analysis can be used to answer questions such as "Which items are shared among these sets?", "What are the relative proportions of the three components in each sample?", or "How do the measured values vary across these sampling locations?"
+
 ## {-}
 
 This appendix collects plot types that are useful but specialized. None of them is part of the main

@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
 ```
 
+Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated columns to a dataset. This analysis can be used to answer questions such as "What is the mean height of each tree species in this dataset?" or "Which samples have the highest measured concentration of this analyte?"
+
+## {-}
+
 Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter's escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an *outside* data set into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -415,15 +419,21 @@ Fill in the blank with the verb that adds a new column without collapsing the ro
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf){.summary-pdf target="_blank"}
+
+::: {.summary-top}
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png', dpi = NA)
+```
 
 Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. `group_by()` with `summarize()` collapses each group to a single row, while `mutate()` keeps every row and adds a column. The pipe (`%>%`) chains these steps together, and `view()` on the result is the quickest way to check that each step did what was intended.
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf).
-
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it."}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png', dpi = NA)
-```
+:::
 
 | Function | What it does | What to set |
 |---|---|---|
@@ -438,6 +448,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `slice()` | keeps the first n rows (of each group, after `group_by()`) | n, as in `slice(1)` |
 | `mutate()` | adds a new column and keeps every row, and works within groups after `group_by()` | the new column, as in `percent_S = mg_per_L/sum(mg_per_L)*100` |
 | `geom_pointrange()` | plots a summary point with a range around it | `x` and `y`, plus `ymin` and `ymax` (or `xmin` and `xmax`) |
+
+<hr>
 
 ## exercises {-}
 
@@ -578,7 +590,7 @@ ggplot(pt_by_year_summ,
 
 7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

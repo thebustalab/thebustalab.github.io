@@ -14,14 +14,14 @@
     })();
   </script><title>wrangling and summaries | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
+<meta name="description" content="Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="wrangling and summaries | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
+<meta property="og:description" content="Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="wrangling and summaries | Integrated Bioanalytics">
-<meta name="twitter:description" content="Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely...">
+<meta name="twitter:description" content="Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,12 +108,17 @@
 <h1>wrangling and summaries<a class="anchor" aria-label="anchor" href="#wrangling-and-summaries"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated columns to a dataset. This analysis can be used to answer questions such as “What is the mean height of each tree species in this dataset?” or “Which samples have the highest measured concentration of this analyte?”</p>
+<div id="section-6" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
 <p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter’s escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an <em>outside</em> data set into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
-</script><div id="section-4" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-4"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-7" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="viewing-data" class="section level2 unnumbered">
 <h2>viewing data<a class="anchor" aria-label="anchor" href="#viewing-data"><i class="fas fa-link"></i></a>
@@ -702,16 +707,21 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="section-8" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-2" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-2"><i class="fas fa-link"></i></a>
 </h2>
-<p>Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. <code>group_by()</code> with <code>summarize()</code> collapses each group to a single row, while <code>mutate()</code> keeps every row and adds a column. The pipe (<code>%&gt;%</code>) chains these steps together, and <code>view()</code> on the result is the quickest way to check that each step did what was intended.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-206"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it." width="100%"><p class="caption">
-Figure: Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action." width="100%"><p class="caption">
+Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action.
 </p>
+</div>
+<p>Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. <code>group_by()</code> with <code>summarize()</code> collapses each group to a single row, while <code>mutate()</code> keeps every row and adds a column. The pipe (<code>%&gt;%</code>) chains these steps together, and <code>view()</code> on the result is the quickest way to check that each step did what was intended.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -795,6 +805,7 @@ Figure: Choosing a wrangling verb. A decision flowchart that starts from what a 
 </tr>
 </tbody>
 </table></div>
+<hr>
 </div>
 <div id="exercises-2" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
@@ -864,10 +875,7 @@ Some pointers:
 
 
 
-7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
-</div>
-<div id="section-5" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a></h2>
+7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. --><hr>
 </div>
 <div id="further-reading-2" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-2"><i class="fas fa-link"></i></a>
@@ -888,7 +896,8 @@ Some pointers:
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#wrangling-and-summaries">wrangling and summaries</a></li>
-<li><a class="nav-link" href="#section-4"></a></li>
+<li><a class="nav-link" href="#section-6"></a></li>
+<li><a class="nav-link" href="#section-7"></a></li>
 <li><a class="nav-link" href="#viewing-data">viewing data</a></li>
 <li><a class="nav-link" href="#subsetting">subsetting</a></li>
 <li><a class="nav-link" href="#wide-and-long-data">wide and long data</a></li>
@@ -896,9 +905,9 @@ Some pointers:
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
 <li><a class="nav-link" href="#mutate">mutate</a></li>
+<li><a class="nav-link" href="#section-8"></a></li>
 <li><a class="nav-link" href="#chapter-summary-2">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-2">exercises</a></li>
-<li><a class="nav-link" href="#section-5"></a></li>
 <li><a class="nav-link" href="#further-reading-2">further reading</a></li>
 </ul>
 
@@ -917,7 +926,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

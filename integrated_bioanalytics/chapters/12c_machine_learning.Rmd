@@ -9,6 +9,10 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg', dpi = NA)
 ```
 
+Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a numerical value (regression) or a category (classification) for each sample. This analysis can be used to answer questions such as "What category does the model predict for each held-out sample, and what fraction of those predictions are correct?" or "What is the root mean squared error of the model's predictions on held-out samples?"
+
+## {-}
+
 The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about getting the prediction right. Does this patient's blood chemistry point to kidney disease? What Valine abundance should we expect, given thirty other metabolites at once? Questions like these, which sort samples into classes or predict a value from many measurements, come up wherever a chemical profile is used to diagnose, classify or forecast. This chapter turns to flexible models that are judged mainly by how well they predict, starting with random forests, which can predict either a number (regression) or a category (classification). Because a flexible model can fit the noise in its own data, the chapter also covers why a model is judged on data it has not seen.
 
 *This chapter is a draft. It currently holds the random-forest material that used to sit in the numerical models chapter, and will grow into a full chapter on training, testing and comparing flexible models against simple ones.*
@@ -167,11 +171,13 @@ data.frame(
 )
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A **random forest** builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the `model_type`. `buildModel2()` tries every combination of settings in the `optimization_parameters` grid and reports each one's cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. `predictWithModel()` then applies the best model to new samples.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf).
+Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A **random forest** builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the `model_type`. `buildModel2()` tries every combination of settings in the `optimization_parameters` grid and reports each one's cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. `predictWithModel()` then applies the best model to new samples.
 
 | Function or setting | What it is for | What we set or vary |
 |---|---|---|
@@ -189,7 +195,7 @@ Flexible models are judged by how well they predict data they have not seen, bec
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

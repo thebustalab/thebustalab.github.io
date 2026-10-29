@@ -220,3 +220,30 @@ html[data-theme="dark"] hr,
 html[data-theme="dark"] .sidebar hr {
   border-color: #33373d;
 }
+/* Chapter summary: the flowchart sits directly under the heading, without the grey rules bs4_book
+   draws above and below every other figure. */
+main div[id^="chapter-summary"] .figure { border-top: none !important; border-bottom: none !important; }
+
+/* Chapter summary layout (HTML only; the one-page PDF builder has its own CSS and stacks these).
+   The PDF link sits on the heading's line, at the right. */
+main div[id^="chapter-summary"] { position: relative; }
+main div[id^="chapter-summary"] > p:has(> a.summary-pdf) {
+  position: absolute; top: 0; right: 0; margin: 0; line-height: 1;
+}
+main a.summary-pdf {
+  display: inline-block; font-size: 0.85rem; padding: 0.35rem 0.7rem;
+  border: 1px solid currentColor; border-radius: 6px; text-decoration: none;
+}
+main a.summary-pdf:hover { text-decoration: none; opacity: 0.8; }
+/* Flowchart and recap side by side on wide screens, stacked on narrow ones. */
+main .summary-top { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+main .summary-top > .figure { margin-top: 0; }
+@media (max-width: 768px) { main .summary-top { grid-template-columns: 1fr; } }
+/* Function table: smaller text and natural column widths, so rows wrap less. */
+main div[id^="chapter-summary"] table { font-size: 0.8rem; table-layout: auto; }
+main div[id^="chapter-summary"] table col { width: auto !important; }
+main div[id^="chapter-summary"] table code { font-size: 0.95em; }
+
+/* Exercise cards: larger cover thumbnails (the cards' inline style sets 150px). */
+main div[id^="exercises"] a > img { width: 220px !important; height: 220px !important; }
+main div[id^="exercises"] div[style*="max-width:640px"] { max-width: 760px !important; }

@@ -17,15 +17,25 @@
   Standard structure — keep this order (see any existing chapter for a live example):
     1. Chapter heading            # title {-}
     2. Opening image              HTML-only include_graphics chunk
-    3. Opening paragraph          a few sentences: what questions these methods answer and where
-                                  they are used, so the reader knows why before how
+    3. Preamble                   two sentences: "X uses the concept of Y to do Z to a dataset"
+                                  (naming every method), then "This analysis can be used to answer
+                                  questions such as '...?' or '...?'" (questions the analysis itself
+                                  answers)
     4. Separator                  ## {-}
-    5. Content sections           ## section {-}  /  ### subsection {-}
-    6. Chapter summary            ## chapter summary {-}  recap + decision flowchart + table, with a
-                                  link to summary_sheets/<file stem>.pdf (build_summary_sheets.py)
-    7. Exercises                  ## exercises {-}  (usually commented out)
-    8. Separator                  ## {-}
-    9. Further reading            ## further reading {-}  (3–5 annotated links)
+    5. Opening paragraph          a few sentences: what questions these methods answer and where
+                                  they are used, so the reader knows why before how
+    6. Separator                  ## {-}
+    7. Content sections           ## section {-}  /  ### subsection {-}
+    8. Separator                  ## {-}  (the TOC gap before the closing trio)
+    9. Chapter summary            ## chapter summary {-}, then the {.summary-pdf} link to
+                                  summary_sheets/<file stem>.pdf (shown on the heading's line), then
+                                  a ::: {.summary-top} div holding flowchart + recap (two columns in
+                                  HTML), then the function table (small text)
+   10. <hr>
+   11. Exercises                  ## exercises {-}  (usually commented out)
+   12. <hr>                       (an <hr>, not ## {-}: summary, exercises and further reading
+                                  sit together in the TOC)
+   13. Further reading            ## further reading {-}  (3–5 annotated links)
 
   Conventions:
     - The {-} after every heading suppresses bookdown's automatic numbering.
@@ -41,6 +51,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/REPLACE_ME.png', dpi = NA)
 ```
 
+Two-sentence preamble: what the analysis does and the questions it answers.
+
+## {-}
+
 A few sentences on when these methods are used: the questions they answer, where they show up in research and in other chapters, and what the reader will be able to do by the end.
 
 ## {-}
@@ -54,20 +68,35 @@ and `### subsection {-}` for subsections.
 # example code chunk
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-A short recap of the chapter's decisions, ideally with a decision flowchart (graphviz source in notes/, PNG in images/) and a table.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/<N>_<short_name>.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/<N>_<short_name>.pdf).
+::: {.summary-top}
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/<N>_<short_name>_flowchart.png', dpi = NA)
+```
+
+A short recap of the chapter's decisions (graphviz source for the flowchart in notes/, PNG in images/).
+
+:::
+
+| Function | What it is for | How it is used in this chapter |
+|---|---|---|
+
+<hr>
 
 <!-- ## exercises {-}
 
 Exercises live here, commented out, until they are assigned. Uncomment to make
-them live (chapter 9 has a worked live example).
+them live (chapter 9 has a worked live example). The <hr> below comes live with them.
+
+<hr>
 
 -->
-
-## {-}
 
 ## further reading {-}
 

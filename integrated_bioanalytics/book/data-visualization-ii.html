@@ -14,14 +14,14 @@
     })();
   </script><title>data visualization II | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with aes(), and choose one or more geometric objects to represent the data with a geom_*(). That...">
+<meta name="description" content="Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets,...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="data visualization II | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with aes(), and choose one or more geometric objects to represent the data with a geom_*(). That...">
+<meta property="og:description" content="Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets,...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="data visualization II | Integrated Bioanalytics">
-<meta name="twitter:description" content="In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with aes(), and choose one or more geometric objects to represent the data with a geom_*(). That...">
+<meta name="twitter:description" content="Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets,...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -107,12 +107,17 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-visualization-ii" class="section level1 unnumbered">
 <h1>data visualization II<a class="anchor" aria-label="anchor" href="#data-visualization-ii"><i class="fas fa-link"></i></a>
 </h1>
+<p>Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets, controlling axes, colors, and non-data elements with scales and themes, and combining multiple plots into one figure with subplots. This chapter’s content can be used to answer questions such as “Does the relationship between these two variables appear the same in each subset of the data?” or “Which samples have high or low values of which variables?”</p>
+<div id="section-3" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-3"><i class="fas fa-link"></i></a></h2>
 <p>In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>, and choose one or more geometric objects to represent the data with a <code>geom_*()</code>. That trio is enough to make a quick plot for ourselves, but a figure for a lab report, a poster or a paper has to do more: show the trend through two continuous measurements, lay out a whole table of abundances as a heat map, compare subsets side by side in panels, and read cleanly to someone who has never seen the data. These tools come back in many of the later chapters, wherever a result has to be shown to someone else. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RColorBrewer","cowplot"], datasets: [{ name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }, { name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }, { name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(ggrepel); library(RColorBrewer); library(cowplot)})" };
-</script><div id="section-2" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-2"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-4" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-4"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="more-geoms" class="section level2 unnumbered">
 <h2>more geoms<a class="anchor" aria-label="anchor" href="#more-geoms"><i class="fas fa-link"></i></a>
@@ -321,7 +326,7 @@ Self-check: which command adjusts a continuous <code>fill</code> color gradient?
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-158"></span>
 <img src="index_files/figure-html/unnamed-chunk-158-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the ‘solvents’ dataset used in UMD CHEM5725.
+Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the ‘solvents’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>In some cases, the following diagram illustrates a useful way to think about the <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> / <code>geom_*()</code> / <code>scale_*()</code> / <code>theme_*()</code> situation. It shows how we use these things together to achieve a sharp-looking plot:</p>
@@ -395,16 +400,21 @@ Self-check: what do you pass to <code>plot_grid()</code>?
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="section-5" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-1" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-1"><i class="fas fa-link"></i></a>
 </h2>
-<p>The kind of data being plotted points toward the geom: <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> for two continuous variables, and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> (a heat map) for two discrete variables and one continuous variable. When it matters which point is which, <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel()</a></code> labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a <code>scale_*</code> command adjusts, themes control the non-data ink, and <code>plot_grid()</code> combines finished plots into one figure.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-161"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png" alt="Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%"><p class="caption">
-Figure: Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png" alt="Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%"><p class="caption">
+Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.
 </p>
+</div>
+<p>The kind of data being plotted can help you choose which geom to use: <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> for two continuous variables, and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel()</a></code> labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a <code>scale_*</code> command adjusts, themes control the non-data ink, and <code>plot_grid()</code> combines finished plots into one figure.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -492,6 +502,7 @@ Figure: Choosing geoms and facets. A decision flowchart that starts from the kin
 </tr>
 </tbody>
 </table></div>
+<hr>
 </div>
 <div id="exercises-1" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-1"><i class="fas fa-link"></i></a>
@@ -545,10 +556,7 @@ Some pointers:
 
 5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized.
 
-6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. -->
-</div>
-<div id="section-3" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-3"><i class="fas fa-link"></i></a></h2>
+6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. --><hr>
 </div>
 <div id="further-reading-1" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-1"><i class="fas fa-link"></i></a>
@@ -579,15 +587,16 @@ Some pointers:
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#data-visualization-ii">data visualization II</a></li>
-<li><a class="nav-link" href="#section-2"></a></li>
+<li><a class="nav-link" href="#section-3"></a></li>
+<li><a class="nav-link" href="#section-4"></a></li>
 <li><a class="nav-link" href="#more-geoms">more geoms</a></li>
 <li><a class="nav-link" href="#facets">facets</a></li>
 <li><a class="nav-link" href="#scales">scales</a></li>
 <li><a class="nav-link" href="#themes">themes</a></li>
 <li><a class="nav-link" href="#subplots">subplots</a></li>
+<li><a class="nav-link" href="#section-5"></a></li>
 <li><a class="nav-link" href="#chapter-summary-1">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-1">exercises</a></li>
-<li><a class="nav-link" href="#section-3"></a></li>
 <li><a class="nav-link" href="#further-reading-1">further reading</a></li>
 </ul>
 
@@ -606,7 +615,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG', dpi = NA)
 ```
 
+Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose similarity exceeds a chosen threshold, or as an interaction network, in which edges are observed connections. Applying wrangling and summary techniques to network data can then examine edge direction, per-node summaries such as the number of connections, and the effect of removing nodes. This analysis can be used to answer questions such as "Which genes have expression profiles correlated above the chosen threshold across these samples?", "Which node has the most connections?", or "Which node, when removed, divides the network into the largest number of disconnected components?"
+
+## {-}
+
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Networks answer questions about connections: which samples resemble which, which genes rise and fall together, which proteins bind one another, and which single node holds a whole system together. In research they appear as gene co-expression networks and protein-protein interaction networks, and in this course they build directly on the distance matrices of the previous chapter, distances and scaling, and on the `group_by()` and `summarize()` verbs from the wrangling chapter. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
 - A **similarity network** is a structure we build. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means "these two samples resemble each other", and we decide how much resemblance is required for two samples to be connected, usually by setting that threshold.
@@ -455,15 +459,21 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-The first decision is what an edge means. A **similarity network** is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An **interaction network** is given: each row is an observed connection, there is no threshold, and the edges may be directed. Degree counts a node's connections and strength adds up their traffic, but neither says whether a node matters. Removing the node and counting the pieces that remain does. The positions of nodes in a force-directed layout carry no information, and a well-connected node means opposite things in the two kinds of network.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a kind of network. A decision flowchart that starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png', dpi = NA)
 ```
+
+The first decision that must be made when working with networks is determining what an edge means. A **similarity network** is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An **interaction network** is given by the data themselves: each row is an observed connection, there is no threshold, and the edges may be directed. We use a metric called 'degree' to count a node's connections and a metric called 'strength' adds up a node's traffic. However, neither degree nor strength accounts for whether a node holds different portions of a network together (an articulation point) - only removing the node and counting the pieces that remain can tell us about that. Importantly, the positions of nodes in a force-directed layout carry no quantitative information.
+
+:::
 
 | Step | Code from this chapter | What to set |
 |---|---|---|
@@ -476,6 +486,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | strength | `summarize(passengers_out = sum(passengers))` | |
 | node removal | `filter(origin != "KTN", destination != "KTN")`, then rebuild | the node to remove |
 
+<hr>
 
 ## exercises {-}
 
@@ -502,7 +513,7 @@ cat('
 ')
 ```
 
-## {-}
+<hr>
 
 ## further reading {-}
 

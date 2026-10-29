@@ -14,14 +14,14 @@
     })();
   </script><title>distances and scaling | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<meta name="description" content="Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="distances and scaling | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<meta property="og:description" content="Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="distances and scaling | Integrated Bioanalytics">
-<meta name="twitter:description" content="Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree,...">
+<meta name="twitter:description" content="Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,12 +108,17 @@
 <h1>distances and scaling<a class="anchor" aria-label="anchor" href="#distances-and-scaling"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of samples and variables into a distance matrix holding one value for every pair of samples, with scaling determining how much each variable contributes to those values. This analysis can be used to answer questions such as “Under the chosen metric, which sample in this reference set is closest to the unknown?” or “Does scaling the variables change which pairs of samples are closest?”</p>
+<div id="section-9" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a></h2>
 <p>Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a <strong>distance matrix</strong>: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. <strong>Scaling decides which variables count. The distance metric decides what “similar” means.</strong> Neither choice has a single right answer, but both change the result, so both should be made on purpose.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "wood_smoke", url: "/phylochemistry/sample_data/wood_smoke_data.csv" }, { name: "hops_components", url: "/phylochemistry/sample_data/hops_components.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- alaska_lake_data %>% select(-element_type) %>% pivot_wider(names_from = 'element', values_from = 'mg_per_L'); wood_smoke_wide <- wood_smoke %>% select(wood_type, species, compound, abundance_mg_g) %>% pivot_wider(names_from = 'compound', values_from = 'abundance_mg_g')" };
-</script><div id="section-6" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-10" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-10"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="distance-matrices" class="section level2 unnumbered">
 <h2>distance matrices<a class="anchor" aria-label="anchor" href="#distance-matrices"><i class="fas fa-link"></i></a>
@@ -273,7 +278,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-250"></span>
 <img src="index_files/figure-html/unnamed-chunk-250-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-16" class="section level4 unnumbered">
@@ -332,7 +337,7 @@ Self-check: in the long format, what does one row represent?
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-252"></span>
 <img src="index_files/figure-html/unnamed-chunk-252-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to <strong>scale</strong> each variable before computing distances: subtract the column’s mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R’s <code><a href="https://rdrr.io/r/base/scale.html">scale()</a></code> does it like this:</p>
@@ -373,7 +378,7 @@ Figure: Chloride abundance across Alaskan lakes. A bar chart showing the concent
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-254"></span>
 <img src="index_files/figure-html/unnamed-chunk-254-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-17" class="section level4 unnumbered">
@@ -782,16 +787,21 @@ Self-check: how does Gower distance score a categorical variable such as country
 </div>
 </div>
 </div>
+<div id="section-11" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-11"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-3" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-3"><i class="fas fa-link"></i></a>
 </h2>
-<p>Two decisions go into every distance matrix. <strong>Scaling decides which variables count</strong>: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when the metric needs them. <strong>The distance metric decides what “similar” means</strong>: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-264"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%"><p class="caption">
-Figure: Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%"><p class="caption">
+Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.
 </p>
+</div>
+<p>Two decisions go into every distance matrix. <strong>Scaling decides which variables count</strong>: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when you want distances to reflect potential differences in the scales that your variables occupy. <strong>The distance metric decides what “similar” means</strong>: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -861,10 +871,7 @@ Figure: Choosing a distance metric. A decision flowchart that starts from what i
 
 Escape-room cards go here once this chapter has rooms.
 
--->
-</div>
-<div id="section-7" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
+--><hr>
 </div>
 <div id="further-reading-3" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
@@ -885,7 +892,8 @@ Escape-room cards go here once this chapter has rooms.
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#distances-and-scaling">distances and scaling</a></li>
-<li><a class="nav-link" href="#section-6"></a></li>
+<li><a class="nav-link" href="#section-9"></a></li>
+<li><a class="nav-link" href="#section-10"></a></li>
 <li><a class="nav-link" href="#distance-matrices">distance matrices</a></li>
 <li><a class="nav-link" href="#scaling">scaling</a></li>
 <li>
@@ -897,8 +905,8 @@ Escape-room cards go here once this chapter has rooms.
 <li><a class="nav-link" href="#mixed-data-types">mixed data types</a></li>
 </ul>
 </li>
+<li><a class="nav-link" href="#section-11"></a></li>
 <li><a class="nav-link" href="#chapter-summary-3">chapter summary</a></li>
-<li><a class="nav-link" href="#section-7"></a></li>
 <li><a class="nav-link" href="#further-reading-3">further reading</a></li>
 </ul>
 
@@ -917,7 +925,7 @@ Escape-room cards go here once this chapter has rooms.
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

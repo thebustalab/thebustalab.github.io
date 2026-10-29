@@ -1,5 +1,9 @@
 # phylogenetic analyses {-}
 
+Phylogenetic comparative analysis uses the concept of shared ancestry, as described by a phylogenetic tree, to account for the non-independence of related species in trait data, measuring phylogenetic signal, testing correlations between traits with independent contrasts, and estimating ancestral trait values. This analysis can be used to answer questions such as "Do closely related species in this tree have more similar values of this trait than distantly related species?", "Are these two traits correlated after accounting for shared ancestry?", or "What value of this trait is estimated for the ancestor at this node?"
+
+## {-}
+
 Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic signal), are two traits related once shared ancestry is taken into account (independent contrasts), and what trait values did the ancestors probably have (ancestral trait reconstruction)? These questions matter because related species are not independent data points: two sister species may share a compound simply because both inherited it from the same ancestor. This chapter answers all three with the chemical bloom data and the angiosperm tree from the previous chapter. We start with a wrapper function, `runPhylogeneticAnalyses()`, that runs these phylogenetic comparative analyses in one call, then take each analysis in turn.
 
 ```{r, message = FALSE}
@@ -96,11 +100,13 @@ ggtree(
   theme_void()
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-The four analysis functions in this chapter take the same inputs: a tree as a `phylo` object, and a long table of traits with one column of species names that match the tree's tip labels exactly. Choosing among the analyses is a matter of choosing the question. **Phylogenetic signal** asks whether related species share similar trait values. **Independent contrasts** remove the effects of shared ancestry before two traits are compared. **Ancestral trait reconstruction** estimates the trait values of ancestors at the tree's nodes. It is not the same as `buildTree()`'s `ancestral_states` in the phylogenies chapter, which computes ancestral sequences.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/19_phylogenetic_analysis.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/19_phylogenetic_analysis.pdf).
+The four analysis functions in this chapter take the same inputs: a tree as a `phylo` object, and a long table of traits with one column of species names that match the tree's tip labels exactly. Choosing among the analyses is a matter of choosing the question. **Phylogenetic signal** asks whether related species share similar trait values. **Independent contrasts** remove the effects of shared ancestry before two traits are compared. **Ancestral trait reconstruction** estimates the trait values of ancestors at the tree's nodes. It is not the same as `buildTree()`'s `ancestral_states` in the phylogenies chapter, which computes ancestral sequences.
 
 | Function | Question it answers | Settings students vary |
 |---|---|---|
@@ -111,3 +117,4 @@ The four analysis functions in this chapter take the same inputs: a tree as a `p
 | `geom_ancestral_pie()` | pie charts of the ancestral estimates at each node of a `ggtree()` plot | `data = filter(anc_traits_tree, isTip == FALSE)`, `pie_size`, `pie_alpha` |
 
 The long trait table is made with `pivot_longer()`, and a tree passed to `ggtree()` for ancestral pies first needs duplicate nodes removed with `distinct(anc_traits_tree, node, .keep_all = TRUE)`.
+

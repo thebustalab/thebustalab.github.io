@@ -6,6 +6,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
+Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", or "Which predictors have coefficients significantly different from zero?"
+
+## {-}
+
 A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -492,15 +496,21 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Every regression model starts with its use. An **inferential** use reads the model's inner workings (the coefficients, their p-values and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs and any influential points with `check_model()`.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
 ```
+
+Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs, and any influential points with `check_model()`.
+
+:::
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
@@ -528,7 +538,7 @@ To practice creating models, try the following:
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

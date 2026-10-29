@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg', dpi = NA)
 ```
 
+Data visualization uses the concept of a grammar of graphics to display a dataset as a plot, mapping each variable to the position, color, or size of geometric objects such as points, lines, and bars. This analysis can be used to answer questions such as "How are the values of this variable distributed across the samples?" or "How does this variable vary with that variable across the samples?"
+
+## {-}
+
 Visualization is one of the most fun parts of working with data, and it is usually the first thing we do with a new data set: a plot shows at a glance which samples stand out, which groups differ, and whether the measurements look the way we expected. Most later chapters in this book produce plots (a heat map, a dendrogram, an ordination, a regression line), and in research, figures are how results reach readers in papers, posters and talks. In this chapter we will jump into visualization as quickly as possible, after just a few prerequisites: storing data in objects and filtering it with functions. Then we will learn the core grammar of `ggplot2`, which every one of those later plots is built on. Data visualization is a whole field in and of itself, and it is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -229,11 +233,13 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 -->
 
+## {-}
+
 ## chapter summary {-}
 
-Objects store data (`<-`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `chemical_species == "FAs"`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. The one decision to get right every time is where a feature of a shape goes. A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** it (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot brings out the trend best.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf).
+Objects store data (like: `my_object <- 7`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `filter(my_data, chemical_species == "FAs")`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** `aes()` (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.
 
 | Function or operator | What it does | What we vary |
 |---|---|---|
@@ -245,6 +251,8 @@ Objects store data (`<-`), and functions act on it: `filter()` keeps only the ro
 | `geom_point()` | draws one point per observation | `aes(color = ...)`, `aes(size = ...)`, or constants such as `size = 5`, `color = "black"` |
 | `geom_violin()` | draws the spread of values in each group | `aes(fill = ...)` |
 | `geom_boxplot()` | draws a box plot for each group | nothing extra in this chapter |
+
+<hr>
 
 ## exercises {-}
 
@@ -522,7 +530,7 @@ ggplot(
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 

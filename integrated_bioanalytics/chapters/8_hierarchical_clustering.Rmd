@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
 ```
 
+Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a dendrogram), which can then be cut at a chosen height to assign groups or used to order the rows of a heat map. This analysis can be used to answer questions such as "Which samples join the unknown sample at the lowest height in the tree?" or "Which groups do the samples fall into when the tree is cut at this height?"
+
+## {-}
+
 Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time, into a branching tree of nested groups (a dendrogram), built from the same distance matrix as in the distances and scaling chapter. The tree shows at a glance which samples resemble each other, and cutting across it turns those relationships into groups. In this chapter we use trees to find the lake whose water chemistry is closest to an unknown sample, to sort solvents into chemically recognizable families, and to order the rows of a heat map so that blocks of similar samples sit together. Along the way we cover the decisions that shape the result: which linkage rule builds the tree, how to read it, and where to cut it. Trees return in the flat clustering chapter, which sorts samples into groups without building one, and in the phylogenies chapters, where a tree records evolutionary history.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -496,15 +500,21 @@ Using AK_tree from the first concept check, fill in the blank with the coordinat
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Hierarchical clustering merges the two closest groups, again and again, until every sample sits in one tree. **The linkage rule decides what "closest" means for a group**, and different rules build different trees from the same distances, so always state the method and run a second one as a check. **A tree is read across, not down**: how far out from the tips two paths meet says how different two samples are, and tips printed side by side are not necessarily similar. **Cutting the tree turns it into groups**: a height lets the data say how many, a number of groups always returns that number.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a linkage and a cut. A decision flowchart that starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png', dpi = NA)
 ```
+
+Hierarchical clustering merges the two closest groups, again and again, until every sample is connected by one tree structure. **The linkage rule decides what "closest" means for a group**, and different rules build different trees from the same distances. **A tree is read across, not down** (assuming it's drawn with the root on the left and leaves on the right): how far out from the tips two paths meet shows how different two samples are, and adjacent tips are not necessarily similar. **Cutting the tree turns it into groups**: choosing a height as the basis for the cut lets the data drive how many clusters are created, whereas setting a number of groups will force the tree to be cut into that number of clusters.
+
+:::
 
 | Function or setting | What it does | What to set or watch |
 |---|---|---|
@@ -518,6 +528,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `ggtree()` + `geom_tiplab()`, `geom_tippoint()` | draws the tree and labels the tips | `aes(label = lake)`, `aes(fill = park)`, `align = TRUE` |
 | `geom_cut(height = 5)` or `geom_cut(k = 4)` | draws the cut on the tree | the same height as `parameters`, never `geom_vline()` |
 | `filter(isTip)` + `aes(y = y)` in `geom_tile()` | heat map in the tree's tip order | same `scale_y_continuous(limits = ...)` as the tree, then `plot_grid()` |
+
+<hr>
 
 ## exercises {-}
 
@@ -544,7 +556,7 @@ cat('
 ')
 ```
 
-## {-}
+<hr>
 
 ## further reading {-}
 

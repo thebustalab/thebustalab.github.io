@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-10-27"
+date: "2026-10-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -75,6 +75,10 @@ ________________________________________________________________________________
 # data visualization I {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Data visualization uses the concept of a grammar of graphics to display a dataset as a plot, mapping each variable to the position, color, or size of geometric objects such as points, lines, and bars. This analysis can be used to answer questions such as "How are the values of this variable distributed across the samples?" or "How does this variable vary with that variable across the samples?"
+
+## {-}
 
 Visualization is one of the most fun parts of working with data, and it is usually the first thing we do with a new data set: a plot shows at a glance which samples stand out, which groups differ, and whether the measurements look the way we expected. Most later chapters in this book produce plots (a heat map, a dendrogram, an ordination, a regression line), and in research, figures are how results reach readers in papers, posters and talks. In this chapter we will jump into visualization as quickly as possible, after just a few prerequisites: storing data in objects and filtering it with functions. Then we will learn the core grammar of `ggplot2`, which every one of those later plots is built on. Data visualization is a whole field in and of itself, and it is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
@@ -391,11 +395,13 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 -->
 
+## {-}
+
 ## chapter summary {-}
 
-Objects store data (`<-`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `chemical_species == "FAs"`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. The one decision to get right every time is where a feature of a shape goes. A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** it (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot brings out the trend best.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf).
+Objects store data (like: `my_object <- 7`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `filter(my_data, chemical_species == "FAs")`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** `aes()` (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.
 
 | Function or operator | What it does | What we vary |
 |---|---|---|
@@ -407,6 +413,8 @@ Objects store data (`<-`), and functions act on it: `filter()` keeps only the ro
 | `geom_point()` | draws one point per observation | `aes(color = ...)`, `aes(size = ...)`, or constants such as `size = 5`, `color = "black"` |
 | `geom_violin()` | draws the spread of values in each group | `aes(fill = ...)` |
 | `geom_boxplot()` | draws a box plot for each group | nothing extra in this chapter |
+
+<hr>
 
 ## exercises {-}
 
@@ -570,7 +578,7 @@ Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -592,6 +600,10 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 
 # data visualization II {-}
+
+Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets, controlling axes, colors, and non-data elements with scales and themes, and combining multiple plots into one figure with subplots. This chapter's content can be used to answer questions such as "Does the relationship between these two variables appear the same in each subset of the data?" or "Which samples have high or low values of which variables?"
+
+## {-}
 
 In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with `aes()`, and choose one or more geometric objects to represent the data with a `geom_*()`. That trio is enough to make a quick plot for ourselves, but a figure for a lab report, a poster or a paper has to do more: show the trend through two continuous measurements, lay out a whole table of abundances as a heat map, compare subsets side by side in panels, and read cleanly to someone who has never seen the data. These tools come back in many of the later chapters, wherever a result has to be shown to someone else. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.
 
@@ -947,16 +959,22 @@ plot_grid(____, ____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-The kind of data being plotted points toward the geom: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When it matters which point is which, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/4_datavis_2.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png" alt="Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-161)Choosing geoms and facets. A decision flowchart that starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png" alt="Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-161)Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
 </div>
+
+The kind of data being plotted can help you choose which geom to use: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
+
+:::
 
 | Function | What it is for | What we vary |
 |---|---|---|
@@ -971,6 +989,8 @@ The kind of data being plotted points toward the geom: `geom_smooth()` with `geo
 | `theme_classic()`, `theme_bw()`, `theme_dark()`, `theme_void()` | complete themes for the non-data ink | which one |
 | `theme()` | individual non-data components | `text = element_text(size = ..., color = ...)`, `axis.text` |
 | `plot_grid()` | arranges finished plot objects into one figure | the plot objects, `ncol` |
+
+<hr>
 
 ## exercises {-}
 
@@ -1022,7 +1042,7 @@ Some pointers:
 
 6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -1065,6 +1085,10 @@ ________________________________________________________________________________
 # wrangling and summaries {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated columns to a dataset. This analysis can be used to answer questions such as "What is the mean height of each tree species in this dataset?" or "Which samples have the highest measured concentration of this analyte?"
+
+## {-}
 
 Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter's escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an *outside* data set into R in the first place is a setup step rather than a wrangling one, so it lives under "data import" in the installation appendix.)
 
@@ -1727,16 +1751,22 @@ Fill in the blank with the verb that adds a new column without collapsing the ro
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf){.summary-pdf target="_blank"}
+
+::: {.summary-top}
+
+<div class="figure" style="text-align: center">
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-206)Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action.</p>
+</div>
 
 Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. `group_by()` with `summarize()` collapses each group to a single row, while `mutate()` keeps every row and adds a column. The pipe (`%>%`) chains these steps together, and `view()` on the result is the quickest way to check that each step did what was intended.
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6_wrangling_summaries.pdf).
-
-<div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-206)Choosing a wrangling verb. A decision flowchart that starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that deliver it.</p>
-</div>
+:::
 
 | Function | What it does | What to set |
 |---|---|---|
@@ -1751,6 +1781,8 @@ Wrangling comes down to deciding what the table should look like after each step
 | `slice()` | keeps the first n rows (of each group, after `group_by()`) | n, as in `slice(1)` |
 | `mutate()` | adds a new column and keeps every row, and works within groups after `group_by()` | the new column, as in `percent_S = mg_per_L/sum(mg_per_L)*100` |
 | `geom_pointrange()` | plots a summary point with a range around it | `x` and `y`, plus `ymin` and `ymax` (or `xmin` and `xmax`) |
+
+<hr>
 
 ## exercises {-}
 
@@ -1818,7 +1850,7 @@ Some pointers:
 
 7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -1836,6 +1868,10 @@ Some pointers:
 # distances and scaling {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of samples and variables into a distance matrix holding one value for every pair of samples, with scaling determining how much each variable contributes to those values. This analysis can be used to answer questions such as "Under the chosen metric, which sample in this reference set is closest to the unknown?" or "Does scaling the variables change which pairs of samples are closest?"
+
+## {-}
 
 Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a **distance matrix**: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. **Scaling decides which variables count. The distance metric decides what "similar" means.** Neither choice has a single right answer, but both change the result, so both should be made on purpose.
 
@@ -2566,16 +2602,22 @@ Fill in the blank with the metric that can compare hop varieties on a mix of num
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when the metric needs them. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/6b_distances_and_scaling.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-264)Choosing a distance metric. A decision flowchart that starts from what is in the columns of a data set and ends at a recommended value for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-264)Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.</p>
 </div>
+
+Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when you want distances to reflect potential differences in the scales that your variables occupy. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
+
+:::
 
 | `distance_method` | Similar means... | Typical data | Scale first? |
 |---|---|---|---|
@@ -2594,7 +2636,7 @@ Escape-room cards go here once this chapter has rooms.
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -2612,6 +2654,10 @@ Escape-room cards go here once this chapter has rooms.
 # networks {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG" alt="" width="100%" style="display: block; margin: auto;" />
+
+Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose similarity exceeds a chosen threshold, or as an interaction network, in which edges are observed connections. Applying wrangling and summary techniques to network data can then examine edge direction, per-node summaries such as the number of connections, and the effect of removing nodes. This analysis can be used to answer questions such as "Which genes have expression profiles correlated above the chosen threshold across these samples?", "Which node has the most connections?", or "Which node, when removed, divides the network into the largest number of disconnected components?"
+
+## {-}
 
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Networks answer questions about connections: which samples resemble which, which genes rise and fall together, which proteins bind one another, and which single node holds a whole system together. In research they appear as gene co-expression networks and protein-protein interaction networks, and in this course they build directly on the distance matrices of the previous chapter, distances and scaling, and on the `group_by()` and `summarize()` verbs from the wrangling chapter. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
@@ -3209,16 +3255,22 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-The first decision is what an edge means. A **similarity network** is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An **interaction network** is given: each row is an observed connection, there is no threshold, and the edges may be directed. Degree counts a node's connections and strength adds up their traffic, but neither says whether a node matters. Removing the node and counting the pieces that remain does. The positions of nodes in a force-directed layout carry no information, and a well-connected node means opposite things in the two kinds of network.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png" alt="Choosing a kind of network. A decision flowchart that starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-302)Choosing a kind of network. A decision flowchart that starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png" alt="Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-302)Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.</p>
 </div>
+
+The first decision that must be made when working with networks is determining what an edge means. A **similarity network** is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An **interaction network** is given by the data themselves: each row is an observed connection, there is no threshold, and the edges may be directed. We use a metric called 'degree' to count a node's connections and a metric called 'strength' adds up a node's traffic. However, neither degree nor strength accounts for whether a node holds different portions of a network together (an articulation point) - only removing the node and counting the pieces that remain can tell us about that. Importantly, the positions of nodes in a force-directed layout carry no quantitative information.
+
+:::
 
 | Step | Code from this chapter | What to set |
 |---|---|---|
@@ -3231,6 +3283,7 @@ The first decision is what an edge means. A **similarity network** is built: dis
 | strength | `summarize(passengers_out = sum(passengers))` | |
 | node removal | `filter(origin != "KTN", destination != "KTN")`, then rebuild | the node to remove |
 
+<hr>
 
 ## exercises {-}
 
@@ -3254,7 +3307,7 @@ The first decision is what an edge means. A **similarity network** is built: dis
 </div>
 </div>
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -3268,6 +3321,10 @@ The first decision is what an edge means. A **similarity network** is built: dis
 # hierarchical clustering {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a dendrogram), which can then be cut at a chosen height to assign groups or used to order the rows of a heat map. This analysis can be used to answer questions such as "Which samples join the unknown sample at the lowest height in the tree?" or "Which groups do the samples fall into when the tree is cut at this height?"
+
+## {-}
 
 Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time, into a branching tree of nested groups (a dendrogram), built from the same distance matrix as in the distances and scaling chapter. The tree shows at a glance which samples resemble each other, and cutting across it turns those relationships into groups. In this chapter we use trees to find the lake whose water chemistry is closest to an unknown sample, to sort solvents into chemically recognizable families, and to order the rows of a heat map so that blocks of similar samples sit together. Along the way we cover the decisions that shape the result: which linkage rule builds the tree, how to read it, and where to cut it. Trees return in the flat clustering chapter, which sorts samples into groups without building one, and in the phylogenies chapters, where a tree records evolutionary history.
 
@@ -3935,16 +3992,22 @@ Using AK_tree from the first concept check, fill in the blank with the coordinat
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Hierarchical clustering merges the two closest groups, again and again, until every sample sits in one tree. **The linkage rule decides what "closest" means for a group**, and different rules build different trees from the same distances, so always state the method and run a second one as a check. **A tree is read across, not down**: how far out from the tips two paths meet says how different two samples are, and tips printed side by side are not necessarily similar. **Cutting the tree turns it into groups**: a height lets the data say how many, a number of groups always returns that number.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png" alt="Choosing a linkage and a cut. A decision flowchart that starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-342)Choosing a linkage and a cut. A decision flowchart that starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png" alt="Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-342)Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.</p>
 </div>
+
+Hierarchical clustering merges the two closest groups, again and again, until every sample is connected by one tree structure. **The linkage rule decides what "closest" means for a group**, and different rules build different trees from the same distances. **A tree is read across, not down** (assuming it's drawn with the root on the left and leaves on the right): how far out from the tips two paths meet shows how different two samples are, and adjacent tips are not necessarily similar. **Cutting the tree turns it into groups**: choosing a height as the basis for the cut lets the data drive how many clusters are created, whereas setting a number of groups will force the tree to be cut into that number of clusters.
+
+:::
 
 | Function or setting | What it does | What to set or watch |
 |---|---|---|
@@ -3958,6 +4021,8 @@ Hierarchical clustering merges the two closest groups, again and again, until ev
 | `ggtree()` + `geom_tiplab()`, `geom_tippoint()` | draws the tree and labels the tips | `aes(label = lake)`, `aes(fill = park)`, `align = TRUE` |
 | `geom_cut(height = 5)` or `geom_cut(k = 4)` | draws the cut on the tree | the same height as `parameters`, never `geom_vline()` |
 | `filter(isTip)` + `aes(y = y)` in `geom_tile()` | heat map in the tree's tip order | same `scale_y_continuous(limits = ...)` as the tree, then `plot_grid()` |
+
+<hr>
 
 ## exercises {-}
 
@@ -3981,7 +4046,7 @@ Hierarchical clustering merges the two closest groups, again and again, until ev
 </div>
 </div>
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -4008,6 +4073,10 @@ Hierarchical clustering merges the two closest groups, again and again, until ev
 # dimensional reduction {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear combinations of the original variables ordered by the variance they explain (PCA), or as nonlinear embeddings that preserve each sample's nearest neighbors (UMAP and t-SNE). This analysis can be used to answer questions such as "Which variables contribute most to the first two principal components?" (PCA), "What fraction of the total variance do the first two principal components explain?" (PCA), or "Which samples are nearest neighbors when all of the variables are considered?" (UMAP and t-SNE).
+
+## {-}
 
 In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 
@@ -4519,16 +4588,22 @@ ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. **PCA is the one to use when the axes need explaining**: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each holds. PCA scales every analyte first, and the scores plot needs `coord_fixed()` so that distances in the two directions can be compared. **UMAP and t-SNE are non-linear** and can reveal clusters or curved gradients that PCA misses, but their axes have no chemical meaning and each run can come out a little differently, so read only which samples sit near each other. The flowchart and the table below summarize the choices.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/9_dimensional_reduction.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png" alt="Choosing a dimensionality reduction. A decision flowchart that starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-385)Choosing a dimensionality reduction. A decision flowchart that starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png" alt="Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-385)Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.</p>
 </div>
+
+Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. **PCA is the one to use when the axes need explaining**: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each principal component describes. PCA scales every analyte first, and the ordination plot needs `coord_fixed()` so that distances in the two directions can be compared. **UMAP and t-SNE are non-linear** and can reveal clusters or curved gradients that PCA misses, but their axes have no quantitative meaning and each run can come out a little differently, so these should only be used to interpret local structures, not data set-wide layout.
+
+:::
 
 | `analysis` or function | What it returns or does | What to set or watch |
 |---|---|---|
@@ -4539,6 +4614,8 @@ Dimensionality reduction places samples with many measurements on a two-dimensio
 | `pcaVisualizer()` | linked scores, ordination and heat map panels | `data` plus the two column arguments, desktop R only |
 | `"umap"` | non-linear embedding | axes have no meaning, runs vary, does not run in browser cells |
 | `"tsne"` | non-linear embedding that favors local clusters | remove samples with duplicate analyte values first, runs vary |
+
+<hr>
 
 ## exercises {-}
 
@@ -4568,7 +4645,7 @@ Dimensionality reduction places samples with many measurements on a two-dimensio
 - What are the top two markers for red versus white wine in the wine_quality dataset? Note that you may need to assign each bottle a unique ID as follows: `wine_quality <- select(mutate(wine_quality, ID = seq(1,6497,1)), ID, everything())`.
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -4582,6 +4659,10 @@ Dimensionality reduction places samples with many measurements on a two-dimensio
 # flat clustering {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Flat clustering uses the concept of distance between samples in variable space to assign each sample in a dataset to one group, either with k-means, which divides the samples into a chosen number (k) of clusters around cluster means, or with dbscan, which forms clusters from regions where samples are densely packed and labels samples in sparse regions as noise, after which the cluster labels can be summarized and joined to other data. This analysis can be used to answer questions such as "Which of k clusters does each sample belong to?", "At what value of k does adding another cluster stop substantially reducing the within-cluster variance?", or "Which samples does dbscan label as noise at these settings?"
+
+## {-}
 
 Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples into sources that share a chemistry, or plant extracts into chemotypes. Once samples have groups, those groups can be counted and summarized, compared with the statistical tests in the next chapter, or used to color an ordination plot such as a PCA. Some samples are interesting precisely because they fit no group at all. In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for and when a sample is better left out of every group.
 
@@ -4998,16 +5079,22 @@ Finally, nothing limits clustering to two columns: any number of columns can be 
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Flat clustering sorts samples straight into groups. **K-means** places every sample in the cluster whose center it sits closest to, so it needs the number of clusters and can never leave a sample out. **Dbscan** grows clusters outwards from points with enough close neighbors and leaves a sample that fits no cluster as `NA`. To choose the number of clusters for k-means, plot the within-cluster variance against k and read the bend (the elbow), not the lowest value: a sharp elbow means the number of groups is a property of the data, and a gentle one means it is largely a choice. Both methods scale the columns first by default. Once samples have clusters, the `cluster` column works like any other grouping column, and a grouping that also separates measurements it was never clustered on (nickel and silica, in the meteorite example) supports the idea that the groups are real.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/10_flat_clustering.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/10_flat_clustering.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/10_flat_clustering_flowchart.png" alt="Choosing a flat clustering method. A decision flowchart that starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-422)Choosing a flat clustering method. A decision flowchart that starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/10_flat_clustering_flowchart.png" alt="Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-422)Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings.</p>
 </div>
+
+Flat clustering sorts samples straight into groups. **K-means** places every sample in the cluster whose center it sits closest to, so it needs the number of clusters determined ahead of time and can never leave a sample out of a cluster. **Dbscan** grows clusters outwards from points with enough close neighbors and can leave a sample that fits no cluster as `NA`. For k-means, plot the within-cluster variance against k and examine whether there is a bend in the plot (the elbow). A sharp elbow means the number of groups is a property of the data, and a gentle one means that the data are not obviously structured into clusters. Both methods scale the data first by default. Once samples have clusters, the `cluster` column works like any other grouping column.
+
+:::
 
 | Function or setting | What it does | What to vary |
 |---|---|---|
@@ -5019,6 +5106,8 @@ Flat clustering sorts samples straight into groups. **K-means** places every sam
 | `group_by(cluster) %>% summarize(n = n())` | counts the samples in each cluster (the `NA` row counts unassigned samples, not a cluster) | other summary statistics |
 | `left_join(x, y, by = "fragment")` | brings back columns that were not clustered on | `by`, and `select()` the needed columns of `y` first |
 | `geom_mark_ellipse(aes(fill = cluster, label = cluster))` | draws an ellipse around each cluster | use `drop_na()` on dbscan output to skip the `NA` samples |
+
+<hr>
 
 ## exercises {-}
 
@@ -5042,7 +5131,7 @@ Flat clustering sorts samples straight into groups. **K-means** places every sam
 </div>
 </div>
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -5170,6 +5259,10 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 # comparing means {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if that hypothesis were true, using t tests or Wilcoxon tests for two groups, and Tukey or Dunn tests for more than two groups, to identify which pairs of groups differ. This analysis can be used to answer questions such as "Is the difference in potassium concentration between these two aquifers statistically significant at the 0.05 level?" or "Which pairs of aquifers differ significantly in potassium concentration?"
+
+## {-}
 
 **"Are these two things the same?"** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in their leaf chemistry? Questions like these come up whenever measurements from two or more groups are compared, which makes them some of the most common questions in experimental science and a feature of many research figures. A difference between two averages on its own does not answer them, because some difference is expected by chance alone. Statistical tests ask how likely it would be to get data this extreme if the groups' distributions were the same. This chapter covers how to look at the distributions first, how to choose a test for two groups or for more than two, and how to mark the results on a plot. The groups can come from anywhere: sites, treatments, species, or the clusters found in the flat clustering chapter.
 
@@ -5852,16 +5945,22 @@ hawaii_aquifers %>%
 
 <img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## chapter summary {-}
 
-Look at the distributions before comparing means: a mean on its own hides the shape, the spread and the number of observations. The *p* value is the likelihood of getting data this extreme if the distributions are the same, and it is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If so, use a parametric test. If not, use a rank test, which asks whether values in one group tend to be higher than values in the other. The t-test here is Welch's, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check it with the Levene test, as the chapter also does before `pairwiseTTest`. A t-test and a rank test can disagree because they answer different questions, and a plot of the raw points shows which question matters.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing means. A decision flowchart that starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-486)Choosing a test for comparing means. A decision flowchart that starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing means. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-486)Choosing a test for comparing means. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.</p>
 </div>
+
+Before choosing a statistical test to apply to your data, look at the distribution of the data in each group. **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). The t-test used in this book is Welch's, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check for equal variances first using the Levene test. The *p* value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The *p* value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.
+
+:::
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
@@ -5875,10 +5974,20 @@ Look at the distributions before comparing means: a mean on its own hides the sh
 | `pairwiseTTest(abundance ~ analyte)`, `pairwiseWilcoxTest(abundance ~ analyte)` | one comparison within each of several groups | after `group_by(aquifer_code)`, with `p.adj` corrected across all the groups |
 | `geomSignif()` | draws brackets and stars from pairwise test output | `data =` a table built from the test output |
 
+<hr>
+
 ## exercises {-}
 
 
 <div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing means &middot; t-tests, Tukey + pairwise tests</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.</div>
+</div>
+</div>
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/cover.png" alt="Seedfall cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
@@ -5889,7 +5998,7 @@ Look at the distributions before comparing means: a mean on its own hides the sh
 </div>
 </div>
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -5930,6 +6039,10 @@ ________________________________________________________________________________
 # regression models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", or "Which predictors have coefficients significantly different from zero?"
+
+## {-}
 
 A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
 
@@ -6587,16 +6700,22 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Every regression model starts with its use. An **inferential** use reads the model's inner workings (the coefficients, their p-values and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs and any influential points with `check_model()`.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-546)Choosing what to do with a regression model. A decision flowchart that starts from what the model is for and ends at the steps for reading, ranking or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-546)Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
 </div>
+
+Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs, and any influential points with `check_model()`.
+
+:::
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
@@ -6624,7 +6743,7 @@ To practice creating models, try the following:
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -6649,6 +6768,10 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 # machine learning {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a numerical value (regression) or a category (classification) for each sample. This analysis can be used to answer questions such as "What category does the model predict for each held-out sample, and what fraction of those predictions are correct?" or "What is the root mean squared error of the model's predictions on held-out samples?"
+
+## {-}
 
 The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about getting the prediction right. Does this patient's blood chemistry point to kidney disease? What Valine abundance should we expect, given thirty other metabolites at once? Questions like these, which sort samples into classes or predict a value from many measurements, come up wherever a chemical profile is used to diagnose, classify or forecast. This chapter turns to flexible models that are judged mainly by how well they predict, starting with random forests, which can predict either a number (regression) or a category (classification). Because a flexible model can fit the noise in its own data, the chapter also covers why a model is judged on data it has not seen.
 
@@ -6861,11 +6984,13 @@ data.frame(
 ## .pred_kidney_disease6 kidney_disease       0.95714286
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A **random forest** builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the `model_type`. `buildModel2()` tries every combination of settings in the `optimization_parameters` grid and reports each one's cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. `predictWithModel()` then applies the best model to new samples.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf).
+Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A **random forest** builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the `model_type`. `buildModel2()` tries every combination of settings in the `optimization_parameters` grid and reports each one's cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. `predictWithModel()` then applies the best model to new samples.
 
 | Function or setting | What it is for | What we set or vary |
 |---|---|---|
@@ -6883,7 +7008,7 @@ Flexible models are judged by how well they predict data they have not seen, bec
 
 -->
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -6903,6 +7028,10 @@ Flexible models are judged by how well they predict data they have not seen, bec
 # language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Language models use the concept of an embedding, a numerical vector computed from a piece of text by a model trained on large collections of text, to convert the text in a dataset into vectors that can be compared with cosine distance and examined with PCA, and generative models use the same approach to produce new text from a prompt. This analysis can be used to answer questions such as "Which publication titles in this set have the most similar embeddings?", "Do these odor descriptions separate along the first principal components of their embeddings?", or "What tags does the generative model assign to each abstract?"
+
+## {-}
 
 Much of the information in science is written rather than measured: paper titles and abstracts, odor descriptions, notes on samples. Earlier chapters analyzed numerical data, and language models are how text joins those analyses. Language models are algorithms trained on large amounts of text, and in this chapter we focus on embedding models, which convert each piece of text into an **embedding**: a vector of numbers that captures its essential features, so that texts with similar meanings end up with similar vectors. Once text is in that form, the techniques we have already covered apply to it directly. Here we use PCA to see which publication titles from a PubMed search, or which odor descriptions, group together, and because embeddings are compared by direction rather than size, cosine distance (from the distances and scaling chapter) is the usual way to measure how alike two of them are. The chapter closes with generative models, which build on the same machinery to write new text, such as tags summarizing each abstract. The next chapter applies the embedding idea to protein sequences.
 
@@ -7190,16 +7319,22 @@ select(search_results, title, generation)
 ## 12 Update on Cuticular Wax Biosynthesis and Its … Plant cut…
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/13_language_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/13_language_models.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/13_language_models_flowchart.png" alt="Choosing a language model approach. A decision flowchart that starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-604)Choosing a language model approach. A decision flowchart that starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
 </div>
+
+Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
+
+:::
 
 | Function | What it is for | Arguments varied in this chapter |
 |---|---|---|
@@ -7209,7 +7344,7 @@ Language models turn text into numbers. An embedding model converts each title, 
 | `runMatrixAnalysis()` | PCA on the embedding columns to see which texts group together | `analysis = "pca"`, `columns_w_values_for_single_analyte` (the columns found by `grep("embed", ...)`), `columns_w_sample_ID_info` |
 | `generateText()` | new text (here, three tags per abstract) from the course generation endpoint | `df`, `prompt_column`, `system_column` |
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -7261,6 +7396,10 @@ search_results_ex_embed_pca %>%
 # protein language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a dataset into vectors that can be compared and examined with PCA without first building a multiple sequence alignment. This analysis can be used to answer questions such as "Which proteins in this set have the most similar embeddings?" or "Do diterpene synthases and monoterpene synthases occupy separate regions of a PCA of their embeddings?"
+
+## {-}
 
 In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.
 
@@ -7350,11 +7489,13 @@ ggplot(all_sequences_embedded_pca) +
 
 <img src="index_files/figure-html/unnamed-chunk-628-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## chapter summary {-}
 
-A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer's attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf).
+A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer's attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.
 
 | Step | Function | What it is for | Arguments and settings used in this chapter |
 |---|---|---|---|
@@ -7363,7 +7504,7 @@ A protein language model turns each amino acid sequence into an embedding, a row
 | 2 | `embedAminoAcids()` | embed each sequence with a pre-trained protein language model | `amino_acid_stringset`, `platform` (`"nvidia"` runs esm2-650m, bioLM offers several models), `nvidia_api_key` or `biolm_api_key` |
 | 3 | `runMatrixAnalysis()` | PCA on the embedding columns to see which proteins group together | `analysis = "pca"`, `columns_w_values_for_single_analyte` (the embedding columns), `columns_w_sample_ID_info` |
 
-## {-}
+<hr>
 
 ## further reading {-}
 
@@ -7390,6 +7531,10 @@ ________________________________________________________________________________
 # homology {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png" alt="" width="100%" style="display: block; margin: auto;" />
+
+Homology searching uses the concept of a statistically scored sequence alignment to find sequences in a database or set of genomes that are similar to a query, either with BLAST, which extends short local matches between the query and individual sequences, or with HMMER, which scores sequences against a profile hidden Markov model built from an alignment of a protein family or domain. This analysis can be used to answer questions such as "Which sequences in this database align to the query with an E-value below the chosen cutoff?" or "Which proteins in these genomes match the profile of this domain?"
+
+## {-}
 
 Homology searching asks which sequences, in a public database or in a set of genomes, are related to the one in hand. It is the first step in annotating a newly sequenced gene, in pulling every member of an enzyme family out of a group of genomes or transcriptomes, and in the workflow of the chapters that follow, where the hits from a search are aligned and then built into phylogenetic trees. BLAST and HMMER are two different means of using homology to answer such questions. However, the two techniques answer slightly different questions because they are built on different models of similarity. BLAST uses a fast heuristic, seed-and-extend approach for local alignments, scoring short exact or near-exact matches and then extending them into longer alignments. This makes BLAST very effective for finding close homologs, quickly identifying full-length similarities, and doing rapid database screening for annotations or orthologs.
 
@@ -7520,16 +7665,22 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
+## {-}
+
 ## chapter summary {-}
 
-A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/16_homology.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/16_homology.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png" alt="Choosing a homology search. A decision flowchart that starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-643)Choosing a homology search. A decision flowchart that starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
 </div>
+
+A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
+
+:::
 
 | Function | What it does | Arguments students vary |
 |---|---|---|
@@ -7545,9 +7696,14 @@ A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast
 | protein | protein | `"pnblastp"` (like blastp) |
 
 
+
 # alignments {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" alt="" width="100%" style="display: block; margin: auto;" />
+
+Multiple sequence alignment uses the concept of positional homology, placing residues inferred to share ancestry in the same column, to arrange a set of nucleotide, amino acid, or codon sequences into a matrix, which can then be assessed for gaps and conservation and trimmed before tree building. This analysis can be used to answer questions such as "Which residues in these sequences occupy corresponding positions?" or "Which columns of the alignment are mostly gaps or poorly conserved?"
+
+## {-}
 
 Multiple sequence alignments form the bridge between raw sequences and downstream phylogenetic analysis. An alignment answers the question of which positions in a set of related sequences correspond to one another, and the later sequence work in this book depends on that answer: the phylogenies built in the next chapter come from alignments, and so do the HMMER domain libraries in the homology chapter. In this chapter we first use `alignSequences()` to assemble consistent nucleotide, amino-acid, or codon alignments. This is easily accomplished from the monolist generated by `polyBlast()`, if the sequences were generated that way. Then we turn to `analyzeAlignment()` to diagnose gap-heavy or poorly conserved sites, interactively trim them away, and export a cleaned alignment for tree building.
 
@@ -7595,11 +7751,13 @@ analyzeAlignment(
 )
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Building an alignment takes two steps. `alignSequences()` aligns the hits chosen by a logical `subset` column of the `polyBlast()` monolist, with `mode` set to nucleotide, amino-acid or codon alignment. `analyzeAlignment()` then profiles each column for gaps and conservation, lets us tune the trimming thresholds interactively, and writes the trimmed alignment to `<alignment_in_path>_trimmed`, ready for tree building.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/17_alignments.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/17_alignments.pdf).
+Building an alignment takes two steps. `alignSequences()` aligns the hits chosen by a logical `subset` column of the `polyBlast()` monolist, with `mode` set to nucleotide, amino-acid or codon alignment. `analyzeAlignment()` then profiles each column for gaps and conservation, lets us tune the trimming thresholds interactively, and writes the trimmed alignment to `<alignment_in_path>_trimmed`, ready for tree building.
 
 | Function | What it does | Arguments students vary |
 |---|---|---|
@@ -7608,7 +7766,12 @@ Building an alignment takes two steps. `alignSequences()` aligns the hits chosen
 | `analyzeAlignment()` | Shiny app for trimming gap-heavy or poorly conserved columns, returning the trimmed alignment | `alignment_in_path`, `type` (`"DNA"`, `"AA"`), `jupyter` (`TRUE` in Jupyter) |
 
 
+
 # phylogenies {-}
+
+Phylogenetic tree building uses the concept of a branching model of descent to represent the evolutionary relationships among species or genes, either by pruning an existing published tree to the species of interest or by inferring a tree from a sequence alignment with neighbor joining or maximum likelihood, after which the tree can be plotted, collapsed to a higher taxonomic level, and displayed alongside trait data. This analysis can be used to answer questions such as "Which of these sequences are most closely related in the inferred tree?" or "In which clades of this tree does this compound class occur?"
+
+## {-}
 
 A phylogeny is a tree of evolutionary relationships, and it answers a question that comes up whenever chemistry is compared across species or genes: which of these are close relatives, and which share a common ancestor only far back? Chemical traits are inherited along those branches, so a tree is the backdrop for asking where in the plant kingdom a group of compounds appears, as in the chemical bloom example at the end of this chapter. Trees of species can be built from an existing published phylogeny, while trees of genes, such as an enzyme family found with the homology searches and aligned in the alignments chapter, are built from the sequences themselves. This chapter covers both routes with `buildTree()`, then shows how to plot a tree, collapse it to a higher taxonomic level, and draw traits beside it. The next chapter uses these trees to ask how the traits evolved.
 
@@ -7945,16 +8108,22 @@ plot_grid(
 
 <img src="index_files/figure-html/unnamed-chunk-673-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## chapter summary {-}
 
-Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/18_phylogenies.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/18_phylogenies.pdf).
+::: {.summary-top}
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png" alt="Choosing how to build a tree. A decision flowchart that starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings." width="100%" />
 <p class="caption">(\#fig:unnamed-chunk-674)Choosing how to build a tree. A decision flowchart that starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
 </div>
+
+Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
+
+:::
 
 | Function | What it is for | Settings students vary |
 |---|---|---|
@@ -7968,7 +8137,12 @@ Building a tree starts with one decision: **what the tree is built from.** A new
 | `plot_grid()` | the tree and the trait plot side by side | `nrow = 1`, `align = "h"`, `axis = "tb"` |
 
 
+
 # phylogenetic analyses {-}
+
+Phylogenetic comparative analysis uses the concept of shared ancestry, as described by a phylogenetic tree, to account for the non-independence of related species in trait data, measuring phylogenetic signal, testing correlations between traits with independent contrasts, and estimating ancestral trait values. This analysis can be used to answer questions such as "Do closely related species in this tree have more similar values of this trait than distantly related species?", "Are these two traits correlated after accounting for shared ancestry?", or "What value of this trait is estimated for the ancestor at this node?"
+
+## {-}
 
 Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic signal), are two traits related once shared ancestry is taken into account (independent contrasts), and what trait values did the ancestors probably have (ancestral trait reconstruction)? These questions matter because related species are not independent data points: two sister species may share a compound simply because both inherited it from the same ancestor. This chapter answers all three with the chemical bloom data and the angiosperm tree from the previous chapter. We start with a wrapper function, `runPhylogeneticAnalyses()`, that runs these phylogenetic comparative analyses in one call, then take each analysis in turn.
 
@@ -8186,11 +8360,13 @@ ggtree(
 
 <img src="index_files/figure-html/unnamed-chunk-698-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## chapter summary {-}
 
-The four analysis functions in this chapter take the same inputs: a tree as a `phylo` object, and a long table of traits with one column of species names that match the tree's tip labels exactly. Choosing among the analyses is a matter of choosing the question. **Phylogenetic signal** asks whether related species share similar trait values. **Independent contrasts** remove the effects of shared ancestry before two traits are compared. **Ancestral trait reconstruction** estimates the trait values of ancestors at the tree's nodes. It is not the same as `buildTree()`'s `ancestral_states` in the phylogenies chapter, which computes ancestral sequences.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/19_phylogenetic_analysis.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/19_phylogenetic_analysis.pdf).
+The four analysis functions in this chapter take the same inputs: a tree as a `phylo` object, and a long table of traits with one column of species names that match the tree's tip labels exactly. Choosing among the analyses is a matter of choosing the question. **Phylogenetic signal** asks whether related species share similar trait values. **Independent contrasts** remove the effects of shared ancestry before two traits are compared. **Ancestral trait reconstruction** estimates the trait values of ancestors at the tree's nodes. It is not the same as `buildTree()`'s `ancestral_states` in the phylogenies chapter, which computes ancestral sequences.
 
 | Function | Question it answers | Settings students vary |
 |---|---|---|
@@ -8201,6 +8377,7 @@ The four analysis functions in this chapter take the same inputs: a tree as a `p
 | `geom_ancestral_pie()` | pie charts of the ancestral estimates at each node of a `ggtree()` plot | `data = filter(anc_traits_tree, isTip == FALSE)`, `pie_size`, `pie_alpha` |
 
 The long trait table is made with `pivot_longer()`, and a tree passed to `ggtree()` for ancestral pies first needs duplicate nodes removed with `distinct(anc_traits_tree, node, .keep_all = TRUE)`.
+
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -8957,6 +9134,8 @@ With these paths, we can read in data using the `read_csv` command. We'll run `r
 
 
 # specialized plots and maps {-}
+
+Specialized plots use the concept of nonstandard coordinate systems to display data that standard plots represent poorly: three continuous variables in 3D scatter plots, overlaps among sets in Venn diagrams, three-part compositions in ternary plots, and geographic positions on maps. This analysis can be used to answer questions such as "Which items are shared among these sets?", "What are the relative proportions of the three components in each sample?", or "How do the measured values vary across these sampling locations?"
 
 ## {-}
 

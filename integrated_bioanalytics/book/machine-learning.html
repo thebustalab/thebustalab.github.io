@@ -14,14 +14,14 @@
     })();
   </script><title>machine learning | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about...">
+<meta name="description" content="Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="machine learning | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about...">
+<meta property="og:description" content="Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="machine learning | Integrated Bioanalytics">
-<meta name="twitter:description" content="The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about...">
+<meta name="twitter:description" content="Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,10 +108,14 @@
 <h1>machine learning<a class="anchor" aria-label="anchor" href="#machine-learning"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Machine learning, in this chapter, uses the concept of a random forest, a collection of decision trees trained on one portion of a dataset and evaluated on a held-out portion, to predict a numerical value (regression) or a category (classification) for each sample. This analysis can be used to answer questions such as “What category does the model predict for each held-out sample, and what fraction of those predictions are correct?” or “What is the root mean squared error of the model’s predictions on held-out samples?”</p>
+<div id="section-30" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-30"><i class="fas fa-link"></i></a></h2>
 <p>The regression models in the previous chapter are simple enough to read directly: a slope, an intercept, a ranked list of coefficients. Some questions care less about reading the model than about getting the prediction right. Does this patient’s blood chemistry point to kidney disease? What Valine abundance should we expect, given thirty other metabolites at once? Questions like these, which sort samples into classes or predict a value from many measurements, come up wherever a chemical profile is used to diagnose, classify or forecast. This chapter turns to flexible models that are judged mainly by how well they predict, starting with random forests, which can predict either a number (regression) or a category (classification). Because a flexible model can fit the noise in its own data, the chapter also covers why a model is judged on data it has not seen.</p>
 <p><em>This chapter is a draft. It currently holds the random-forest material that used to sit in the numerical models chapter, and will grow into a full chapter on training, testing and comparing flexible models against simple ones.</em></p>
-<div id="section-20" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-20"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="section-31" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-31"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="why-hold-data-back" class="section level2 unnumbered">
 <h2>why hold data back<a class="anchor" aria-label="anchor" href="#why-hold-data-back"><i class="fas fa-link"></i></a>
@@ -199,7 +203,7 @@
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-578"></span>
 <img src="index_files/figure-html/unnamed-chunk-578-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.
+Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.
 </p>
 </div>
 <p>We can use the model to make predictions with the <code>predictWithModel()</code> function:</p>
@@ -226,7 +230,7 @@ Figure: Prediction error of random forest models for valine across the parameter
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-579"></span>
 <img src="index_files/figure-html/unnamed-chunk-579-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
-Figure: Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest’s predictions as a maroon line. Each point is one patient. Data: metabolomics_data.
+Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest’s predictions as a maroon line. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
 <p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the <code>model_type</code> to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
@@ -274,7 +278,7 @@ Figure: Valine abundance predicted by the best random forest model. Scatter plot
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-581"></span>
 <img src="index_files/figure-html/unnamed-chunk-581-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%"><p class="caption">
-Figure: Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.
+Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.
 </p>
 </div>
 <p>We can also make predictions on data the model has not seen, here the six patients that were held out:</p>
@@ -303,11 +307,14 @@ Figure: Accuracy of random forest classifiers for patient status across the para
 <span><span class="co">## .pred_kidney_disease5 kidney_disease       0.96428571</span></span>
 <span><span class="co">## .pred_kidney_disease6 kidney_disease       0.95714286</span></span></code></pre></div>
 </div>
+<div id="section-32" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-32"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-10" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-10"><i class="fas fa-link"></i></a>
 </h2>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
 <p>Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A <strong>random forest</strong> builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the <code>model_type</code>. <code>buildModel2()</code> tries every combination of settings in the <code>optimization_parameters</code> grid and reports each one’s cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. <code>predictWithModel()</code> then applies the best model to new samples.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf">Download this summary as a one-page PDF</a>.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -378,10 +385,7 @@ Figure: Accuracy of random forest classifiers for patient status across the para
 </table></div>
 <!-- ## exercises {-}
 
--->
-</div>
-<div id="section-21" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-21"><i class="fas fa-link"></i></a></h2>
+--><hr>
 </div>
 <div id="further-reading-10" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
@@ -403,11 +407,12 @@ Figure: Accuracy of random forest classifiers for patient status across the para
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#machine-learning">machine learning</a></li>
-<li><a class="nav-link" href="#section-20"></a></li>
+<li><a class="nav-link" href="#section-30"></a></li>
+<li><a class="nav-link" href="#section-31"></a></li>
 <li><a class="nav-link" href="#why-hold-data-back">why hold data back</a></li>
 <li><a class="nav-link" href="#random-forests">random forests</a></li>
+<li><a class="nav-link" href="#section-32"></a></li>
 <li><a class="nav-link" href="#chapter-summary-10">chapter summary</a></li>
-<li><a class="nav-link" href="#section-21"></a></li>
 <li><a class="nav-link" href="#further-reading-10">further reading</a></li>
 </ul>
 
@@ -426,7 +431,7 @@ Figure: Accuracy of random forest classifiers for patient status across the para
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)
 ```
 
+Language models use the concept of an embedding, a numerical vector computed from a piece of text by a model trained on large collections of text, to convert the text in a dataset into vectors that can be compared with cosine distance and examined with PCA, and generative models use the same approach to produce new text from a prompt. This analysis can be used to answer questions such as "Which publication titles in this set have the most similar embeddings?", "Do these odor descriptions separate along the first principal components of their embeddings?", or "What tags does the generative model assign to each abstract?"
+
+## {-}
+
 Much of the information in science is written rather than measured: paper titles and abstracts, odor descriptions, notes on samples. Earlier chapters analyzed numerical data, and language models are how text joins those analyses. Language models are algorithms trained on large amounts of text, and in this chapter we focus on embedding models, which convert each piece of text into an **embedding**: a vector of numbers that captures its essential features, so that texts with similar meanings end up with similar vectors. Once text is in that form, the techniques we have already covered apply to it directly. Here we use PCA to see which publication titles from a PubMed search, or which odor descriptions, group together, and because embeddings are compared by direction rather than size, cosine distance (from the distances and scaling chapter) is the usual way to measure how alike two of them are. The chapter closes with generative models, which build on the same machinery to write new text, such as tags summarizing each abstract. The next chapter applies the embedding idea to protein sequences.
 
 To run the analyses in this chapter, you will need three things.
@@ -226,15 +230,21 @@ search_results <- generateText(
 select(search_results, title, generation)
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/13_language_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/13_language_models.pdf).
+::: {.summary-top}
 
 ```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a language model approach. A decision flowchart that starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/13_language_models_flowchart.png', dpi = NA)
 ```
+
+Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
+
+:::
 
 | Function | What it is for | Arguments varied in this chapter |
 |---|---|---|
@@ -244,7 +254,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `runMatrixAnalysis()` | PCA on the embedding columns to see which texts group together | `analysis = "pca"`, `columns_w_values_for_single_analyte` (the columns found by `grep("embed", ...)`), `columns_w_sample_ID_info` |
 | `generateText()` | new text (here, three tags per abstract) from the course generation endpoint | `df`, `prompt_column`, `system_column` |
 
-## {-}
+<hr>
 
 ## further reading {-}
 

@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png', dpi = NA)
 ```
 
+Flat clustering uses the concept of distance between samples in variable space to assign each sample in a dataset to one group, either with k-means, which divides the samples into a chosen number (k) of clusters around cluster means, or with dbscan, which forms clusters from regions where samples are densely packed and labels samples in sparse regions as noise, after which the cluster labels can be summarized and joined to other data. This analysis can be used to answer questions such as "Which of k clusters does each sample belong to?", "At what value of k does adding another cluster stop substantially reducing the within-cluster variance?", or "Which samples does dbscan label as noise at these settings?"
+
+## {-}
+
 Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples into sources that share a chemistry, or plant extracts into chemotypes. Once samples have groups, those groups can be counted and summarized, compared with the statistical tests in the next chapter, or used to color an ordination plot such as a PCA. Some samples are interesting precisely because they fit no group at all. In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for and when a sample is better left out of every group.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
@@ -331,15 +335,21 @@ Finally, nothing limits clustering to two columns: any number of columns can be 
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
+## {-}
+
 ## chapter summary {-}
 
-Flat clustering sorts samples straight into groups. **K-means** places every sample in the cluster whose center it sits closest to, so it needs the number of clusters and can never leave a sample out. **Dbscan** grows clusters outwards from points with enough close neighbors and leaves a sample that fits no cluster as `NA`. To choose the number of clusters for k-means, plot the within-cluster variance against k and read the bend (the elbow), not the lowest value: a sharp elbow means the number of groups is a property of the data, and a gentle one means it is largely a choice. Both methods scale the columns first by default. Once samples have clusters, the `cluster` column works like any other grouping column, and a grouping that also separates measurements it was never clustered on (nickel and silica, in the meteorite example) supports the idea that the groups are real.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/10_flat_clustering.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/10_flat_clustering.pdf).
+::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a flat clustering method. A decision flowchart that starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/10_flat_clustering_flowchart.png', dpi = NA)
 ```
+
+Flat clustering sorts samples straight into groups. **K-means** places every sample in the cluster whose center it sits closest to, so it needs the number of clusters determined ahead of time and can never leave a sample out of a cluster. **Dbscan** grows clusters outwards from points with enough close neighbors and can leave a sample that fits no cluster as `NA`. For k-means, plot the within-cluster variance against k and examine whether there is a bend in the plot (the elbow). A sharp elbow means the number of groups is a property of the data, and a gentle one means that the data are not obviously structured into clusters. Both methods scale the data first by default. Once samples have clusters, the `cluster` column works like any other grouping column.
+
+:::
 
 | Function or setting | What it does | What to vary |
 |---|---|---|
@@ -351,6 +361,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 | `group_by(cluster) %>% summarize(n = n())` | counts the samples in each cluster (the `NA` row counts unassigned samples, not a cluster) | other summary statistics |
 | `left_join(x, y, by = "fragment")` | brings back columns that were not clustered on | `by`, and `select()` the needed columns of `y` first |
 | `geom_mark_ellipse(aes(fill = cluster, label = cluster))` | draws an ellipse around each cluster | use `drop_na()` on dbscan output to skip the `NA` samples |
+
+<hr>
 
 ## exercises {-}
 
@@ -377,7 +389,7 @@ cat('
 ')
 ```
 
-## {-}
+<hr>
 
 ## further reading {-}
 

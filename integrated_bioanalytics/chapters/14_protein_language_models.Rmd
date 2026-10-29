@@ -4,6 +4,10 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA)
 ```
 
+Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a dataset into vectors that can be compared and examined with PCA without first building a multiple sequence alignment. This analysis can be used to answer questions such as "Which proteins in this set have the most similar embeddings?" or "Do diterpene synthases and monoterpene synthases occupy separate regions of a PCA of their embeddings?"
+
+## {-}
+
 In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.
 
 Running the analyses in this chapter requires three things.
@@ -115,11 +119,13 @@ ggplot(all_sequences_embedded_pca) +
 
 ```
 
+## {-}
+
 ## chapter summary {-}
 
-A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer's attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf){.summary-pdf target="_blank"}
 
-[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/14_protein_language_models.pdf).
+A protein language model turns each amino acid sequence into an embedding, a row of numbers reflecting patterns the model learned from vast numbers of protein sequences. Proteins with similar embeddings tend to share evolutionary, structural or functional features, and because a transformer's attention mechanism relates every amino acid to every other, the embedding can reflect residues that are far apart in the sequence but close in the folded protein. Unlike a multiple sequence alignment, an embedding needs no homologous sequences and is fast to compute once the model is trained. The workflow has three steps: retrieve sequences, embed them, and run a PCA on the embedding columns to see whether proteins with different functions separate.
 
 | Step | Function | What it is for | Arguments and settings used in this chapter |
 |---|---|---|---|
@@ -128,7 +134,7 @@ A protein language model turns each amino acid sequence into an embedding, a row
 | 2 | `embedAminoAcids()` | embed each sequence with a pre-trained protein language model | `amino_acid_stringset`, `platform` (`"nvidia"` runs esm2-650m, bioLM offers several models), `nvidia_api_key` or `biolm_api_key` |
 | 3 | `runMatrixAnalysis()` | PCA on the embedding columns to see which proteins group together | `analysis = "pca"`, `columns_w_values_for_single_analyte` (the embedding columns), `columns_w_sample_ID_info` |
 
-## {-}
+<hr>
 
 ## further reading {-}
 

@@ -14,14 +14,14 @@
     })();
   </script><title>hierarchical clustering | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time,...">
+<meta name="description" content="Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="hierarchical clustering | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time,...">
+<meta property="og:description" content="Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hierarchical clustering | Integrated Bioanalytics">
-<meta name="twitter:description" content="Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time,...">
+<meta name="twitter:description" content="Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,12 +108,17 @@
 <h1>hierarchical clustering<a class="anchor" aria-label="anchor" href="#hierarchical-clustering"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a dendrogram), which can then be cut at a chosen height to assign groups or used to order the rows of a heat map. This analysis can be used to answer questions such as “Which samples join the unknown sample at the lowest height in the tree?” or “Which groups do the samples fall into when the tree is cut at this height?”</p>
+<div id="section-15" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
 <p>Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time, into a branching tree of nested groups (a dendrogram), built from the same distance matrix as in the distances and scaling chapter. The tree shows at a glance which samples resemble each other, and cutting across it turns those relationships into groups. In this chapter we use trees to find the lake whose water chemistry is closest to an unknown sample, to sort solvents into chemically recognizable families, and to order the rows of a heat map so that blocks of similar samples sit together. Along the way we cover the decisions that shape the result: which linkage rule builds the tree, how to read it, and where to cut it. Trees return in the flat clustering chapter, which sorts samples into groups without building one, and in the phylogenies chapters, where a tree records evolutionary history.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
-</script><div id="section-10" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-10"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-16" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="linkage-dendrograms" class="section level2 unnumbered">
 <h2>linkage dendrograms<a class="anchor" aria-label="anchor" href="#linkage-dendrograms"><i class="fas fa-link"></i></a>
@@ -163,7 +168,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-325"></span>
 <img src="index_files/figure-html/unnamed-chunk-325-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
-Figure: A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
 </p>
 </div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
@@ -181,7 +186,7 @@ Figure: A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in whi
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-326"></span>
 <img src="index_files/figure-html/unnamed-chunk-326-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
-Figure: The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
 </p>
 </div>
 <p>Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:</p>
@@ -210,7 +215,7 @@ Figure: The same dendrogram, with lake names as tip labels and park identity sho
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-327"></span>
 <img src="index_files/figure-html/unnamed-chunk-327-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%"><p class="caption">
-Figure: The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
+The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the ‘alaska_lake_data’ dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.
 </p>
 </div>
 <div id="concept-check-29" class="section level4 unnumbered">
@@ -322,7 +327,7 @@ Self-check: the pair at the top of that table is the first merge the algorithm m
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-329"></span>
 <img src="index_files/figure-html/unnamed-chunk-329-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%"><p class="caption">
-Figure: Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties.
+Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties.
 </p>
 </div>
 <p>The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid, and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.</p>
@@ -544,7 +549,7 @@ Self-check: in the Alaska tree, Lake Kangilipak sits next to Okoklik Lake and Wh
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-334"></span>
 <img src="index_files/figure-html/unnamed-chunk-334-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
-Figure: The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
+The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
 </p>
 </div>
 <p>The dashed line drawn by <code>geom_cut()</code> is the cut. Everything to its right has already merged, so each color is one unbroken piece of the tree; the three joins to its left were severed, which is what left four groups rather than one. Count them on the figure: severing three joins always leaves four pieces. The groups here are the compact families complete linkage found: the dense chlorinated solvents on their own, the polar protic solvents together, and so on.</p>
@@ -573,7 +578,7 @@ Figure: The solvent dendrogram cut at a height of 5. A tree diagram in which eac
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-335"></span>
 <img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%"><p class="caption">
-Figure: The number of groups is not something chosen in advance – it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
+The number of groups is not something chosen in advance – it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the ‘solvents’ dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.
 </p>
 </div>
 <p>Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the four-group result is <strong>stable over a wide stretch</strong>: anywhere from a height of about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.</p>
@@ -654,7 +659,7 @@ Self-check: cutting at 5 gave groups of 13, 8, 7 and 4. Cutting at 6 gives 28 an
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-338"></span>
 <img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%"><p class="caption">
-Figure: A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
+A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.
 </p>
 </div>
 <p>Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the <code>y</code> coordinate supplied by <code>ggtree</code>, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity, since they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.</p>
@@ -671,7 +676,7 @@ Figure: A dendrogram of the chemical bloom samples, drawn on a deliberately fixe
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-339"></span>
 <img src="index_files/figure-html/unnamed-chunk-339-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+Compound abundances for the same samples, in the tree’s own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class’s abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>With matching y scales, <code>plot_grid()</code> can align the tree and the heat map so the tiles line up with the corresponding samples. Using <code>align = "h"</code> snaps them together horizontally, and <code>axis = "tb"</code> keeps the panel heights consistent.</p>
@@ -680,7 +685,7 @@ Figure: Compound abundances for the same samples, in the tree’s own tip order.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-340"></span>
 <img src="index_files/figure-html/unnamed-chunk-340-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Note: if we were to instead build the heat map directly from the raw <code>chemical_blooms</code> table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:</p>
@@ -693,7 +698,7 @@ Figure: The dendrogram and the heat map aligned. A two-panel figure combining th
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-341"></span>
 <img src="index_files/figure-html/unnamed-chunk-341-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
+What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the ‘chemical_blooms’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-33" class="section level4 unnumbered">
@@ -720,16 +725,21 @@ Self-check: mapping y to lake instead of to y also draws a perfectly good-lookin
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 </div>
 </div>
+<div id="section-17" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-5" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-5"><i class="fas fa-link"></i></a>
 </h2>
-<p>Hierarchical clustering merges the two closest groups, again and again, until every sample sits in one tree. <strong>The linkage rule decides what “closest” means for a group</strong>, and different rules build different trees from the same distances, so always state the method and run a second one as a check. <strong>A tree is read across, not down</strong>: how far out from the tips two paths meet says how different two samples are, and tips printed side by side are not necessarily similar. <strong>Cutting the tree turns it into groups</strong>: a height lets the data say how many, a number of groups always returns that number.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/8_hierarchical_clustering.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-342"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png" alt="Choosing a linkage and a cut. A decision flowchart that starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions." width="100%"><p class="caption">
-Figure: Choosing a linkage and a cut. A decision flowchart that starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png" alt="Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions." width="100%"><p class="caption">
+Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.
 </p>
+</div>
+<p>Hierarchical clustering merges the two closest groups, again and again, until every sample is connected by one tree structure. <strong>The linkage rule decides what “closest” means for a group</strong>, and different rules build different trees from the same distances. <strong>A tree is read across, not down</strong> (assuming it’s drawn with the root on the left and leaves on the right): how far out from the tips two paths meet shows how different two samples are, and adjacent tips are not necessarily similar. <strong>Cutting the tree turns it into groups</strong>: choosing a height as the basis for the cut lets the data drive how many clusters are created, whereas setting a number of groups will force the tree to be cut into that number of clusters.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -807,6 +817,7 @@ Figure: Choosing a linkage and a cut. A decision flowchart that starts from scal
 </tr>
 </tbody>
 </table></div>
+<hr>
 </div>
 <div id="exercises-4" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
@@ -837,9 +848,7 @@ The keeper of the temple is dead, and two registers died with him: which offerin
 </div>
 </div>
 </div>
-</div>
-<div id="section-11" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-11"><i class="fas fa-link"></i></a></h2>
+<hr>
 </div>
 <div id="further-reading-5" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-5"><i class="fas fa-link"></i></a>
@@ -858,15 +867,16 @@ The keeper of the temple is dead, and two registers died with him: which offerin
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#hierarchical-clustering">hierarchical clustering</a></li>
-<li><a class="nav-link" href="#section-10"></a></li>
+<li><a class="nav-link" href="#section-15"></a></li>
+<li><a class="nav-link" href="#section-16"></a></li>
 <li><a class="nav-link" href="#linkage-dendrograms">linkage dendrograms</a></li>
 <li><a class="nav-link" href="#agglomeration-methods">agglomeration methods</a></li>
 <li><a class="nav-link" href="#dendrogram-interpretation">dendrogram interpretation</a></li>
 <li><a class="nav-link" href="#cutting-a-dendrogram">cutting a dendrogram</a></li>
 <li><a class="nav-link" href="#annotating-dendrograms">annotating dendrograms</a></li>
+<li><a class="nav-link" href="#section-17"></a></li>
 <li><a class="nav-link" href="#chapter-summary-5">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-4">exercises</a></li>
-<li><a class="nav-link" href="#section-11"></a></li>
 <li><a class="nav-link" href="#further-reading-5">further reading</a></li>
 </ul>
 
@@ -885,7 +895,7 @@ The keeper of the temple is dead, and two registers died with him: which offerin
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

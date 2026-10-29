@@ -14,14 +14,14 @@
     })();
   </script><title>networks | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually...">
+<meta name="description" content="Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="networks | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually...">
+<meta property="og:description" content="Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="networks | Integrated Bioanalytics">
-<meta name="twitter:description" content="A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually...">
+<meta name="twitter:description" content="Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -108,6 +108,9 @@
 <h1>networks<a class="anchor" aria-label="anchor" href="#networks"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG" alt="" width="100%" style="display: block; margin: auto;"></div>
+<p>Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose similarity exceeds a chosen threshold, or as an interaction network, in which edges are observed connections. Applying wrangling and summary techniques to network data can then examine edge direction, per-node summaries such as the number of connections, and the effect of removing nodes. This analysis can be used to answer questions such as “Which genes have expression profiles correlated above the chosen threshold across these samples?”, “Which node has the most connections?”, or “Which node, when removed, divides the network into the largest number of disconnected components?”</p>
+<div id="section-12" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-12"><i class="fas fa-link"></i></a></h2>
 <p>A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Networks answer questions about connections: which samples resemble which, which genes rise and fall together, which proteins bind one another, and which single node holds a whole system together. In research they appear as gene co-expression networks and protein-protein interaction networks, and in this course they build directly on the distance matrices of the previous chapter, distances and scaling, and on the <code>group_by()</code> and <code>summarize()</code> verbs from the wrangling chapter. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:</p>
 <ul>
 <li><p>A <strong>similarity network</strong> is a structure we build. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means “these two samples resemble each other”, and we decide how much resemblance is required for two samples to be connected, usually by setting that threshold.</p></li>
@@ -117,8 +120,10 @@
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
-</script><div id="section-8" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
+</script>
+</div>
+<div id="section-13" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="similarity-networks" class="section level2 unnumbered">
 <h2>similarity networks<a class="anchor" aria-label="anchor" href="#similarity-networks"><i class="fas fa-link"></i></a>
@@ -222,7 +227,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-291"></span>
 <img src="index_files/figure-html/unnamed-chunk-291-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the ‘hairball’ seen here. Node positions carry no information. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the ‘hairball’ seen here. Node positions carry no information. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:</p>
@@ -284,7 +289,7 @@ Figure: A similarity network of Alaskan lakes drawn with no threshold. Each poin
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-293"></span>
 <img src="index_files/figure-html/unnamed-chunk-293-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
+The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the ‘alaska_lake_data’ dataset used in UMD CHEM5725.
 </p>
 </div>
 <p>Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. <code>buildNetwork()</code> spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to <em>why</em> (and to when it is the wrong thing to do) under “directed and undirected”, below.</p>
@@ -413,7 +418,7 @@ Self-check: what happens if you use raw distance as the edge weight instead of i
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-296"></span>
 <img src="index_files/figure-html/unnamed-chunk-296-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
+An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
 <div id="concept-check-24" class="section level4 unnumbered">
@@ -598,7 +603,7 @@ Self-check: what is the difference between a node’s degree and its strength?
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-301"></span>
 <img src="index_files/figure-html/unnamed-chunk-301-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%"><p class="caption">
-Figure: What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
+What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated ‘passenger_flows’ and ‘us_airports’ datasets used in UMD CHEM5725.
 </p>
 </div>
 <p>Based on the above, we can say the following: take the busiest airport out and the picture barely changes: everything that is left can still be reached from everything else. Take Ketchikan out and the network falls into two clearly separate clumps, with the Alaskan airports floating free of the rest of the country. A node whose removal breaks a network into more pieces than it was in before is called an <strong>articulation point</strong>, and in this data set Ketchikan is the only one.</p>
@@ -656,16 +661,21 @@ Self-check: a colleague ranks these airports by passenger volume and proposes pr
 </div>
 </div>
 </div>
+<div id="section-14" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
+</div>
 <div id="chapter-summary-4" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-4"><i class="fas fa-link"></i></a>
 </h2>
-<p>The first decision is what an edge means. A <strong>similarity network</strong> is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An <strong>interaction network</strong> is given: each row is an observed connection, there is no threshold, and the edges may be directed. Degree counts a node’s connections and strength adds up their traffic, but neither says whether a node matters. Removing the node and counting the pieces that remain does. The positions of nodes in a force-directed layout carry no information, and a well-connected node means opposite things in the two kinds of network.</p>
-<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf">Download this summary as a one-page PDF</a>.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/7_networks.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-302"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png" alt="Choosing a kind of network. A decision flowchart that starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks." width="100%"><p class="caption">
-Figure: Choosing a kind of network. A decision flowchart that starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png" alt="Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks." width="100%"><p class="caption">
+Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.
 </p>
+</div>
+<p>The first decision that must be made when working with networks is determining what an edge means. A <strong>similarity network</strong> is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An <strong>interaction network</strong> is given by the data themselves: each row is an observed connection, there is no threshold, and the edges may be directed. We use a metric called ‘degree’ to count a node’s connections and a metric called ‘strength’ adds up a node’s traffic. However, neither degree nor strength accounts for whether a node holds different portions of a network together (an articulation point) - only removing the node and counting the pieces that remain can tell us about that. Importantly, the positions of nodes in a force-directed layout carry no quantitative information.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -729,6 +739,7 @@ Figure: Choosing a kind of network. A decision flowchart that starts from what a
 </tr>
 </tbody>
 </table></div>
+<hr>
 </div>
 <div id="exercises-3" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
@@ -759,9 +770,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 </div>
 </div>
 </div>
-</div>
-<div id="section-9" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a></h2>
+<hr>
 </div>
 <div id="further-reading-4" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
@@ -780,7 +789,8 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#networks">networks</a></li>
-<li><a class="nav-link" href="#section-8"></a></li>
+<li><a class="nav-link" href="#section-12"></a></li>
+<li><a class="nav-link" href="#section-13"></a></li>
 <li><a class="nav-link" href="#similarity-networks">similarity networks</a></li>
 <li><a class="nav-link" href="#interaction-networks">interaction networks</a></li>
 <li>
@@ -791,9 +801,9 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <li><a class="nav-link" href="#warnings">warnings</a></li>
 </ul>
 </li>
+<li><a class="nav-link" href="#section-14"></a></li>
 <li><a class="nav-link" href="#chapter-summary-4">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-3">exercises</a></li>
-<li><a class="nav-link" href="#section-9"></a></li>
 <li><a class="nav-link" href="#further-reading-4">further reading</a></li>
 </ul>
 
@@ -812,7 +822,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
