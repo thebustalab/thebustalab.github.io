@@ -6,7 +6,7 @@
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", or "Which predictors have coefficients significantly different from zero?"
+Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression, comparing slopes between groups of samples, and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", "Which predictors have coefficients significantly different from zero?", or "Does the response rise with this predictor at the same rate in every group?"
 
 <hr>
 
@@ -14,7 +14,7 @@ A regression model predicts a number from one or more measured inputs, and it an
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
-window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }, { name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
 </script>
 
 ## model use {-}
@@ -183,7 +183,7 @@ top <- ggplot(predictions_from_basic_linear_model) +
     annotate(geom = "table",
       x = 3.25,
       y = 5,
-      label = list(select(basic_regression_model$metrics, variable, value))
+      label = list(mutate(select(basic_regression_model$metrics, variable, value), value = signif(value, 3)))
     ) +
     coord_cartesian(ylim = c(4.25,5.25)) +
     theme_bw()
@@ -429,6 +429,66 @@ scaled_four_input_model$metrics %>%
 
 <hr>
 
+## comparing slopes between groups {-}
+
+The inputs so far have all been numbers. A model can also take a categorical input, a column that names a group, and that opens up a common question: does the output rise with an input at the same rate in every group? Consider the elements of the periodic table. Density increases with atomic mass, but an element that is a gas at room temperature is about a thousand times less dense than a solid of similar mass, so one line through all of the elements would describe none of them well.
+
+To give each group its own line, we describe the model with a formula instead of `input_variables` and `output_variable`. A formula puts the output on the left of a `~` and the inputs on the right, the same way as in the comparing groups chapter. Joining two inputs with `*` gives each group its own intercept and its own slope, while joining them with `+` would give each group its own intercept but force every group to share one slope (parallel lines). Elements whose density or state is not recorded are filtered out first, because `buildModel()` stops on missing values:
+
+```{r}
+elements <- periodic_table %>%
+  filter(!is.na(density_g_per_mL), !is.na(state_at_RT))
+
+state_model <- buildModel(
+  data = elements,
+  model_type = "linear_regression",
+  formula = density_g_per_mL ~ atomic_mass_rounded * state_at_RT
+)
+
+state_model$metrics %>% filter(variable == "r_squared")
+```
+
+```{r, fig.width = 6.5, fig.height = 4.5, fig.cap = "Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table."}
+predictWithModel(data = elements, model = state_model) %>%
+  ggplot(aes(x = atomic_mass_rounded, color = state_at_RT)) +
+    geom_point(aes(y = density_g_per_mL)) +
+    geom_line(aes(y = predicted_density_g_per_mL)) +
+    theme_bw()
+```
+
+Each state now has its own line. To ask which slopes differ from which, we pass the model to `tukeyTest()`, the same Tukey test as in the comparing groups chapter, and name the numeric input whose slope should be compared with `slopes_of`. Piping the result into `pGroups()` gives each group a letter, as before, along with its slope (`estimate`) and that slope's standard error:
+
+```{r}
+state_model %>%
+  tukeyTest(slopes_of = "atomic_mass_rounded") %>%
+  pGroups()
+```
+
+The letters read exactly as they do for means: groups that share a letter do not have significantly different slopes. Solids gain about 0.058 g/mL of density for every extra unit of atomic mass, while the slope for gases is indistinguishable from zero on this scale, and the two do not share a letter. The liquids share a letter with both. Only two elements (bromine and mercury) are liquid at room temperature, and two points pin down a slope very loosely, as the large standard error shows, so the test cannot tell their slope apart from either of the others. Without the `slopes_of` argument, `tukeyTest()` on a model compares the groups' outputs instead of their slopes, as predicted by the model at the average value of the numeric input.
+
+#### concept check {-}
+
+Fill in the blank with the input whose slope should be compared between find sites, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">site_model <- buildModel(
+  data = meteorite_fragments,
+  model_type = "linear_regression",
+  formula = density_g_per_cm3 ~ iron_percent * find_site
+)
+
+site_model %>%
+  tukeyTest(slopes_of = "____") %>%
+  pGroups()</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Every find site gets the letter a, so no two sites have significantly different slopes: density rises by about 0.06 g/cm3 per percent of iron wherever the fragments were found. Sharing a letter is about the slopes, not the densities themselves, and a shared letter means the test found no difference, not that it proved the slopes identical.">
+<p class="scq">Self-check: every find site gets the same letter. What does that tell us?</p>
+<label><input type="radio"> The test found no evidence that density rises with iron at a different rate at any of the sites</label>
+<label><input type="radio"> The fragments from every site have the same average density</label>
+<label><input type="radio"> The model failed to find a relationship between iron and density</label>
+</div>
+
+<hr>
+
 ## assessing regression models {-}
 
 There are three aspects of a regression model that we should check on, to make sure the model isn't violating any assumptions that we make when declaring the model to be valid:
@@ -496,7 +556,7 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 ::: {.summary-top}
 
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
 ```
 
@@ -507,11 +567,12 @@ Building a regression model starts with determining what the model will be used 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
 | `Hmisc::impute()` | filling in missing values, because `buildModel()` stops on any | the fill value (here each column's median) |
-| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable` |
+| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable`; or instead a `formula`, `output ~ input * group` |
 | `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
 | `predictWithModel()` | predictions for any table with the same input columns, returned as that table with a new `predicted_<output>` column | `data`, and `model` (the whole `buildModel()` output) |
 | `mutate(across(c(...), scale))` | putting inputs on a mean of zero and a standard deviation of one before comparing coefficients | which inputs to scale |
 | `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
+| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ, given a model built with a `*` formula; letters plus each group's slope | `slopes_of`, the numeric input whose slope is compared |
 | `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |
 
 <!-- ## exercises {-}

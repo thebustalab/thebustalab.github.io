@@ -317,7 +317,7 @@ Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the 
 Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
+<p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shapiro test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
@@ -578,7 +578,7 @@ Self-check: Why compare the ten aquifers with a Tukey or Dunn test rather than a
 Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
+<p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 (“acd”) and aquifer 6 (“cd”) share the letters “c” and “d”, so their means do not differ significantly. Aquifer 4 (“b”) and aquifer 6 share no letter, so their means do differ.</p>
 <div id="concept-check-48" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-48"><i class="fas fa-link"></i></a>
 </h4>

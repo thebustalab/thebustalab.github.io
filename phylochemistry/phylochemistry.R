@@ -214,7 +214,8 @@
                     "plyr",       # points3D -> plyr::round_any
                     "see",        # performance::check_model diagnostic plots (ch11)
                     "ranger",     # parsnip random-forest engine (ch11)
-                    "igraph"      # buildNetwork (requireNamespace)
+                    "igraph",     # buildNetwork (requireNamespace)
+                    "emmeans"     # tukeyTest() on a buildModel() model -> emmeans::emmeans / emtrends (ch12, ANOVA)
                 )
                 Bioc_core <- c("ggtree")
 
@@ -377,8 +378,103 @@
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
         tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
-        anovaTest <- function( data, ... ) {rstatix::anova_test( data = ungroup(data), ... )}
-        tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data, ... )}  # tukey_hsd's first argument is x, not data
+        # anovaTest() takes data + formula, or a fitted linear model from buildModel() (same table, type II).
+        anovaTest <- function( data, ... ) {
+            if (inherits(data, "lm") ||
+                (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))) {
+                if (length(list(...)) > 0) {
+                    stop("anovaTest(): a model already contains its formula, so give it on its own: model %>% anovaTest().", call. = FALSE)
+                }
+                if (!inherits(data, "lm") && data$model_type != "linear_regression") {
+                    stop("anovaTest(): only linear regression models have an ANOVA table.", call. = FALSE)
+                }
+                return(rstatix::anova_test( if (inherits(data, "lm")) data else data$model ))
+            }
+            rstatix::anova_test( data = ungroup(data), ... )
+        }
+        # tukeyTest() takes either data + formula (rstatix, tukey_hsd's first argument is x, not data) or a
+        # fitted linear model from buildModel(): then it compares the model's group means, or with
+        # slopes_of = the slope of that numeric input in each group, Tukey-adjusted via emmeans. The output
+        # has tukey_hsd's columns (estimate = group2 - group1) so pGroups() reads both. Everything is inline,
+        # not in helpers, because the WebR shim generator carries only the ...Test functions themselves.
+        tukeyTest <- function( data, ..., compare = NULL, slopes_of = NULL ) {
+            is_model <- inherits(data, "lm") ||
+                (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
+            if (!is_model) {
+                if (!is.null(compare) || !is.null(slopes_of)) {
+                    stop("tukeyTest(): compare = and slopes_of = are for a model from buildModel(). With a data table, give a formula, e.g. tukeyTest(abundance ~ aquifer_code).", call. = FALSE)
+                }
+                return(rstatix::tukey_hsd( data, ... ))
+            }
+            if (length(list(...)) > 0) {
+                stop("tukeyTest(): a model already contains its formula. Use compare = (which groups) and, for slopes, slopes_of = (which numeric input).", call. = FALSE)
+            }
+            if (inherits(data, "lm")) {
+                fit <- data
+                model_data <- fit$model
+            } else {
+                if (data$model_type != "linear_regression") {
+                    stop("tukeyTest(): only linear regression models can be Tukey-tested.", call. = FALSE)
+                }
+                fit <- data$model
+                model_data <- if (!is.null(data$data)) data$data else fit$model
+            }
+            inputs <- all.vars(stats::formula(fit)[[3]])
+            groups <- inputs[!vapply(model_data[inputs], is.numeric, logical(1))]
+            if (is.null(compare)) {
+                if (length(groups) == 0) {
+                    stop("tukeyTest(): this model has no group (text) input to compare. Build it with one, e.g. formula = rate ~ temperature * chemistry.", call. = FALSE)
+                }
+                if (length(groups) > 1) {
+                    stop("tukeyTest(): this model has more than one group input (", paste(groups, collapse = ", "), "). Choose one with compare =.", call. = FALSE)
+                }
+                compare <- groups
+            }
+            if (!compare %in% groups) {
+                stop("tukeyTest(): compare = should name a group (text) input of the model: ", paste(groups, collapse = ", "), ".", call. = FALSE)
+            }
+            if (is.null(slopes_of)) {
+                in_interaction <- grepl(":", attr(stats::terms(fit), "term.labels")) &
+                    vapply(strsplit(attr(stats::terms(fit), "term.labels"), ":"), function(t) compare %in% t, logical(1))
+                if (any(in_interaction)) {
+                    message("tukeyTest(): ", compare, " is part of an interaction in this model, so these are its means averaged over the other inputs. If the interaction matters, compare within each level instead (filter, then test), or use slopes_of = for a numeric input.")
+                }
+                em <- emmeans::emmeans(fit, specs = compare, data = model_data)
+            } else {
+                numeric_inputs <- setdiff(inputs, groups)
+                if (!slopes_of %in% numeric_inputs) {
+                    stop("tukeyTest(): slopes_of = should name a numeric input of the model: ", paste(numeric_inputs, collapse = ", "), ".", call. = FALSE)
+                }
+                em <- emmeans::emtrends(fit, specs = compare, var = slopes_of, data = model_data)
+            }
+            em_table <- as.data.frame(summary(em))
+            prs <- emmeans::contrast(em, method = "pairwise", adjust = "tukey")
+            prs_table <- as.data.frame(summary(prs, infer = c(TRUE, TRUE)))
+            # which two groups each row compares, read from the contrast weights, never from its label
+            weights <- as.matrix(stats::coef(prs)[, -seq_len(ncol(stats::coef(prs)) - nrow(prs_table)), drop = FALSE])
+            group_levels <- as.character(em_table[[compare]])
+            lo_col <- grep("lower", names(prs_table), value = TRUE)[1]
+            hi_col <- grep("upper", names(prs_table), value = TRUE)[1]
+            out <- tibble::tibble(
+                term = compare,
+                group1 = group_levels[apply(weights, 2, function(w) which(w > 0))],
+                group2 = group_levels[apply(weights, 2, function(w) which(w < 0))],
+                null.value = 0,
+                estimate = -prs_table$estimate,
+                conf.low = -prs_table[[hi_col]],
+                conf.high = -prs_table[[lo_col]],
+                p.adj = prs_table$p.value,
+                p.adj.signif = as.character(stats::symnum(prs_table$p.value,
+                    cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 1),
+                    symbols = c("****", "***", "**", "*", "ns"), na = ""))
+            )
+            attr(out, "estimates") <- data.frame(
+                group = group_levels,
+                estimate = em_table[[if (is.null(slopes_of)) "emmean" else paste0(slopes_of, ".trend")]],
+                std_err = em_table$SE
+            )
+            out
+        }
         # kruskalTest() and dunnTest() refuse a backwards formula. rstatix's kruskal_test and dunn_test
         # do NOT error on `garden ~ value`: they rank the text column and return a confident, meaningless
         # p-value, so a student never learns the formula was reversed (the t and Wilcoxon tests do error,
@@ -11659,21 +11755,35 @@
             #' pGroups
 
             pGroups <- function(data) {
-                
+
+                ## Letters from a pairwise table (tukeyTest, dunnTest, ...): a shared letter = no
+                ## significant difference. multcompLetters() splits pair names on "-", so group names
+                ## are swapped for hyphen-free tokens and swapped back (a name like "iso-Leucine"
+                ## used to get the wrong letters).
+                g1 <- as.character(data$group1)
+                g2 <- as.character(data$group2)
+                lev <- unique(c(g1, g2))
+                tok <- paste0("g", seq_along(lev))
                 p <- data$p.adj
-                names(p) <- paste(data$group1, data$group2, sep = "-")
+                names(p) <- paste(tok[match(g1, lev)], tok[match(g2, lev)], sep = "-")
 
-                if (is.null(multcompLetters(p)$monospacedLetters)) {
-                    spaced_group <- multcompLetters(p)$Letters 
-                } else {
-                    spaced_group <- multcompLetters(p)$monospacedLetters   
-                }
+                letters_out <- multcompView::multcompLetters(p)
+                spaced_group <- if (is.null(letters_out$monospacedLetters)) letters_out$Letters else letters_out$monospacedLetters
 
+                treatment <- lev[match(names(letters_out$Letters), tok)]
                 output <- data.frame(
-                    treatment = names(multcompLetters(p)$Letters),
-                    group = multcompLetters(p)$Letters,
-                    spaced_group = spaced_group
+                    treatment = treatment,
+                    group = unname(letters_out$Letters),
+                    spaced_group = unname(spaced_group),
+                    row.names = treatment
                 )
+
+                ## tukeyTest() on a model attaches each group's mean or slope: carry it along for plotting
+                estimates <- attr(data, "estimates")
+                if (!is.null(estimates)) {
+                    output$estimate <- estimates$estimate[match(output$treatment, estimates$group)]
+                    output$std_err <- estimates$std_err[match(output$treatment, estimates$group)]
+                }
                 return(output)
             }
 
@@ -12379,13 +12489,54 @@
                     n_vars_tried_at_split = seq(10,20,5),
                     n_trees = seq(100,200,50),
                     min_leaf_size = 1
-                )
+                ),
+                formula = NULL
             ) {
 
                 ## Prepare the data
 
                     ## Correct the formula and the data, start the output
                         model_type <- match.arg(model_type)
+
+                        ## formula = is the alternative to input_variables / output_variable (linear
+                        ## regression only), e.g. formula = rate ~ temperature * chemistry. It is the last
+                        ## argument so positional calls are unaffected. The variables it names are worked
+                        ## out here so every check below runs unchanged.
+                        user_formula <- formula
+                        if (!is.null(user_formula)) {
+                            if (is.character(user_formula)) user_formula <- stats::as.formula(user_formula)
+                            if (!inherits(user_formula, "formula") || length(user_formula) != 3) {
+                                stop("formula should look like output ~ inputs, for example rate ~ temperature * chemistry.")
+                            }
+                            if (model_type != "linear_regression") {
+                                stop("formula = works with model_type = \"linear_regression\" only. For other model types, use input_variables and output_variable.")
+                            }
+                            if (!is.null(input_variables) || !is.null(output_variable)) {
+                                stop("Give either formula, or input_variables and output_variable, not both.")
+                            }
+                            if (!is.name(user_formula[[2]])) {
+                                stop("The left side of the formula should be one column name, not a calculation. Make the column first, e.g. mutate(log_rate = log(rate)), then use log_rate ~ ...")
+                            }
+                            output_variable <- all.vars(user_formula[[2]])
+                            input_variables <- all.vars(user_formula[[3]])
+                            if (length(output_variable) != 1) {
+                                stop("The left side of the formula should be the one column you want to predict.")
+                            }
+                            if ("." %in% input_variables) {
+                                stop("Please name the input columns in the formula rather than using a dot.")
+                            }
+                            missing_vars <- setdiff(c(output_variable, input_variables), colnames(data))
+                            if (length(missing_vars) > 0) {
+                                stop(paste("The following formula variables are not present in the data:", paste(missing_vars, collapse = ", ")))
+                            }
+                            ## only the columns the model uses are checked for missing values and fitted
+                            data <- as.data.frame(data)[, c(output_variable, input_variables), drop = FALSE]
+                            ## text inputs become factors so later tests (tukeyTest) see the groups
+                            for (v in input_variables) {
+                                if (is.character(data[[v]])) data[[v]] <- factor(data[[v]])
+                            }
+                        }
+
                         if (is.null(input_variables) || length(input_variables) == 0) {
                             stop("Please provide at least one input variable.")
                         }
@@ -12419,9 +12570,15 @@
                         data <- as.data.frame(data)
                         if( any(is.na(data)) ) { stop("Yo - there are missing data in your data set, please deal with that before proceeding.") }
                         formula <- paste0("`", output_variable, "` ~ `", paste(input_variables, collapse = "` + `"), "`")
+                        if (!is.null(user_formula)) formula <- user_formula
                         output <- list()
                         output$model_type <- model_type
                         output$output_variable <- output_variable   # predictWithModel names its column from this
+                        ## only on the formula path, so the variable-list output keeps its four parts
+                        if (!is.null(user_formula)) {
+                            output$formula <- user_formula
+                            output$data <- data
+                        }
 
                     ## Various checkes
                             if (dim(data)[1] < length(input_variables)) {
@@ -12462,13 +12619,15 @@
                                 data.frame(
                                     variable = names(coefficients(fit)),
                                     value = as.numeric(coefficients(fit)),
-                                    std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
+                                    std_err = as.numeric(summary(fit)$coefficients[,2]),
                                     type = "coefficient",
-                                    p_value = round(summary(fit)$coefficients[,4], 8),
-                                    p_value_adj = p.adjust(round(summary(fit)$coefficients[,4], 8))
+                                    p_value = summary(fit)$coefficients[,4],
+                                    p_value_adj = p.adjust(summary(fit)$coefficients[,4])
                                 )
                             )
-                            metrics$value <- round(as.numeric(metrics$value), 4)
+                            # Full precision: rounding to 4 dp collapsed small slopes (~1e-4) and their
+                            # standard errors to 1e-04 or 0. Round at display time instead.
+                            metrics$value <- as.numeric(metrics$value)
                             rownames(metrics) <- NULL
                             output$metrics <- metrics
                     }
@@ -12635,7 +12794,16 @@
                     output <- as_tibble(data)
 
                     if (model_type == "linear_regression") {
-                        output[[pred_col]] <- unname(as.numeric(stats::predict(model, data)))
+                        output[[pred_col]] <- unname(as.numeric(tryCatch(
+                            stats::predict(model, data),
+                            error = function(e) {
+                                if (grepl("new level", conditionMessage(e))) {
+                                    stop("predictWithModel(): the new data contain a group the model was not built on (",
+                                         conditionMessage(e), "). A model can only predict for groups it has seen.", call. = FALSE)
+                                }
+                                stop(e)
+                            }
+                        )))
                     }
 
                     if (model_type == "logistic_regression") {

@@ -21,18 +21,32 @@ The comparing groups chapter asked whether groups differ, and which pairs. Analy
 
 The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, scaled for the number of groups and measurements, and a large F means the groups differ by more than chance would allow.
 
-This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a continuous covariate) can appear in an ANOVA too.
+This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a continuous covariate) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and `tukeyTest()`.
 
 ### one factor {-}
 
-Using the potassium data from the comparing groups chapter, a one-way ANOVA asks whether the aquifers differ at all:
+Using the potassium data from the comparing groups chapter, we build a model of abundance by aquifer, and a one-way ANOVA on it asks whether the aquifers differ at all:
 
 ```{r}
-K_data %>%
-  anovaTest(abundance ~ aquifer_code)
+K_model <- buildModel(
+  data = K_data,
+  model_type = "linear_regression",
+  formula = abundance ~ aquifer_code
+)
+
+K_model %>%
+  anovaTest()
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ; that is the job of the Tukey test from the comparing groups chapter. What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Tukey test from the comparing groups chapter, which accepts the same model and returns the same letters as `tukeyTest(abundance ~ aquifer_code)` on the data:
+
+```{r}
+K_model %>%
+  tukeyTest() %>%
+  pGroups()
+```
+
+What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
 
 The ANOVA and the Tukey test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Tukey test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
 
@@ -54,8 +68,14 @@ nacl <- hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl"),
          aquifer_code %in% c("aquifer_1", "aquifer_2", "aquifer_3", "aquifer_4"))
 
-nacl %>%
-  anovaTest(abundance ~ analyte * aquifer_code)
+nacl_model <- buildModel(
+  data = nacl,
+  model_type = "linear_regression",
+  formula = abundance ~ analyte * aquifer_code
+)
+
+nacl_model %>%
+  anovaTest()
 ```
 
 The `*` in the formula asks for both factors and their interaction. The output has one row for each. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
