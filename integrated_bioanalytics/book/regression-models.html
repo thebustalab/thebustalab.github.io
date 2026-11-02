@@ -136,8 +136,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","perfor
 <span><span class="va">metabolomics_data</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">impute</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [1] FALSE</span></span></code></pre></div>
-<div id="concept-check-43" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-43"><i class="fas fa-link"></i></a>
+<div id="concept-check-51" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-51"><i class="fas fa-link"></i></a>
 </h4>
 <p>The cells on this page start from a copy of <code>metabolomics_data</code> whose missing values have already been filled in this way.</p>
 <div class="selfcheck" data-answer="2" data-explain="An inferential use is about understanding the relationship itself: which inputs matter, in which direction, and how strongly. Forecasting new samples or chasing the most accurate predictions are predictive uses, where the inner workings matter less.">
@@ -335,8 +335,8 @@ Residuals of the mean-only model of valine abundance. Scatter plot of valine aga
 A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model’s metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-44" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-44"><i class="fas fa-link"></i></a>
+<div id="concept-check-52" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-52"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the variable the model should predict, then press Run to see its coefficients.</p>
 <div class="webr-cell">
@@ -439,8 +439,8 @@ Self-check: what does the iso-Leucine coefficient of about 0.51 tell us?
 <span><span class="co">## #   `1-Methylhistidine` &lt;dbl&gt;, `isoValeric Acid` &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   `2-Hydroxyisovaleric Acid` &lt;dbl&gt;, …</span></span></code></pre></div>
 <p>A prediction is only as good as the model behind it. This model explains about 40% of the variation in Valine (its r-squared is 0.40), so these predictions are rough. Using more of what was measured is the next step.</p>
-<div id="concept-check-45" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-45"><i class="fas fa-link"></i></a>
+<div id="concept-check-53" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-53"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the name of the column that holds the predictions, then press Run. This cell uses <code>basic_regression_model</code> from the previous check, so run that one first.</p>
 <div class="webr-cell">
@@ -526,8 +526,8 @@ Self-check: which of the seven new patients does the model predict to have the h
 Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-46" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-46"><i class="fas fa-link"></i></a>
+<div id="concept-check-54" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-54"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the metric that measures how much of the variation in Valine a model explains, then press Run.</p>
 <div class="webr-cell">
@@ -623,8 +623,8 @@ Self-check: what does the higher r-squared of the 30-input model tell us?
 <ul>
 <li>Use the scaled model to compare inputs, and the model built on the data as measured to make predictions. A model fitted on scaled inputs expects scaled inputs, so giving it the raw columns of a new table, such as <code>metabolomics_unknown</code>, produces nonsense.</li>
 </ul>
-<div id="concept-check-47" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-47"><i class="fas fa-link"></i></a>
+<div id="concept-check-55" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-55"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the function that puts each input on a mean of zero and a standard deviation of one, then press Run to rank the inputs.</p>
 <div class="webr-cell">
@@ -697,8 +697,8 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.
 </p>
 </div>
-<div id="concept-check-48" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-48"><i class="fas fa-link"></i></a>
+<div id="concept-check-56" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-56"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the part of the <code>buildModel()</code> output that holds the fitted model, then press Run. Drawing the six panels takes about ten seconds.</p>
 <div class="webr-cell">
@@ -857,7 +857,7 @@ To practice creating models, try the following:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-02.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

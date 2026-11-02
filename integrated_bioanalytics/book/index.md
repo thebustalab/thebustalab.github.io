@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-01"
+date: "2026-11-02"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5265,6 +5265,11 @@ ________________________________________________________________________________
 
 :::
 
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K')" };
+</script>
+
 Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set: we have 990 measurements of 9 different analytes in multiple wells, each of which draws on one of 10 aquifers.
 
 
@@ -5317,7 +5322,10 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-460)Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -5338,6 +5346,17 @@ library(multcompView)
 
 Please note that the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
+#### concept check {-}
+
+<div class="selfcheck" data-answer="1" data-explain="The p value is calculated by assuming the null hypothesis is true: if the two aquifers really had the same distribution of potassium, data at least this extreme would turn up about 4% of the time. It says nothing directly about how likely the difference is to be real, or to be a false positive; working that out needs information the test does not have.">
+<p class="scq">Self-check: A test comparing potassium in two aquifers gives p = 0.04. Which statement is correct?</p>
+<label><input type="radio"> There is a 4% chance that the difference you found is a false positive</label>
+<label><input type="radio"> If the two aquifers had the same distribution of potassium, data at least this extreme would turn up about 4% of the time</label>
+<label><input type="radio"> There is a 96% chance that the two aquifers really differ in potassium</label>
+</div>
+
+<hr>
+
 ## distributions {-}
 
 Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the *shape* of the data (whether it is roughly normally distributed and/or whether the groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.
@@ -5355,9 +5374,30 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models)." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-461)Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models).</p>
+</div>
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether the distribution is skewed, and whether any group is bimodal. All three change which statistical test would be needed to complete the work described in the next section.
+
+#### concept check {-}
+
+`K_data` (the potassium rows of `hawaii_aquifers`) is already loaded. Fill in the blank with the geom function that draws one point at the exact value of every individual measurement, on top of the boxplots, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">ggplot(K_data, aes(x = abundance, y = aquifer_code)) +
+  geom_boxplot() +
+  ____(color = "maroon", alpha = 0.6, size = 2) +
+  theme_classic()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Aquifer 9 has 33 potassium measurements, far more than any other aquifer, while aquifers 3 and 8 have only three each. A boxplot drawn from three points looks just as solid as one drawn from thirty-three, which is exactly what the raw points reveal and a summary hides.">
+<p class="scq">Self-check: With the points drawn, which aquifer has the most potassium measurements behind its boxplot?</p>
+<label><input type="radio"> aquifer_3</label>
+<label><input type="radio"> aquifer_7</label>
+<label><input type="radio"> aquifer_9</label>
+</div>
+
+<hr>
 
 ## test selection {-}
 
@@ -5418,20 +5458,26 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-463)Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Are these data normally distributed? Let's get a first approximation by looking at a plot:
 
 
 ``` r
 K_data_1_6 %>%
-  ggplot(aes(x = abundance)) + 
+  ggplot(aes(x = abundance)) +
     geom_histogram(bins = 30) +
     facet_wrap(~aquifer_code) +
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-464)Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -5448,6 +5494,26 @@ K_data_1_6 %>%
 ```
 
 Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the spread of the two groups? The t-test used in this course is Welch's t-test, which does not assume the two groups have equal variances, so for two groups there is no need to test the variances before choosing a test. (Student's t-test, the older version, does assume equal variances. It is barely more powerful when that assumption holds and can give badly misleading p-values when it does not, which is why Welch's version is the default.)
+
+#### concept check {-}
+
+This time compare aquifer 1 with aquifer 9. Fill in the blank with the column that makes the Shapiro test look within each aquifer separately, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data_1_9 <- K_data %>%
+  filter(aquifer_code %in% c("aquifer_1", "aquifer_9"))
+
+K_data_1_9 %>%
+  group_by(____) %>%
+  shapiroTest(abundance)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Aquifer 1 passes (p = 0.10), but aquifer 9 does not (p = 0.00002): its potassium values are significantly different from a normal distribution. The t-test's p value may then be inaccurate, so the comparison calls for the rank-based Wilcox test.">
+<p class="scq">Self-check: Based on the Shapiro results, which test should compare potassium in aquifers 1 and 9?</p>
+<label><input type="radio"> The Wilcox test, because aquifer 9 is significantly different from a normal distribution</label>
+<label><input type="radio"> The t-test, because aquifer 1 is not significantly different from a normal distribution</label>
+<label><input type="radio"> The t-test, because aquifer 9 has more than thirty measurements</label>
+</div>
+
+<hr>
 
 ## two means {-}
 
@@ -5529,7 +5595,23 @@ orchards %>%
 ## 1 nitrate north  south     30    30       660 0.00161
 ```
 
-Both p-values are below 0.05, and the two results point in opposite directions. The t-test says the south orchard has significantly more nitrate on average, because eight very high readings raise its mean. The Wilcox test says north samples tend to be higher, because 22 of the 30 south samples sit below every north sample. Neither test is wrong. They are answering different questions, and a plot of the raw points shows which question matters for the data at hand: here, whether the concern is the total nitrate load (the mean) or the condition of a typical bed (the ranks).
+Both p-values are below 0.05, and the two results point in opposite directions. The t-test says the south orchard has significantly more nitrate on average, because eight very high readings raise its mean. The Wilcox test says north samples tend to be higher, because 22 of the 30 south samples sit below every north sample. Neither test is wrong. They are answering different questions, and a plain plot of each data points shows which question matters for the data at hand: here, whether the concern is the total nitrate load (the mean) or the condition of a typical bed (the ranks).
+
+#### concept check {-}
+
+`K_data_1_9` from the last check is still in the session. Fill in the blank with the test the Shapiro results called for, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data_1_9 %>%
+  ____(abundance ~ aquifer_code)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="The Wilcox test gives p = 0.35. If potassium in the two aquifers came from the same distribution, data at least this extreme would turn up about a third of the time, so there is no good evidence that values in one aquifer tend to be higher than in the other. That is not the same as showing the aquifers are identical: a test can fail to find a difference that is really there.">
+<p class="scq">Self-check: What does the result tell you about aquifers 1 and 9?</p>
+<label><input type="radio"> The two aquifers have been shown to have the same potassium distribution</label>
+<label><input type="radio"> There is no good evidence that potassium values in one aquifer tend to be higher than in the other</label>
+<label><input type="radio"> There is a 35% chance that the two aquifers differ in potassium</label>
+</div>
+
+<hr>
 
 ## more than two means {-}
 
@@ -5562,7 +5644,10 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-470)Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -5570,13 +5655,16 @@ Let's check visually to see if each group is normally distributed and to see if 
 ``` r
 K_data %>%
   group_by(aquifer_code) %>%
-  ggplot(aes(x = abundance)) + 
+  ggplot(aes(x = abundance)) +
     geom_histogram(bins = 30) +
     facet_wrap(~aquifer_code) +
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-471)Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`, and with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -5613,6 +5701,22 @@ K_data %>%
 Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p < 0.05), and the variances are certainly different from one another (Levene test p < 0.05).
 
 With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Tukey test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)
+
+#### concept check {-}
+
+Fill in the blank with the column that holds the grouping variable, so the Levene test compares the spread of potassium across all ten aquifers, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data %>%
+  leveneTest(abundance ~ ____)</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Ten aquifers make 45 pairs. Each separate t-test at a 0.05 threshold has a 5% chance of a false positive, so across 45 of them about two would come out significant by chance alone even if no aquifer differed from any other. The Tukey and Dunn tests compare every pair at once and correct the p values for the number of comparisons.">
+<p class="scq">Self-check: Why compare the ten aquifers with a Tukey or Dunn test rather than a separate t-test on each of the 45 pairs?</p>
+<label><input type="radio"> A t-test can only be run on aquifers with more than ten measurements</label>
+<label><input type="radio"> The Tukey and Dunn tests do not need the data to be checked first</label>
+<label><input type="radio"> With 45 separate tests, a few pairs would come out significant by chance alone, and the Tukey and Dunn tests correct for that</label>
+</div>
+
+<hr>
 
 ### Tukey test {-}
 
@@ -5671,9 +5775,29 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-476)Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
+
+#### concept check {-}
+
+Fill in the blank with the column of corrected p values, so the filter keeps only the pairs of aquifers that differ significantly, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data %>%
+  tukeyTest(abundance ~ aquifer_code) %>%
+  filter(____ < 0.05)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="Ten rows survive the filter: 10 of the 45 pairs have an adjusted p value below 0.05. The p.adj column is the one to filter on, because it has been corrected for the number of comparisons; an uncorrected p value would let through pairs that differ only by chance.">
+<p class="scq">Self-check: How many of the 45 pairs of aquifers differ significantly in potassium according to the Tukey test?</p>
+<label><input type="radio"> 6</label>
+<label><input type="radio"> 10</label>
+<label><input type="radio"> 45</label>
+</div>
+
+<hr>
 
 ### Dunn test {-}
 
@@ -5729,9 +5853,29 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-478-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-478-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-478)Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Note that these groupings are different from those generated by the Tukey test.
+
+#### concept check {-}
+
+Fill in the blank with the rank-based counterpart of the Tukey test, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data %>%
+  ____(abundance ~ aquifer_code) %>%
+  filter(p.adj < 0.05)</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Aquifer 9 failed the Shapiro test and the Levene test found that the spreads differ, so the Tukey test's assumptions do not hold and its p values may be inaccurate. The Dunn test works on ranks, so it does not need either assumption. Here it finds 6 significantly different pairs where the Tukey test found 10.">
+<p class="scq">Self-check: Why is the Dunn result the one to trust for these potassium data?</p>
+<label><input type="radio"> Aquifer 9 is not normally distributed and the spreads differ, so the Tukey test's assumptions do not hold</label>
+<label><input type="radio"> The Dunn test always finds fewer significant pairs, so it is the safer choice</label>
+<label><input type="radio"> The Dunn test does not need its p values corrected for the number of comparisons</label>
+</div>
+
+<hr>
 
 ## pairs of means {-}
 
@@ -5744,7 +5888,10 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-479-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-479-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-479)Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
 
 Fortunately, we can use an approach that is very similar to what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -5896,9 +6043,31 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-484)Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p > 0.05, and one, two, three or four stars mean p < 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+</div>
+
+#### concept check {-}
+
+Fill in the blank with the column that splits the data into one sodium-versus-chloride comparison per aquifer, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  group_by(____) %>%
+  pairwiseTTest(abundance ~ analyte) %>%
+  select(aquifer_code, p, p.adj, p.adj.signif)</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Aquifer 1's uncorrected p is 0.047, just under 0.05, but once it is corrected for the ten comparisons made across all the aquifers, p.adj is 0.42. Only p.adj accounts for running ten tests, so sodium and chloride in aquifer 1 do not differ significantly. Aquifer 2 is the one that survives the correction.">
+<p class="scq">Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride differ significantly there?</p>
+<label><input type="radio"> Yes, because p is below 0.05</label>
+<label><input type="radio"> Yes, because at least one of the two p values is below 0.05</label>
+<label><input type="radio"> No, because p.adj, which is corrected for the ten comparisons, is above 0.05</label>
+</div>
 
 <hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
 []{#comparing-means-summary}
 
