@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -121,8 +122,8 @@
 </li>
 </ul>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/report_outline.jpg" alt="" width="100%" style="display: block; margin: auto;"></div>
-<div id="section-47" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-47"><i class="fas fa-link"></i></a></h2>
+<div id="section-2" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-2"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="brief-structural-example" class="section level2 unnumbered">
 <h2>brief structural example<a class="anchor" aria-label="anchor" href="#brief-structural-example"><i class="fas fa-link"></i></a>
@@ -252,8 +253,8 @@
 </ul>
 </div>
 </div>
-<div id="section-48" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-48"><i class="fas fa-link"></i></a></h2>
+<div id="section-3" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-3"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="further-reading-14" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-14"><i class="fas fa-link"></i></a>
@@ -277,7 +278,7 @@
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#question-driven-report">question-driven report</a></li>
-<li><a class="nav-link" href="#section-47"></a></li>
+<li><a class="nav-link" href="#section-2"></a></li>
 <li><a class="nav-link" href="#brief-structural-example">brief structural example</a></li>
 <li><a class="nav-link" href="#structure">structure</a></li>
 <li>
@@ -286,7 +287,7 @@
 <li><a class="nav-link" href="#order-then-edit-paragraphs">order then edit paragraphs</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#section-48"></a></li>
+<li><a class="nav-link" href="#section-3"></a></li>
 <li><a class="nav-link" href="#further-reading-14">further reading</a></li>
 </ul>
 
@@ -305,7 +306,7 @@
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -313,7 +314,13 @@
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

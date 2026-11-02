@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Data visualization uses the concept of a grammar of graphics to display a dataset as a plot, mapping each variable to the position, color, or size of geometric objects such as points, lines, and bars. This analysis can be used to answer questions such as "How are the values of this variable distributed across the samples?" or "How does this variable vary with that variable across the samples?"
 
-## {-}
+<hr>
 
 Visualization is one of the most fun parts of working with data, and it is usually the first thing we do with a new data set: a plot shows at a glance which samples stand out, which groups differ, and whether the measurements look the way we expected. Most later chapters in this book produce plots (a heat map, a dendrogram, an ordination, a regression line), and in research, figures are how results reach readers in papers, posters and talks. In this chapter we will jump into visualization as quickly as possible, after just a few prerequisites: storing data in objects and filtering it with functions. Then we will learn the core grammar of `ggplot2`, which every one of those later plots is built on. Data visualization is a whole field in and of itself, and it is also rife with "trendy" visuals, misleading visuals, and visuals that look cool but don't actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let's get started!
 
@@ -14,8 +14,6 @@ Visualization is one of the most fun parts of working with data, and it is usual
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
 </script>
-
-## {-}
 
 ## objects {-}
 
@@ -233,7 +231,7 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 -->
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

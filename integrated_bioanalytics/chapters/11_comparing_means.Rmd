@@ -1,20 +1,24 @@
-# comparing means {-}
+# comparing groups {#comparing-means -}
+
+::: {.chapter-card}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
 ```
 
-Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if that hypothesis were true, using t tests or Wilcoxon tests for two groups, and Tukey or Dunn tests for more than two groups, to identify which pairs of groups differ. This analysis can be used to answer questions such as "Is the difference in potassium concentration between these two aquifers statistically significant at the 0.05 level?" or "Which pairs of aquifers differ significantly in potassium concentration?"
+<div class="cc-title-slot"></div>
 
-## {-}
+**Are these two things the same?** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Tukey or Dunn tests, and marks the results on a plot.
 
-**"Are these two things the same?"** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in their leaf chemistry? Questions like these come up whenever measurements from two or more groups are compared, which makes them some of the most common questions in experimental science and a feature of many research figures. A difference between two averages on its own does not answer them, because some difference is expected by chance alone. Statistical tests ask how likely it would be to get data this extreme if the groups' distributions were the same. This chapter covers how to look at the distributions first, how to choose a test for two groups or for more than two, and how to mark the results on a plot. The groups can come from anywhere: sites, treatments, species, or the clusters found in the flat clustering chapter.
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#comparing-means-summary){.cc-btn .ghost}
 
-## {-}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png', dpi = NA)
+```
 
-Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
+:::
 
-Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set - we have 990 measurements of 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island's aquifers with the data set `hawaii_aquifers` in hand. The output below shows the structure of the data set: we have 990 measurements of 9 different analytes in multiple wells, each of which draws on one of 10 aquifers.
 
 ```{r}
 hawaii_aquifers
@@ -46,27 +50,17 @@ library(multcompView)
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
-2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference between the means (which is where the name "null" comes from). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
+2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference between the distributions (which is where the name "null" comes from). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
 
-3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same potassium levels (i.e. assuming the null hypothesis is true), there is a 4% chance of getting values at least as extreme as the ones we measured. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
+3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words: the *p* value is the probability that we would observe the differences in our samples that we did, if in fact there were no differences in the populations at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same potassium levels (i.e. assuming the null hypothesis is true), there is a 4% chance of getting values at least as extreme as the ones we measured. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
 
 Please note that the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
-## looking at the distribution first {-}
+## distributions {-}
 
-Before comparing two means, look at the two distributions. This is not a formality. Every test in this
-chapter makes assumptions about the *shape* of the data (whether it is roughly normal, whether the
-groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can
-have identical means and completely different distributions, and a bar chart of the means will hide
-that perfectly.
+Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the *shape* of the data (whether it is roughly normally distributed and/or whether the groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.
 
-So it is worth knowing how to draw a distribution in full rather than summarizing it away.
-
-### distributions in full {-}
-
-Combining geoms shows the summary, the density and the raw observations at once. The half-eye
-gives the density, the boxplot the quartiles, and the dots every actual measurement, showing
-the shape, the spread and the sample size in one picture:
+By using multiple geoms, a single plot can show the summary (mean, median, etc.), the density, and the raw observations at once. In the plot below, the half-eye gives the density, the boxplot the quartiles, and the dots every actual measurement, showing the shape, the spread and the sample size in one picture:
 
 ```{r}
 mpg %>% filter(cyl %in% c(4,6,8)) %>%
@@ -78,44 +72,15 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-Look at what this shows that a bar chart would not: how many observations there actually are, whether
-the distribution is skewed, and whether any group is bimodal. All three change which test to
-reach for in the next section.
-
-### distributions alongside a scatter plot {-}
-
-With two variables in play at once, the distribution of each can be attached to the margins
-of the plot, so the relationship and the two individual distributions are visible together:
-
-```{r}
-i2 <- iris %>%
-  mutate(Species2 = rep(c("A","B"), 75))
-p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
-  geom_point()
-
-p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
-  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
-  theme_bw() + 
-  facet_grid(Species~Species2, space = "free", scales = "free") +
-  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
-  ggside(collapse = "all") +
-  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
-  scale_yfill_manual(values = c("black","gold"))
-```
+Look at what this shows that a bar chart would not: how many observations there actually are, whether the distribution is skewed, and whether any group is bimodal. All three change which statistical test would be needed to complete the work described in the next section.
 
 ## test selection {-}
 
-There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. There are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/stats.png', dpi = NA)
-```
-
-When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If our data can be reasonably modeled by a normal distribution, then we can use "parametric" tests. Under those conditions they are the most powerful choice, meaning they can detect smaller differences as statistically significant. If they cannot, the p-values from parametric tests may no longer be accurate, especially with small samples, so we switch to "non-parametric" tests, whose p-values hold up whatever the shape of the data. Non-parametric tests are not simply weaker versions of the parametric ones: with skewed data or a few outliers, they are often the more powerful choice as well.
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If our data can be reasonably modeled by a normal distribution, then we can use what are called "parametric" tests. Under those conditions they are the most powerful choice, meaning they can detect smaller differences as statistically significant. If the data are not normally distributed within each group we are comparing, the p-values from parametric tests may no longer be accurate, especially with small samples, so we switch to "non-parametric" tests, whose p-values hold up regardless of the shape of the data. Non-parametric tests are not simply weaker versions of the parametric ones: with skewed data or a few outliers, they are often the more powerful choice as well.
 
 A helpful way to think about the non-parametric tests in this chapter is that each one ranks all of the values, then does something close to its parametric partner on those ranks. The Wilcox test behaves much like a t-test run on ranks, and the Dunn test (for more than two groups) much like a set of pairwise comparisons run on ranks. This is an approximation rather than exactly what the software computes, but it explains why these tests do not need normally distributed data: ranks always run from 1 to N, whatever the measurements looked like, so a skewed distribution or an extreme value cannot distort them.
 
-We can check our data for normality using the Shapiro test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
+So, the first question we must answer is whether each group within our data can be sufficiently approximated using a normal distribution. We can check our data for normality using the Shapiro test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
 ```{r, message = FALSE}
 K_data <- hawaii_aquifers %>%
@@ -172,13 +137,11 @@ K_data_1_6 %>%
   wilcoxTest(abundance ~ aquifer_code)
 ```
 
-A p-value of 0.028! This is higher than the value given by the t-test (0.012), because the Wilcox test works with less information. Instead of using the measured values, it pools both groups, ranks every observation from smallest to largest, and asks whether one group's ranks sit consistently higher than the other's. Its null hypothesis is that both groups come from the same distribution, so that a value drawn from one group is equally likely to be larger or smaller than a value drawn from the other. Interpreting the number as before, if the two aquifers really had identical distributions, we would see results this extreme only about 2.8% of the time.
+A p-value of 0.028! This is higher than the t-test's value (0.012) because the Wilcox test works with less information. Rather than the measured values themselves, it pools both groups, ranks every observation from smallest to largest, and asks whether values from one group tend to rank higher than those from the other. Its null hypothesis is that both groups come from the same distribution. If the two aquifers really had identical distributions, we would see a result this extreme only about 2.8% of the time.
 
-### what the Wilcox test compares {-}
+Strictly speaking, then, the Wilcox test compares neither means nor medians. When the two distributions share a shape and are simply shifted relative to one another, its question reduces to whether the medians differ, which is why the median is the usual summary to report alongside a Wilcox result. When the shapes clearly do not match, still report the medians as a description, but phrase the conclusion as "values in group A tend to be higher than values in group B."
 
-Strictly speaking, the Wilcox test compares neither means nor medians. It asks whether values from one group tend to be larger than values from the other. If the two distributions have the same shape and differ only by a shift, that question is the same as asking whether their medians differ, which is why the median is the usual summary to report with a Wilcox result. When the shapes clearly differ, report the medians as a description, but phrase the conclusion as "values in group A tend to be higher than values in group B."
-
-Because it works on ranks, the Wilcox test is barely moved by a few extreme values. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. For this reason the Wilcox test is less powerful than the t-test when the data truly are normal, but often more powerful when a few outliers are present. It also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:
+Working on ranks also makes the test resistant to outliers. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. Ranking also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:
 
 ```{r, fig.cap = "Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.", fig.width = 4.5, fig.height = 4}
 orchards <- tibble(
@@ -393,21 +356,15 @@ hawaii_aquifers %>%
 
 ```
 
-## {-}
+<hr>
+
+[]{#comparing-means-summary}
 
 ## chapter summary {-}
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf){.summary-pdf target="_blank"}
 
-::: {.summary-top}
-
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a test for comparing means. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests."}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png', dpi = NA)
-```
-
 Before choosing a statistical test to apply to your data, look at the distribution of the data in each group. **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). The t-test used in this book is Welch's, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check for equal variances first using the Levene test. The *p* value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The *p* value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.
-
-:::
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
@@ -429,19 +386,19 @@ Before choosing a statistical test to apply to your data, look at the distributi
 cat('
 <div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
-<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
-<div>
-<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing means &middot; t-tests, Tukey + pairwise tests</div>
-<div style="margin-top:8px;font-size:13px;line-height:1.4;">You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.</div>
-</div>
-</div>
-<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/cover.png" alt="Seedfall cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Seedfall</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing means &middot; t-tests, Tukey + rank-based tests &middot; two players</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Tukey + rank-based tests &middot; two players</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A city of rooftop orchards climbs five levels up a sea cliff, and the first snow is on its way. Play as a pair: one of you starts at the harbor, the other at the lighthouse. You will test the same soil survey two different ways, and you will have to compare notes before you can light the city for winter.</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Tukey + pairwise tests</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.</div>
 </div>
 </div>
 </div>

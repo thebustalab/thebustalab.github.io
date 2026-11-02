@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="active" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -109,8 +110,7 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/network.JPG" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose similarity exceeds a chosen threshold, or as an interaction network, in which edges are observed connections. Applying wrangling and summary techniques to network data can then examine edge direction, per-node summaries such as the number of connections, and the effect of removing nodes. This analysis can be used to answer questions such as “Which genes have expression profiles correlated above the chosen threshold across these samples?”, “Which node has the most connections?”, or “Which node, when removed, divides the network into the largest number of disconnected components?”</p>
-<div id="section-12" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-12"><i class="fas fa-link"></i></a></h2>
+<hr>
 <p>A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Networks answer questions about connections: which samples resemble which, which genes rise and fall together, which proteins bind one another, and which single node holds a whole system together. In research they appear as gene co-expression networks and protein-protein interaction networks, and in this course they build directly on the distance matrices of the previous chapter, distances and scaling, and on the <code>group_by()</code> and <code>summarize()</code> verbs from the wrangling chapter. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:</p>
 <ul>
 <li><p>A <strong>similarity network</strong> is a structure we build. We start with a data matrix (samples for which we have measured many variables) and compute how similar every sample is to every other, then draw an edge wherever two samples are similar enough (see the bit about thresholds, below). Here, an edge means “these two samples resemble each other”, and we decide how much resemblance is required for two samples to be connected, usually by setting that threshold.</p></li>
@@ -120,12 +120,7 @@
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
-</script>
-</div>
-<div id="section-13" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a></h2>
-</div>
-<div id="similarity-networks" class="section level2 unnumbered">
+</script><div id="similarity-networks" class="section level2 unnumbered">
 <h2>similarity networks<a class="anchor" aria-label="anchor" href="#similarity-networks"><i class="fas fa-link"></i></a>
 </h2>
 <p>A similarity network starts from a distance matrix, which is the subject of the previous chapter, distances and scaling. Here we use the Alaska lakes again, in wide format, with every analyte scaled and euclidean distance as the metric. Any of the other metrics from that chapter could be swapped in through <code>distance_method</code>, and the network would then join lakes that are similar in that other sense.</p>
@@ -657,12 +652,9 @@ Self-check: a colleague ranks these airports by passenger volume and proposes pr
 <label><input type="radio"> Passenger volume cannot be calculated from this data set</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
 </div>
 </div>
-</div>
-<div id="section-14" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="chapter-summary-4" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-4"><i class="fas fa-link"></i></a>
@@ -789,8 +781,6 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#networks">networks</a></li>
-<li><a class="nav-link" href="#section-12"></a></li>
-<li><a class="nav-link" href="#section-13"></a></li>
 <li><a class="nav-link" href="#similarity-networks">similarity networks</a></li>
 <li><a class="nav-link" href="#interaction-networks">interaction networks</a></li>
 <li>
@@ -801,7 +791,6 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <li><a class="nav-link" href="#warnings">warnings</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#section-14"></a></li>
 <li><a class="nav-link" href="#chapter-summary-4">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-3">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-4">further reading</a></li>
@@ -822,7 +811,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -830,7 +819,13 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

@@ -15,7 +15,7 @@
 
 ## {-}
 
-The comparing means chapter asked whether groups differ, and which pairs. Analysis of variance (ANOVA) asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine? That question is the backbone of designed experiments, where several things are varied at once, where samples are processed in batches, and where several responses are measured on the same subjects.
+The comparing groups chapter asked whether groups differ, and which pairs. Analysis of variance (ANOVA) asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine? That question is the backbone of designed experiments, where several things are varied at once, where samples are processed in batches, and where several responses are measured on the same subjects.
 
 ## ANOVA is a linear model {-}
 
@@ -25,14 +25,14 @@ This is the same machinery as the regression chapter. An ANOVA is a linear model
 
 ### one factor {-}
 
-Using the potassium data from the comparing means chapter, a one-way ANOVA asks whether the aquifers differ at all:
+Using the potassium data from the comparing groups chapter, a one-way ANOVA asks whether the aquifers differ at all:
 
 ```{r}
 K_data %>%
   anovaTest(abundance ~ aquifer_code)
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ; that is the job of the Tukey test from the comparing means chapter. What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ; that is the job of the Tukey test from the comparing groups chapter. What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
 
 The ANOVA and the Tukey test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Tukey test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
 

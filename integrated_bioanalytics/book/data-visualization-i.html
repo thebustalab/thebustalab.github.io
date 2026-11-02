@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="active" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -109,18 +110,12 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Data visualization uses the concept of a grammar of graphics to display a dataset as a plot, mapping each variable to the position, color, or size of geometric objects such as points, lines, and bars. This analysis can be used to answer questions such as “How are the values of this variable distributed across the samples?” or “How does this variable vary with that variable across the samples?”</p>
-<div id="section" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a></h2>
+<hr>
 <p>Visualization is one of the most fun parts of working with data, and it is usually the first thing we do with a new data set: a plot shows at a glance which samples stand out, which groups differ, and whether the measurements look the way we expected. Most later chapters in this book produce plots (a heat map, a dendrogram, an ordination, a regression line), and in research, figures are how results reach readers in papers, posters and talks. In this chapter we will jump into visualization as quickly as possible, after just a few prerequisites: storing data in objects and filtering it with functions. Then we will learn the core grammar of <code>ggplot2</code>, which every one of those later plots is built on. Data visualization is a whole field in and of itself, and it is also rife with “trendy” visuals, misleading visuals, and visuals that look cool but don’t actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let’s get started!</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
-</script>
-</div>
-<div id="section-1" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-1"><i class="fas fa-link"></i></a></h2>
-</div>
-<div id="objects" class="section level2 unnumbered">
+</script><div id="objects" class="section level2 unnumbered">
 <h2>objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
 </h2>
 <p>In R, data is stored in objects. Objects can be thought of as “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with. Let’s look at how to create an object. For this, we can use an arrow: <code>&lt;-</code> . The arrow will take something and store it inside an object. For example:</p>
@@ -364,11 +359,8 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 2. Plain text: Plain text in an R Markdown document creates a plain text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
--->
+--><hr>
 </div>
-</div>
-<div id="section-2" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-2"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="chapter-summary" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary"><i class="fas fa-link"></i></a>
@@ -623,12 +615,9 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#data-visualization-i">data visualization I</a></li>
-<li><a class="nav-link" href="#section"></a></li>
-<li><a class="nav-link" href="#section-1"></a></li>
 <li><a class="nav-link" href="#objects">objects</a></li>
 <li><a class="nav-link" href="#functions">functions</a></li>
 <li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
-<li><a class="nav-link" href="#section-2"></a></li>
 <li><a class="nav-link" href="#chapter-summary">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises">exercises</a></li>
 <li><a class="nav-link" href="#further-reading">further reading</a></li>
@@ -649,7 +638,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -657,7 +646,13 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

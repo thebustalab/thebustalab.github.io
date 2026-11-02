@@ -12199,229 +12199,6 @@
                     return(out)
                 }
 
-        #### buildModel
-
-            buildModel <- function(
-                data,
-                model_type = c(
-                    "linear_regression", "random_forest_regression",
-                    "random_forest_classification", "logistic_regression",
-                    "contrastive_learning"
-                ),
-                input_variables = NULL,
-                output_variable = NULL,
-                fold_cross_validation = 10,
-                optimization_parameters = list(
-                    n_vars_tried_at_split = seq(10,20,5),
-                    n_trees = seq(100,200,50),
-                    min_leaf_size = 1
-                ),
-                epochs = 50
-            ) {
-
-                ## Prepare the data
-
-                    ## Correct the formula and the data, start the output
-                        data <- as.data.frame(data)
-                        data <- data %>% select(output_variable, input_variables)
-                        if( any(is.na(data)) ) { stop("Yo - there are missing data in your data set, please deal with that before proceeding.") }
-                        formula <- paste0("`", output_variable, "` ~ `", paste(input_variables, collapse = "` + `"), "`")
-                        output <- list()
-                        output$model_type <- model_type
-
-                    ## Various checkes
-                        if (dim(data)[2] < length(input_variables)) {
-                            stop("Heyyyyy, there are fewer observations in the data than input variables. You should change the number of input variables or make more observations.")
-                        }
-                        if (!is.numeric(data[,colnames(data) == output_variable]) & !model_type %in% c("random_forest_classification", "contrastive_learning")) {
-                            stop("Uh oh! You cannot predict the value of a categorical variable with a regression model. Choose a classification model instead.")
-                        }
-
-                ## Modeling
-
-                    if (model_type == "linear_regression") {
-
-                        ## Run the fit and start the output
-                            fit <- lm(
-                                data = data,
-                                formula = formula,
-                                x = TRUE, y = TRUE, model = TRUE, qr = TRUE
-                            )
-                            output$model <- fit
-
-                            input_y <- fit$y[order(as.numeric(names(fit$y)))]
-                            total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
-                            residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
-
-                            metrics <- rbind(
-                                data.frame(
-                                    variable = c("r_squared", "total_sum_squares", "residual_sum_squares"),
-                                    value = c(summary(fit)$r.squared, total_sum_squares, residual_sum_squares),
-                                    std_err = NA,
-                                    type = "statistic",
-                                    p_value = NA,
-                                    p_value_adj = NA
-                                ),
-                                data.frame(
-                                    variable = names(coefficients(fit)),
-                                    value = as.numeric(coefficients(fit)),
-                                    std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
-                                    type = "coefficient",
-                                    p_value = round(summary(fit)$coefficients[,4], 8),
-                                    p_value_adj = p.adjust(round(summary(fit)$coefficients[,4], 8))
-                                )
-                            )
-                            metrics$value <- round(as.numeric(metrics$value), 4)
-                            rownames(metrics) <- NULL
-                            output$metrics <- metrics
-                    }
-
-                    if (model_type == "random_forest_regression") {
-
-                        ## Create a workflow that has a recipe and a model
-                            workflow() %>%
-                                add_recipe(
-                                    recipe( as.formula(formula), data = data ) # %>%
-                                    # step_normalize(all_numeric()) # %>% step_impute_knn(all_inputs())
-                                ) %>%
-                                add_model(
-                                    rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-                                    set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-                                    set_mode("regression") # choose either the continuous regression or binary classification mode
-                                ) -> workflow
-
-                        ## Tune the model on the training set
-                            tune_results <- tune::tune_grid(
-                                workflow,
-                                resamples = rsample::vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(
-                                    mtry = optimization_parameters$n_vars_tried_at_split,
-                                    trees = optimization_parameters$n_trees,
-                                    min_n = optimization_parameters$min_leaf_size
-                                ), # grid of values to try
-                                metrics = yardstick::metric_set(yardstick::rmse) # metrics we care about
-                            )
-
-                        # Check model parameters if you want
-                            output <- list()
-                            output$metrics <- collect_metrics(tune_results)
-
-                        ## Apply the best parameters to the workflow to creat the output model
-                            output$model <- fit(
-                                finalize_workflow(workflow, select_best(tune_results, metric = "rmse")),
-                                data
-                            )
-                    }
-
-                    if (model_type == "random_forest_classification") {
-
-                        ## Create a workflow that has a recipe and a model
-                            workflow() %>%
-                                add_recipe(
-                                    recipe( as.formula(formula), data = data ) # %>%
-                                    # step_normalize(all_numeric()) # %>% step_impute_knn(all_inputs())
-                                ) %>%
-                                add_model(
-                                    rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-                                    set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-                                    set_mode("classification") # choose either the continuous regression or binary classification mode
-                                ) -> workflow
-
-                        ## Tune the model on the training set
-                            tune_results <- tune_grid(
-                                workflow,
-                                resamples = vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(
-                                    mtry = optimization_parameters$n_vars_tried_at_split,
-                                    trees = optimization_parameters$n_trees,
-                                    min_n = optimization_parameters$min_leaf_size
-                                ), # grid of values to try
-                                metrics = yardstick::metric_set(yardstick::accuracy)
-                            )
-
-                        # Check model parameters if you want
-                            output <- list()
-                            output$metrics <- collect_metrics(tune_results)
-                            colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
-                            # select_best(tune_results, metric = "rmse")
-
-                        ## Apply the best parameters to the workflow to creat the output model
-                            output$model <- fit(
-                                finalize_workflow(workflow, select_best(tune_results, metric = "accuracy")),
-                                data
-                            )
-
-                        names(output$metrics)[1] <- "n_vars_tried_at_split"
-                        names(output$metrics)[2] <- "n_trees"
-                        colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
-                    }
-
-                    if (model_type == "contrastive_learning") {
-
-                        # Extract embeddings as a matrix and function labels
-                        embedding_matrix <- data %>% select(all_of(input_variables)) %>% as.matrix()
-                        function_labels <- data %>% select(all_of(output_variable)) %>% as.data.frame() %>% unlist()
-
-                        # Create all possible pairs of rows
-                        pairs <- expand.grid(1:nrow(embedding_matrix), 1:nrow(embedding_matrix))
-                        pairs <- pairs[pairs$Var1 < pairs$Var2, ]  # Remove redundant pairs
-                        pairs$similarity <- ifelse(function_labels[pairs$Var1] == function_labels[pairs$Var2], 1, 0)
-
-                        # Convert pairs into torch tensors
-                        embedding_pairs <- list(
-                            anchor = torch_tensor(embedding_matrix[pairs$Var1, ]),
-                            positive = torch_tensor(embedding_matrix[pairs$Var2, ]),
-                            labels = torch_tensor(pairs$similarity)
-                        )
-
-                        contrastive_loss <- function(anchor, positive, label, margin = 1.0) {
-                            # Compute Euclidean distance between pairs
-                            distance <- torch::torch_norm(anchor - positive, dim = 2)
-                            loss <- label * torch::torch_square(distance) + (1 - label) * torch::torch_square(torch::torch_relu(margin - distance))
-                            return(torch::torch_mean(loss))
-                        }
-
-                        embedding_model <- nn_module(
-                            initialize = function() {
-                                self$fc1 <- nn_linear(in_features = ncol(embedding_matrix), out_features = 128)
-                                self$fc2 <- nn_linear(128, 64)  # Reduce to 64-dimensional space
-                            },
-                            forward = function(x) { x %>% self$fc1() %>% nnf_relu() %>% self$fc2() }
-                        )
-                          
-                        # Instantiate model and optimizer
-                        model <- embedding_model()
-                        optimizer <- optim_adam(model$parameters, lr = 0.001)
-
-                        # Training loop
-                        losses_vector <- as.numeric()
-                        for (epoch in 1:epochs) {
-                            optimizer$zero_grad()
-                            anchor_output <- model(embedding_pairs$anchor)
-                            positive_output <- model(embedding_pairs$positive)
-                            loss <- contrastive_loss(anchor_output, positive_output, embedding_pairs$labels)
-                            loss$backward()
-                            optimizer$step()
-                            losses_vector <- c(losses_vector, as.numeric(loss$item()))
-                        }
-
-                         # Check model parameters if you want
-                            output <- list()
-                            output$metrics <- losses_vector
-
-                        ## Apply the best parameters to the workflow to creat the output model
-                            output$model <- list(
-                                state_dict = model$state_dict(),
-                                architecture = embedding_model,  # Keep the architecture for reference
-                                input_variables = input_variables
-                            )
-                    }
-
-                    return(output)
-            }
-
         #### buildModel1.5
 
             buildModel1.5 <- function(
@@ -12584,9 +12361,11 @@
                     return(output)
             }
 
-        #### buildModel2
+        #### buildModel
 
-            buildModel2 <- function(
+            # Was buildModel2 until 2026-10-30 (Lucas): the older buildModel it replaced had no callers and was
+            # removed. buildModel2 stays as an alias below so existing code keeps running.
+            buildModel <- function(
                 data,
                 model_type = c(
                     "linear_regression", "random_forest_regression",
@@ -12642,6 +12421,7 @@
                         formula <- paste0("`", output_variable, "` ~ `", paste(input_variables, collapse = "` + `"), "`")
                         output <- list()
                         output$model_type <- model_type
+                        output$output_variable <- output_variable   # predictWithModel names its column from this
 
                     ## Various checkes
                             if (dim(data)[1] < length(input_variables)) {
@@ -12788,60 +12568,111 @@
             }
 
 
+        #### buildModel2 (alias, kept for back-compatibility)
+
+            buildModel2 <- function(...) buildModel(...)
+
         #### predictWithModel
 
             predictWithModel <- function(
                 data,
-                model_type = c(
-                    "linear_regression", "random_forest_regression",
-                    "random_forest_classification", "logistic_regression",
-                    "contrastive_learning"
-                ),
                 model,
+                model_type = NULL,
                 id_cols = NULL
             ) {
+
+                ## Lucas, 2026-10-30: the model type comes from the model itself, and the result is the
+                ## input data with the prediction(s) appended, like the cluster column runMatrixAnalysis
+                ## adds. `model` may be the whole buildModel() result or its $model; `model_type` is an
+                ## optional override kept for old code; `id_cols` is accepted and ignored (every input
+                ## column now comes back).
 
                 ## Check to see that required data are provided
                     if (missing(data)) {
                         stop("Input data is required.")
                     }
+                    if (missing(model)) {
+                        stop("Please provide a model (the output of buildModel(), or its $model).")
+                    }
 
-                ## Predictions
+                ## Unpack a whole buildModel() result
+                    outcome <- NULL
+                    if (is.list(model) && !is.null(model$model_type) && !is.null(model$model)) {
+                        if (is.null(model_type)) model_type <- model$model_type
+                        outcome <- model$output_variable
+                        model <- model$model
+                    }
+
+                ## Infer the model type from the fitted object
+                    if (is.null(model_type)) {
+                        if (inherits(model, "glm")) {
+                            model_type <- "logistic_regression"
+                        } else if (inherits(model, "lm")) {
+                            model_type <- "linear_regression"
+                        } else if (inherits(model, "workflow")) {
+                            mode <- model$fit$actions$model$spec$mode
+                            model_type <- if (identical(mode, "classification")) "random_forest_classification" else "random_forest_regression"
+                        } else if (is.list(model) && !is.null(model$architecture)) {
+                            model_type <- "contrastive_learning"
+                        } else {
+                            stop("predictWithModel() could not tell what kind of model this is. Pass the output of buildModel().")
+                        }
+                    }
+                    model_type <- match.arg(model_type, c(
+                        "linear_regression", "random_forest_regression",
+                        "random_forest_classification", "logistic_regression",
+                        "contrastive_learning"
+                    ))
+
+                ## The outcome's name, for the column
+                    if (is.null(outcome)) {
+                        if (inherits(model, "lm")) outcome <- names(model$model)[1]
+                        if (inherits(model, "workflow")) outcome <- names(model$pre$mold$outcomes)[1]
+                    }
+                    pred_col <- paste0("predicted_", if (is.null(outcome) || !nzchar(outcome)) "value" else outcome)
+
+                ## Predictions, appended to the input data
+                    output <- as_tibble(data)
 
                     if (model_type == "linear_regression") {
-                        output <- stats::predict(model, data)
-                        output <- unlist(output)
+                        output[[pred_col]] <- unname(as.numeric(stats::predict(model, data)))
+                    }
+
+                    if (model_type == "logistic_regression") {
+                        stop("predictWithModel() does not support logistic_regression yet.")
                     }
 
                     if (model_type == "random_forest_regression") {
-                        output <- stats::predict(model, new_data = data)
-                        output <- unlist(output)
+                        output[[pred_col]] <- unname(as.numeric(unlist(stats::predict(model, new_data = data))))
                     }
 
                     if (model_type == "random_forest_classification") {
-                        output <- stats::predict(model, new_data = data, type = "prob")
+                        probs <- as.data.frame(stats::predict(model, new_data = data, type = "prob"))
+                        classes <- sub("^\\.pred_", "", colnames(probs))
+                        for (k in seq_along(classes)) {
+                            output[[paste0("probability_", classes[k])]] <- probs[[k]]
+                        }
+                        output[["predicted_class"]] <- classes[max.col(as.matrix(probs), ties.method = "first")]
                     }
 
                     if (model_type == "contrastive_learning") {
                         # Convert data to the required matrix format
-                        data <- data[,colnames(data) %in% model$input_variables]
-                        embedding_matrix <- as.matrix(data)
+                        x <- data[,colnames(data) %in% model$input_variables]
+                        embedding_matrix <- as.matrix(x)
 
                         # Load model architecture and parameters
                         embedding_model <- model$architecture()
                         embedding_model$load_state_dict(model$state_dict)
 
-                        # Pass the data through the model to get embeddings
+                        # Pass the data through the model to get embeddings, one column per dimension
                         embeddings <- embedding_model(torch::torch_tensor(embedding_matrix))
-
-                        # Convert embeddings to a data frame or matrix format for easy use in R
-                        output <- as.matrix(embeddings$detach()$cpu())  # Detach and bring to CPU if running on GPU
-                        output <- unlist(output)
+                        emb <- as.matrix(embeddings$detach()$cpu())  # Detach and bring to CPU if running on GPU
+                        for (k in seq_len(ncol(emb))) {
+                            output[[paste0("embedding_", k)]] <- emb[, k]
+                        }
                     }
 
                 ## Return
-                    output <- as_tibble(output)
-                    if (!is.null(id_cols)) { output <- cbind(data[,colnames(data) %in% id_cols, drop = FALSE], output) }
                     return(output)
 
             }

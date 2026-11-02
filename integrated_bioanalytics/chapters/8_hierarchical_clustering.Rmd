@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a dendrogram), which can then be cut at a chosen height to assign groups or used to order the rows of a heat map. This analysis can be used to answer questions such as "Which samples join the unknown sample at the lowest height in the tree?" or "Which groups do the samples fall into when the tree is cut at this height?"
 
-## {-}
+<hr>
 
 Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time, into a branching tree of nested groups (a dendrogram), built from the same distance matrix as in the distances and scaling chapter. The tree shows at a glance which samples resemble each other, and cutting across it turns those relationships into groups. In this chapter we use trees to find the lake whose water chemistry is closest to an unknown sample, to sort solvents into chemically recognizable families, and to order the rows of a heat map so that blocks of similar samples sit together. Along the way we cover the decisions that shape the result: which linkage rule builds the tree, how to read it, and where to cut it. Trees return in the flat clustering chapter, which sorts samples into groups without building one, and in the phylogenies chapters, where a tree records evolutionary history.
 
@@ -14,8 +14,6 @@ Which samples in a data set are close relatives, which stand apart, and do they 
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
 </script>
-
-## {-}
 
 ## linkage dendrograms {-}
 
@@ -500,7 +498,7 @@ Using AK_tree from the first concept check, fill in the blank with the coordinat
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

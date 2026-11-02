@@ -129,7 +129,7 @@
   <div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -140,6 +140,15 @@
 </footer>
 
 
+
+<!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). -->
+<script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script>
 
 <!-- Dark mode toggle handler -->
 <script>

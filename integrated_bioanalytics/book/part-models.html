@@ -15,22 +15,22 @@
     })();
   </script>
 
-  <title>Chapter 3 (PART) MODELS | Integrated Bioanalytics</title>
+  <title>Chapter 4 (PART) MODELS | Integrated Bioanalytics</title>
 
     <meta name="author" content="Lucas Busta and members of the Busta lab" />
   
-   <meta name="description" content="Chapter 3 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
+   <meta name="description" content="Chapter 4 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
    <meta name="generator" content="placeholder" />
-  <meta property="og:title" content="Chapter 3 (PART) MODELS | Integrated Bioanalytics" />
+  <meta property="og:title" content="Chapter 4 (PART) MODELS | Integrated Bioanalytics" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Chapter 3 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
+  <meta property="og:description" content="Chapter 4 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 (PART) MODELS | Integrated Bioanalytics" />
+  <meta name="twitter:title" content="Chapter 4 (PART) MODELS | Integrated Bioanalytics" />
   
-  <meta name="twitter:description" content="Chapter 3 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
+  <meta name="twitter:description" content="Chapter 4 (PART) MODELS | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, genomic, and language model-based analyses." />
   
   <!-- JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
@@ -103,9 +103,11 @@
   </header>
 
   <main class="col-sm-12 col-md-9 col-lg-7" id="content">
-<div id="part-models" class="section level1" number="3">
-<h1><span class="header-section-number">Chapter 3</span> (PART) MODELS</h1>
-<!-- start regression models -->
+<div id="part-models" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> (PART) MODELS</h1>
+<!-- start machine learning -->
+<!-- DRAFT (2026-10-20): split out of 12_numerical_models.Rmd. Holds the training/testing and random-forest
+material while the chapter is written; plan in notes/modeling_split_notes.md -> Chapter C. -->
 </div>
   </main>
 
@@ -130,7 +132,7 @@
   <div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -141,6 +143,15 @@
 </footer>
 
 
+
+<!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). -->
+<script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script>
 
 <!-- Dark mode toggle handler -->
 <script>

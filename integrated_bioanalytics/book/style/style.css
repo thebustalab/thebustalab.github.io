@@ -247,3 +247,33 @@ main div[id^="chapter-summary"] table code { font-size: 0.95em; }
 /* Exercise cards: larger cover thumbnails (the cards' inline style sets 150px). */
 main div[id^="exercises"] a > img { width: 220px !important; height: 220px !important; }
 main div[id^="exercises"] div[style*="max-width:640px"] { max-width: 760px !important; }
+/* ...and larger card text to match the bigger covers (the inline style sets 17px / 13px). */
+main div[id^="exercises"] div[style*="max-width:640px"] a[style*="font-size:17px"] { font-size: 21px !important; }
+main div[id^="exercises"] div[style*="max-width:640px"] div[style*="font-size:13px"] { font-size: 16px !important; }
+
+/* "On this page" menu: a plain gap (not a link) after the chapter title and before the chapter
+   summary. These replace the old empty `## {-}` headings, which showed as clickable blanks. */
+#toc > ul > li:first-child + li { margin-top: 0.9rem; }
+#toc > ul > li:has(> a[href^="#chapter-summary"]) { margin-top: 0.9rem; }
+
+/* Chapter-opening card (Lucas, 2026-10-29; pilot: comparing groups). In the chapter it is a
+   ::: {.chapter-card} fenced div: cover image, an empty .cc-title-slot, the one intro paragraph, the
+   PDF / jump buttons, then the decision flowchart. A script in style/bs4_book.html moves the
+   chapter's real <h1> into the slot, so the title sits in a strip under the image. Without the
+   script the card still reads correctly, with the title above it. */
+main .chapter-card { border: 1px solid rgba(128,128,128,.35); border-radius: 12px; overflow: hidden;
+  margin: 0 0 2.2rem; background: rgba(128,128,128,.05); }
+main .chapter-card > * { margin-left: 1.3rem; margin-right: 1.3rem; }
+main .chapter-card > .inline-figure:first-child { margin: 0; }
+main .chapter-card > .inline-figure:first-child img { display: block; width: 100%; }
+main .chapter-card h1 { margin: 0 0 1rem; padding: .55rem 1.3rem .6rem; color: #fff;
+  background: #0f2a1f; border-top: 3px solid #2e8b57; }
+main .chapter-card > h1 { margin-left: 0; margin-right: 0; }
+main .chapter-card h1 .anchor { display: none; }
+main .chapter-card > .figure { margin-top: .6rem; margin-bottom: 1.3rem; max-width: calc(100% - 2.6rem);
+  border-top: none !important; border-bottom: none !important; padding: 0; }
+main .chapter-card .figure img { border-radius: 6px; background: #fff; }
+main .chapter-card .caption { display: none; }
+main a.cc-btn { display: inline-block; margin: .1rem .4rem .3rem 0; padding: .35rem .8rem; border-radius: 6px;
+  background: #2e8b57; color: #fff !important; text-decoration: none !important; font-size: .9rem; }
+main a.cc-btn.ghost { background: transparent; border: 1px solid #2e8b57; color: inherit !important; }

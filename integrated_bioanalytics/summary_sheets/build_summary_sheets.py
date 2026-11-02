@@ -11,6 +11,11 @@ Lines containing the download link itself are dropped, so the PDF does not link 
     python3 summary_sheets/build_summary_sheets.py --check    # exit 1 if any PDF is older than its chapter
     python3 summary_sheets/build_summary_sheets.py --deploy   # rebuild only stale sheets; if Playwright,
                                                               # Chromium or pandoc is missing, WARN and exit 0
+    python3 summary_sheets/build_summary_sheets.py 6 --no-packet   # skip the packet rebuild
+
+Every build also rewrites summary_packet.pdf: a contents cover, then every registered chapter's
+sheet in index.Rmd reading order, for printing and handing out as one packet. --check and --deploy
+treat the packet as stale whenever any registered chapter is newer than it.
 
 --deploy is what deploy.sh runs (step 1c). A missing tool must not block a publish, so it warns
 and leaves the stale PDFs in place; a sheet that overflows one page is an authoring error and
@@ -33,6 +38,7 @@ CHAPTERS = os.path.join(BOOK, "chapters")
 IMAGES = os.path.join(BOOK, "images")
 HEADING = "## chapter summary {-}"
 LINK_MARK = "summary_sheets/"
+PACKET = "summary_packet.pdf"
 
 CSS = """
 @page { size: letter; margin: 0.45in; }
@@ -81,7 +87,7 @@ def launch_chromium(p):
 
 def chapter_title(rmd):
     for line in rmd.splitlines():
-        m = re.match(r"#\s+(.*?)\s*\{-\}\s*$", line)
+        m = re.match(r"#\s+(.*?)\s*\{(?:#[\w-]+\s+)?-\}\s*$", line)  # {-} or {#id -}
         if m and not line.startswith("##"):
             return m.group(1)
     return "chapter summary"
@@ -110,40 +116,105 @@ def chunks_to_images(md):
     return re.sub(r"```\{r[^\n]*\}\n.*?\n```", repl, md, flags=re.S)
 
 
-def build(rmd_path, pandoc):
-    rmd = open(rmd_path, encoding="utf-8").read()
+def sheet_body(rmd, pandoc, suffix=": summary"):
+    """The sheet's inner HTML (heading, subtitle, summary), or None if the chapter has no summary.
+    The packet passes suffix="" because its cover already says these are the chapter summaries."""
     section = summary_section(rmd)
     if section is None:
         return None
     section = "\n".join(l for l in section.splitlines() if LINK_MARK not in l)
+    if "include_graphics" not in section:
+        # The chapter-opening card holds the decision flowchart (since 2026-10-29); the sheet still
+        # leads with it.
+        flow = re.search(r"```\{r[^\n]*\}\n[^\n]*images/[A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*[^\n]*\n```", rmd)
+        if flow:
+            section = flow.group(0) + "\n\n" + section
     md = chunks_to_images(section)
     frag = subprocess.run([pandoc, "--from", "markdown", "--to", "html"], input=md,
                           capture_output=True, text=True, check=True).stdout
-    name = os.path.splitext(os.path.basename(rmd_path))[0]
-    title = html.escape(chapter_title(rmd)) + ": summary"
-    page = (f"<!doctype html><html><head><meta charset='utf-8'><title>{title}</title><style>{CSS}</style></head><body>"
-            f"<h1>{html.escape(chapter_title(rmd))}: summary</h1>"
+    return (f"<h1>{html.escape(chapter_title(rmd))}{suffix}</h1>"
             f"<div class='sub'>Integrated Bioanalytical Chemistry &middot; thebustalab.github.io/integrated_bioanalytics</div>"
-            f"{frag}</body></html>")
-    out = os.path.join(HERE, name + ".pdf")
+            f"{frag}")
+
+
+def print_pdf(page_html, out):
+    """Print a full HTML page to `out` with headless Chromium; return the PDF's page count."""
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
         raise MissingTool("Playwright is not installed (pip install playwright)")
     with tempfile.TemporaryDirectory() as td:
         src = os.path.join(td, "sheet.html")
-        open(src, "w", encoding="utf-8").write(page)
+        open(src, "w", encoding="utf-8").write(page_html)
         with sync_playwright() as p:
             b = launch_chromium(p)
             pg = b.new_page()
             pg.goto("file://" + src)
             pg.pdf(path=out, format="Letter", print_background=True, prefer_css_page_size=True)
             b.close()
-    pages = len(re.findall(rb"/Type\s*/Page[^s]", open(out, "rb").read()))
+    return len(re.findall(rb"/Type\s*/Page[^s]", open(out, "rb").read()))
+
+
+def html_page(title, body):
+    return (f"<!doctype html><html><head><meta charset='utf-8'><title>{title}</title><style>{CSS}</style></head>"
+            f"<body>{body}</body></html>")
+
+
+def build(rmd_path, pandoc):
+    rmd = open(rmd_path, encoding="utf-8").read()
+    body = sheet_body(rmd, pandoc)
+    if body is None:
+        return None
+    name = os.path.splitext(os.path.basename(rmd_path))[0]
+    out = os.path.join(HERE, name + ".pdf")
+    pages = print_pdf(html_page(html.escape(chapter_title(rmd)) + ": summary", body), out)
     if pages != 1:
         os.remove(out)
         sys.exit(f"ERROR: {name} summary runs to {pages} pages; trim the chapter's summary section.")
     return out
+
+
+def reading_order():
+    """Registered chapter files with a summary section, in the order index.Rmd reads them."""
+    idx = open(os.path.join(BOOK, "index.Rmd"), encoding="utf-8").read()
+    files = [os.path.join(BOOK, m) for m in re.findall(r'child="(chapters/[0-9][^"]*\.Rmd)"', idx)]
+    return [f for f in files if os.path.exists(f) and HEADING in open(f, encoding="utf-8").read()]
+
+
+PACKET_CSS = """
+.sheet { break-after: page; }
+.cover h1 { font-size: 24pt; margin: 1.4in 0 6pt 0; }
+.cover .sub { font-size: 11pt; margin-bottom: 0.4in; }
+.cover ol { font-size: 11pt; line-height: 1.9; padding-left: 1.2em; }
+.cover li span { color: #666; }
+"""
+
+
+def build_packet(pandoc):
+    """Every registered chapter's summary, in reading order, behind a cover with a contents list:
+    one PDF to print and hand out. Each sheet is the same HTML as its own one-page PDF."""
+    files = reading_order()
+    items, sheets = [], []
+    for i, f in enumerate(files):
+        rmd = open(f, encoding="utf-8").read()
+        sheets.append(f"<section class='sheet'>{sheet_body(rmd, pandoc, suffix='')}</section>")
+        items.append(f"<li>{html.escape(chapter_title(rmd))} <span>&middot; page {i + 2}</span></li>")
+    cover = ("<section class='sheet cover'><h1>Chapter summaries</h1>"
+             "<div class='sub'>Integrated Bioanalytical Chemistry &middot; thebustalab.github.io/integrated_bioanalytics</div>"
+             f"<ol>{''.join(items)}</ol></section>")
+    out = os.path.join(HERE, PACKET)
+    page = html_page("Chapter summaries", cover + "".join(sheets)).replace("</style>", PACKET_CSS + "</style>", 1)
+    pages = print_pdf(page, out)
+    if pages != len(files) + 1:
+        os.remove(out)
+        sys.exit(f"ERROR: the packet came out at {pages} pages, expected {len(files) + 1} "
+                 "(cover plus one per chapter); a sheet is spilling over.")
+    return out
+
+
+def packet_stale():
+    out = os.path.join(HERE, PACKET)
+    return not os.path.exists(out) or any(os.path.getmtime(out) < os.path.getmtime(f) for f in reading_order())
 
 
 def pdf_for(f):
@@ -165,16 +236,21 @@ def main():
         stale = [f for f in files if is_stale(f)]
         for f in stale:
             print("STALE:", os.path.basename(f))
-        sys.exit(1 if stale else 0)
+        if packet_stale():
+            print("STALE:", PACKET)
+        sys.exit(1 if stale or packet_stale() else 0)
     if "--deploy" in flags:
         files = [f for f in files if is_stale(f)]
-        if not files:
+        if not files and not packet_stale():
             print("summary sheets: all current")
             return
     try:
         pandoc = pandoc_bin()
         for f in files:
             print("wrote", os.path.relpath(build(f, pandoc), BOOK))
+        # The packet follows every sheet build, so it can never lag the sheets it is made of.
+        if "--no-packet" not in flags:
+            print("wrote", os.path.relpath(build_packet(pandoc), BOOK))
     except MissingTool as e:
         if "--deploy" not in flags:
             sys.exit(f"ERROR: {e}")

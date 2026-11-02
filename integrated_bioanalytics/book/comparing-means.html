@@ -12,16 +12,16 @@
         }
       } catch (e) {}
     })();
-  </script><title>comparing means | Integrated Bioanalytics</title>
+  </script><title>comparing groups | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if...">
+<meta name="description" content="Are these two things the same? Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
-<meta property="og:title" content="comparing means | Integrated Bioanalytics">
+<meta property="og:title" content="comparing groups | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if...">
+<meta property="og:description" content="Are these two things the same? Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="comparing means | Integrated Bioanalytics">
-<meta name="twitter:description" content="Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if...">
+<meta name="twitter:title" content="comparing groups | Integrated Bioanalytics">
+<meta name="twitter:description" content="Are these two things the same? Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="active" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="active" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -105,18 +106,23 @@
       </nav>
 </div>
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="comparing-means" class="section level1 unnumbered">
-<h1>comparing means<a class="anchor" aria-label="anchor" href="#comparing-means"><i class="fas fa-link"></i></a>
+<h1>comparing groups<a class="anchor" aria-label="anchor" href="#comparing-means"><i class="fas fa-link"></i></a>
 </h1>
+<div class="chapter-card">
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Comparing means uses the concept of a null hypothesis of no difference between groups to calculate a p-value, the probability of observing a difference at least as large as the one measured if that hypothesis were true, using t tests or Wilcoxon tests for two groups, and Tukey or Dunn tests for more than two groups, to identify which pairs of groups differ. This analysis can be used to answer questions such as “Is the difference in potassium concentration between these two aquifers statistically significant at the 0.05 level?” or “Which pairs of aquifers differ significantly in potassium concentration?”</p>
-<div id="section-24" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-24"><i class="fas fa-link"></i></a></h2>
-<p><strong>“Are these two things the same?”</strong> Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in their leaf chemistry? Questions like these come up whenever measurements from two or more groups are compared, which makes them some of the most common questions in experimental science and a feature of many research figures. A difference between two averages on its own does not answer them, because some difference is expected by chance alone. Statistical tests ask how likely it would be to get data this extreme if the groups’ distributions were the same. This chapter covers how to look at the distributions first, how to choose a test for two groups or for more than two, and how to mark the results on a plot. The groups can come from anywhere: sites, treatments, species, or the clusters found in the flat clustering chapter.</p>
+<div class="cc-title-slot">
+
 </div>
-<div id="section-25" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-25"><i class="fas fa-link"></i></a></h2>
-<p>Often, we want to know if our study subjects contain different amounts of certain analytes. For example, “Does this lake over here contain more potassium than that lake over there?” For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.</p>
-<p>Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island’s aquifers with the data set <code>hawaii_aquifers</code> in hand. The output below shows the structure of the data set - we have 990 measurements of 9 different analytes in multiple wells that draw on a set of 10 aquifers.</p>
+<p><strong>Are these two things the same?</strong> Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Tukey or Dunn tests, and marks the results on a plot.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="comparing-means.html#comparing-means-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-458"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%"><p class="caption">
+Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.
+</p>
+</div>
+</div>
+<p>Many of the concepts discussed in this chapter are easier to think about with an example in mind. For that, suppose we are analytical chemists on Hawaii, studying the chemistry of the island’s aquifers with the data set <code>hawaii_aquifers</code> in hand. The output below shows the structure of the data set: we have 990 measurements of 9 different analytes in multiple wells, each of which draws on one of 10 aquifers.</p>
 <div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span></span>
 <span><span class="co">## # A tibble: 954 × 6</span></span>
@@ -161,7 +167,7 @@
 <span><span class="co">## 10 aquifer_9         30</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">aquifers_summarized</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_wells</span>, y <span class="op">=</span> <span class="va">aquifer_code</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-459-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
@@ -170,32 +176,21 @@ library(rstatix)
 library(agricolae)
 library(multcompView)
 ``` -->
-</div>
 <div id="definitions" class="section level2 unnumbered">
 <h2>definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li><p><strong>populations and independent measurements</strong>: When we are comparing means, we are comparing two <em>sets</em> of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the “population” (i.e. the aquifer).</p></li>
-<li><p><strong>the null hypothesis</strong>: When we conduct a statistical test, we are testing the null hypothesis. The null (think “default”) hypothesis is that there is no difference between the means (which is where the name “null” comes from). In the example of our aquifers, let’s say that we’re interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.</p></li>
-<li><p><strong>the <em>p</em> value</strong>: The <em>p</em> value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the <em>p</em> value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same potassium levels (i.e. assuming the null hypothesis is true), there is a 4% chance of getting values at least as extreme as the ones we measured. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.</p></li>
+<li><p><strong>the null hypothesis</strong>: When we conduct a statistical test, we are testing the null hypothesis. The null (think “default”) hypothesis is that there is no difference between the distributions (which is where the name “null” comes from). In the example of our aquifers, let’s say that we’re interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.</p></li>
+<li><p><strong>the <em>p</em> value</strong>: The <em>p</em> value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words: the <em>p</em> value is the probability that we would observe the differences in our samples that we did, if in fact there were no differences in the populations at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same potassium levels (i.e. assuming the null hypothesis is true), there is a 4% chance of getting values at least as extreme as the ones we measured. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.</p></li>
 </ol>
 <p>Please note that the <em>p</em> value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.</p>
 </div>
-<div id="looking-at-the-distribution-first" class="section level2 unnumbered">
-<h2>looking at the distribution first<a class="anchor" aria-label="anchor" href="#looking-at-the-distribution-first"><i class="fas fa-link"></i></a>
+<div id="distributions" class="section level2 unnumbered">
+<h2>distributions<a class="anchor" aria-label="anchor" href="#distributions"><i class="fas fa-link"></i></a>
 </h2>
-<p>Before comparing two means, look at the two distributions. This is not a formality. Every test in this
-chapter makes assumptions about the <em>shape</em> of the data (whether it is roughly normal, whether the
-groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can
-have identical means and completely different distributions, and a bar chart of the means will hide
-that perfectly.</p>
-<p>So it is worth knowing how to draw a distribution in full rather than summarizing it away.</p>
-<div id="distributions-in-full" class="section level3 unnumbered">
-<h3>distributions in full<a class="anchor" aria-label="anchor" href="#distributions-in-full"><i class="fas fa-link"></i></a>
-</h3>
-<p>Combining geoms shows the summary, the density and the raw observations at once. The half-eye
-gives the density, the boxplot the quartiles, and the dots every actual measurement, showing
-the shape, the spread and the sample size in one picture:</p>
+<p>Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the <em>shape</em> of the data (whether it is roughly normally distributed and/or whether the groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.</p>
+<p>By using multiple geoms, a single plot can show the summary (mean, median, etc.), the density, and the raw observations at once. In the plot below, the half-eye gives the density, the boxplot the quartiles, and the dots every actual measurement, showing the shape, the spread and the sample size in one picture:</p>
 <div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mpg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">cyl</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">hwy</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -204,42 +199,16 @@ the shape, the spread and the sample size in one picture:</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.12</span>, outlier.color <span class="op">=</span> <span class="cn">NA</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggdist</span><span class="fu">::</span><span class="fu"><a href="https://mjskay.github.io/ggdist/reference/stat_dots.html">stat_dots</a></span><span class="op">(</span>side <span class="op">=</span> <span class="st">"left"</span>, justification <span class="op">=</span> <span class="fl">1.1</span>, binwidth <span class="op">=</span> <span class="fl">.25</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Look at what this shows that a bar chart would not: how many observations there actually are, whether
-the distribution is skewed, and whether any group is bimodal. All three change which test to
-reach for in the next section.</p>
-</div>
-<div id="distributions-alongside-a-scatter-plot" class="section level3 unnumbered">
-<h3>distributions alongside a scatter plot<a class="anchor" aria-label="anchor" href="#distributions-alongside-a-scatter-plot"><i class="fas fa-link"></i></a>
-</h3>
-<p>With two variables in play at once, the distribution of each can be attached to the margins
-of the plot, so the relationship and the two individual distributions are visible together:</p>
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i2</span> <span class="op">&lt;-</span> <span class="va">iris</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>Species2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="st">"B"</span><span class="op">)</span>, <span class="fl">75</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">i2</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="va">Sepal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p</span> <span class="op">+</span> <span class="fu">geom_xsidedensity</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">density</span><span class="op">)</span>, xfill <span class="op">=</span> <span class="va">Species</span><span class="op">)</span>, position <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu">geom_ysidedensity</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">density</span><span class="op">)</span>, yfill <span class="op">=</span> <span class="va">Species2</span><span class="op">)</span>, position <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">Species</span><span class="op">~</span><span class="va">Species2</span>, space <span class="op">=</span> <span class="st">"free"</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"FacetGrid"</span>, subtitle <span class="op">=</span> <span class="st">"Collapsing All Side Panels"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggside</span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_xfill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"darkred"</span>,<span class="st">"darkgreen"</span>,<span class="st">"darkblue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_yfill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="st">"gold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-</div>
+<p>Look at what this shows that a bar chart would not: how many observations there actually are, whether the distribution is skewed, and whether any group is bimodal. All three change which statistical test would be needed to complete the work described in the next section.</p>
 </div>
 <div id="test-selection" class="section level2 unnumbered">
 <h2>test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
 </h2>
-<p>There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. There are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):</p>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/stats.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If our data can be reasonably modeled by a normal distribution, then we can use “parametric” tests. Under those conditions they are the most powerful choice, meaning they can detect smaller differences as statistically significant. If they cannot, the p-values from parametric tests may no longer be accurate, especially with small samples, so we switch to “non-parametric” tests, whose p-values hold up whatever the shape of the data. Non-parametric tests are not simply weaker versions of the parametric ones: with skewed data or a few outliers, they are often the more powerful choice as well.</p>
+<p>When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If our data can be reasonably modeled by a normal distribution, then we can use what are called “parametric” tests. Under those conditions they are the most powerful choice, meaning they can detect smaller differences as statistically significant. If the data are not normally distributed within each group we are comparing, the p-values from parametric tests may no longer be accurate, especially with small samples, so we switch to “non-parametric” tests, whose p-values hold up regardless of the shape of the data. Non-parametric tests are not simply weaker versions of the parametric ones: with skewed data or a few outliers, they are often the more powerful choice as well.</p>
 <p>A helpful way to think about the non-parametric tests in this chapter is that each one ranks all of the values, then does something close to its parametric partner on those ranks. The Wilcox test behaves much like a t-test run on ranks, and the Dunn test (for more than two groups) much like a set of pairwise comparisons run on ranks. This is an approximation rather than exactly what the software computes, but it explains why these tests do not need normally distributed data: ranks always run from 1 to N, whatever the measurements looked like, so a skewed distribution or an extreme value cannot distort them.</p>
-<p>We can check our data for normality using the Shapiro test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
-<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
+<p>So, the first question we must answer is whether each group within our data can be sufficiently approximated using a normal distribution. We can check our data for normality using the Shapiro test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
 <span>  <span class="va">K_data</span></span>
@@ -259,7 +228,7 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">## # ℹ 96 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
 <p>To work with two means, let’s just look at aquifers 1 and 6:</p>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_6"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -283,17 +252,17 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">K_data_1_6</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Are these data normally distributed? Let’s get a first approximation by looking at a plot:</p>
-<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-465-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
-<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
@@ -308,7 +277,7 @@ of the plot, so the relationship and the two individual distributions are visibl
 <h2>two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
-<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 8</span></span>
@@ -316,20 +285,17 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121</span></span></code></pre></div>
 <p>A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. When the data really are normal, this makes it a less powerful test than the t-test, meaning it is less likely to detect a difference between the groups, assuming there is one. For fun, let’s try that one out and compare the p-values from the two methods:</p>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">wilcoxTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 7</span></span>
 <span><span class="co">##   .y.       group1    group2       n1    n2 statistic      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0252</span></span></code></pre></div>
-<p>A p-value of 0.028! This is higher than the value given by the t-test (0.012), because the Wilcox test works with less information. Instead of using the measured values, it pools both groups, ranks every observation from smallest to largest, and asks whether one group’s ranks sit consistently higher than the other’s. Its null hypothesis is that both groups come from the same distribution, so that a value drawn from one group is equally likely to be larger or smaller than a value drawn from the other. Interpreting the number as before, if the two aquifers really had identical distributions, we would see results this extreme only about 2.8% of the time.</p>
-<div id="what-the-wilcox-test-compares" class="section level3 unnumbered">
-<h3>what the Wilcox test compares<a class="anchor" aria-label="anchor" href="#what-the-wilcox-test-compares"><i class="fas fa-link"></i></a>
-</h3>
-<p>Strictly speaking, the Wilcox test compares neither means nor medians. It asks whether values from one group tend to be larger than values from the other. If the two distributions have the same shape and differ only by a shift, that question is the same as asking whether their medians differ, which is why the median is the usual summary to report with a Wilcox result. When the shapes clearly differ, report the medians as a description, but phrase the conclusion as “values in group A tend to be higher than values in group B.”</p>
-<p>Because it works on ranks, the Wilcox test is barely moved by a few extreme values. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. For this reason the Wilcox test is less powerful than the t-test when the data truly are normal, but often more powerful when a few outliers are present. It also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:</p>
-<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<p>A p-value of 0.028! This is higher than the t-test’s value (0.012) because the Wilcox test works with less information. Rather than the measured values themselves, it pools both groups, ranks every observation from smallest to largest, and asks whether values from one group tend to rank higher than those from the other. Its null hypothesis is that both groups come from the same distribution. If the two aquifers really had identical distributions, we would see a result this extreme only about 2.8% of the time.</p>
+<p>Strictly speaking, then, the Wilcox test compares neither means nor medians. When the two distributions share a shape and are simply shifted relative to one another, its question reduces to whether the medians differ, which is why the median is the usual summary to report alongside a Wilcox result. When the shapes clearly do not match, still report the medians as a description, but phrase the conclusion as “values in group A tend to be higher than values in group B.”</p>
+<p>Working on ranks also makes the test resistant to outliers. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. Ranking also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:</p>
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">orchards</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  orchard <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"north"</span>, <span class="st">"south"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  nitrate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">13</span>, <span class="fl">17</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
@@ -339,12 +305,12 @@ of the plot, so the relationship and the two individual distributions are visibl
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">orchards</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">orchard</span>, y <span class="op">=</span> <span class="va">nitrate</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-469"></span>
-<img src="index_files/figure-html/unnamed-chunk-469-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-468"></span>
+<img src="index_files/figure-html/unnamed-chunk-468-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%"><p class="caption">
 Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.
 </p>
 </div>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">orchards</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">orchard</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -355,7 +321,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## 1 north      15   15  </span></span>
 <span><span class="co">## 2 south      34   10.8</span></span></code></pre></div>
 <p>The south orchard has the higher mean (34 vs 15) but the lower median (10.8 vs 15). Now both tests:</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">orchards</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tTest</span><span class="op">(</span><span class="va">nitrate</span> <span class="op">~</span> <span class="va">orchard</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 8</span></span>
@@ -371,12 +337,11 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## 1 nitrate north  south     30    30       660 0.00161</span></span></code></pre></div>
 <p>Both p-values are below 0.05, and the two results point in opposite directions. The t-test says the south orchard has significantly more nitrate on average, because eight very high readings raise its mean. The Wilcox test says north samples tend to be higher, because 22 of the 30 south samples sit below every north sample. Neither test is wrong. They are answering different questions, and a plot of the raw points shows which question matters for the data at hand: here, whether the concern is the total nitrate load (the mean) or the condition of a typical bed (the ranks).</p>
 </div>
-</div>
 <div id="more-than-two-means" class="section level2 unnumbered">
 <h2>more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let’s consider our hawaii aquifer data again, though this time let’s use all the aquifers, not just two:</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
 <span></span>
@@ -400,18 +365,18 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-472-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed, so let’s check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don’t forget: with the Shapiro test, we are looking within each group and so need to <code>group_by()</code>, and with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
@@ -428,7 +393,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">##  8 aquifer_7    values       0.915 0.355    </span></span>
 <span><span class="co">##  9 aquifer_8    values       0.842 0.220    </span></span>
 <span><span class="co">## 10 aquifer_9    values       0.790 0.0000214</span></span></code></pre></div>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 4</span></span>
@@ -441,7 +406,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <h3>Tukey test<a class="anchor" aria-label="anchor" href="#tukey-test"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use Tukey’s Honest Significant Difference test (implemented using <code>tukeyTest</code>). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 9</span></span>
@@ -461,7 +426,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## # ℹ 3 more variables: conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Using the output from our Tukey test, we can determine which means are similar. We can do this using the pGroups function:</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_tukey</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
@@ -478,19 +443,19 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## aquifer_8   aquifer_8  abcd         abcd</span></span>
 <span><span class="co">## aquifer_9   aquifer_9    ab         ab</span></span></code></pre></div>
 <p>We can use the output from <code>pGroups</code> to annotate our plot:</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_tukey</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-477-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="dunn-test" class="section level3 unnumbered">
 <h3>Dunn test<a class="anchor" aria-label="anchor" href="#dunn-test"><i class="fas fa-link"></i></a>
 </h3>
 <p>The above Tukey example is great, but remember - our data did not pass the Shapiro or Levene tests, so the Tukey test’s p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Tukey test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair’s average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair’s ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let’s try:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 9</span></span>
@@ -509,7 +474,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## # ℹ 35 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>pGroups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_dunn</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
@@ -533,7 +498,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Aquifer code"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_dunn</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-479-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-478-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that these groupings are different from those generated by the Tukey test.</p>
 </div>
 </div>
@@ -541,13 +506,13 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <h2>pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-480-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-479-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Fortunately, we can use an approach that is very similar to what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -580,7 +545,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## 19 Na      aquifer_8    values       0.855 2.53e- 1</span></span>
 <span><span class="co">## 20 Na      aquifer_9    values       0.531 3.97e- 9</span></span></code></pre></div>
 <p>Looks like some of those distributions are significantly different from normal! Let’s run the Levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -599,7 +564,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">##  9 aquifer_8        1     4    0.515  0.512  </span></span>
 <span><span class="co">## 10 aquifer_9        1    64    1.10   0.298</span></span></code></pre></div>
 <p>It looks like the pair in aquifer 1 has significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use <code>wilcoxTest</code>, but we have many pairs, so we will use <code>pairwiseWilcoxTest</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code><a href="https://rpkgs.datanovia.com/rstatix/reference/wilcox_test.html">?rstatix::pairwise_wilcox_test</a></code>):</p>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -621,7 +586,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).</p>
 <p>What would we have done if our Shapiro and Levene tests had revealed no significant differences? Well, a <code>pairwiseTTest</code> of course!</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -644,7 +609,7 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>When the data are grouped, as they are here, <code>pairwiseTTest</code> and <code>pairwiseWilcoxTest</code> correct for multiple comparisons across all of the groups at once. Here there is one comparison per aquifer, ten in all, so the <code>p.adj</code> column holds Holm-adjusted p-values for the full set of ten comparisons, while the <code>p</code> column holds the uncorrected values. Read <code>p.adj</code> (and its stars, <code>p.adj.signif</code>) when deciding which differences are significant.</p>
 <p>Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:</p>
-<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
 <span>  xmin <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">group1</span>,</span>
@@ -674,24 +639,15 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-</div>
-<div id="section-26" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-26"><i class="fas fa-link"></i></a></h2>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
+<hr>
+<p><span id="comparing-means-summary"></span></p>
 </div>
 <div id="chapter-summary-8" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-8"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<div class="summary-top">
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-486"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing means. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%"><p class="caption">
-Choosing a test for comparing means. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.
-</p>
-</div>
 <p>Before choosing a statistical test to apply to your data, look at the distribution of the data in each group. <strong>Can each group be modeled by a normal distribution?</strong> Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. <strong>How many groups are being compared?</strong> With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read <code>p.adj</code>). The t-test used in this book is Welch’s, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check for equal variances first using the Levene test. The <em>p</em> value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The <em>p</em> value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.</p>
-</div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -767,26 +723,26 @@ Choosing a test for comparing means. This decision flowchart starts from the num
 </h2>
 <div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
-<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
-<div>
-<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">
-Comparing means · t-tests, Tukey + pairwise tests
-</div>
-<div style="margin-top:8px;font-size:13px;line-height:1.4;">
-You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.
-</div>
-</div>
-</div>
-<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/cover.png" alt="Seedfall cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Seedfall</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">
-Comparing means · t-tests, Tukey + rank-based tests · two players
+Comparing groups · t-tests, Tukey + rank-based tests · two players
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
 A city of rooftop orchards climbs five levels up a sea cliff, and the first snow is on its way. Play as a pair: one of you starts at the harbor, the other at the lighthouse. You will test the same soil survey two different ways, and you will have to compare notes before you can light the city for winter.
+</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">
+Comparing groups · t-tests, Tukey + pairwise tests
+</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">
+You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.
 </div>
 </div>
 </div>
@@ -813,31 +769,20 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? --><!-- end --><hr>
-<hr>
-<hr>
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? --><!-- end --><!-- start regression models -->
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="flat-clustering.html">flat clustering</a></div>
+<div class="prev"><a href="dimensional-reduction.html">dimensional reduction</a></div>
 <div class="next"><a href="regression-models.html">regression models</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#comparing-means">comparing means</a></li>
-<li><a class="nav-link" href="#section-24"></a></li>
-<li><a class="nav-link" href="#section-25"></a></li>
+<li><a class="nav-link" href="#comparing-means">comparing groups</a></li>
 <li><a class="nav-link" href="#definitions">definitions</a></li>
-<li>
-<a class="nav-link" href="#looking-at-the-distribution-first">looking at the distribution first</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#distributions-in-full">distributions in full</a></li>
-<li><a class="nav-link" href="#distributions-alongside-a-scatter-plot">distributions alongside a scatter plot</a></li>
-</ul>
-</li>
+<li><a class="nav-link" href="#distributions">distributions</a></li>
 <li><a class="nav-link" href="#test-selection">test selection</a></li>
-<li>
-<a class="nav-link" href="#two-means">two means</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#what-the-wilcox-test-compares">what the Wilcox test compares</a></li></ul>
-</li>
+<li><a class="nav-link" href="#two-means">two means</a></li>
 <li>
 <a class="nav-link" href="#more-than-two-means">more than two means</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#tukey-test">Tukey test</a></li>
@@ -845,7 +790,6 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 </ul>
 </li>
 <li><a class="nav-link" href="#pairs-of-means">pairs of means</a></li>
-<li><a class="nav-link" href="#section-26"></a></li>
 <li><a class="nav-link" href="#chapter-summary-8">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-7">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-8">further reading</a></li>
@@ -866,7 +810,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -874,7 +818,13 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

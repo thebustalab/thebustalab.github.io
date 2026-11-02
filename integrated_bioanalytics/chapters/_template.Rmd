@@ -15,27 +15,26 @@
   appears in the book.
 
   Standard structure — keep this order (see any existing chapter for a live example):
-    1. Chapter heading            # title {-}
-    2. Opening image              HTML-only include_graphics chunk
-    3. Preamble                   two sentences: "X uses the concept of Y to do Z to a dataset"
-                                  (naming every method), then "This analysis can be used to answer
-                                  questions such as '...?' or '...?'" (questions the analysis itself
-                                  answers)
-    4. Separator                  ## {-}
-    5. Opening paragraph          a few sentences: what questions these methods answer and where
-                                  they are used, so the reader knows why before how
-    6. Separator                  ## {-}
-    7. Content sections           ## section {-}  /  ### subsection {-}
-    8. Separator                  ## {-}  (the TOC gap before the closing trio)
-    9. Chapter summary            ## chapter summary {-}, then the {.summary-pdf} link to
-                                  summary_sheets/<file stem>.pdf (shown on the heading's line), then
-                                  a ::: {.summary-top} div holding flowchart + recap (two columns in
-                                  HTML), then the function table (small text)
-   10. <hr>
-   11. Exercises                  ## exercises {-}  (usually commented out)
-   12. <hr>                       (an <hr>, not ## {-}: summary, exercises and further reading
-                                  sit together in the TOC)
-   13. Further reading            ## further reading {-}  (3–5 annotated links)
+    1. Chapter heading            # title {#slug -}  (pin the slug: links point at <slug>.html)
+    2. Opening card               ::: {.chapter-card} holding: cover image chunk, the empty
+                                  cc-title-slot div (the title is moved there), ONE intro
+                                  paragraph (why and when: the questions answered, no function
+                                  names), the PDF and jump buttons, the decision flowchart
+    3. Content sections           ## section {-}  /  ### subsection {-}  (straight after the card)
+    4. <hr>
+    5. Chapter summary            []{#<slug>-summary} anchor, ## chapter summary {-}, the
+                                  {.summary-pdf} link to summary_sheets/<file stem>.pdf, the recap
+                                  (how to do it well: decisions, traps, reading the results), then
+                                  the function table. The flowchart is in the card, not here; the
+                                  PDF builder fetches it from there.
+    6. <hr>
+    7. Exercises                  ## exercises {-}  (usually commented out)
+    8. <hr>
+    9. Further reading            ## further reading {-}  (3–5 annotated links)
+
+  One job per text: see chapters/AGENTS.md, "One job per text".
+  No empty `## {-}` headings: the right-hand "On this page" menu gets its two gaps (after the
+  title, before the summary) from style.css, so the gaps are not clickable links.
 
   Conventions:
     - The {-} after every heading suppresses bookdown's automatic numbering.
@@ -45,19 +44,25 @@
       per-chunk options (fig.width, out.width, message, etc.) when needed.
 -->
 
-# chapter title {-}
+# chapter title {#chapter-slug -}
+
+::: {.chapter-card}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/REPLACE_ME.png', dpi = NA)
 ```
 
-Two-sentence preamble: what the analysis does and the questions it answers.
+<div class="cc-title-slot"></div>
 
-## {-}
+One intro paragraph: why and when. The questions this chapter answers, why they matter, and what it covers. No function or argument names.
 
-A few sentences on when these methods are used: the questions they answer, where they show up in research and in other chapters, and what the reader will be able to do by the end.
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/<N>_<short_name>.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#chapter-slug-summary){.cc-btn .ghost}
 
-## {-}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/<N>_<short_name>_flowchart.png', dpi = NA)
+```
+
+:::
 
 ## first section {-}
 
@@ -68,21 +73,15 @@ and `### subsection {-}` for subsections.
 # example code chunk
 ```
 
-## {-}
+<hr>
+
+[]{#chapter-slug-summary}
 
 ## chapter summary {-}
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/<N>_<short_name>.pdf){.summary-pdf target="_blank"}
 
-::: {.summary-top}
-
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>."}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/<N>_<short_name>_flowchart.png', dpi = NA)
-```
-
-A short recap of the chapter's decisions (graphviz source for the flowchart in notes/, PNG in images/).
-
-:::
+A short recap: how to do the analysis well. The decisions, the traps and how to read the results, each taught in the chapter (graphviz source for the card's flowchart in notes/, PNG in images/).
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|

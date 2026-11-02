@@ -2,7 +2,7 @@
 
 Specialized plots use the concept of nonstandard coordinate systems to display data that standard plots represent poorly: three continuous variables in 3D scatter plots, overlaps among sets in Venn diagrams, three-part compositions in ternary plots, and geographic positions on maps. This analysis can be used to answer questions such as "Which items are shared among these sets?", "What are the relative proportions of the three components in each sample?", or "How do the measured values vary across these sampling locations?"
 
-## {-}
+<hr>
 
 This appendix collects plot types that are useful but specialized. None of them is part of the main
 sequence of the book — each is a self-contained recipe you can come back to when your data happens to
@@ -14,6 +14,24 @@ mapping, is a larger topic in its own right.
 comparing-means chapter, and what remained is here.*
 
 ## specialized plots {-}
+
+```{r}
+
+i2 <- iris %>%
+  mutate(Species2 = rep(c("A","B"), 75))
+p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
+  geom_point()
+
+p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=after_stat(density), yfill = Species2), position = "stack") +
+  theme_bw() + 
+  facet_grid(Species~Species2, space = "free", scales = "free") +
+  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
+  ggside(collapse = "all") +
+  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
+  scale_yfill_manual(values = c("black","gold"))
+
+```
 
 ### 3D scatter plots {-}
 
@@ -294,7 +312,7 @@ plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
 
-## {-}
+<hr>
 
 ## further reading {-}
 

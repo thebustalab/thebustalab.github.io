@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="active" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -109,18 +110,12 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Hierarchical clustering uses the concept of linkage, a rule for calculating the distance between two groups of samples, to merge the samples in a distance matrix step by step into a tree (a dendrogram), which can then be cut at a chosen height to assign groups or used to order the rows of a heat map. This analysis can be used to answer questions such as “Which samples join the unknown sample at the lowest height in the tree?” or “Which groups do the samples fall into when the tree is cut at this height?”</p>
-<div id="section-15" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
+<hr>
 <p>Which samples in a data set are close relatives, which stand apart, and do they fall into groups? Hierarchical clustering answers these questions by merging samples, one pair of groups at a time, into a branching tree of nested groups (a dendrogram), built from the same distance matrix as in the distances and scaling chapter. The tree shows at a glance which samples resemble each other, and cutting across it turns those relationships into groups. In this chapter we use trees to find the lake whose water chemistry is closest to an unknown sample, to sort solvents into chemically recognizable families, and to order the rows of a heat map so that blocks of similar samples sit together. Along the way we cover the decisions that shape the result: which linkage rule builds the tree, how to read it, and where to cut it. Trees return in the flat clustering chapter, which sorts samples into groups without building one, and in the phylogenies chapters, where a tree records evolutionary history.</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L'); solvent_properties <- c('boiling_point','melting_point','density','relative_polarity','formula_weight','refractive_index')" };
-</script>
-</div>
-<div id="section-16" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
-</div>
-<div id="linkage-dendrograms" class="section level2 unnumbered">
+</script><div id="linkage-dendrograms" class="section level2 unnumbered">
 <h2>linkage dendrograms<a class="anchor" aria-label="anchor" href="#linkage-dendrograms"><i class="fas fa-link"></i></a>
 </h2>
 <p>Consider the Alaska lakes dataset: which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties, just as we did in the distances and scaling chapter, and then building a tree from those distances. We can do it all in one step by using <code>analysis = "hclust"</code>:</p>
@@ -722,11 +717,8 @@ Self-check: mapping y to lake instead of to y also draws a perfectly good-lookin
 <label><input type="radio"> Because it orders the rows alphabetically, which has nothing to do with the order ggtree placed the tips in, so the tiles no longer line up with the tree</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
 </div>
-</div>
-<div id="section-17" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="chapter-summary-5" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-5"><i class="fas fa-link"></i></a>
@@ -862,19 +854,16 @@ The keeper of the temple is dead, and two registers died with him: which offerin
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="networks.html">networks</a></div>
-<div class="next"><a href="dimensional-reduction.html">dimensional reduction</a></div>
+<div class="next"><a href="flat-clustering.html">flat clustering</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#hierarchical-clustering">hierarchical clustering</a></li>
-<li><a class="nav-link" href="#section-15"></a></li>
-<li><a class="nav-link" href="#section-16"></a></li>
 <li><a class="nav-link" href="#linkage-dendrograms">linkage dendrograms</a></li>
 <li><a class="nav-link" href="#agglomeration-methods">agglomeration methods</a></li>
 <li><a class="nav-link" href="#dendrogram-interpretation">dendrogram interpretation</a></li>
 <li><a class="nav-link" href="#cutting-a-dendrogram">cutting a dendrogram</a></li>
 <li><a class="nav-link" href="#annotating-dendrograms">annotating dendrograms</a></li>
-<li><a class="nav-link" href="#section-17"></a></li>
 <li><a class="nav-link" href="#chapter-summary-5">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-4">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-5">further reading</a></li>
@@ -895,7 +884,7 @@ The keeper of the temple is dead, and two registers died with him: which offerin
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -903,7 +892,13 @@ The keeper of the temple is dead, and two registers died with him: which offerin
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

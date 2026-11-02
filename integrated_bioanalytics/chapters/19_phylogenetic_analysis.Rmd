@@ -2,7 +2,7 @@
 
 Phylogenetic comparative analysis uses the concept of shared ancestry, as described by a phylogenetic tree, to account for the non-independence of related species in trait data, measuring phylogenetic signal, testing correlations between traits with independent contrasts, and estimating ancestral trait values. This analysis can be used to answer questions such as "Do closely related species in this tree have more similar values of this trait than distantly related species?", "Are these two traits correlated after accounting for shared ancestry?", or "What value of this trait is estimated for the ancestor at this node?"
 
-## {-}
+<hr>
 
 Once a tree is built, it can be used to ask how traits evolved. Three questions come up whenever chemistry is compared across species: do close relatives have similar trait values (phylogenetic signal), are two traits related once shared ancestry is taken into account (independent contrasts), and what trait values did the ancestors probably have (ancestral trait reconstruction)? These questions matter because related species are not independent data points: two sister species may share a compound simply because both inherited it from the same ancestor. This chapter answers all three with the chemical bloom data and the angiosperm tree from the previous chapter. We start with a wrapper function, `runPhylogeneticAnalyses()`, that runs these phylogenetic comparative analyses in one call, then take each analysis in turn.
 
@@ -100,7 +100,7 @@ ggtree(
   theme_void()
 ```
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

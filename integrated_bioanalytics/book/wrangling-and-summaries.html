@@ -68,17 +68,18 @@
 <li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
-<li class="book-part">STATISTICAL METHODS</li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
 <li><a class="active" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
 <li><a class="" href="networks.html">networks</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELS</li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
-<li><a class="" href="machine-learning.html">machine learning</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
@@ -109,18 +110,12 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated columns to a dataset. This analysis can be used to answer questions such as “What is the mean height of each tree species in this dataset?” or “Which samples have the highest measured concentration of this analyte?”</p>
-<div id="section-6" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a></h2>
+<hr>
 <p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter’s escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an <em>outside</em> data set into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
-</script>
-</div>
-<div id="section-7" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
-</div>
-<div id="viewing-data" class="section level2 unnumbered">
+</script><div id="viewing-data" class="section level2 unnumbered">
 <h2>viewing data<a class="anchor" aria-label="anchor" href="#viewing-data"><i class="fas fa-link"></i></a>
 </h2>
 <p>Before a data set can be wrangled, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, there is <code>view()</code>:</p>
@@ -704,11 +699,8 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 <label><input type="radio"> mutate() returns one row per group; summarize() keeps every row</label>
 <label><input type="radio"> they are the same; mutate() is just the newer name</label></p>
 </div>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
 </div>
-</div>
-<div id="section-8" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="chapter-summary-2" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-2"><i class="fas fa-link"></i></a>
@@ -896,8 +888,6 @@ Some pointers:
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#wrangling-and-summaries">wrangling and summaries</a></li>
-<li><a class="nav-link" href="#section-6"></a></li>
-<li><a class="nav-link" href="#section-7"></a></li>
 <li><a class="nav-link" href="#viewing-data">viewing data</a></li>
 <li><a class="nav-link" href="#subsetting">subsetting</a></li>
 <li><a class="nav-link" href="#wide-and-long-data">wide and long data</a></li>
@@ -905,7 +895,6 @@ Some pointers:
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
 <li><a class="nav-link" href="#mutate">mutate</a></li>
-<li><a class="nav-link" href="#section-8"></a></li>
 <li><a class="nav-link" href="#chapter-summary-2">chapter summary</a></li>
 <li><a class="nav-link" href="#exercises-2">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-2">further reading</a></li>
@@ -926,7 +915,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-10-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -934,7 +923,13 @@ Some pointers:
   </div>
 
 </div></div>
-</footer><!-- Dark mode toggle handler --><script>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
   (function () {
     var btn = document.getElementById('dark-mode-toggle');
     if (!btn) return;

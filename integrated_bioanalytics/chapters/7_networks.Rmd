@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Network analysis uses the concept of nodes connected by edges to represent a dataset as entities and the relationships among them, either as a similarity network, in which edges join samples whose similarity exceeds a chosen threshold, or as an interaction network, in which edges are observed connections. Applying wrangling and summary techniques to network data can then examine edge direction, per-node summaries such as the number of connections, and the effect of removing nodes. This analysis can be used to answer questions such as "Which genes have expression profiles correlated above the chosen threshold across these samples?", "Which node has the most connections?", or "Which node, when removed, divides the network into the largest number of disconnected components?"
 
-## {-}
+<hr>
 
 A network is an interesting display because it can show both properties of an entity and also relationships between entities. A network does this using nodes, usually points, and edges, usually lines that connect the nodes. Networks answer questions about connections: which samples resemble which, which genes rise and fall together, which proteins bind one another, and which single node holds a whole system together. In research they appear as gene co-expression networks and protein-protein interaction networks, and in this course they build directly on the distance matrices of the previous chapter, distances and scaling, and on the `group_by()` and `summarize()` verbs from the wrangling chapter. Typically, nodes are things and edges are connections between them, which mirrors the underlying data structure. However, there are two distinct sources of such a structure:
 
@@ -20,8 +20,6 @@ That distinction is worth fixing firmly in mind now, because two networks built 
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script>
-
-## {-}
 
 ## similarity networks {-}
 
@@ -459,7 +457,7 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

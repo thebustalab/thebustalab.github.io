@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Dimensional reduction uses the concept of a small number of new axes to represent a dataset with many variables in two or three dimensions, either as principal components, which are linear combinations of the original variables ordered by the variance they explain (PCA), or as nonlinear embeddings that preserve each sample's nearest neighbors (UMAP and t-SNE). This analysis can be used to answer questions such as "Which variables contribute most to the first two principal components?" (PCA), "What fraction of the total variance do the first two principal components explain?" (PCA), or "Which samples are nearest neighbors when all of the variables are considered?" (UMAP and t-SNE).
 
-## {-}
+<hr>
 
 In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
 
@@ -22,8 +22,6 @@ We can see that this dataset consists of measurements of various *analytes* (i.e
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')" };
 </script>
-
-## {-}
 
 ## pca {-}
 
@@ -376,7 +374,7 @@ ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

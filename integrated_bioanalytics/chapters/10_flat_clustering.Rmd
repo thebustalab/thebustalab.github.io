@@ -6,16 +6,14 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Flat clustering uses the concept of distance between samples in variable space to assign each sample in a dataset to one group, either with k-means, which divides the samples into a chosen number (k) of clusters around cluster means, or with dbscan, which forms clusters from regions where samples are densely packed and labels samples in sparse regions as noise, after which the cluster labels can be summarized and joined to other data. This analysis can be used to answer questions such as "Which of k clusters does each sample belong to?", "At what value of k does adding another cluster stop substantially reducing the within-cluster variance?", or "Which samples does dbscan label as noise at these settings?"
 
-## {-}
+<hr>
 
-Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples into sources that share a chemistry, or plant extracts into chemotypes. Once samples have groups, those groups can be counted and summarized, compared with the statistical tests in the next chapter, or used to color an ordination plot such as a PCA. Some samples are interesting precisely because they fit no group at all. In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for and when a sample is better left out of every group.
+Do my samples fall into definable clusters? Sorting samples into groups is often the first step in making sense of a large set of measurements: fragments into kinds of meteorite, water samples into sources that share a chemistry, or plant extracts into chemotypes. Once samples have groups, those groups can be counted and summarized, compared with the statistical tests in the comparing groups chapter, or used to color an ordination plot such as a PCA. Some samples are interesting precisely because they fit no group at all. In the hierarchical clustering chapter we answered a related question by building a tree and then cutting it. This chapter sorts samples straight into groups without building a tree first, using two methods, k-means and dbscan, and shows how to decide how many groups to ask for and when a sample is better left out of every group.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script>
-
-## {-}
 
 ## kmeans {-}
 
@@ -335,7 +333,7 @@ Finally, nothing limits clustering to two columns: any number of columns can be 
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

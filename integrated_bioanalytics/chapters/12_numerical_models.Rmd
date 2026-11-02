@@ -8,7 +8,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", or "Which predictors have coefficients significantly different from zero?"
 
-## {-}
+<hr>
 
 A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
 
@@ -16,8 +16,6 @@ A regression model predicts a number from one or more measured inputs, and it an
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
 </script>
-
-## {-}
 
 ## model use {-}
 
@@ -29,13 +27,13 @@ Next on our quest to develop our abilities in analytical data exploration is mod
 
 The straight-line models in this chapter serve both purposes at once: their inner workings are simple enough to read directly, and they can also be used to predict. More flexible models, whose inner workings are harder to read and which are judged mainly on their predictive accuracy, are the subject of the machine learning chapter.
 
-In this course, we will build models using a function called `buildModel2()`. To use it, we give it our data and tell it which sets of values we want to relate. To do that, we need to specify (at least) two things:
+In this course, we will build models using a function called `buildModel()`. To use it, we give it our data and tell it which sets of values we want to relate. To do that, we need to specify (at least) two things:
 
 - `input_variables`: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
 
 - `output_variable`: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
 
-For model building, we also need to handle missing data. `buildModel2()` stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the `impute()` function from the `Hmisc` package:
+For model building, we also need to handle missing data. `buildModel()` stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the `impute()` function from the `Hmisc` package:
 
 ```{r}
 any(is.na(metabolomics_data))
@@ -58,7 +56,7 @@ The cells on this page start from a copy of `metabolomics_data` whose missing va
 
 ## single linear regression {-}
 
-We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use `buildModel2()`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
+We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use `buildModel()`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
@@ -68,7 +66,7 @@ ggplot(metabolomics_data) +
 It looks like there might be a relationship! Let's build a linear regression model and use it inferentially to examine the details of that relationship:
 
 ```{r}
-basic_regression_model <- buildModel2(
+basic_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = "iso-Leucine",
@@ -77,7 +75,7 @@ basic_regression_model <- buildModel2(
 names(basic_regression_model)
 ```
 
-The output of `buildModel2()` consists of three things: the model_type, the model itself, and the metrics describing the model and its performance. Let's look at the model:
+The output of `buildModel()` consists of four things: the model_type, the name of the output variable, the model itself, and the metrics describing the model and its performance. Let's look at the model:
 
 ```{r}
 basic_regression_model$model
@@ -102,22 +100,20 @@ Note that a variable whose name contains a space or a hyphen, like iso-Leucine, 
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png', dpi = NA)
 ```
 
-We can also use a function called `predictWithModel()` to make predictions using the model. We give it the model and the data we want predictions for. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance, and store the predictions as a new column next to the measured values:
+We can also use a function called `predictWithModel()` to make predictions using the model. We give it the data we want predictions for and the model. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance:
 
 ```{r}
-predictions_from_basic_linear_model <- metabolomics_data %>%
-  mutate(predicted_Valine = predictWithModel(
-    data = metabolomics_data,
-    model_type = "linear_regression",
-    model = basic_regression_model$model
-  )$value)
+predictions_from_basic_linear_model <- predictWithModel(
+  data = metabolomics_data,
+  model = basic_regression_model
+)
 
 predictions_from_basic_linear_model %>%
   select(`iso-Leucine`, Valine, predicted_Valine) %>%
   head()
 ```
 
-`predictWithModel()` returns a table with one column, `value`, so `$value` pulls out the predictions themselves. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:
+`predictWithModel()` returns the data we gave it with one new column holding the predictions. The column is named after the model's output variable, so here it is `predicted_Valine`. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data."}
 ggplot(predictions_from_basic_linear_model) +
@@ -206,7 +202,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 Fill in the blank with the variable the model should predict, then press Run to see its coefficients.
 
-<div class="webr-cell"><textarea class="webr-code">basic_regression_model <- buildModel2(
+<div class="webr-cell"><textarea class="webr-code">basic_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = "iso-Leucine",
@@ -229,7 +225,7 @@ basic_regression_model$metrics %>%
 
 A fitted model is not tied to the data it was built from. It can predict the output for any table that has the same input columns, including samples whose output was never measured. That is the predictive use of a model, and it is often the reason for building one.
 
-`metabolomics_unknown` holds measurements from seven new patients. It has every metabolite column that `metabolomics_data` has, so our iso-Leucine model can predict a Valine abundance for each of them. The table has no column identifying the patients, though, so first we number the rows. Then `predictWithModel()` can carry that column through to its output with the `id_cols` argument, which keeps every prediction attached to the patient it belongs to:
+`metabolomics_unknown` holds measurements from seven new patients. It has every metabolite column that `metabolomics_data` has, so our iso-Leucine model can predict a Valine abundance for each of them. The table has no column identifying the patients, though, so first we number the rows. Because `predictWithModel()` returns the whole table with the prediction added to each row, every prediction stays attached to the patient it belongs to:
 
 ```{r}
 unknown_patients <- metabolomics_unknown %>%
@@ -237,11 +233,10 @@ unknown_patients <- metabolomics_unknown %>%
 
 unknown_predictions <- predictWithModel(
   data = unknown_patients,
-  model_type = "linear_regression",
-  model = basic_regression_model$model,
-  id_cols = "patient"
+  model = basic_regression_model
 )
-unknown_predictions
+unknown_predictions %>%
+  select(patient, `iso-Leucine`, predicted_Valine)
 ```
 
 The output is an ordinary table, so the verbs from the wrangling chapter work on it. We can read off the prediction for a single patient:
@@ -255,30 +250,29 @@ Or sort the patients by their predicted value, or keep only those predicted to b
 
 ```{r}
 unknown_predictions %>%
-  arrange(desc(value))
+  arrange(desc(predicted_Valine))
 
 unknown_predictions %>%
-  filter(value > 4.66)
+  filter(predicted_Valine > 4.66)
 ```
 
 A prediction is only as good as the model behind it. This model explains about 40% of the variation in Valine (its r-squared is 0.40), so these predictions are rough. Using more of what was measured is the next step.
 
 #### concept check {-}
 
-Fill in the blank with the column that keeps each prediction attached to its patient, then press Run. This cell uses `basic_regression_model` from the previous check, so run that one first.
+Fill in the blank with the name of the column that holds the predictions, then press Run. This cell uses `basic_regression_model` from the previous check, so run that one first.
 
 <div class="webr-cell"><textarea class="webr-code">unknown_patients <- metabolomics_unknown %>%
   mutate(patient = row_number())
 
 unknown_predictions <- predictWithModel(
   data = unknown_patients,
-  model_type = "linear_regression",
-  model = basic_regression_model$model,
-  id_cols = "____"
+  model = basic_regression_model
 )
 
 unknown_predictions %>%
-  arrange(desc(value))</textarea></div>
+  arrange(desc(____)) %>%
+  select(patient, predicted_Valine)</textarea></div>
 
 <div class="selfcheck" data-answer="3" data-explain="Sorted from highest to lowest, patient 5 comes first, with a predicted Valine abundance of about 4.75. Patient 3 has the lowest prediction, about 4.56.">
 <p class="scq">Self-check: which of the seven new patients does the model predict to have the highest Valine abundance?</p>
@@ -296,7 +290,7 @@ unknown_predictions %>%
 Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression uses one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let's try it with the first 30 metabolites in our data set:
 
 ```{r}
-multiple_input_regression_model <- buildModel2(
+multiple_input_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:32],
@@ -314,14 +308,12 @@ model_comparison_data <- metabolomics_data %>%
   mutate(
     single_input_predicted_Valine = predictWithModel(
       data = metabolomics_data,
-      model_type = "linear_regression",
-      model = basic_regression_model$model
-    )$value,
+      model = basic_regression_model
+    )$predicted_Valine,
     multiple_input_predicted_Valine = predictWithModel(
       data = metabolomics_data,
-      model_type = "linear_regression",
-      model = multiple_input_regression_model$model
-    )$value
+      model = multiple_input_regression_model
+    )$predicted_Valine
   )
 
 plot1 <- ggplot(model_comparison_data) +
@@ -337,7 +329,7 @@ plot_grid(plot1, plot2, nrow = 1, labels = "AUTO")
 
 Fill in the blank with the metric that measures how much of the variation in Valine a model explains, then press Run.
 
-<div class="webr-cell"><textarea class="webr-code">multiple_input_regression_model <- buildModel2(
+<div class="webr-cell"><textarea class="webr-code">multiple_input_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:32],
@@ -366,7 +358,7 @@ Once a model has several inputs, a natural question is which of them drives the 
 It is tempting to rank the inputs by the size of their coefficients, but a coefficient is measured in the units of its own input, so raw coefficients cannot be compared with each other. Let's see what goes wrong, with a model of Valine built from four metabolites:
 
 ```{r}
-four_input_model <- buildModel2(
+four_input_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
@@ -386,7 +378,7 @@ The fix is to put every input on the same footing before fitting, by scaling eac
 scaled_metabolomics_data <- metabolomics_data %>%
   mutate(across(c(Phenylalanine, `2-Aminoadipate`, Tryptophan, Propionate), scale))
 
-scaled_four_input_model <- buildModel2(
+scaled_four_input_model <- buildModel(
   data = scaled_metabolomics_data,
   model_type = "linear_regression",
   input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
@@ -417,7 +409,7 @@ Fill in the blank with the function that puts each input on a mean of zero and a
 <div class="webr-cell"><textarea class="webr-code">scaled_metabolomics_data <- metabolomics_data %>%
   mutate(across(c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"), ____))
 
-scaled_four_input_model <- buildModel2(
+scaled_four_input_model <- buildModel(
   data = scaled_metabolomics_data,
   model_type = "linear_regression",
   input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
@@ -462,7 +454,7 @@ There are three aspects of a regression model that we should check on, to make s
 We can assess all of these using:
 
 ```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data."}
-multiple_regression_model <- buildModel2(
+multiple_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:10],
@@ -474,9 +466,9 @@ check_model(multiple_regression_model$model)
 
 #### concept check {-}
 
-Fill in the blank with the part of the `buildModel2()` output that holds the fitted model, then press Run. Drawing the six panels takes about ten seconds.
+Fill in the blank with the part of the `buildModel()` output that holds the fitted model, then press Run. Drawing the six panels takes about ten seconds.
 
-<div class="webr-cell"><textarea class="webr-code">multiple_regression_model <- buildModel2(
+<div class="webr-cell"><textarea class="webr-code">multiple_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:10],
@@ -496,7 +488,7 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 
@@ -514,10 +506,10 @@ Building a regression model starts with determining what the model will be used 
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
-| `Hmisc::impute()` | filling in missing values, because `buildModel2()` stops on any | the fill value (here each column's median) |
-| `buildModel2()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable` |
+| `Hmisc::impute()` | filling in missing values, because `buildModel()` stops on any | the fill value (here each column's median) |
+| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable` |
 | `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
-| `predictWithModel()` | predictions for any table with the same input columns, returned in the column `value` | `data`, `model_type`, `model`, and `id_cols` to keep each prediction attached to its sample |
+| `predictWithModel()` | predictions for any table with the same input columns, returned as that table with a new `predicted_<output>` column | `data`, and `model` (the whole `buildModel()` output) |
 | `mutate(across(c(...), scale))` | putting inputs on a mean of zero and a standard deviation of one before comparing coefficients | which inputs to scale |
 | `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
 | `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |

@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Protein language models use the concept of an embedding, a numerical vector computed from an amino acid sequence by a model trained on large sequence databases, to convert the proteins in a dataset into vectors that can be compared and examined with PCA without first building a multiple sequence alignment. This analysis can be used to answer questions such as "Which proteins in this set have the most similar embeddings?" or "Do diterpene synthases and monoterpene synthases occupy separate regions of a PCA of their embeddings?"
 
-## {-}
+<hr>
 
 In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.
 
@@ -119,7 +119,7 @@ ggplot(all_sequences_embedded_pca) +
 
 ```
 
-## {-}
+<hr>
 
 ## chapter summary {-}
 

@@ -1,0 +1,25 @@
+{
+ "mode": "open",
+ "history": [
+  {
+   "to": "sensitive",
+   "at": "2026-11-02T02:23:54.455Z",
+   "via": "default"
+  },
+  {
+   "to": "open",
+   "at": "2026-11-02T02:23:57.426Z",
+   "via": "toggle"
+  },
+  {
+   "to": "sensitive",
+   "at": "2026-11-02T02:59:00.340Z",
+   "via": "toggle"
+  },
+  {
+   "to": "open",
+   "at": "2026-11-02T02:59:01.656Z",
+   "via": "toggle"
+  }
+ ]
+}
