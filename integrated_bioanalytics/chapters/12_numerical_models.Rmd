@@ -10,7 +10,7 @@ Regression modeling uses the concept of a fitted linear equation relating a resp
 
 <hr>
 
-A regression model predicts a number from one or more measured inputs, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several inputs matters most? The second is about prediction: what value should we expect for a sample whose output was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
+A regression model predicts a number from one or more measured predictors, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several predictors matters most? The second is about prediction: what value should we expect for a sample whose response was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -29,9 +29,9 @@ The straight-line models in this chapter serve both purposes at once: their inne
 
 In this course, we will build models using a function called `buildModel()`. To use it, we give it our data and tell it which sets of values we want to relate. To do that, we need to specify (at least) two things:
 
-- `input_variables`: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
+- `input_variables`: the **predictors** (also called inputs or features), the variables the model uses to make its prediction. They are the variables that go on the right of a formula and, in a plot, on the x axis (a second predictor is usually shown with color or facets). Depending on the model, these could be continuous or categorical variables.
 
-- `output_variable`: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
+- `output_variable`: the **response** (also called the output), the variable that the model should predict. It is the variable that goes on the left of a formula and on the y axis of a plot. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
 
 For model building, we also need to handle missing data. `buildModel()` stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the `impute()` function from the `Hmisc` package:
 
@@ -45,7 +45,7 @@ any(is.na(metabolomics_data))
 
 The cells on this page start from a copy of `metabolomics_data` whose missing values have already been filled in this way.
 
-<div class="selfcheck" data-answer="2" data-explain="An inferential use is about understanding the relationship itself: which inputs matter, in which direction, and how strongly. Forecasting new samples or chasing the most accurate predictions are predictive uses, where the inner workings matter less.">
+<div class="selfcheck" data-answer="2" data-explain="An inferential use is about understanding the relationship itself: which predictors matter, in which direction, and how strongly. Forecasting new samples or chasing the most accurate predictions are predictive uses, where the inner workings matter less.">
 <p class="scq">Self-check: which of these is an inferential use of a model?</p>
 <label><input type="radio"> Predicting Valine for patients whose blood has not been measured for it yet</label>
 <label><input type="radio"> Choosing whichever model gives the most accurate predictions, however it works inside</label>
@@ -56,7 +56,7 @@ The cells on this page start from a copy of `metabolomics_data` whose missing va
 
 ## single linear regression {-}
 
-We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use `buildModel()`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
+We will start with some of the simplest models: linear models. There are a variety of ways to build linear models in R, but we will use `buildModel()`, as mentioned above. First, we will use least squares regression to model the relationship between predictor and response variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
@@ -75,7 +75,7 @@ basic_regression_model <- buildModel(
 names(basic_regression_model)
 ```
 
-The output of `buildModel()` consists of four things: the model_type, the name of the output variable, the model itself, and the metrics describing the model and its performance. Let's look at the model:
+The output of `buildModel()` consists of four things: the model_type, the name of the response (output) variable, the model itself, and the metrics describing the model and its performance. Let's look at the model:
 
 ```{r}
 basic_regression_model$model
@@ -96,7 +96,7 @@ basic_regression_model$metrics %>%
 
 Note that a variable whose name contains a space or a hyphen, like iso-Leucine, is listed in the `variable` column with backticks around it (`` `iso-Leucine` ``), so filtering on `type` is the more reliable way to find a coefficient. The slope here says that for every one-unit increase in iso-Leucine abundance, the model expects Valine abundance to rise by about 0.51.
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "Using a model to make predictions. A fitted model takes values of the input variable and returns the value of the output variable that the model expects for each one."}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one."}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png', dpi = NA)
 ```
 
@@ -113,7 +113,7 @@ predictions_from_basic_linear_model %>%
   head()
 ```
 
-`predictWithModel()` returns the data we gave it with one new column holding the predictions. The column is named after the model's output variable, so here it is `predicted_Valine`. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:
+`predictWithModel()` returns the data we gave it with one new column holding the predictions. The column is named after the model's response variable, so here it is `predicted_Valine`. Because we have the measured Valine values in our data set, we can compare the predicted values to the measured values to see how well our model is doing:
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data."}
 ggplot(predictions_from_basic_linear_model) +
@@ -170,7 +170,7 @@ total_sum_of_squares <- sum(
 
 That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
 
-- The amount of variance in the output variable explained by the input variable.
+- The amount of variance in the response variable explained by the predictor variable.
 - How much better the line of best fit describes the data than the flat line.
 
 Now, let's put it all together and make it pretty:
@@ -223,7 +223,7 @@ basic_regression_model$metrics %>%
 
 ## predicting with a model {-}
 
-A fitted model is not tied to the data it was built from. It can predict the output for any table that has the same input columns, including samples whose output was never measured. That is the predictive use of a model, and it is often the reason for building one.
+A fitted model is not tied to the data it was built from. It can predict the response for any table that has the same predictor columns, including samples whose response was never measured. That is the predictive use of a model, and it is often the reason for building one.
 
 `metabolomics_unknown` holds measurements from seven new patients. It has every metabolite column that `metabolomics_data` has, so our iso-Leucine model can predict a Valine abundance for each of them. The table has no column identifying the patients, though, so first we number the rows. Because `predictWithModel()` returns the whole table with the prediction added to each row, every prediction stays attached to the patient it belongs to:
 
@@ -287,7 +287,7 @@ unknown_predictions %>%
 
 ## multiple linear regression {-}
 
-Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one input variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (input variables) and a dependent variable (output variable). Simple linear regression uses one independent variable to predict the value of one dependent variable, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one input and the output, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the inputs together influence the output. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the inputs themselves. Let's try it with the first 30 metabolites in our data set:
+Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor. (Other texts call the predictors independent or explanatory variables, and the response the dependent variable.) Simple linear regression uses one predictor to predict the value of the response, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more predictors, with a typical form of y = m1x1 + m2x2 + ... + b. While simple linear regression describes a straight-line relationship between one predictor and the response, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the predictors together influence the response. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the predictors themselves. Let's try it with the first 30 metabolites in our data set:
 
 ```{r}
 multiple_input_regression_model <- buildModel(
@@ -301,9 +301,9 @@ basic_regression_model$metrics %>% filter(type == "statistic")
 multiple_input_regression_model$metrics %>% filter(type == "statistic")
 ```
 
-The 30-input model explains far more of the variation in Valine than the iso-Leucine model does (an r-squared of 0.89 against 0.40). Comparing each model's predictions with the measured values shows the same thing:
+The 30-predictor model explains far more of the variation in Valine than the iso-Leucine model does (an r-squared of 0.89 against 0.40). Comparing each model's predictions with the measured values shows the same thing:
 
-```{r, fig.width = 10, fig.height = 5, fig.cap = "Predicted against measured valine abundance for two linear models. (A) Predictions of the single-input model (iso-leucine only). (B) Predictions of the 30-input model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data."}
+```{r, fig.width = 10, fig.height = 5, fig.cap = "Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data."}
 model_comparison_data <- metabolomics_data %>%
   mutate(
     single_input_predicted_Valine = predictWithModel(
@@ -339,23 +339,23 @@ Fill in the blank with the metric that measures how much of the variation in Val
 multiple_input_regression_model$metrics %>%
   filter(variable == "____")</textarea></div>
 
-<div class="selfcheck" data-answer="0" data-explain="The 30-input model has an r-squared of about 0.89, against 0.40 for the iso-Leucine model, so across these 93 patients it accounts for far more of the variation in Valine. A higher r-squared does not show that any one input causes the change, and the model still has an intercept.">
-<p class="scq">Self-check: what does the higher r-squared of the 30-input model tell us?</p>
-<label><input type="radio"> Together, the 30 inputs account for much more of the variation in Valine across these patients than iso-Leucine does alone</label>
-<label><input type="radio"> Every one of the 30 inputs has a strong effect on Valine</label>
-<label><input type="radio"> The 30-input model no longer needs an intercept</label>
+<div class="selfcheck" data-answer="0" data-explain="The 30-predictor model has an r-squared of about 0.89, against 0.40 for the iso-Leucine model, so across these 93 patients it accounts for far more of the variation in Valine. A higher r-squared does not show that any one predictor causes the change, and the model still has an intercept.">
+<p class="scq">Self-check: what does the higher r-squared of the 30-predictor model tell us?</p>
+<label><input type="radio"> Together, the 30 predictors account for much more of the variation in Valine across these patients than iso-Leucine does alone</label>
+<label><input type="radio"> Every one of the 30 predictors has a strong effect on Valine</label>
+<label><input type="radio"> The 30-predictor model no longer needs an intercept</label>
 </div>
 
 <hr>
 
-### which inputs matter most {-}
+### which predictors matter most {-}
 
-Once a model has several inputs, a natural question is which of them drives the prediction. The metrics table reports a coefficient, a standard error and a p-value for every input:
+Once a model has several predictors, a natural question is which of them drives the prediction. The metrics table reports a coefficient, a standard error and a p-value for every predictor:
 
-- Coefficient value: its magnitude and sign describe the expected change in the output when that input increases by one unit while all the other inputs are held constant.
-- `p_value` (or `p_value_adj`, adjusted for testing many inputs at once) is the p-value from testing whether that input's coefficient is different from zero. Small p-values highlight inputs that are likely to matter after accounting for the rest.
+- Coefficient value: its magnitude and sign describe the expected change in the response when that predictor increases by one unit while all the other predictors are held constant.
+- `p_value` (or `p_value_adj`, adjusted for testing many predictors at once) is the p-value from testing whether that predictor's coefficient is different from zero. Small p-values highlight predictors that are likely to matter after accounting for the rest.
 
-It is tempting to rank the inputs by the size of their coefficients, but a coefficient is measured in the units of its own input, so raw coefficients cannot be compared with each other. Let's see what goes wrong, with a model of Valine built from four metabolites:
+It is tempting to rank the predictors by the size of their coefficients, but a coefficient is measured in the units of its own predictor, so raw coefficients cannot be compared with each other. Let's see what goes wrong, with a model of Valine built from four metabolites:
 
 ```{r}
 four_input_model <- buildModel(
@@ -372,7 +372,7 @@ four_input_model$metrics %>%
 
 Phenylalanine has by far the largest coefficient. But Phenylalanine barely varies from patient to patient: its standard deviation is about 0.12, against about 0.4 for 2-Aminoadipate and Propionate. A one-unit change in Phenylalanine is therefore an enormous change, far bigger than anything seen in the data, so its coefficient is large simply because its unit is large.
 
-The fix is to put every input on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). Each coefficient then means "the change in the output for a one-standard-deviation change in this input", which can be compared across inputs:
+The fix is to put every predictor on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). Each coefficient then means "the change in the response for a one-standard-deviation change in this predictor", which can be compared across predictors:
 
 ```{r}
 scaled_metabolomics_data <- metabolomics_data %>%
@@ -392,7 +392,7 @@ scaled_four_input_model$metrics %>%
 
 After scaling, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third. The scaled ranking also agrees with the p-values, where 2-Aminoadipate has the smallest. Three further points:
 
-- The intercept is left out of the ranking with `variable != "(Intercept)"`. It is not a measurement but the model's baseline (after scaling it is simply the mean Valine abundance), so it does not belong in a list of inputs.
+- The intercept is left out of the ranking with `variable != "(Intercept)"`. It is not a measurement but the model's baseline (after scaling it is simply the mean Valine abundance), so it does not belong in a list of predictors.
 - Scaling changes the units of the coefficients, not the fit. Both models have the same r-squared and make the same predictions:
 
 ```{r}
@@ -400,11 +400,11 @@ four_input_model$metrics %>% filter(variable == "r_squared")
 scaled_four_input_model$metrics %>% filter(variable == "r_squared")
 ```
 
-- Use the scaled model to compare inputs, and the model built on the data as measured to make predictions. A model fitted on scaled inputs expects scaled inputs, so giving it the raw columns of a new table, such as `metabolomics_unknown`, produces nonsense.
+- Use the scaled model to compare predictors, and the model built on the data as measured to make predictions. A model fitted on scaled predictors expects scaled predictors, so giving it the raw columns of a new table, such as `metabolomics_unknown`, produces nonsense.
 
 #### concept check {-}
 
-Fill in the blank with the function that puts each input on a mean of zero and a standard deviation of one, then press Run to rank the inputs.
+Fill in the blank with the function that puts each predictor on a mean of zero and a standard deviation of one, then press Run to rank the predictors.
 
 <div class="webr-cell"><textarea class="webr-code">scaled_metabolomics_data <- metabolomics_data %>%
   mutate(across(c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"), ____))
@@ -420,10 +420,10 @@ scaled_four_input_model$metrics %>%
   filter(type == "coefficient", variable != "(Intercept)") %>%
   arrange(desc(abs(value)))</textarea></div>
 
-<div class="selfcheck" data-answer="2" data-explain="Phenylalanine varies very little between patients (a standard deviation of about 0.12), so a one-unit change in it is far larger than anything in the data and its raw coefficient is large for that reason alone. Once every input is scaled, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third.">
-<p class="scq">Self-check: why does Phenylalanine have the largest coefficient in the model built on the raw, unscaled inputs?</p>
-<label><input type="radio"> It has the strongest effect on Valine of the four inputs</label>
-<label><input type="radio"> It has the smallest p-value of the four inputs</label>
+<div class="selfcheck" data-answer="2" data-explain="Phenylalanine varies very little between patients (a standard deviation of about 0.12), so a one-unit change in it is far larger than anything in the data and its raw coefficient is large for that reason alone. Once every predictor is scaled, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third.">
+<p class="scq">Self-check: why does Phenylalanine have the largest coefficient in the model built on the raw, unscaled predictors?</p>
+<label><input type="radio"> It has the strongest effect on Valine of the four predictors</label>
+<label><input type="radio"> It has the smallest p-value of the four predictors</label>
 <label><input type="radio"> It barely varies between patients, so one unit of it is a very large change</label>
 </div>
 
@@ -431,9 +431,9 @@ scaled_four_input_model$metrics %>%
 
 ## comparing slopes between groups {-}
 
-The inputs so far have all been numbers. A model can also take a categorical input, a column that names a group, and that opens up a common question: does the output rise with an input at the same rate in every group? Consider the elements of the periodic table. Density increases with atomic mass, but an element that is a gas at room temperature is about a thousand times less dense than a solid of similar mass, so one line through all of the elements would describe none of them well.
+The predictors so far have all been numbers. A model can also take a categorical predictor, a column that names a group, and that opens up a common question: does the response rise with a predictor at the same rate in every group? Consider the elements of the periodic table. Density increases with atomic mass, but an element that is a gas at room temperature is about a thousand times less dense than a solid of similar mass, so one line through all of the elements would describe none of them well.
 
-To give each group its own line, we describe the model with a formula instead of `input_variables` and `output_variable`. A formula puts the output on the left of a `~` and the inputs on the right, the same way as in the comparing groups chapter. Joining two inputs with `*` gives each group its own intercept and its own slope, while joining them with `+` would give each group its own intercept but force every group to share one slope (parallel lines). Elements whose density or state is not recorded are filtered out first, because `buildModel()` stops on missing values:
+To give each group its own line, we describe the model with a formula instead of `input_variables` and `output_variable`. A formula puts the response on the left of a `~` and the predictors on the right, the same way as in the comparing groups chapter. Joining two predictors with `*` gives each group its own intercept and its own slope, while joining them with `+` would give each group its own intercept but force every group to share one slope (parallel lines). Elements whose density or state is not recorded are filtered out first, because `buildModel()` stops on missing values:
 
 ```{r}
 elements <- periodic_table %>%
@@ -456,7 +456,7 @@ predictWithModel(data = elements, model = state_model) %>%
     theme_bw()
 ```
 
-Each state now has its own line. To ask which slopes differ from which, we pass the model to `tukeyTest()`, the same Tukey test as in the comparing groups chapter, and name the numeric input whose slope should be compared with `slopes_of`. Piping the result into `pGroups()` gives each group a letter, as before, along with its slope (`estimate`) and that slope's standard error:
+Each state now has its own line. To ask which slopes differ from which, we pass the model to `tukeyTest()` and name the numeric predictor whose slope should be compared with `slopes_of`. The Tukey test compares the slopes of every pair of groups and corrects the p-values for the number of comparisons, much as the comparing groups chapter's tests do for means. Piping the result into `pGroups()` gives each group a letter, as before, along with its slope (`estimate`) and that slope's standard error:
 
 ```{r}
 state_model %>%
@@ -464,11 +464,11 @@ state_model %>%
   pGroups()
 ```
 
-The letters read exactly as they do for means: groups that share a letter do not have significantly different slopes. Solids gain about 0.058 g/mL of density for every extra unit of atomic mass, while the slope for gases is indistinguishable from zero on this scale, and the two do not share a letter. The liquids share a letter with both. Only two elements (bromine and mercury) are liquid at room temperature, and two points pin down a slope very loosely, as the large standard error shows, so the test cannot tell their slope apart from either of the others. Without the `slopes_of` argument, `tukeyTest()` on a model compares the groups' outputs instead of their slopes, as predicted by the model at the average value of the numeric input.
+The letters read exactly as they do for means: groups that share a letter do not have significantly different slopes. Solids gain about 0.058 g/mL of density for every extra unit of atomic mass, while the slope for gases is indistinguishable from zero on this scale, and the two do not share a letter. The liquids share a letter with both. Only two elements (bromine and mercury) are liquid at room temperature, and two points pin down a slope very loosely, as the large standard error shows, so the test cannot tell their slope apart from either of the others.
 
 #### concept check {-}
 
-Fill in the blank with the input whose slope should be compared between find sites, then press Run.
+Fill in the blank with the predictor whose slope should be compared between find sites, then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">site_model <- buildModel(
   data = meteorite_fragments,
@@ -495,15 +495,15 @@ There are three aspects of a regression model that we should check on, to make s
 
 1. Residual-based assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:
 
-    - Linearity: examines if residuals show a random scatter around zero, indicating a linear relationship between the inputs and the output variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.
+    - Linearity: examines if residuals show a random scatter around zero, indicating a linear relationship between the predictors and the response variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.
 
     - Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.
 
     - Normality of residuals: assesses whether residuals follow a normal distribution, which matters for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
 
-2. Input relationships. This check pertains to relationships among the input variables themselves, rather than their relationship with the output variable. In this case:
+2. Predictor relationships. This check pertains to relationships among the predictor variables themselves, rather than their relationship with the response variable. In this case:
 
-    - Collinearity: assesses multicollinearity, which occurs when inputs are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual inputs. This check helps ensure that inputs are independent enough to provide clear, interpretable results for each variable's influence on the output.
+    - Collinearity: assesses multicollinearity, which occurs when predictors are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual predictors. This check helps ensure that predictors are independent enough to provide clear, interpretable results for each variable's influence on the response.
 
 3. Model fit and influence. These checks look at the overall fit of the model and assess if specific data points have undue influence on the model's results. This group includes:
 
@@ -513,7 +513,7 @@ There are three aspects of a regression model that we should check on, to make s
 
 We can assess all of these using:
 
-```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each input; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data."}
+```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data."}
 multiple_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
@@ -537,7 +537,7 @@ Fill in the blank with the part of the `buildModel()` output that holds the fitt
 
 check_model(multiple_regression_model$____)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="A funnel means the residuals spread out (or close in) as the fitted values change, so the variance of the errors is not constant. That is heteroscedasticity, a failure of the homogeneity-of-variance check. Collinearity is about the inputs being correlated with each other, and normality is judged on the Q-Q plot.">
+<div class="selfcheck" data-answer="1" data-explain="A funnel means the residuals spread out (or close in) as the fitted values change, so the variance of the errors is not constant. That is heteroscedasticity, a failure of the homogeneity-of-variance check. Collinearity is about the predictors being correlated with each other, and normality is judged on the Q-Q plot.">
 <p class="scq">Self-check: in a plot of residuals against fitted values, the residuals form a funnel that widens to the right. Which assumption does that call into question?</p>
 <label><input type="radio"> That the inputs are not strongly correlated with each other</label>
 <label><input type="radio"> That the variance of the residuals is the same across fitted values</label>
@@ -560,19 +560,19 @@ check_model(multiple_regression_model$____)</textarea></div>
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
 ```
 
-Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the output relates to the inputs. A **predictive** use applies the model to a table whose output was never measured. Three decisions follow. **How many inputs:** more inputs can explain more of the variation in the output, which r-squared shows. **Whether to scale:** scale the inputs before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the inputs, and any influential points with `check_model()`.
+Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the response relates to the predictors. A **predictive** use applies the model to a table whose response was never measured. Three decisions follow. **How many predictors:** more predictors can explain more of the variation in the response, which r-squared shows. **Whether to scale:** scale the predictors before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the predictors, and any influential points with `check_model()`.
 
 :::
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
 | `Hmisc::impute()` | filling in missing values, because `buildModel()` stops on any | the fill value (here each column's median) |
-| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one column or several), `output_variable`; or instead a `formula`, `output ~ input * group` |
+| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (the predictors, one column or several), `output_variable` (the response); or instead a `formula`, `response ~ predictor * group` |
 | `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
-| `predictWithModel()` | predictions for any table with the same input columns, returned as that table with a new `predicted_<output>` column | `data`, and `model` (the whole `buildModel()` output) |
-| `mutate(across(c(...), scale))` | putting inputs on a mean of zero and a standard deviation of one before comparing coefficients | which inputs to scale |
+| `predictWithModel()` | predictions for any table with the same predictor columns, returned as that table with a new `predicted_<response>` column | `data`, and `model` (the whole `buildModel()` output) |
+| `mutate(across(c(...), scale))` | putting predictors on a mean of zero and a standard deviation of one before comparing coefficients | which predictors to scale |
 | `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
-| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ, given a model built with a `*` formula; letters plus each group's slope | `slopes_of`, the numeric input whose slope is compared |
+| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ, given a model built with a `*` formula; letters plus each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
 | `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |
 
 <!-- ## exercises {-}

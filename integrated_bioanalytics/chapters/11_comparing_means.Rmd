@@ -8,7 +8,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <div class="cc-title-slot"></div>
 
-**Are these two things the same?** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Tukey or Dunn tests, and marks the results on a plot.
+**Are these two things the same?** Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Games-Howell or Dunn tests, and marks the results on a plot.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#comparing-means-summary){.cc-btn .ghost}
 
@@ -74,7 +74,7 @@ Please note that the *p* value is not the probability of a detected difference b
 
 ## distributions {-}
 
-Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the *shape* of the data (whether it is roughly normally distributed and/or whether the groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.
+Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the *shape* of the data (the parametric tests assume each group is roughly normally distributed, and the rank tests assume the groups have similar shapes), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.
 
 By using multiple geoms, a single plot can show the summary (mean, median, etc.), the density, and the raw observations at once. In the plot below, the half-eye gives the density, the boxplot the quartiles, and the dots every actual measurement, showing the shape, the spread and the sample size in one picture:
 
@@ -177,14 +177,14 @@ K_data_1_9 %>%
 
 ## two means {-}
 
-Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Let's try it out:
+Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Like every test in this chapter, it takes a formula written with a tilde (`~`). The **response**, the measured value being compared, goes on the left of the tilde, and the **predictor**, here the column that sorts the measurements into groups, goes on the right. In `abundance ~ aquifer_code`, the response is `abundance` and the predictor is `aquifer_code`. The regression and ANOVA chapters use the same `response ~ predictor` form, where a predictor can also be a number. Let's try it out:
 
 ```{r}
 K_data_1_6 %>%
   tTest(abundance ~ aquifer_code)
 ```
 
-A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. When the data really are normal, this makes it a less powerful test than the t-test, meaning it is less likely to detect a difference between the groups, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
+A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. Instead, it compares the groups using the ranks of the measurements rather than the measurements themselves, so its p-value does not depend on the shape of the distribution. For fun, let's try that one out and compare the p-values from the two methods:
 
 ```{r}
 K_data_1_6 %>%
@@ -255,7 +255,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
+Let's check visually to see if each group is normally distributed:
 
 ```{r, fig.width = 10, fig.height = 5, fig.cap = "Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725."}
 K_data %>%
@@ -266,80 +266,76 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`, and with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
+Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`:
 
 ```{r}
 K_data %>%
-  group_by(aquifer_code) %>% 
+  group_by(aquifer_code) %>%
   shapiroTest(abundance)
 ```
 
-```{r}
-K_data %>%
-  leveneTest(abundance ~ aquifer_code)
-```
+Based on this test, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p < 0.05), while the other nine aquifers are not.
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p < 0.05), and the variances are certainly different from one another (Levene test p < 0.05).
-
-With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Tukey test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)
+With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Games-Howell test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)
 
 #### concept check {-}
 
-Fill in the blank with the column that holds the grouping variable, so the Levene test compares the spread of potassium across all ten aquifers, then press Run.
+Ten aquifers make 45 pairs. Fill in the blank so the table works that number out from the count of groups (each group pairs with every other group, and each pair is counted twice), then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">K_data %>%
-  leveneTest(abundance ~ ____)</textarea></div>
+  summarize(groups = n_distinct(aquifer_code)) %>%
+  mutate(pairs = groups * (groups - 1) / ____)</textarea></div>
 
-<div class="selfcheck" data-answer="2" data-explain="Ten aquifers make 45 pairs. Each separate t-test at a 0.05 threshold has a 5% chance of a false positive, so across 45 of them about two would come out significant by chance alone even if no aquifer differed from any other. The Tukey and Dunn tests compare every pair at once and correct the p values for the number of comparisons.">
-<p class="scq">Self-check: Why compare the ten aquifers with a Tukey or Dunn test rather than a separate t-test on each of the 45 pairs?</p>
+<div class="selfcheck" data-answer="2" data-explain="Ten aquifers make 45 pairs. Each separate t-test at a 0.05 threshold has a 5% chance of a false positive, so across 45 of them about two would come out significant by chance alone even if no aquifer differed from any other. The Games-Howell and Dunn tests compare every pair at once and correct the p values for the number of comparisons.">
+<p class="scq">Self-check: Why compare the ten aquifers with a Games-Howell or Dunn test rather than a separate t-test on each of the 45 pairs?</p>
 <label><input type="radio"> A t-test can only be run on aquifers with more than ten measurements</label>
-<label><input type="radio"> The Tukey and Dunn tests do not need the data to be checked first</label>
-<label><input type="radio"> With 45 separate tests, a few pairs would come out significant by chance alone, and the Tukey and Dunn tests correct for that</label>
+<label><input type="radio"> The Games-Howell and Dunn tests do not need the data to be checked first</label>
+<label><input type="radio"> With 45 separate tests, a few pairs would come out significant by chance alone, and the Games-Howell and Dunn tests correct for that</label>
 </div>
 
 <hr>
 
-### Tukey test {-}
+### Games-Howell test {-}
 
-Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use Tukey's Honest Significant Difference test (implemented using `tukeyTest`). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+Let's assume for a second that every group passed the Shapiro test. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use the Games-Howell test (implemented using `gamesHowellTest`). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). Like Welch's t-test, it compares each pair using those two groups' own spreads, rather than one spread shared by all the groups, so it needs no check that the groups have similar variances. After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 ```{r}
 K_data %>%
-  tukeyTest(abundance ~ aquifer_code)
+  gamesHowellTest(abundance ~ aquifer_code)
 ```
 
-Using the output from our Tukey test, we can determine which means are similar. We can do this using the pGroups function:
+Using the output from our Games-Howell test, we can determine which means are similar. We can do this using the pGroups function:
 
 ```{r, message = FALSE}
-groups_based_on_tukey <- K_data %>%
-  tukeyTest(abundance ~ aquifer_code) %>%
+groups_based_on_games_howell <- K_data %>%
+  gamesHowellTest(abundance ~ aquifer_code) %>%
   pGroups()
-groups_based_on_tukey
+groups_based_on_games_howell
 ```
 
 We can use the output from `pGroups` to annotate our plot:
 
-```{r, fig.width = 6, fig.height = 4.5, fig.cap = "Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725."}
+```{r, fig.width = 6, fig.height = 4.5, fig.cap = "Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725."}
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3) +
-  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
+  geom_text(data = groups_based_on_games_howell, aes(y = treatment, x = 9, label = group))
 ```
 
-Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 ("acd") and aquifer 6 ("cd") share the letters "c" and "d", so their means do not differ significantly. Aquifer 4 ("b") and aquifer 6 share no letter, so their means do differ.
+Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 ("af") and aquifer 6 ("abf") share the letters "a" and "f", so their means do not differ significantly. Aquifer 4 ("c") and aquifer 6 share no letter, so their means do differ. Because each pair is judged on its own two spreads, aquifers whose wells agree closely, such as aquifers 4 and 5, can be told apart from others by small differences in mean, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
 
 #### concept check {-}
 
 Fill in the blank with the column of corrected p values, so the filter keeps only the pairs of aquifers that differ significantly, then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">K_data %>%
-  tukeyTest(abundance ~ aquifer_code) %>%
+  gamesHowellTest(abundance ~ aquifer_code) %>%
   filter(____ < 0.05)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="Ten rows survive the filter: 10 of the 45 pairs have an adjusted p value below 0.05. The p.adj column is the one to filter on, because it has been corrected for the number of comparisons; an uncorrected p value would let through pairs that differ only by chance.">
-<p class="scq">Self-check: How many of the 45 pairs of aquifers differ significantly in potassium according to the Tukey test?</p>
+<div class="selfcheck" data-answer="1" data-explain="Sixteen rows survive the filter: 16 of the 45 pairs have an adjusted p value below 0.05. The p.adj column is the one to filter on, because it has been corrected for the number of comparisons; an uncorrected p value would let through pairs that differ only by chance.">
+<p class="scq">Self-check: How many of the 45 pairs of aquifers differ significantly in potassium according to the Games-Howell test?</p>
 <label><input type="radio"> 6</label>
-<label><input type="radio"> 10</label>
+<label><input type="radio"> 16</label>
 <label><input type="radio"> 45</label>
 </div>
 
@@ -347,7 +343,7 @@ Fill in the blank with the column of corrected p values, so the filter keeps onl
 
 ### Dunn test {-}
 
-The above Tukey example is great, but remember - our data did not pass the Shapiro or Levene tests, so the Tukey test's p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Tukey test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair's average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair's ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let's try:
+The above Games-Howell example is great, but remember - aquifer 9 did not pass the Shapiro test, so the Games-Howell test's p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Games-Howell test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair's average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair's ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let's try:
 
 ```{r}
 K_data %>%
@@ -371,19 +367,19 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-Note that these groupings are different from those generated by the Tukey test.
+Note that these groupings are different from those generated by the Games-Howell test.
 
 #### concept check {-}
 
-Fill in the blank with the rank-based counterpart of the Tukey test, then press Run.
+Fill in the blank with the rank-based counterpart of the Games-Howell test, then press Run.
 
 <div class="webr-cell"><textarea class="webr-code">K_data %>%
   ____(abundance ~ aquifer_code) %>%
   filter(p.adj < 0.05)</textarea></div>
 
-<div class="selfcheck" data-answer="0" data-explain="Aquifer 9 failed the Shapiro test and the Levene test found that the spreads differ, so the Tukey test's assumptions do not hold and its p values may be inaccurate. The Dunn test works on ranks, so it does not need either assumption. Here it finds 6 significantly different pairs where the Tukey test found 10.">
+<div class="selfcheck" data-answer="0" data-explain="Aquifer 9 failed the Shapiro test. The Games-Howell test does not need the groups to have similar spreads, but it does model each group with a normal distribution, so its p values may be inaccurate here. The Dunn test works on ranks, so it does not need that assumption. Here it finds 6 significantly different pairs where the Games-Howell test found 16.">
 <p class="scq">Self-check: Why is the Dunn result the one to trust for these potassium data?</p>
-<label><input type="radio"> Aquifer 9 is not normally distributed and the spreads differ, so the Tukey test's assumptions do not hold</label>
+<label><input type="radio"> Aquifer 9 is not normally distributed, so the Games-Howell test's assumption of normal groups does not hold</label>
 <label><input type="radio"> The Dunn test always finds fewer significant pairs, so it is the safer choice</label>
 <label><input type="radio"> The Dunn test does not need its p values corrected for the number of comparisons</label>
 </div>
@@ -400,7 +396,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-Fortunately, we can use an approach that is very similar to what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
+Fortunately, we can use an approach that is very similar to what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro test, as usual (note that we group using two variables so that each analyte within each aquifer is considered as an individual distribution):
 
 ```{r}
 hawaii_aquifers %>%
@@ -409,16 +405,7 @@ hawaii_aquifers %>%
   shapiroTest(abundance)
 ```
 
-Looks like some of those distributions are significantly different from normal! Let's run the Levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
-
-```{r, message = FALSE}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  group_by(aquifer_code) %>%
-  leveneTest(abundance ~ analyte)
-```
-
-It looks like the pair in aquifer 1 has significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use `wilcoxTest`, but we have many pairs, so we will use `pairwiseWilcoxTest` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?rstatix::pairwise_wilcox_test`):
+Looks like some of those distributions are significantly different from normal! So we need to be using non-parametric testing. If this were a simple case of two means we would use `wilcoxTest`, but we have many pairs, so we will use `pairwiseWilcoxTest` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?rstatix::pairwise_wilcox_test`):
 
 ```{r}
 hawaii_aquifers %>%
@@ -429,7 +416,7 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shapiro and Levene tests had revealed no significant differences? Well, a `pairwiseTTest` of course!
+What would we have done if every distribution had passed the Shapiro test? Well, a `pairwiseTTest` of course! Like `tTest`, it runs Welch's t-test for each pair, so it needs no check that the two analytes have similar variances:
 
 ```{r}
 hawaii_aquifers %>%
@@ -486,11 +473,11 @@ Fill in the blank with the column that splits the data into one sodium-versus-ch
   pairwiseTTest(abundance ~ analyte) %>%
   select(aquifer_code, p, p.adj, p.adj.signif)</textarea></div>
 
-<div class="selfcheck" data-answer="2" data-explain="Aquifer 1's uncorrected p is 0.047, just under 0.05, but once it is corrected for the ten comparisons made across all the aquifers, p.adj is 0.42. Only p.adj accounts for running ten tests, so sodium and chloride in aquifer 1 do not differ significantly. Aquifer 2 is the one that survives the correction.">
-<p class="scq">Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride differ significantly there?</p>
-<label><input type="radio"> Yes, because p is below 0.05</label>
-<label><input type="radio"> Yes, because at least one of the two p values is below 0.05</label>
-<label><input type="radio"> No, because p.adj, which is corrected for the ten comparisons, is above 0.05</label>
+<div class="selfcheck" data-answer="2" data-explain="Aquifer 1's uncorrected p is 0.054, but p.adj is 0.49, about nine times larger, because it has been corrected for the ten comparisons made across all the aquifers. Running ten tests gives ten chances of a false positive, and p.adj accounts for that. Aquifer 2 is the one aquifer whose p.adj is still below 0.05.">
+<p class="scq">Self-check: In aquifer 1, p is 0.054 but p.adj is 0.49. Why is p.adj so much larger?</p>
+<label><input type="radio"> Because aquifer 1 is not normally distributed</label>
+<label><input type="radio"> Because p.adj compares sodium and chloride across every aquifer pooled together</label>
+<label><input type="radio"> Because p.adj is corrected for the ten comparisons made, one per aquifer</label>
 </div>
 
 <hr>
@@ -503,17 +490,16 @@ Fill in the blank with the column that splits the data into one sodium-versus-ch
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf){.summary-pdf target="_blank"}
 
-Before choosing a statistical test to apply to your data, look at the distribution of the data in each group. **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). The t-test used in this book is Welch's, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check for equal variances first using the Levene test. The *p* value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The *p* value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.
+Before choosing a statistical test, look at the distribution of the data in each group. **Can each group be modeled by a normal distribution?** Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. **How many groups are being compared?** With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Games-Howell and Dunn tests compare every pair at once and correct the p-values (read `p.adj`). The t-test used in this book is Welch's, and the Games-Howell test and `pairwiseTTest` likewise judge each pair on its own two spreads, so no test in this chapter needs a check for equal variances. The *p* value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The *p* value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
 | `shapiroTest(abundance)` | is each group roughly normal? (p > 0.05 means not significantly different from normal) | after `group_by()` on the grouping column(s) |
-| `leveneTest(abundance ~ aquifer_code)` | do the groups have similar variances? | before `tukeyTest` or `pairwiseTTest` |
-| `tTest(abundance ~ aquifer_code)` | two groups, roughly normal (Welch's t-test) | `y ~ x` formula |
-| `wilcoxTest(abundance ~ aquifer_code)` | two groups, not normal (rank test) | `y ~ x` formula |
-| `tukeyTest(abundance ~ aquifer_code)` | more than two groups, every pair, normal with similar variances | read `p.adj` |
+| `tTest(abundance ~ aquifer_code)` | two groups, roughly normal (Welch's t-test) | `response ~ predictor` formula |
+| `wilcoxTest(abundance ~ aquifer_code)` | two groups, not normal (rank test) | `response ~ predictor` formula |
+| `gamesHowellTest(abundance ~ aquifer_code)` | more than two groups, every pair, roughly normal (each pair judged on its own spreads) | read `p.adj` |
 | `dunnTest(abundance ~ aquifer_code)` | more than two groups, every pair, rank-based | read `p.adj` |
-| `pGroups()` | letters for each group from Tukey or Dunn output (a shared letter means no significant difference) | piped after `tukeyTest` or `dunnTest`, then drawn with `geom_text()` |
+| `pGroups()` | letters for each group from Games-Howell or Dunn output (a shared letter means no significant difference) | piped after `gamesHowellTest` or `dunnTest`, then drawn with `geom_text()` |
 | `pairwiseTTest(abundance ~ analyte)`, `pairwiseWilcoxTest(abundance ~ analyte)` | one comparison within each of several groups | after `group_by(aquifer_code)`, with `p.adj` corrected across all the groups |
 | `geomSignif()` | draws brackets and stars from pairwise test output | `data =` a table built from the test output |
 
@@ -528,7 +514,7 @@ cat('
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/cover.png" alt="Seedfall cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Seedfall</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Tukey + rank-based tests &middot; two players</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Games-Howell + rank-based tests &middot; two players</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">A city of rooftop orchards climbs five levels up a sea cliff, and the first snow is on its way. Play as a pair: one of you starts at the harbor, the other at the lighthouse. You will test the same soil survey two different ways, and you will have to compare notes before you can light the city for winter.</div>
 </div>
 </div>
@@ -536,7 +522,7 @@ cat('
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/cover.png" alt="First Guest cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Tukey + pairwise tests</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Comparing groups &middot; t-tests, Games-Howell + pairwise tests</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.</div>
 </div>
 </div>
@@ -548,7 +534,7 @@ cat('
 
 ## further reading {-}
 
-- [Comparing Multiple Means in R](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/). Datanovia's step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code.
+- [One-Way ANOVA in R: Compare Group Means](https://www.datanovia.com/learn/biostatistics/anova/anova-in-r). When the data meet a stricter criterion, a little extra statistical power is available. If the groups' spreads are known to be similar, for example from a plot or from experience with the measurement method, the Tukey test, which pools the spread of all the groups into one estimate, detects real differences somewhat more often than the Games-Howell test. Datanovia's lesson shows the Tukey test alongside the Levene test, the usual check for equal variances, and the Games-Howell test for when the spreads differ. Keep in mind that with the three to five samples per group common in laboratory work, the Levene test rarely detects spreads that really are unequal, so passing it is weak evidence that the spreads are similar.
 
 - [Parametric vs. Nonparametric Tests](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/). Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation.
 
@@ -565,9 +551,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 1. Choose one analyte and filter the data so only the rows for that analyte are shown.
 
-2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (Games-Howell tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
 
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 

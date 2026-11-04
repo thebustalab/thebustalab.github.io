@@ -404,7 +404,35 @@
                 if (!is.null(compare) || !is.null(slopes_of)) {
                     stop("tukeyTest(): compare = and slopes_of = are for a model from buildModel(). With a data table, give a formula, e.g. tukeyTest(abundance ~ aquifer_code).", call. = FALSE)
                 }
-                return(rstatix::tukey_hsd( data, ... ))
+                # rstatix::tukey_hsd splits its "group2-group1" labels on "-", so a group name containing a
+                # hyphen comes back garbled (B-2 -> "2" / "B"). Swap such levels for zero-padded tokens (same
+                # sort order, so every comparison keeps its orientation), test, then put the names back.
+                dots <- list(...)
+                fml <- if (!is.null(dots$formula)) dots$formula else if (length(dots) > 0 && inherits(dots[[1]], "formula")) dots[[1]] else NULL
+                hyphen_key <- character(0)
+                if (!is.null(fml) && length(fml) == 3) {
+                    rhs_vars <- intersect(all.vars(fml[[3]]), names(data))
+                    for (i in seq_along(rhs_vars)) {
+                        v <- rhs_vars[i]
+                        x <- data[[v]]
+                        if (is.numeric(x) || !any(grepl("-", as.character(x)), na.rm = TRUE)) next
+                        lev <- if (is.factor(x)) levels(x) else sort(unique(as.character(x[!is.na(x)])))
+                        tok <- sprintf("v%dl%05d", i, seq_along(lev))
+                        data[[v]] <- factor(tok[match(as.character(x), lev)], levels = tok)
+                        hyphen_key <- c(hyphen_key, stats::setNames(lev, tok))
+                    }
+                }
+                res <- rstatix::tukey_hsd( data, ... )
+                if (length(hyphen_key) > 0) {
+                    untoken <- function(s) vapply(strsplit(as.character(s), ":", fixed = TRUE), function(p) {
+                        hit <- p %in% names(hyphen_key)
+                        p[hit] <- hyphen_key[p[hit]]
+                        paste(p, collapse = ":")
+                    }, character(1))
+                    res$group1 <- untoken(res$group1)
+                    res$group2 <- untoken(res$group2)
+                }
+                return(res)
             }
             if (length(list(...)) > 0) {
                 stop("tukeyTest(): a model already contains its formula. Use compare = (which groups) and, for slopes, slopes_of = (which numeric input).", call. = FALSE)
@@ -475,6 +503,55 @@
             )
             out
         }
+        # gamesHowellTest() compares every pair of group means using each group's OWN spread (Welch-style),
+        # so it needs no equal-variance check first: the course's default pairwise test since 2026-11-03
+        # (Lucas; with 3-5 per group a Levene test almost never detects unequal spreads, and Tukey then runs
+        # at about double its stated false-positive rate). Takes data + formula, or a one-factor model from
+        # buildModel(); because Games-Howell uses each group's own spread rather than the model's pooled
+        # residual, the model path re-reads the fitted data. Output has rstatix's columns, so pGroups()
+        # reads it; the model path also carries each group's mean for pGroups()' estimate column.
+        # Inline, not in helpers, because the WebR shim generator carries only the ...Test functions.
+        gamesHowellTest <- function( data, ..., compare = NULL ) {
+            is_model <- inherits(data, "lm") ||
+                (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
+            if (!is_model) {
+                if (!is.null(compare)) {
+                    stop("gamesHowellTest(): compare = is for a model from buildModel(). With a data table, give a formula, e.g. gamesHowellTest(abundance ~ aquifer_code).", call. = FALSE)
+                }
+                return(rstatix::games_howell_test( data = data, ... ))
+            }
+            if (length(list(...)) > 0) {
+                stop("gamesHowellTest(): a model already contains its formula. Use compare = to say which groups.", call. = FALSE)
+            }
+            if (inherits(data, "lm")) {
+                fit <- data
+                model_data <- fit$model
+            } else {
+                if (data$model_type != "linear_regression") {
+                    stop("gamesHowellTest(): only linear regression models can be tested.", call. = FALSE)
+                }
+                fit <- data$model
+                model_data <- if (!is.null(data$data)) data$data else fit$model
+            }
+            response <- all.vars(stats::formula(fit)[[2]])
+            inputs <- all.vars(stats::formula(fit)[[3]])
+            groups <- inputs[!vapply(model_data[inputs], is.numeric, logical(1))]
+            if (length(inputs) != 1 || length(groups) != 1) {
+                stop("gamesHowellTest(): this works on a model with one group input, e.g. formula = abundance ~ aquifer_code. With more inputs, compare the groups within one level of the others (filter, then test), or for slopes use tukeyTest(slopes_of = ).", call. = FALSE)
+            }
+            if (!is.null(compare) && !identical(compare, groups)) {
+                stop("gamesHowellTest(): compare = should name the model's group input: ", groups, ".", call. = FALSE)
+            }
+            d <- as.data.frame(model_data)[, c(response, groups)]
+            names(d) <- c("response", "group")
+            d$group <- as.character(d$group)
+            out <- rstatix::games_howell_test(data = d, formula = response ~ group)
+            out$.y. <- response
+            means <- stats::aggregate(response ~ group, data = d, FUN = mean)
+            ses <- stats::aggregate(response ~ group, data = d, FUN = function(v) stats::sd(v) / sqrt(length(v)))
+            attr(out, "estimates") <- data.frame(group = means$group, estimate = means$response, std_err = ses$response)
+            out
+        }
         # kruskalTest() and dunnTest() refuse a backwards formula. rstatix's kruskal_test and dunn_test
         # do NOT error on `garden ~ value`: they rank the text column and return a confident, meaningless
         # p-value, so a student never learns the formula was reversed (the t and Wilcoxon tests do error,
@@ -528,11 +605,13 @@
         # "none" is honoured), and p.adj.signif is recomputed with rstatix's cut-points. Columns, column
         # order, class and grouping are kept as rstatix returns them. Ungrouped data go straight to
         # rstatix, unchanged.
-        pairwiseTTest <- function( data, ..., p.adjust.method = "holm" ) {
+        # pool.sd = FALSE (2026-11-03, Lucas): each pair is a Welch t-test on its own two spreads, so, like
+        # tTest() and gamesHowellTest(), it needs no equal-variance check first. rstatix's default pools.
+        pairwiseTTest <- function( data, ..., p.adjust.method = "holm", pool.sd = FALSE ) {
             if (!dplyr::is_grouped_df(data)) {
-                return(rstatix::pairwise_t_test(data = data, ..., p.adjust.method = p.adjust.method))
+                return(rstatix::pairwise_t_test(data = data, ..., pool.sd = pool.sd, p.adjust.method = p.adjust.method))
             }
-            res <- rstatix::pairwise_t_test(data = data, ..., p.adjust.method = "none")
+            res <- rstatix::pairwise_t_test(data = data, ..., pool.sd = pool.sd, p.adjust.method = "none")
             keep <- attributes(res)
             cols <- unclass(res)
             cols[["p.adj"]] <- stats::p.adjust(cols[["p"]], method = p.adjust.method)
@@ -11769,6 +11848,9 @@
 
                 letters_out <- multcompView::multcompLetters(p)
                 spaced_group <- if (is.null(letters_out$monospacedLetters)) letters_out$Letters else letters_out$monospacedLetters
+                ## pad with non-breaking spaces: HTML tables (Jupyter, knitted pages) collapse runs of plain
+                ## spaces, which made "  cde" display as "cde" and look misaligned (Lucas, 2026-11-02)
+                spaced_group <- gsub(" ", "\u00a0", spaced_group, fixed = TRUE)
 
                 treatment <- lev[match(names(letters_out$Letters), tok)]
                 output <- data.frame(
@@ -12198,277 +12280,6 @@
                     
                     return(output)
 
-            }
-
-        #### buildLinearModel
-
-            #' buildLinearModel
-            #'
-            #' @param data
-            #' @param formula
-            #' @export
-            #' @examples
-            #' buildLinearModel()
-
-                buildLinearModel <- function(data, formula) {
-
-                    ## Correct the formula and the data
-
-                        data <- as.data.frame(data)
-                        formula <- gsub("=", "~", formula)
-                        formula <- gsub("~", " ~ ", formula)
-                        formula <- gsub("  ", " ", formula)
-
-                    ## Run the fit and start the output
-
-                        fit <- lm(
-                            data = data,
-                            formula = formula,
-                            x = TRUE, y = TRUE, model = TRUE, qr = TRUE
-                        )
-                        output <- fit$model
-                        output$residuals <- fit$residuals
-                        output$model_y <- fit$model[,1] - output$residuals
-
-                    ## Determine input x values
-
-                        eqn_side <- gsub(".*~ ", "", formula)
-                        for (j in 1:length(colnames(data))) {
-                            result <- grep(paste0(" ", colnames(data)[j]), paste0(" ", eqn_side), fixed = TRUE)
-                            if (length(result) > 0) {
-                                # print(j)
-                                index <- gregexpr(pattern = paste0(" ", colnames(data)[j]),paste0(" ", eqn_side))[[1]][1]
-                                eqn_side <- paste0(
-                                    substr(eqn_side, 0, index-1),
-                                    "data$",
-                                    substr(eqn_side, index, nchar(eqn_side))
-                                )
-                            }
-                        }
-                        input_x <- eval(parse(text=eqn_side))
-
-                    ## Determine input y values
-
-                        eqn_side <- gsub(" ~ .*$", "", formula)
-                        for (j in 1:length(colnames(data))) {
-                            result <- grep(paste0(" ", colnames(data)[j]), paste0(" ", eqn_side), fixed = TRUE)
-                            if (length(result) > 0) {
-                                # print(j)
-                                index <- gregexpr(pattern = paste0(" ", colnames(data)[j]),paste0(" ", eqn_side))[[1]][1]
-                                eqn_side <- paste0(
-                                    substr(eqn_side, 0, index-1),
-                                    "data$",
-                                    substr(eqn_side, index, nchar(eqn_side))
-                                )
-                            }
-                        }
-                        input_y <- eval(parse(text=eqn_side))
-
-                        output <- cbind(
-                            cbind(input_x, input_y)[!apply(apply(cbind(input_x, input_y), 2, is.na), 1, any),],
-                            output
-                        )
-                        # colnames(output)[1]
-
-                    ## Start the master output and put the coefficients and stats in it
-
-                        out <- list()
-                        
-                        coefficients <- data.frame(
-                            variable = names(coefficients(fit)),
-                            value = as.numeric(coefficients(fit)),
-                            std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
-                            type = "coefficient",
-                            p_value = round(summary(fit)$coefficients[,4], 8)
-                        )
-
-                        total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
-                        residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
-
-                        statistics <- rbind(
-                            c("median_residual", median(summary(fit)$residuals), NA, "statistic", NA),
-                            c("total_sum_squares", total_sum_squares, NA, "statistic", NA),
-                            c("residual_sum_squares", residual_sum_squares, NA, "statistic", NA),
-                            c("r_squared", summary(fit)$r.squared, NA, "statistic", NA)
-                        )
-                        colnames(statistics) <- c("variable", "value", "std_err", "type", "p_value")
-
-                        # round(1-(residual_sum_squares/total_sum_squares), 4) == round(summary(fit)$r.squared, 4)
-
-                        metrics <- rbind(coefficients, statistics)
-                        metrics$value <- round(as.numeric(metrics$value), 4)
-                        rownames(metrics) <- NULL
-                        metrics
-
-                        out$metrics <- metrics
-
-                        output$model_x <- output$input_x
-
-                        out$data <- output
-
-                    return(out)
-                }
-
-        #### buildModel1.5
-
-            buildModel1.5 <- function(
-                data,
-                model_type = c(
-                    "linear_regression", "random_forest_regression",
-                    "random_forest_classification", "logistic_regression",
-                    "contrastive_learning"
-                ),
-                input_variables = NULL,
-                output_variable = NULL,
-                fold_cross_validation = 10,
-                optimization_parameters = list(
-                    n_vars_tried_at_split = seq(10,20,5),
-                    n_trees = seq(100,200,50),
-                    min_leaf_size = 1
-                )
-            ) {
-
-                ## Prepare the data
-
-                    ## Correct the formula and the data, start the output
-                        data <- as.data.frame(data)
-                        if( any(is.na(data)) ) { stop("Yo - there are missing data in your data set, please deal with that before proceeding.") }
-                        formula <- paste0("`", output_variable, "` ~ `", paste(input_variables, collapse = "` + `"), "`")
-                        output <- list()
-                        output$model_type <- model_type
-
-                    ## Various checkes
-                            if (dim(data)[1] < length(input_variables)) {
-                                stop("Heyyyyy, there are fewer observations in the data than input variables. You should change the number of input variables or make more observations.")
-                            }
-                            if (!is.numeric(data[,colnames(data) == output_variable]) & !model_type %in% c("random_forest_classification")) {
-                                stop("Uh oh! You cannot predict the value of a categorical variable with a regression model. Choose a classification model instead.")
-                            }
-
-                ## Modeling
-
-                    if (model_type == "linear_regression") {
-
-                        ## Run the fit and start the output
-                            fit <- lm(
-                                data = data,
-                                formula = formula,
-                                x = TRUE, y = TRUE, model = TRUE, qr = TRUE
-                            )
-                            output$model <- fit
-
-                            input_y <- fit$y[order(as.numeric(names(fit$y)))]
-                            total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
-                            residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
-
-                            metrics <- rbind(
-                                data.frame(
-                                    variable = c("r_squared", "total_sum_squares", "residual_sum_squares"),
-                                    value = c(summary(fit)$r.squared, total_sum_squares, residual_sum_squares),
-                                    std_err = NA,
-                                    type = "statistic",
-                                    p_value = NA,
-                                    p_value_adj = NA
-                                ),
-                                data.frame(
-                                    variable = names(coefficients(fit)),
-                                    value = as.numeric(coefficients(fit)),
-                                    std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
-                                    type = "coefficient",
-                                    p_value = round(summary(fit)$coefficients[,4], 8),
-                                    p_value_adj = p.adjust(round(summary(fit)$coefficients[,4], 8))
-                                )
-                            )
-                            metrics$value <- round(as.numeric(metrics$value), 4)
-                            rownames(metrics) <- NULL
-                            output$metrics <- metrics
-                    }
-
-                    if (model_type == "random_forest_regression") {
-
-                        ## Create a workflow that has a recipe and a model
-                            workflow() %>%
-                                add_recipe(
-                                    recipe( as.formula(formula), data = data ) # %>%
-                                    # step_normalize(all_numeric()) # %>% step_impute_knn(all_inputs())
-                                ) %>%
-                                add_model(
-                                    rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-                                    set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-                                    set_mode("regression") # choose either the continuous regression or binary classification mode
-                                ) -> workflow_for_training
-
-                        ## Tune the model on the training set
-                            tune_results <- tune_grid(
-                                workflow_for_training,
-                                resamples = vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(
-                                    mtry = optimization_parameters$n_vars_tried_at_split,
-                                    trees = optimization_parameters$n_trees,
-                                    min_n = optimization_parameters$min_leaf_size
-                                ), # grid of values to try
-                                metrics = metric_set(rmse) # metrics we care about
-                            )
-
-                        # Check model parameters if you want
-                            output <- list()
-                            output$metrics <- collect_metrics(tune_results)
-
-                        ## Apply the best parameters to the workflow to creat the output model
-                            output$model <- fit(
-                                finalize_workflow(workflow_for_training, select_best(tune_results, metric = "rmse")),
-                                data
-                            )
-                    }
-
-                    if (model_type == "random_forest_classification") {
-
-                        ## Create a workflow that has a recipe and a model
-                            workflow() %>%
-                                add_recipe(
-                                    recipe( as.formula(formula), data = data ) # %>%
-                                    # step_normalize(all_numeric()) # %>% step_impute_knn(all_inputs())
-                                ) %>%
-                                add_model(
-                                    rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-                                    set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-                                    set_mode("classification") # choose either the continuous regression or binary classification mode
-                                ) -> workflow_for_training
-
-                        ## Tune the model on the training set
-                            tune_results <- tune_grid(
-                                workflow_for_training,
-                                resamples = vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(
-                                    mtry = optimization_parameters$n_vars_tried_at_split,
-                                    trees = optimization_parameters$n_trees,
-                                    min_n = optimization_parameters$min_leaf_size
-                                ), # grid of values to try
-                                metrics = metric_set(accuracy) # metrics we care about
-                            )
-
-                        # Check model parameters if you want
-                            output <- list()
-                            output$metrics <- collect_metrics(tune_results)
-                            colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
-                            # select_best(tune_results, metric = "rmse")
-
-                        ## Apply the best parameters to the workflow to creat the output model
-                            output$model <- fit(
-                                finalize_workflow(workflow_for_training, select_best(tune_results, metric = "accuracy")),
-                                data
-                            )
-
-                        names(output$metrics)[1] <- "n_vars_tried_at_split"
-                        names(output$metrics)[2] <- "n_trees"
-                        colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
-                    }
-
-                ## Return a model trained on all the input data
-                    
-                    return(output)
             }
 
         #### buildModel

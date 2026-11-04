@@ -78,6 +78,7 @@
 <li class="book-part">STATISTICAL ANALYSIS</li>
 <li><a class="active" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="" href="anova.html">analysis of variance</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
@@ -113,10 +114,10 @@
 <div class="cc-title-slot">
 
 </div>
-<p><strong>Are these two things the same?</strong> Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Tukey or Dunn tests, and marks the results on a plot.</p>
+<p><strong>Are these two things the same?</strong> Does one aquifer hold more potassium than another, did a treatment change the amount of a metabolite, or do plants from two sites differ in leaf chemistry? Some difference between two groups is expected by chance alone, so a statistical test asks how likely data as extreme as that in hand would be if the groups came from the same distribution. This chapter checks the distributions first, compares two groups with a t-test or a Wilcoxon test and more than two with Games-Howell or Dunn tests, and marks the results on a plot.</p>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="comparing-means.html#comparing-means-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-458"></span>
+<span style="display:block;" id="fig:unnamed-chunk-459"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%"><p class="caption">
 Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.
 </p>
@@ -171,8 +172,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">aquifers_summarized</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_wells</span>, y <span class="op">=</span> <span class="va">aquifer_code</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-460"></span>
-<img src="index_files/figure-html/unnamed-chunk-460-1.png" alt="Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-461"></span>
+<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -210,7 +211,7 @@ Self-check: A test comparing potassium in two aquifers gives p = 0.04. Which sta
 <div id="distributions" class="section level2 unnumbered">
 <h2>distributions<a class="anchor" aria-label="anchor" href="#distributions"><i class="fas fa-link"></i></a>
 </h2>
-<p>Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the <em>shape</em> of the data (whether it is roughly normally distributed and/or whether the groups have comparable spread), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.</p>
+<p>Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the <em>shape</em> of the data (the parametric tests assume each group is roughly normally distributed, and the rank tests assume the groups have similar shapes), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.</p>
 <p>By using multiple geoms, a single plot can show the summary (mean, median, etc.), the density, and the raw observations at once. In the plot below, the half-eye gives the density, the boxplot the quartiles, and the dots every actual measurement, showing the shape, the spread and the sample size in one picture:</p>
 <div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mpg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">cyl</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -221,8 +222,8 @@ Self-check: A test comparing potassium in two aquifers gives p = 0.04. Which sta
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.12</span>, outlier.color <span class="op">=</span> <span class="cn">NA</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggdist</span><span class="fu">::</span><span class="fu"><a href="https://mjskay.github.io/ggdist/reference/stat_dots.html">stat_dots</a></span><span class="op">(</span>side <span class="op">=</span> <span class="st">"left"</span>, justification <span class="op">=</span> <span class="fl">1.1</span>, binwidth <span class="op">=</span> <span class="fl">.25</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-461"></span>
-<img src="index_files/figure-html/unnamed-chunk-461-1.png" alt="Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models)." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-462"></span>
+<img src="index_files/figure-html/unnamed-chunk-462-1.png" alt="Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models)." width="100%"><p class="caption">
 Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the ‘mpg’ dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models).
 </p>
 </div>
@@ -299,8 +300,8 @@ Self-check: With the points drawn, which aquifer has the most potassium measurem
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-463"></span>
-<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-464"></span>
+<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -312,8 +313,8 @@ Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the 
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-464"></span>
-<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-465"></span>
+<img src="index_files/figure-html/unnamed-chunk-465-1.png" alt="Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -354,7 +355,7 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <div id="two-means" class="section level2 unnumbered">
 <h2>two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
 </h2>
-<p>Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
+<p>Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Like every test in this chapter, it takes a formula written with a tilde (<code>~</code>). The <strong>response</strong>, the measured value being compared, goes on the left of the tilde, and the <strong>predictor</strong>, here the column that sorts the measurements into groups, goes on the right. In <code>abundance ~ aquifer_code</code>, the response is <code>abundance</code> and the predictor is <code>aquifer_code</code>. The regression and ANOVA chapters use the same <code>response ~ predictor</code> form, where a predictor can also be a number. Let’s try it out:</p>
 <div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -362,7 +363,7 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <span><span class="co">##   .y.       group1 group2    n1    n2 statistic    df      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121</span></span></code></pre></div>
-<p>A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. When the data really are normal, this makes it a less powerful test than the t-test, meaning it is less likely to detect a difference between the groups, assuming there is one. For fun, let’s try that one out and compare the p-values from the two methods:</p>
+<p>A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. Instead, it compares the groups using the ranks of the measurements rather than the measurements themselves, so its p-value does not depend on the shape of the distribution. For fun, let’s try that one out and compare the p-values from the two methods:</p>
 <div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">wilcoxTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -383,8 +384,8 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">orchards</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">orchard</span>, y <span class="op">=</span> <span class="va">nitrate</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-468"></span>
-<img src="index_files/figure-html/unnamed-chunk-468-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-469"></span>
+<img src="index_files/figure-html/unnamed-chunk-469-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%"><p class="caption">
 Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.
 </p>
 </div>
@@ -462,12 +463,12 @@ Self-check: What does the result tell you about aquifers 1 and 9?
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-470"></span>
-<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-471"></span>
+<img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
+<p>Let’s check visually to see if each group is normally distributed:</p>
 <div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -476,15 +477,15 @@ Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis)
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-471"></span>
-<img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-472"></span>
+<img src="index_files/figure-html/unnamed-chunk-472-1.png" alt="Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Again, it is somewhat hard to tell visually if these data are normally distributed, so let’s check with the Shapiro test. With more than two groups there is a second thing to look at: the Tukey test used below compares every pair using one shared estimate of the spread, so it assumes the groups have roughly similar variances. The Levene test checks that. Don’t forget: with the Shapiro test, we are looking within each group and so need to <code>group_by()</code>, and with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
+<p>Again, it is somewhat hard to tell visually if these data are normally distributed, so let’s check with the Shapiro test. Don’t forget: with the Shapiro test, we are looking within each group and so need to <code>group_by()</code>:</p>
 <div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 10 × 4</span></span>
 <span><span class="co">##    aquifer_code variable statistic         p</span></span>
@@ -499,101 +500,94 @@ Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gra
 <span><span class="co">##  8 aquifer_7    values       0.915 0.355    </span></span>
 <span><span class="co">##  9 aquifer_8    values       0.842 0.220    </span></span>
 <span><span class="co">## 10 aquifer_9    values       0.790 0.0000214</span></span></code></pre></div>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 1 × 4</span></span>
-<span><span class="co">##     df1   df2 statistic       p</span></span>
-<span><span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">## 1     9    96      2.95 0.00387</span></span></code></pre></div>
-<p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p &lt; 0.05), and the variances are certainly different from one another (Levene test p &lt; 0.05).</p>
-<p>With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Tukey test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)</p>
+<p>Based on this test, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shapiro test p &lt; 0.05), while the other nine aquifers are not.</p>
+<p>With more than two groups, running a separate t-test on every pair would multiply the chances of a false positive. Ten aquifers make 45 pairs, and at a 0.05 threshold about two of those 45 would come out significant by chance alone even if no aquifer differed from any other. The tests below compare every pair at once and correct the p-values for the number of comparisons made. (An ANOVA is often run first, to ask whether any group differs at all. It is not needed before the Games-Howell test, which makes its own correction. ANOVA answers other questions too, such as how two factors combine, and it has a chapter of its own.)</p>
 <div id="concept-check-47" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-47"><i class="fas fa-link"></i></a>
 </h4>
-<p>Fill in the blank with the column that holds the grouping variable, so the Levene test compares the spread of potassium across all ten aquifers, then press Run.</p>
+<p>Ten aquifers make 45 pairs. Fill in the blank so the table works that number out from the count of groups (each group pairs with every other group, and each pair is counted twice), then press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">K_data %&gt;%
-  leveneTest(abundance ~ ____)</textarea>
+  summarize(groups = n_distinct(aquifer_code)) %&gt;%
+  mutate(pairs = groups * (groups - 1) / ____)</textarea>
 </div>
-<div class="selfcheck" data-answer="2" data-explain="Ten aquifers make 45 pairs. Each separate t-test at a 0.05 threshold has a 5% chance of a false positive, so across 45 of them about two would come out significant by chance alone even if no aquifer differed from any other. The Tukey and Dunn tests compare every pair at once and correct the p values for the number of comparisons.">
+<div class="selfcheck" data-answer="2" data-explain="Ten aquifers make 45 pairs. Each separate t-test at a 0.05 threshold has a 5% chance of a false positive, so across 45 of them about two would come out significant by chance alone even if no aquifer differed from any other. The Games-Howell and Dunn tests compare every pair at once and correct the p values for the number of comparisons.">
 <p class="scq">
-Self-check: Why compare the ten aquifers with a Tukey or Dunn test rather than a separate t-test on each of the 45 pairs?
+Self-check: Why compare the ten aquifers with a Games-Howell or Dunn test rather than a separate t-test on each of the 45 pairs?
 </p>
 <p><label><input type="radio"> A t-test can only be run on aquifers with more than ten measurements</label>
-<label><input type="radio"> The Tukey and Dunn tests do not need the data to be checked first</label>
-<label><input type="radio"> With 45 separate tests, a few pairs would come out significant by chance alone, and the Tukey and Dunn tests correct for that</label></p>
+<label><input type="radio"> The Games-Howell and Dunn tests do not need the data to be checked first</label>
+<label><input type="radio"> With 45 separate tests, a few pairs would come out significant by chance alone, and the Games-Howell and Dunn tests correct for that</label></p>
 </div>
 <hr>
 </div>
-<div id="tukey-test" class="section level3 unnumbered">
-<h3>Tukey test<a class="anchor" aria-label="anchor" href="#tukey-test"><i class="fas fa-link"></i></a>
+<div id="games-howell-test" class="section level3 unnumbered">
+<h3>Games-Howell test<a class="anchor" aria-label="anchor" href="#games-howell-test"><i class="fas fa-link"></i></a>
 </h3>
-<p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use Tukey’s Honest Significant Difference test (implemented using <code>tukeyTest</code>). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<p>Let’s assume for a second that every group passed the Shapiro test. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use the Games-Howell test (implemented using <code>gamesHowellTest</code>). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). Like Welch’s t-test, it compares each pair using those two groups’ own spreads, rather than one spread shared by all the groups, so it needs no check that the groups have similar variances. After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 45 × 9</span></span>
-<span><span class="co">##    term         group1   group2 null.value estimate conf.low</span></span>
-<span><span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 aquifer_code aquifer… aquif…          0  0.00357   -2.04 </span></span>
-<span><span class="co">##  2 aquifer_code aquifer… aquif…          0  1.44      -0.708</span></span>
-<span><span class="co">##  3 aquifer_code aquifer… aquif…          0  0.375     -2.40 </span></span>
-<span><span class="co">##  4 aquifer_code aquifer… aquif…          0 -1.15      -2.78 </span></span>
-<span><span class="co">##  5 aquifer_code aquifer… aquif…          0 -0.875     -3.36 </span></span>
-<span><span class="co">##  6 aquifer_code aquifer… aquif…          0  1.98       0.228</span></span>
-<span><span class="co">##  7 aquifer_code aquifer… aquif…          0  2.70       0.801</span></span>
-<span><span class="co">##  8 aquifer_code aquifer… aquif…          0 -0.125     -2.90 </span></span>
-<span><span class="co">##  9 aquifer_code aquifer… aquif…          0 -0.349     -1.80 </span></span>
-<span><span class="co">## 10 aquifer_code aquifer… aquif…          0  1.44      -0.954</span></span>
+<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 45 × 8</span></span>
+<span><span class="co">##    .y.       group1 group2 estimate conf.low conf.high p.adj</span></span>
+<span><span class="co">##  * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 abundance aquif… aquif…  0.00357   -3.47      3.48  1    </span></span>
+<span><span class="co">##  2 abundance aquif… aquif…  1.44      -0.257     3.14  0.125</span></span>
+<span><span class="co">##  3 abundance aquif… aquif…  0.375     -1.36      2.11  0.997</span></span>
+<span><span class="co">##  4 abundance aquif… aquif… -1.15      -2.84      0.536 0.302</span></span>
+<span><span class="co">##  5 abundance aquif… aquif… -0.875     -2.57      0.816 0.619</span></span>
+<span><span class="co">##  6 abundance aquif… aquif…  1.98      -0.560     4.53  0.216</span></span>
+<span><span class="co">##  7 abundance aquif… aquif…  2.70       0.232     5.16  0.026</span></span>
+<span><span class="co">##  8 abundance aquif… aquif… -0.125     -2.04      1.79  1    </span></span>
+<span><span class="co">##  9 abundance aquif… aquif… -0.349     -2.12      1.42  0.999</span></span>
+<span><span class="co">## 10 abundance aquif… aquif…  1.44      -2.05      4.92  0.688</span></span>
 <span><span class="co">## # ℹ 35 more rows</span></span>
-<span><span class="co">## # ℹ 3 more variables: conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
-<span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
-<p>Using the output from our Tukey test, we can determine which means are similar. We can do this using the pGroups function:</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">groups_based_on_tukey</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tukeyTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="co">## # ℹ 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<p>Using the output from our Games-Howell test, we can determine which means are similar. We can do this using the pGroups function:</p>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">groups_based_on_games_howell</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">groups_based_on_tukey</span></span>
-<span><span class="co">##             treatment group spaced_group</span></span>
-<span><span class="co">## aquifer_1   aquifer_1    ab         ab  </span></span>
-<span><span class="co">## aquifer_10 aquifer_10   abc         abc </span></span>
-<span><span class="co">## aquifer_2   aquifer_2   acd         a cd</span></span>
-<span><span class="co">## aquifer_3   aquifer_3  abcd         abcd</span></span>
-<span><span class="co">## aquifer_4   aquifer_4     b          b  </span></span>
-<span><span class="co">## aquifer_5   aquifer_5    ab         ab  </span></span>
-<span><span class="co">## aquifer_6   aquifer_6    cd           cd</span></span>
-<span><span class="co">## aquifer_7   aquifer_7     d            d</span></span>
-<span><span class="co">## aquifer_8   aquifer_8  abcd         abcd</span></span>
-<span><span class="co">## aquifer_9   aquifer_9    ab         ab</span></span></code></pre></div>
+<span><span class="va">groups_based_on_games_howell</span></span>
+<span><span class="co">##             treatment  group spaced_group</span></span>
+<span><span class="co">## aquifer_1   aquifer_1  abcde       abcde </span></span>
+<span><span class="co">## aquifer_10 aquifer_10 abcdef       abcdef</span></span>
+<span><span class="co">## aquifer_2   aquifer_2     af       a    f</span></span>
+<span><span class="co">## aquifer_3   aquifer_3     bd        b d  </span></span>
+<span><span class="co">## aquifer_4   aquifer_4      c         c   </span></span>
+<span><span class="co">## aquifer_5   aquifer_5     ce         c e </span></span>
+<span><span class="co">## aquifer_6   aquifer_6    abf       ab   f</span></span>
+<span><span class="co">## aquifer_7   aquifer_7      f            f</span></span>
+<span><span class="co">## aquifer_8   aquifer_8  abcde       abcde </span></span>
+<span><span class="co">## aquifer_9   aquifer_9     de          de </span></span></code></pre></div>
 <p>We can use the output from <code>pGroups</code> to annotate our plot:</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_tukey</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_games_howell</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-476"></span>
-<img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
-Potassium in the ten Hawaiian aquifers, labeled by Tukey test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Tukey test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
+<img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 (“acd”) and aquifer 6 (“cd”) share the letters “c” and “d”, so their means do not differ significantly. Aquifer 4 (“b”) and aquifer 6 share no letter, so their means do differ.</p>
+<p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 (“af”) and aquifer 6 (“abf”) share the letters “a” and “f”, so their means do not differ significantly. Aquifer 4 (“c”) and aquifer 6 share no letter, so their means do differ. Because each pair is judged on its own two spreads, aquifers whose wells agree closely, such as aquifers 4 and 5, can be told apart from others by small differences in mean, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.</p>
 <div id="concept-check-48" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-48"><i class="fas fa-link"></i></a>
 </h4>
 <p>Fill in the blank with the column of corrected p values, so the filter keeps only the pairs of aquifers that differ significantly, then press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">K_data %&gt;%
-  tukeyTest(abundance ~ aquifer_code) %&gt;%
+  gamesHowellTest(abundance ~ aquifer_code) %&gt;%
   filter(____ &lt; 0.05)</textarea>
 </div>
-<div class="selfcheck" data-answer="1" data-explain="Ten rows survive the filter: 10 of the 45 pairs have an adjusted p value below 0.05. The p.adj column is the one to filter on, because it has been corrected for the number of comparisons; an uncorrected p value would let through pairs that differ only by chance.">
+<div class="selfcheck" data-answer="1" data-explain="Sixteen rows survive the filter: 16 of the 45 pairs have an adjusted p value below 0.05. The p.adj column is the one to filter on, because it has been corrected for the number of comparisons; an uncorrected p value would let through pairs that differ only by chance.">
 <p class="scq">
-Self-check: How many of the 45 pairs of aquifers differ significantly in potassium according to the Tukey test?
+Self-check: How many of the 45 pairs of aquifers differ significantly in potassium according to the Games-Howell test?
 </p>
 <p><label><input type="radio"> 6</label>
-<label><input type="radio"> 10</label>
+<label><input type="radio"> 16</label>
 <label><input type="radio"> 45</label></p>
 </div>
 <hr>
@@ -602,8 +596,8 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 <div id="dunn-test" class="section level3 unnumbered">
 <h3>Dunn test<a class="anchor" aria-label="anchor" href="#dunn-test"><i class="fas fa-link"></i></a>
 </h3>
-<p>The above Tukey example is great, but remember - our data did not pass the Shapiro or Levene tests, so the Tukey test’s p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Tukey test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair’s average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair’s ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let’s try:</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<p>The above Games-Howell example is great, but remember - aquifer 9 did not pass the Shapiro test, so the Games-Howell test’s p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Games-Howell test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair’s average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair’s ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let’s try:</p>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 9</span></span>
@@ -622,7 +616,7 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 <span><span class="co">## # ℹ 35 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>pGroups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_dunn</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
@@ -630,14 +624,14 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 <span><span class="co">##             treatment group spaced_group</span></span>
 <span><span class="co">## aquifer_1   aquifer_1  abcd         abcd</span></span>
 <span><span class="co">## aquifer_10 aquifer_10  abcd         abcd</span></span>
-<span><span class="co">## aquifer_2   aquifer_2   abc         abc </span></span>
+<span><span class="co">## aquifer_2   aquifer_2   abc         abc </span></span>
 <span><span class="co">## aquifer_3   aquifer_3  abcd         abcd</span></span>
-<span><span class="co">## aquifer_4   aquifer_4     d            d</span></span>
-<span><span class="co">## aquifer_5   aquifer_5   acd         a cd</span></span>
-<span><span class="co">## aquifer_6   aquifer_6    ab         ab  </span></span>
-<span><span class="co">## aquifer_7   aquifer_7     b          b  </span></span>
+<span><span class="co">## aquifer_4   aquifer_4     d            d</span></span>
+<span><span class="co">## aquifer_5   aquifer_5   acd         a cd</span></span>
+<span><span class="co">## aquifer_6   aquifer_6    ab         ab  </span></span>
+<span><span class="co">## aquifer_7   aquifer_7     b          b  </span></span>
 <span><span class="co">## aquifer_8   aquifer_8  abcd         abcd</span></span>
-<span><span class="co">## aquifer_9   aquifer_9    cd           cd</span></span>
+<span><span class="co">## aquifer_9   aquifer_9    cd           cd</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -652,21 +646,21 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Note that these groupings are different from those generated by the Tukey test.</p>
+<p>Note that these groupings are different from those generated by the Games-Howell test.</p>
 <div id="concept-check-49" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-49"><i class="fas fa-link"></i></a>
 </h4>
-<p>Fill in the blank with the rank-based counterpart of the Tukey test, then press Run.</p>
+<p>Fill in the blank with the rank-based counterpart of the Games-Howell test, then press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">K_data %&gt;%
   ____(abundance ~ aquifer_code) %&gt;%
   filter(p.adj &lt; 0.05)</textarea>
 </div>
-<div class="selfcheck" data-answer="0" data-explain="Aquifer 9 failed the Shapiro test and the Levene test found that the spreads differ, so the Tukey test's assumptions do not hold and its p values may be inaccurate. The Dunn test works on ranks, so it does not need either assumption. Here it finds 6 significantly different pairs where the Tukey test found 10.">
+<div class="selfcheck" data-answer="0" data-explain="Aquifer 9 failed the Shapiro test. The Games-Howell test does not need the groups to have similar spreads, but it does model each group with a normal distribution, so its p values may be inaccurate here. The Dunn test works on ranks, so it does not need that assumption. Here it finds 6 significantly different pairs where the Games-Howell test found 16.">
 <p class="scq">
 Self-check: Why is the Dunn result the one to trust for these potassium data?
 </p>
-<p><label><input type="radio"> Aquifer 9 is not normally distributed and the spreads differ, so the Tukey test’s assumptions do not hold</label>
+<p><label><input type="radio"> Aquifer 9 is not normally distributed, so the Games-Howell test’s assumption of normal groups does not hold</label>
 <label><input type="radio"> The Dunn test always finds fewer significant pairs, so it is the safer choice</label>
 <label><input type="radio"> The Dunn test does not need its p values corrected for the number of comparisons</label></p>
 </div>
@@ -678,7 +672,7 @@ Self-check: Why is the Dunn result the one to trust for these potassium data?
 <h2>pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></span></code></pre></div>
@@ -688,8 +682,8 @@ Self-check: Why is the Dunn result the one to trust for these potassium data?
 Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Fortunately, we can use an approach that is very similar to what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<p>Fortunately, we can use an approach that is very similar to what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro test, as usual (note that we group using two variables so that each analyte within each aquifer is considered as an individual distribution):</p>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -721,27 +715,8 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <span><span class="co">## 18 Na      aquifer_7    values       0.915 3.51e- 1</span></span>
 <span><span class="co">## 19 Na      aquifer_8    values       0.855 2.53e- 1</span></span>
 <span><span class="co">## 20 Na      aquifer_9    values       0.531 3.97e- 9</span></span></code></pre></div>
-<p>Looks like some of those distributions are significantly different from normal! Let’s run the Levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 10 × 5</span></span>
-<span><span class="co">##    aquifer_code   df1   df2 statistic       p</span></span>
-<span><span class="co">##    &lt;chr&gt;        &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 aquifer_1        1    22   10.5    0.00375</span></span>
-<span><span class="co">##  2 aquifer_10       1    12    0.0535 0.821  </span></span>
-<span><span class="co">##  3 aquifer_2        1    10    0.0243 0.879  </span></span>
-<span><span class="co">##  4 aquifer_3        1     4    0.320  0.602  </span></span>
-<span><span class="co">##  5 aquifer_4        1    32    1.57   0.219  </span></span>
-<span><span class="co">##  6 aquifer_5        1     6    2      0.207  </span></span>
-<span><span class="co">##  7 aquifer_6        1    22    1.03   0.322  </span></span>
-<span><span class="co">##  8 aquifer_7        1    16    1.54   0.232  </span></span>
-<span><span class="co">##  9 aquifer_8        1     4    0.515  0.512  </span></span>
-<span><span class="co">## 10 aquifer_9        1    64    1.10   0.298</span></span></code></pre></div>
-<p>It looks like the pair in aquifer 1 has significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use <code>wilcoxTest</code>, but we have many pairs, so we will use <code>pairwiseWilcoxTest</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code><a href="https://rpkgs.datanovia.com/rstatix/reference/wilcox_test.html">?rstatix::pairwise_wilcox_test</a></code>):</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<p>Looks like some of those distributions are significantly different from normal! So we need to be using non-parametric testing. If this were a simple case of two means we would use <code>wilcoxTest</code>, but we have many pairs, so we will use <code>pairwiseWilcoxTest</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code><a href="https://rpkgs.datanovia.com/rstatix/reference/wilcox_test.html">?rstatix::pairwise_wilcox_test</a></code>):</p>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -762,31 +737,31 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <span><span class="co">## # ℹ 3 more variables: p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).</p>
-<p>What would we have done if our Shapiro and Levene tests had revealed no significant differences? Well, a <code>pairwiseTTest</code> of course!</p>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<p>What would we have done if every distribution had passed the Shapiro test? Well, a <code>pairwiseTTest</code> of course! Like <code>tTest</code>, it runs Welch’s t-test for each pair, so it needs no check that the two analytes have similar variances:</p>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pairwiseTTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span></span>
 <span>  <span class="va">test_output</span></span>
-<span><span class="co">## # A tibble: 10 × 10</span></span>
-<span><span class="co">##    aquifer_code .y.       group1 group2    n1    n2        p</span></span>
-<span><span class="co">##  * &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 aquifer_1    abundance Cl     Na        12    12  4.69e-2</span></span>
-<span><span class="co">##  2 aquifer_10   abundance Cl     Na         7     7  8.82e-1</span></span>
-<span><span class="co">##  3 aquifer_2    abundance Cl     Na         6     6  3.75e-5</span></span>
-<span><span class="co">##  4 aquifer_3    abundance Cl     Na         3     3  6.83e-1</span></span>
-<span><span class="co">##  5 aquifer_4    abundance Cl     Na        17    17  1.03e-1</span></span>
-<span><span class="co">##  6 aquifer_5    abundance Cl     Na         4     4  9.75e-2</span></span>
-<span><span class="co">##  7 aquifer_6    abundance Cl     Na        12    12  5.66e-1</span></span>
-<span><span class="co">##  8 aquifer_7    abundance Cl     Na         9     9  5.21e-1</span></span>
-<span><span class="co">##  9 aquifer_8    abundance Cl     Na         3     3  4.28e-1</span></span>
-<span><span class="co">## 10 aquifer_9    abundance Cl     Na        33    33  8.96e-1</span></span>
-<span><span class="co">## # ℹ 3 more variables: p.signif &lt;chr&gt;, p.adj &lt;dbl&gt;,</span></span>
+<span><span class="co">## # A tibble: 10 × 11</span></span>
+<span><span class="co">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span></span>
+<span><span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 aquifer_1    abundan… Cl     Na        12    12     2.11 </span></span>
+<span><span class="co">##  2 aquifer_10   abundan… Cl     Na         7     7     0.152</span></span>
+<span><span class="co">##  3 aquifer_2    abundan… Cl     Na         6     6     6.99 </span></span>
+<span><span class="co">##  4 aquifer_3    abundan… Cl     Na         3     3     0.439</span></span>
+<span><span class="co">##  5 aquifer_4    abundan… Cl     Na        17    17     1.68 </span></span>
+<span><span class="co">##  6 aquifer_5    abundan… Cl     Na         4     4     1.96 </span></span>
+<span><span class="co">##  7 aquifer_6    abundan… Cl     Na        12    12     0.583</span></span>
+<span><span class="co">##  8 aquifer_7    abundan… Cl     Na         9     9     0.657</span></span>
+<span><span class="co">##  9 aquifer_8    abundan… Cl     Na         3     3     0.881</span></span>
+<span><span class="co">## 10 aquifer_9    abundan… Cl     Na        33    33     0.132</span></span>
+<span><span class="co">## # ℹ 4 more variables: df &lt;dbl&gt;, p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>When the data are grouped, as they are here, <code>pairwiseTTest</code> and <code>pairwiseWilcoxTest</code> correct for multiple comparisons across all of the groups at once. Here there is one comparison per aquifer, ten in all, so the <code>p.adj</code> column holds Holm-adjusted p-values for the full set of ten comparisons, while the <code>p</code> column holds the uncorrected values. Read <code>p.adj</code> (and its stars, <code>p.adj.signif</code>) when deciding which differences are significant.</p>
 <p>Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
 <span>  xmin <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">group1</span>,</span>
@@ -817,8 +792,8 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-484"></span>
-<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-483"></span>
+<img src="index_files/figure-html/unnamed-chunk-483-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%"><p class="caption">
 Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
@@ -833,13 +808,13 @@ Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwis
   pairwiseTTest(abundance ~ analyte) %&gt;%
   select(aquifer_code, p, p.adj, p.adj.signif)</textarea>
 </div>
-<div class="selfcheck" data-answer="2" data-explain="Aquifer 1's uncorrected p is 0.047, just under 0.05, but once it is corrected for the ten comparisons made across all the aquifers, p.adj is 0.42. Only p.adj accounts for running ten tests, so sodium and chloride in aquifer 1 do not differ significantly. Aquifer 2 is the one that survives the correction.">
+<div class="selfcheck" data-answer="2" data-explain="Aquifer 1's uncorrected p is 0.054, but p.adj is 0.49, about nine times larger, because it has been corrected for the ten comparisons made across all the aquifers. Running ten tests gives ten chances of a false positive, and p.adj accounts for that. Aquifer 2 is the one aquifer whose p.adj is still below 0.05.">
 <p class="scq">
-Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride differ significantly there?
+Self-check: In aquifer 1, p is 0.054 but p.adj is 0.49. Why is p.adj so much larger?
 </p>
-<p><label><input type="radio"> Yes, because p is below 0.05</label>
-<label><input type="radio"> Yes, because at least one of the two p values is below 0.05</label>
-<label><input type="radio"> No, because p.adj, which is corrected for the ten comparisons, is above 0.05</label></p>
+<p><label><input type="radio"> Because aquifer 1 is not normally distributed</label>
+<label><input type="radio"> Because p.adj compares sodium and chloride across every aquifer pooled together</label>
+<label><input type="radio"> Because p.adj is corrected for the ten comparisons made, one per aquifer</label></p>
 </div>
 <hr>
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><p><span id="comparing-means-summary"></span></p>
@@ -849,7 +824,7 @@ Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride d
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-8"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/11_comparing_means.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>Before choosing a statistical test to apply to your data, look at the distribution of the data in each group. <strong>Can each group be modeled by a normal distribution?</strong> Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. <strong>How many groups are being compared?</strong> With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Tukey and Dunn tests compare every pair at once and correct the p-values (read <code>p.adj</code>). The t-test used in this book is Welch’s, so two groups need no variance test, but the Tukey test shares one estimate of the spread across groups, so check for equal variances first using the Levene test. The <em>p</em> value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The <em>p</em> value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.</p>
+<p>Before choosing a statistical test, look at the distribution of the data in each group. <strong>Can each group be modeled by a normal distribution?</strong> Check with the Shapiro test within each group. If they are not significantly different from normal, use a parametric test. If they are, use a rank test, which asks whether values in one group tend to be higher than values in the other. <strong>How many groups are being compared?</strong> With more than two, a separate t-test on every pair multiplies the chance of a false positive, so the Games-Howell and Dunn tests compare every pair at once and correct the p-values (read <code>p.adj</code>). The t-test used in this book is Welch’s, and the Games-Howell test and <code>pairwiseTTest</code> likewise judge each pair on its own two spreads, so no test in this chapter needs a check for equal variances. The <em>p</em> value is the likelihood of getting data as extreme as the data in hand if the distributions they are coming from are in fact the same. The <em>p</em> value is not the probability that a detected difference is a false positive. Choosing a test comes down to how many groups are compared and whether the data are normal. Note that ANOVA is addressed in a separate, dedicated chapter.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -868,49 +843,43 @@ Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride d
 <td>after <code>group_by()</code> on the grouping column(s)</td>
 </tr>
 <tr class="even">
-<td><code>leveneTest(abundance ~ aquifer_code)</code></td>
-<td>do the groups have similar variances?</td>
-<td>before <code>tukeyTest</code> or <code>pairwiseTTest</code>
-</td>
-</tr>
-<tr class="odd">
 <td><code>tTest(abundance ~ aquifer_code)</code></td>
 <td>two groups, roughly normal (Welch’s t-test)</td>
 <td>
-<code>y ~ x</code> formula</td>
+<code>response ~ predictor</code> formula</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>wilcoxTest(abundance ~ aquifer_code)</code></td>
 <td>two groups, not normal (rank test)</td>
 <td>
-<code>y ~ x</code> formula</td>
+<code>response ~ predictor</code> formula</td>
 </tr>
-<tr class="odd">
-<td><code>tukeyTest(abundance ~ aquifer_code)</code></td>
-<td>more than two groups, every pair, normal with similar variances</td>
+<tr class="even">
+<td><code>gamesHowellTest(abundance ~ aquifer_code)</code></td>
+<td>more than two groups, every pair, roughly normal (each pair judged on its own spreads)</td>
 <td>read <code>p.adj</code>
 </td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>dunnTest(abundance ~ aquifer_code)</code></td>
 <td>more than two groups, every pair, rank-based</td>
 <td>read <code>p.adj</code>
 </td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>pGroups()</code></td>
-<td>letters for each group from Tukey or Dunn output (a shared letter means no significant difference)</td>
-<td>piped after <code>tukeyTest</code> or <code>dunnTest</code>, then drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text()</a></code>
+<td>letters for each group from Games-Howell or Dunn output (a shared letter means no significant difference)</td>
+<td>piped after <code>gamesHowellTest</code> or <code>dunnTest</code>, then drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text()</a></code>
 </td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <code>pairwiseTTest(abundance ~ analyte)</code>, <code>pairwiseWilcoxTest(abundance ~ analyte)</code>
 </td>
 <td>one comparison within each of several groups</td>
 <td>after <code>group_by(aquifer_code)</code>, with <code>p.adj</code> corrected across all the groups</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>geomSignif()</code></td>
 <td>draws brackets and stars from pairwise test output</td>
 <td>
@@ -929,7 +898,7 @@ Self-check: In aquifer 1, p is 0.047 but p.adj is 0.42. Do sodium and chloride d
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/squirrel/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Seedfall</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">
-Comparing groups · t-tests, Tukey + rank-based tests · two players
+Comparing groups · t-tests, Games-Howell + rank-based tests · two players
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
 A city of rooftop orchards climbs five levels up a sea cliff, and the first snow is on its way. Play as a pair: one of you starts at the harbor, the other at the lighthouse. You will test the same soil survey two different ways, and you will have to compare notes before you can light the city for winter.
@@ -941,7 +910,7 @@ A city of rooftop orchards climbs five levels up a sea cliff, and the first snow
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/comparing_means/spa/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">First Guest</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">
-Comparing groups · t-tests, Tukey + pairwise tests
+Comparing groups · t-tests, Games-Howell + pairwise tests
 </div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">
 You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, and it is the morning after the first snow. Your rival, Diana Volpe, is already stepping into the harbor lift with her friends, your first guests of the day. Certify the water in every bath before they arrive.
@@ -955,7 +924,7 @@ You own Calmarupe, the old bathhouse spa cut into the sea cliff below Seedfall, 
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-8"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
-<li><p><a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">Comparing Multiple Means in R</a>. Datanovia’s step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code.</p></li>
+<li><p><a href="https://www.datanovia.com/learn/biostatistics/anova/anova-in-r">One-Way ANOVA in R: Compare Group Means</a>. When the data meet a stricter criterion, a little extra statistical power is available. If the groups’ spreads are known to be similar, for example from a plot or from experience with the measurement method, the Tukey test, which pools the spread of all the groups into one estimate, detects real differences somewhat more often than the Games-Howell test. Datanovia’s lesson shows the Tukey test alongside the Levene test, the usual check for equal variances, and the Games-Howell test for when the spreads differ. Keep in mind that with the three to five samples per group common in laboratory work, the Levene test rarely detects spreads that really are unequal, so passing it is weak evidence that the spreads are similar.</p></li>
 <li><p><a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Parametric vs. Nonparametric Tests</a>. Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation.</p></li>
 <li><p><a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars</a>. A short commentary by Ulrich Dirnagl capturing the ongoing debates about redefining statistical significance, the historical context of <em>p</em> &lt; 0.05, and the risks of rigid thresholds versus broader inferential thinking.</p></li>
 <li><p><a href="https://elifesciences.org/articles/48175">Common statistical mistakes in biomedical research</a>. The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, pairing each with pragmatic fixes for both authors and reviewers.</p></li>
@@ -967,9 +936,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 1. Choose one analyte and filter the data so only the rows for that analyte are shown.
 
-2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (Games-Howell tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
 
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? --><!-- end --><!-- start regression models -->
 </div>
@@ -987,7 +956,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <li><a class="nav-link" href="#two-means">two means</a></li>
 <li>
 <a class="nav-link" href="#more-than-two-means">more than two means</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#tukey-test">Tukey test</a></li>
+<li><a class="nav-link" href="#games-howell-test">Games-Howell test</a></li>
 <li><a class="nav-link" href="#dunn-test">Dunn test</a></li>
 </ul>
 </li>
@@ -1012,7 +981,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-02.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

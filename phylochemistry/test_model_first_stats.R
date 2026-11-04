@@ -25,7 +25,7 @@ find_defs <- function(e, wanted, found = list()) {
     }
     found
 }
-wanted <- c("buildModel", "predictWithModel", "tukeyTest", "anovaTest", "pGroups")
+wanted <- c("buildModel", "predictWithModel", "tukeyTest", "anovaTest", "pGroups", "gamesHowellTest", "pairwiseTTest")
 defs <- find_defs(parse("phylochemistry.R"), wanted)
 for (d in defs) eval(d, envir = globalenv())
 stopifnot(exists("buildModel"), exists("predictWithModel"))
@@ -156,6 +156,10 @@ gh <- pGroups(hy)
 check(gh["A", "group"] == gh["B-1", "group"] && gh["C", "group"] != gh["A", "group"],
       "pGroups gives correct letters with a hyphen in a group name")
 check(identical(names(gh), c("treatment", "group", "spaced_group")), "no estimate column without a model")
+sp <- pGroups(data.frame(group1 = c("A", "A", "B"), group2 = c("B", "C", "C"), p.adj = c(0.001, 0.001, 0.9)))
+check(all(nchar(sp$spaced_group) == 2) && !any(grepl(" ", sp$spaced_group, fixed = TRUE)) &&
+      sp["C", "spaced_group"] == "\u00a0b",
+      "spaced_group is padded with non-breaking spaces, so HTML tables keep the alignment")
 
 ## a bare lm works too, and plain errors
 check(isTRUE(all.equal(tukeyTest(lm(y ~ x * grp, d), slopes_of = "x")$p.adj, tk_s$p.adj)), "bare lm accepted")
@@ -163,6 +167,37 @@ check(grepl("no group", err_of(tukeyTest(buildModel(data = d, formula = y ~ x)))
 check(grepl("slopes_of", err_of(tukeyTest(m, slopes_of = "grp"))), "slopes_of must be numeric")
 check(grepl("for a model", err_of(tukeyTest(d, y ~ grp, slopes_of = "x"))), "slopes_of on a data table: plain error")
 check(grepl("already contains", err_of(tukeyTest(m, y ~ grp))), "formula given to a model: plain error")
+
+## data path, hyphenated group names (rstatix::tukey_hsd splits its labels on "-" and garbled them)
+hy <- data.frame(g = rep(c("A", "B-2", "C-x-1"), each = 5), y = c(1:5, 3:7, 10:14) + c(0.1, -0.2, 0.3, 0, -0.1))
+tk_hy <- tukeyTest(hy, y ~ g)
+base_hy <- TukeyHSD(aov(y ~ g, hy))$g
+check(identical(paste0(tk_hy$group2, "-", tk_hy$group1), rownames(base_hy)), "data path: hyphenated names come back intact, same orientation as TukeyHSD")
+check(isTRUE(all.equal(tk_hy$p.adj, signif(unname(base_hy[, "p adj"]), 3))), "data path: hyphenated p.adj match TukeyHSD (rstatix rounds to 3 significant figures)")
+check(isTRUE(all.equal(tk_hy$estimate, unname(base_hy[, "diff"]))), "data path: hyphenated estimates match TukeyHSD")
+check(identical(pGroups(tk_hy)$group, pGroups(tukeyTest(buildModel(data = hy, formula = y ~ g)))$group), "data path letters = model path letters with hyphens")
+hy_g <- dplyr::group_by(transform(hy, site = rep(c("s1", "s2"), length.out = 15)), site)
+tk_hy_g <- tukeyTest(hy_g, y ~ g)
+check(all(c(tk_hy_g$group1, tk_hy_g$group2) %in% c("A", "B-2", "C-x-1")), "data path, grouped data: hyphenated names intact")
+plain <- data.frame(g = rep(c("a", "b", "c"), each = 5), y = c(1:5, 3:7, 10:14))
+check(identical(tukeyTest(plain, y ~ g), rstatix::tukey_hsd(plain, y ~ g)), "data path without hyphens: output identical to rstatix")
+hy2 <- transform(hy, h = rep(c("p-1", "q"), length.out = 15))
+tk_int <- tukeyTest(hy2, y ~ g * h)
+check(all(grepl("^(A|B-2|C-x-1|p-1|q)(:(p-1|q))?$", c(tk_int$group1, tk_int$group2))), "data path, two factors with hyphens: interaction labels intact")
+
+## gamesHowellTest (2026-11-03): data path = rstatix; model path = data path plus group means; hyphen-safe
+gh_data <- gamesHowellTest(hy, y ~ g)
+check(identical(gh_data, rstatix::games_howell_test(hy, y ~ g)), "gamesHowellTest data path = rstatix::games_howell_test")
+check(all(c(gh_data$group1, gh_data$group2) %in% c("A", "B-2", "C-x-1")), "gamesHowellTest: hyphenated names intact")
+gh_model <- gamesHowellTest(buildModel(data = hy, formula = y ~ g))
+check(isTRUE(all.equal(gh_model$p.adj, gh_data$p.adj)) && identical(gh_model$group1, gh_data$group1), "gamesHowellTest model path = data path")
+check(isTRUE(all.equal(sort(pGroups(gh_model)$estimate), sort(as.numeric(tapply(hy$y, hy$g, mean))))), "gamesHowellTest model path carries group means for pGroups")
+check(grepl("one group input", err_of(gamesHowellTest(m))), "gamesHowellTest on a slope model: plain error pointing to tukeyTest(slopes_of)")
+## pairwiseTTest is unpooled (Welch per pair) by default since 2026-11-03
+pw2 <- data.frame(g = rep(c("a", "b", "c"), c(4, 4, 4)), y = c(1, 2, 3, 4, 2, 3, 9, 11, 5, 5.5, 6, 6.2))
+pt_course <- pairwiseTTest(pw2, y ~ g)
+pt_welch <- rstatix::pairwise_t_test(pw2, y ~ g, pool.sd = FALSE, p.adjust.method = "holm")
+check(isTRUE(all.equal(pt_course$p, pt_welch$p)), "pairwiseTTest is unpooled (Welch) by default")
 
 ## ===================================================================================================
 ## Phase 3: anovaTest(model)

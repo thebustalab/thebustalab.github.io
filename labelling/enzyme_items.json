@@ -898,5 +898,95 @@
     },
     "source_topic": "osc",
     "discovered": "2026-10-27"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_600d3f19e433",
+    "title": "Gypenosides Damulin A and Damulin B Inhibit Hepatocellular Carcinoma by Regulating Cholesterol Synthesis",
+    "authors": "Fang‐Fang Li; Can Cui; Zhou-Juan Zheng; Man‐Yu Xiao; Si Li; Peng Xie; Xiang‐Lan Piao",
+    "journal": "Drug Development Research",
+    "year": 2026,
+    "doi": "10.1002/ddr.70387",
+    "link": "https://doi.org/10.1002/ddr.70387",
+    "abstract": "Hepatocellular carcinoma (HCC) is a common malignant tumor of the digestive system. The liver is the primary organ for cholesterol production and metabolism in the body. Abnormal cholesterol levels can promote the initiation and progression of liver cancer, as well as influence treatment and patient prognosis. Damulin A and damulin B, a pair of isomeric dammarane-type saponins isolated from heat-treated Gynostemma pentaphyllum, have been shown to inhibit HCC cell proliferation and migration, arrest the cell cycle at the G0/G1 phase, induce apoptosis, and reduce intracellular cholesterol levels in vitro. Damulin B exhibited more potent effects in these assays. RNA sequencing and Western blot analysis revealed that both compounds downregulate the expression of key cholesterol biosynthesis-related genes, namely isopentenyl-diphosphate delta isomerase 1 (IDI1) and geranylgeranyl diphosphate synthase 1 (GGPS1). However, damulin A uniquely increased the expression of other cholesterol pathway genes: farnesyl diphosphate synthase (FDPS), farnesyl-diphosphate farnesyltransferase 1 (FDFT1), and lanosterol synthase (LSS). These findings indicate that damulin A and damulin B regulate intracellular cholesterol biosynthesis through distinct mechanisms, which may account for their differential inhibitory effects on hepatocellular carcinoma.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1002/ddr.70387"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-03"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_642cde255c75",
+    "title": "Rhizobial inoculation promotes glycyrrhizic acid production through jasmonic acid signaling in Glycyrrhiza uralensis",
+    "authors": "Shion Yamamoto; Aya Shimomura; Satoshi Watanabe; Nazmul Hasan; Akihiro Suzuki",
+    "journal": "Journal of Natural Medicines",
+    "year": 2026,
+    "doi": "10.1007/s11418-026-02072-z",
+    "link": "https://doi.org/10.1007/s11418-026-02072-z",
+    "abstract": "We previously found that inoculation with rhizobia tends to increase both biomass production and glycyrrhizic acid (GL) production in the medicinal plants Glycyrrhiza uralensis and G. glabra. In this study, we investigated the mechanism by which rhizobial inoculation promotes GL production. Transcriptome analysis of plants grown for 3, 6, 9, and 13 weeks after rhizobial inoculation revealed significant enrichment of GO terms related to root tissue differentiation and reorganization in inoculated plants. In addition, jasmonic acid (JA)-mediated signaling pathway, fatty acid biosynthetic process, and isoprenoid biosynthetic process were specifically enriched in inoculated plants, and these terms included Jasmonate ZIM-domain protein (JAZ)-like, MYC-related transcription factor 2 (MYC2)-like, Allene oxide cyclase (AOC)-like, Allene oxide synthase (AOS)-like, and Squalene synthase 2 (SQS2)-like genes. Time-course analysis of the expression patterns of these genes showed that JAZ-like genes were upregulated at the early growth stages in inoculated plants, whereas at 13 weeks after inoculation, expression of JAZ-like genes decreased while MYC2b and CYP88D6 expression increased. These results suggest that CYP88D6 expression may be regulated by MYC2. These results suggest that activation of JA biosynthesis and JA signaling is involved in the promotion of GL production by rhizobial inoculation, thereby supporting our previously proposed hypothesis at the transcriptome level. Further studies, including JA quantification, elucidation of transcriptional regulatory mechanisms, and functional analyses, will be necessary.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1007/s11418-026-02072-z"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-03"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_59a81b29d4a4",
+    "title": "Sulfonyl-Imidazopyridines Decouple Reactivity from Stability for Ligandability Mapping and Covalent Inhibitor Discovery",
+    "authors": "Zhihong Li; Madeleine L. Ware; Phillip W. Gingrich; Bissan Al‐Lazikani; Ku‐Lung Hsu",
+    "journal": "Journal of the American Chemical Society",
+    "year": 2026,
+    "doi": "10.1021/jacs.6c07487",
+    "link": "https://doi.org/10.1021/jacs.6c07487",
+    "abstract": "Covalent probes and therapeutics must balance electrophilicity and stability for function in biological systems, yet gains in stability can sacrifice proteome coverage and limit ligand discovery. Here, we show that single-atom N-to-C substitutions of sulfonyl purines at the nucleofuge position decouple reactivity from stability. Systematic chemical proteomic profiling identifies sulfonyl-imidazopyridines as a class of electrophiles with enhanced cellular and in vivo stability while retaining tunable reactivity toward functional tyrosine and lysine sites. These electrophiles expand access to proteomic sites not engaged by parent sulfonyl-purines or related -triazoles. Importantly, the differential binding of N7- vs N9-sulfonyl-imidazopyridine regioisomer pairs expedites the discovery of proteome-wide-selective inhibitors of metabolic targets, including lanosterol synthase (LSS), phosphoglycerate mutase 1 (PGAM1), and DCTP pyrophosphatase 1 (DCTPP1). Collectively, this work establishes a general strategy for stabilizing electrophiles and introduces a platform for global ligandability mapping guided by regioselective recognition.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1021/jacs.6c07487"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-03"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_82e81d02c070",
+    "title": "The type III polyketide synthase supergene family in plants: complex evolutionary history and functional divergence",
+    "authors": "Dongmei Guo; Hanyan Wang; Shumin Zhang; Ting Lan",
+    "journal": "The Plant Journal",
+    "year": 2022,
+    "doi": "10.1111/tpj.15953",
+    "link": "https://doi.org/10.1111/tpj.15953",
+    "abstract": "Type III polyketide synthases (PKSs) are key enzymes involved in the biosynthesis of a variety of plant specialized metabolites, including flavonoids, stilbenes, and sporopollenin, to name a few. These enzymes likely played vital roles in plant adaptation during their transition from aquatic to terrestrial habitats and their colonization of specific ecological environments. Members of this supergene family have diverse functions, but how type III PKSs and their functions have evolved remains poorly understood. Here, we conducted comprehensive phylogenomics analysis of the type III PKS supergene family in 60 species representing the major plant lineages and elucidated the classification, origin, and evolutionary history of each class. Molecular evolutionary analysis of the typical chalcone synthase and stilbene synthase types revealed evidence for strong positive natural selection in both the Pinaceae and Fabaceae lineages. The positively selected sites of these proteins include residues at the catalytic tunnel entrance and homodimer interface, which might have driven the functional divergence between the two types. Our results also suggest that convergent evolution of enzymes involved in plant flavonoid biosynthesis is quite common. The results of this study provide new insights into the origin, evolution, and functional diversity of plant type III PKSs. In addition, they serve as a guide for the enzymatic engineering of plant polyketides.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1111/tpj.15953"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-03"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_bd492d11dd5c",
+    "title": "Evolutionary and functional analysis of mulberry type III polyketide synthases",
+    "authors": "Han Li; Jiubo Liang; Hu Chen; Guangyu Ding; Bi Ma; Ningjia He",
+    "journal": "BMC Genomics",
+    "year": 2016,
+    "doi": "10.1186/s12864-016-2843-7",
+    "link": "https://doi.org/10.1186/s12864-016-2843-7",
+    "abstract": "BACKGROUND: Type III polyketide synthases are important for the biosynthesis of flavonoids and various plant polyphenols. Mulberry plants have abundant polyphenols, but very little is known about the mulberry type III polyketide synthase genes. An analysis of these genes may provide new targets for genetic improvement to increase relevant secondary metabolites and enhance the plant tolerance to biotic and abiotic stresses. RESULTS: Eighteen genes encoding type III polyketide synthases were identified, including six chalcone synthases (CHS), ten stilbene synthases (STS), and two polyketide synthases (PKS). Functional characterization of four genes representing most of the MnCHS and MnSTS genes by coexpression with 4-Coumaroyl-CoA ligase in Escherichia coli indicated that their products were able to catalyze p-coumaroyl-CoA and malonyl-CoA to generate naringenin and resveratrol, respectively. Microsynteny analysis within mulberry indicated that segmental and tandem duplication events contributed to the expansion of the MnCHS family, while tandem duplications were mainly responsible for the generation of the MnSTS genes. Combining the evolution and expression analysis results of the mulberry type III PKS genes indicated that MnCHS and MnSTS genes evolved mainly under purifying selection to maintain their original functions, but transcriptional subfunctionalization occurred during long-term species evolution. Moreover, mulberry leaves can rapidly accumulated oxyresveratrol after UV-C irradiation, suggesting that resveratrol was converted to oxyresveratrol. CONCLUSIONS: Characterizing the functions and evolution of mulberry type III PKS genes is crucial for advancing our understanding of these genes and providing the basis for further studies on the biosynthesis of relevant secondary metabolites in mulberry plants.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1186/s12864-016-2843-7"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-03"
   }
 ]

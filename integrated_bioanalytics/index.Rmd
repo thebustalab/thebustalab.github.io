@@ -129,7 +129,8 @@ ________________________________________________________________________________
 ```{r child="chapters/12_numerical_models.Rmd"}
 ```
 
-<!-- ANOVA (chapters/12b_anova.Rmd) registers here, after regression, once it is ready. Not as a chunk: knitr runs chunks even inside an HTML comment. -->
+```{r child="chapters/12b_anova.Rmd"}
+```
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -562,7 +563,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 >*2.2 Statistical Analyses*\
 >
 >
->Using the groupings that were identified via principal components analysis, statistical tests were conducted to determine if chemical abundances differed between groups. Tests for normality and homogeneity of variance (Shapiro and Levene tests) revealed that the data could not be assessed using ANOVA but instead required the use of a non-parametric test. Accordingly, the Kruskall-Wallis test followed by post-hoc Dunn tests were applied, which showed that the abundances of halogenated pollutants is significantly higher in urban versus rural areas (p = 0.0035, Fig. 2A). These direct observations are consistent with conclusions drawn by others in recent literature reviews focused on hydrocarbon compounds (Petrucci et al., 2018; Hendrix et al., 2019). *Thus, the new chemical analyses presented here demonstrate that the discrepancy in urban versus rural pollution is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds.* Together, these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.\
+>Using the groupings that were identified via principal components analysis, statistical tests were conducted to determine if chemical abundances differed between groups. Tests for normality (Shapiro tests) revealed that the data could not be assessed using a parametric test but instead required the use of a non-parametric test. Accordingly, the Kruskall-Wallis test followed by post-hoc Dunn tests were applied, which showed that the abundances of halogenated pollutants is significantly higher in urban versus rural areas (p = 0.0035, Fig. 2A). These direct observations are consistent with conclusions drawn by others in recent literature reviews focused on hydrocarbon compounds (Petrucci et al., 2018; Hendrix et al., 2019). *Thus, the new chemical analyses presented here demonstrate that the discrepancy in urban versus rural pollution is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds.* Together, these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.\
 >
 
 ## structure {-}

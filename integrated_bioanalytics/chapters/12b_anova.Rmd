@@ -1,27 +1,48 @@
-<!--
-  DRAFT CHAPTER, NOT REGISTERED in ../index.Rmd, so it does not render into the book.
-  Split out of 11_comparing_means.Rmd on 2026-10-25: comparing means now goes straight to Tukey / Dunn,
-  and ANOVA (with its rank cousin, the Kruskal test) lives here alongside the other questions ANOVA answers.
-  Plan, open decisions and what is still missing: ../notes/anova_chapter_plan.md
-  Register it only once the planned sections have worked examples, an opening image and further reading.
-  Render check (it reuses K_data from chapter 11): _render_check.R 11 12b
+# analysis of variance {#anova -}
+
+::: {.chapter-card}
+
+<!-- TODO cover image: no title plate exists yet for this chapter. When one does, add the usual chunk here:
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/<name>.png', dpi = NA)
+```
 -->
 
-# analysis of variance {-}
+<div class="cc-title-slot"></div>
 
-<!-- TODO opening image: no title plate exists yet for this chapter. -->
+**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the variation in a set of measurements into a part explained by each factor and a part left over, then asks whether each factor explains more than chance would, how large its effect is, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, two factors and their interaction, reading the ANOVA table, and checking the model.
 
-**"How much of the variation does each factor explain?"**
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#anova-summary){.cc-btn .ghost}
 
-## {-}
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png', dpi = NA)
+```
 
-The comparing groups chapter asked whether groups differ, and which pairs. Analysis of variance (ANOVA) asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine? That question is the backbone of designed experiments, where several things are varied at once, where samples are processed in batches, and where several responses are measured on the same subjects.
+:::
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
+</script>
 
 ## ANOVA is a linear model {-}
 
-The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, scaled for the number of groups and measurements, and a large F means the groups differ by more than chance would allow.
+The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?
 
-This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a continuous covariate) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and `tukeyTest()`.
+The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, each divided by its degrees of freedom (explained below), and a large F means the groups differ by more than chance would allow.
+
+This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a **factor**). The formula is written the same way: the response on the left of the `~`, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and, for a single factor, `gamesHowellTest()`.
+
+#### concept check {-}
+
+<div class="selfcheck" data-answer="2" data-explain="F compares the variation between groups (how far the group averages sit from the overall average) with the variation within groups (how far measurements sit from their own group's average), each per degree of freedom. If the groups do not really differ, the two are about the same size and F is near 1.">
+<p class="scq">Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does that say?</p>
+<label><input type="radio"> Potassium varies a lot within each aquifer</label>
+<label><input type="radio"> Every aquifer differs from every other aquifer</label>
+<label><input type="radio"> The aquifer averages differ from one another by much more than the scatter within aquifers would produce by chance</label>
+</div>
+
+<hr>
 
 ### one factor {-}
 
@@ -38,26 +59,101 @@ K_model %>%
   anovaTest()
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Tukey test from the comparing groups chapter, which accepts the same model and returns the same letters as `tukeyTest(abundance ~ aquifer_code)` on the data:
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as `gamesHowellTest(abundance ~ aquifer_code)` on the data:
 
 ```{r}
 K_model %>%
-  tukeyTest() %>%
+  gamesHowellTest() %>%
   pGroups()
 ```
 
-What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The `ges` column (generalized eta squared) is the share of the variation explained by the factor: here, aquifer explains roughly 47% of the variation in potassium.
+Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the model's pooled residual, the single estimate of the leftover scatter that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
 
-The ANOVA and the Tukey test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Tukey test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
+What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
+
+#### concept check {-}
+
+Magnesium was measured in the same wells. Fill in the blank with the predictor that sorts the wells into aquifers, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">Mg_model <- buildModel(
+  data = filter(hawaii_aquifers, analyte == "Mg"),
+  model_type = "linear_regression",
+  formula = abundance ~ ____
+)
+
+Mg_model %>%
+  anovaTest()</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="The ges column is the share of the variation explained by the factor. A ges of 0.53 means aquifer accounts for roughly half of the variation in magnesium. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
+<p class="scq">Self-check: the magnesium ANOVA reports ges = 0.53. What does that mean?</p>
+<label><input type="radio"> Aquifer explains roughly half of the variation in magnesium</label>
+<label><input type="radio"> About half of the aquifers differ significantly from the others</label>
+<label><input type="radio"> Magnesium is 53% higher in some aquifers than in others</label>
+</div>
+
+<hr>
+
+### reading the ANOVA table {-}
+
+Each row of an ANOVA table is one term in the model, and its columns say how much of the variation that term explains and whether that is more than chance would allow. A full ANOVA table also has a row for the residuals, the variation left over after every term has been fitted; `anovaTest()` does not print that row, but reports its degrees of freedom in every row as `DFd`.
+
+**Degrees of freedom work like a budget.** Every measurement adds one unit to the budget, so the potassium data, with 106 measurements, have 106 units to spend. Every value the model estimates costs one unit, and each kind of term has a fixed price:
+
+| Term in the model | Cost in degrees of freedom |
+|---|---|
+| the overall average | 1 (always part of the model, so it has no row of its own) |
+| a factor with *k* groups | *k* − 1 (the overall average already accounts for one group) |
+| a numeric predictor | 1 (one slope) |
+| an interaction between two terms | the costs of the two terms multiplied together |
+| the residuals | whatever is left over |
+
+A term's cost is its `DFn`, and what is left for the residuals is `DFd`. In the potassium model, the ten aquifers cost 9, the overall average costs 1, and the residuals get the remaining 106 − 10 = 96.
+
+The budget matters because every value the model estimates lets it bend toward the data a little, so even a term with no real effect explains some variation by chance: on average, about as much per unit spent as the residuals hold per unit. F therefore divides each part by its cost before comparing them. Aquifer explains 150.4 units of squared variation (its sum of squares, which `anovaTest()` does not print) at a cost of 9, and the residuals hold 169.2 at a cost of 96, so F = (150.4 / 9) / (169.2 / 96) = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 whatever it costs, which is what lets terms of different cost be compared on the same scale. The size of the residual budget matters too: the more units left over, the better the estimate of the leftover scatter, and the more the F can be trusted.
+
+Because F is a rate per unit spent, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. The size of an effect is in the `ges` column (generalized eta squared), the share of the variation explained by the term once the other terms are set aside. Here, aquifer explains roughly 47% of the variation in potassium (150.4 out of 150.4 + 169.2).
+
+#### concept check {-}
+
+Fill in the blank so the table works out the residual degrees of freedom from the budget, then press Run and compare `DFn` and `DFd` with the ANOVA table above.
+
+<div class="webr-cell"><textarea class="webr-code">K_data %>%
+  summarize(n = n(), groups = n_distinct(aquifer_code)) %>%
+  mutate(DFn = groups - 1, DFd = n - ____)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="The budget is 24 units, one per plot. Four fertilizers cost 4 − 1 = 3 (DFn), the overall average costs 1, and the residuals get the remaining 24 − 4 = 20 (DFd).">
+<p class="scq">Self-check: a trial compares four fertilizers with six plots each. What are DFn and DFd for the fertilizer row?</p>
+<label><input type="radio"> DFn = 4, DFd = 24</label>
+<label><input type="radio"> DFn = 3, DFd = 20</label>
+<label><input type="radio"> DFn = 3, DFd = 23</label>
+</div>
+
+<hr>
 
 ### the Kruskal test {-}
 
-The rank-based cousin of the ANOVA is the Kruskal test. It is the Wilcox test extended to more than two groups: it pools every value from every group, ranks them all together, and asks whether the groups' average ranks differ by more than chance would allow. It behaves much like an ANOVA run on the ranks, which is why it does not need normally distributed data. It answers only the "any difference at all?" question for a single factor. Rank-based versions of the designs in the rest of this chapter do exist, but they are more specialized and are not covered here.
+The rank-based cousin of the ANOVA is the Kruskal test. It is the Wilcox test extended to more than two groups: it pools every value from every group, ranks them all together, and asks whether the groups' average ranks differ by more than chance would allow. It behaves much like an ANOVA run on the ranks, which is why it does not need normally distributed data. It answers only the "any difference at all?" question for a single factor, and which groups differ is then a question for the Dunn test from the comparing groups chapter. Rank-based versions of the designs in the rest of this chapter do exist, but they are more specialized and are not covered here.
 
 ```{r}
 K_data %>%
   kruskalTest(abundance ~ aquifer_code)
 ```
+
+#### concept check {-}
+
+Fill in the blank with the rank-based test of whether potassium differs among the aquifers, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">K_data %>%
+  ____(abundance ~ aquifer_code)</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="Like the ANOVA, the Kruskal test answers only whether any of the groups differ, here on ranks rather than raw values, so it does not need normally distributed data. Which groups differ is the job of the Dunn test, and the Kruskal test does not handle two factors.">
+<p class="scq">Self-check: when is the Kruskal test the right choice?</p>
+<label><input type="radio"> To find which pairs of groups differ</label>
+<label><input type="radio"> To test two factors and their interaction</label>
+<label><input type="radio"> To ask whether any of several groups differ, when the data within groups are not normal</label>
+</div>
+
+<hr>
 
 ## two factors and interactions {-}
 
@@ -78,7 +174,7 @@ nacl_model %>%
   anovaTest()
 ```
 
-The `*` in the formula asks for both factors and their interaction. The output has one row for each. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
+The `*` in the formula asks for both factors and their interaction. The output has one row for each, and the budget still balances: the 76 measurements pay 1 for the overall average, 1 for analyte (two levels), 3 for aquifer (four levels) and 1 × 3 = 3 for the interaction, which leaves 68 for the residuals. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
 
 ```{r, fig.cap = "Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.", fig.width = 6, fig.height = 4}
 nacl %>%
@@ -90,46 +186,101 @@ nacl %>%
     theme_bw()
 ```
 
-When an interaction is real, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
+The interaction row is not "the two factors together". It measures only the extra variation explained by letting the effect of one factor differ across the levels of the other, on top of a model that already has both factors. Most of the explaining is usually done by the factors themselves, so the interaction row is often the smallest, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
 
-## blocking {-}
+#### concept check {-}
 
-Laboratory measurements are rarely made all at once. Samples are run on different days, on different plates, or in different instrument batches, and those batches can shift the readings by themselves. A **block** is a factor that is not of interest but is known to add variation, such as plate, batch or day. Including it in the model removes its variation from the error term, which makes the factor of interest easier to detect. The formula simply gains a term: `response ~ treatment + batch`.
+Fill in the blank with the symbol that asks for both factors and their interaction, then press Run and find the interaction row.
 
-<!-- TODO worked example: a dataset with a treatment run across several plates or days, showing the treatment p-value with and without the block term. No suitable teaching dataset exists yet. -->
+<div class="webr-cell"><textarea class="webr-code">nacl_model <- buildModel(
+  data = nacl,
+  model_type = "linear_regression",
+  formula = abundance ~ analyte ____ aquifer_code
+)
 
-## adjusting for a covariate {-}
+nacl_model %>%
+  anovaTest()</textarea></div>
 
-Sometimes groups differ in something other than the factor being tested. Plants given different treatments may also differ in size, and size alone affects how much of a compound they make. Analysis of covariance (ANCOVA) compares the groups while adjusting for a continuous variable, the **covariate**: in effect, it asks whether the groups differ once the covariate is held constant. Because ANOVA is a linear model, this is just a categorical factor and a numeric predictor in the same formula, `response ~ treatment + plant_size`, which ties this chapter directly back to the regression chapter.
+<div class="selfcheck" data-answer="1" data-explain="Parallel lines mean the gap between the two analytes is the same in every aquifer, so the effect of one factor does not depend on the other: no interaction. Lines that converge, diverge or cross are what an interaction looks like.">
+<p class="scq">Self-check: in an interaction plot, the lines for the two analytes run parallel across the aquifers. What does that suggest?</p>
+<label><input type="radio"> Neither factor has an effect</label>
+<label><input type="radio"> There is no interaction: the gap between the analytes is the same in every aquifer</label>
+<label><input type="radio"> There is a strong interaction between analyte and aquifer</label>
+</div>
 
-<!-- TODO worked example: treatment groups that differ in a covariate, where the raw comparison and the adjusted one disagree. -->
+<hr>
 
-## repeated measures {-}
+## other designs {-}
 
-When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. Repeated measures designs account for this by tracking which measurements belong to which subject. The general tool for these designs is the mixed model, which is beyond the scope of this chapter; the key habit here is to recognize when measurements share a subject.
+The same model-then-table approach covers several designs that come up in laboratory work. They are named here so they can be recognized; each has its own literature.
 
-<!-- TODO decide: a short paired / repeated-measures example, or a pointer only. -->
+- **Blocking.** Samples run on different days, plates or instrument batches can shift by batch alone. A **block** is a factor that is not of interest but adds variation; including it, as in `response ~ treatment + batch`, removes that variation from the residuals and makes the factor of interest easier to detect.
+- **Adjusting for a covariate (ANCOVA).** When groups also differ in a numeric variable that affects the response, such as plant size, adding it to the formula, `response ~ treatment + plant_size`, compares the groups at the same value of the covariate. With `*` instead of `+`, the model gives each group its own slope, which is the comparing-slopes analysis from the regression chapter.
+- **Repeated measures.** When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. These designs need a mixed model, which tracks which measurements belong to which subject.
+- **Many responses at once.** MANOVA extends ANOVA to several responses measured on each sample but assumes they are jointly normal, which large chemical profiles rarely are. PERMANOVA works from a distance matrix, as built in the distances and scaling chapter, and gets its p-value by shuffling the group labels, so it is the usual choice for metabolomics and community profiles.
 
-## many responses at once {-}
+#### concept check {-}
 
-Chemical data often have many responses measured on each sample: a whole metabolite profile rather than a single compound. Multivariate analysis of variance (MANOVA) extends ANOVA to several response variables at once, asking whether the groups differ in their combined profile. It assumes the responses together follow a multivariate normal distribution, which large chemical profiles rarely do.
+<div class="selfcheck" data-answer="0" data-explain="Each leaf is measured four times, so the 48 measurements are not 48 independent units of evidence. Treating them as independent overstates the evidence; a repeated-measures (mixed model) design tracks which measurements come from which leaf.">
+<p class="scq">Self-check: twelve leaves are each measured on four days, giving 48 measurements. Why is a one-way ANOVA on all 48 a problem?</p>
+<label><input type="radio"> The four measurements of each leaf are not independent, so the test overstates the evidence</label>
+<label><input type="radio"> An ANOVA needs at least 100 measurements</label>
+<label><input type="radio"> Day is a numeric predictor, so ANOVA cannot use it</label>
+</div>
 
-For profile data, a more common choice is PERMANOVA (permutational multivariate analysis of variance). It works from a distance matrix, the same kind of object built in the distances and scaling chapter and used in the networks, clustering and dimensionality reduction chapters, and asks whether samples within a group are more similar to each other than to samples in other groups. Instead of assuming a distribution, it gets its p-value by repeatedly shuffling the group labels and asking how often the shuffled data look as separated as the real data. It is widely used for metabolomics and ecological community data.
-
-<!-- TODO: PERMANOVA usually runs through vegan::adonis2. Check that vegan installs and runs in WebR before planning any cell or escape room on it. -->
+<hr>
 
 ## checking the model {-}
 
-An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement's distance from its group mean) should be roughly normal and have similar spread across groups. The `check_model()` habit from the regression chapter applies here unchanged. When the spreads clearly differ, a Welch ANOVA and the Games-Howell pairwise test are the unequal-variance counterparts of the ANOVA and the Tukey test.
+An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement's distance from its group mean) should be roughly normal and have similar spread across groups, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
 
-<!-- TODO decide whether to add course wrappers for rstatix::welch_anova_test and rstatix::games_howell_test (both exist in rstatix), which would also need the WebR shim. -->
+```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset."}
+check_model(K_model$model)
+```
+
+Unequal spreads matter most to the ANOVA's F, which compares every term with one pooled estimate of the leftover scatter. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
+
+#### concept check {-}
+
+<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled estimate of the leftover spread fits every group.">
+<p class="scq">Self-check: in the residuals-against-fitted-values panel, some aquifers' stripes are far taller than others. Which assumption does that call into question?</p>
+<label><input type="radio"> That the measurements are independent</label>
+<label><input type="radio"> That the factor has an effect</label>
+<label><input type="radio"> That every group has a similar spread</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+
+[]{#anova-summary}
+
+## chapter summary {-}
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.summary-pdf target="_blank"}
+
+An ANOVA splits the variation in a response into the part each term explains and the part left over. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table with the degrees-of-freedom budget in mind:** each measurement adds one unit, a factor with *k* groups costs *k* − 1, an interaction costs the product of its terms' costs, and the rest goes to the residuals. F is each term's variation per unit spent over the residual variation per unit, so it is evidence that a term matters; `ges` is how much it matters. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: residuals roughly normal with similar spread, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
+
+| Function | What it is for | How it is used in this chapter |
+|---|---|---|
+| `buildModel(formula = )` | fitting the model the ANOVA is read from | `response ~ factor`, or `response ~ factor_1 * factor_2` for an interaction, with `model_type = "linear_regression"` |
+| `anovaTest()` | the ANOVA table: one row per term, with `DFn`, `DFd`, `F`, `p` and `ges` | piped after the model |
+| `gamesHowellTest()`, `pGroups()` | which groups differ, as letters, using each group's own spread | piped after the same one-factor model |
+| `kruskalTest(abundance ~ aquifer_code)` | rank-based test of any difference, one factor | on the data, followed by `dunnTest()` |
+| `check_model()` | diagnostic panels for the residuals | given `model$model` |
+
+<hr>
 
 <!-- ## exercises {-}
 
-TODO: two escape-room scenarios, following the course pattern. Candidates: an interaction puzzle (the effect of one factor flips across the levels of another) and a PERMANOVA puzzle (profiles that differ as a whole while no single compound does), the latter only if vegan runs in WebR. -->
-
-## {-}
+TODO: the two Rothamsted escape-room scenarios (rooms/anova/cellars and rooms/anova/glasshouses), as cards in the course pattern, once each scenario.json is status: ready. -->
 
 ## further reading {-}
 
-<!-- TODO: 3-5 annotated links, each verified before it goes in. -->
+- [Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/). Jonas Lindeløv shows that the t-test, one- and two-way ANOVA and ANCOVA are all the same linear model with different predictors, with R code side by side. It is the clearest account of the idea this chapter is built on.
+
+- [Analysis of variance and blocking](https://www.nature.com/articles/nmeth.3005). Martin Krzywinski and Naomi Altman's short *Nature Methods* column (2014) explains the between- and within-group split behind F, and how a blocking factor removes nuisance variation from the error term.
+
+- [Two-way anova](https://www.biostathandbook.com/twowayanova.html). John McDonald's *Handbook of Biological Statistics* walks through two-way designs with and without replication, what an interaction test does, and why main effects can mislead when an interaction is present.
+
+- [Interaction analysis in emmeans](https://cran.r-project.org/web/packages/emmeans/vignettes/interactions.html). The vignette for the package the course uses to compare slopes between groups shows how to follow up an interaction: comparisons within each level of the other factor, interaction plots, and comparing slopes between groups.

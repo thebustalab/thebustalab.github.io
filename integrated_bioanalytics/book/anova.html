@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>analysis of variance | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="How much of the variation does each factor explain? Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses...">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
+<meta property="og:title" content="analysis of variance | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="How much of the variation does each factor explain? Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="analysis of variance | Integrated Bioanalytics">
+<meta name="twitter:description" content="How much of the variation does each factor explain? Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
+<li><a class="" href="networks.html">networks</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
+<li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="active" href="anova.html">analysis of variance</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="specialized-plots-and-maps.html">specialized plots and maps</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="anova" class="section level1 unnumbered">
+<h1>analysis of variance<a class="anchor" aria-label="anchor" href="#anova"><i class="fas fa-link"></i></a>
+</h1>
+<div class="chapter-card">
+<!-- TODO cover image: no title plate exists yet for this chapter. When one does, add the usual chunk here:
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/<name>.png" alt="" width="100%" style="display: block; margin: auto;" />
+-->
+<div class="cc-title-slot">
+
+</div>
+<p><strong>How much of the variation does each factor explain?</strong> Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the variation in a set of measurements into a part explained by each factor and a part left over, then asks whether each factor explains more than chance would, how large its effect is, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, two factors and their interaction, reading the ANOVA table, and checking the model.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="anova.html#anova-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-575"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%"><p class="caption">
+Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.
+</p>
+</div>
+</div>
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
+</script><div id="anova-is-a-linear-model" class="section level2 unnumbered">
+<h2>ANOVA is a linear model<a class="anchor" aria-label="anchor" href="#anova-is-a-linear-model"><i class="fas fa-link"></i></a>
+</h2>
+<p>The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?</p>
+<p>The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group’s average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, each divided by its degrees of freedom (explained below), and a large F means the groups differ by more than chance would allow.</p>
+<p>This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a <strong>factor</strong>). The formula is written the same way: the response on the left of the <code>~</code>, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with <code>buildModel()</code> and a formula, as in the regression chapter’s section on comparing slopes between groups, then ask that one model questions with <code>anovaTest()</code> and, for a single factor, <code>gamesHowellTest()</code>.</p>
+<div id="concept-check-58" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-58"><i class="fas fa-link"></i></a>
+</h4>
+<div class="selfcheck" data-answer="2" data-explain="F compares the variation between groups (how far the group averages sit from the overall average) with the variation within groups (how far measurements sit from their own group's average), each per degree of freedom. If the groups do not really differ, the two are about the same size and F is near 1.">
+<p class="scq">
+Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does that say?
+</p>
+<p><label><input type="radio"> Potassium varies a lot within each aquifer</label>
+<label><input type="radio"> Every aquifer differs from every other aquifer</label>
+<label><input type="radio"> The aquifer averages differ from one another by much more than the scatter within aquifers would produce by chance</label></p>
+</div>
+<hr>
+</div>
+<div id="one-factor" class="section level3 unnumbered">
+<h3>one factor<a class="anchor" aria-label="anchor" href="#one-factor"><i class="fas fa-link"></i></a>
+</h3>
+<p>Using the potassium data from the comparing groups chapter, we build a model of abundance by aquifer, and a one-way ANOVA on it asks whether the aquifers differ at all:</p>
+<div class="sourceCode" id="cb181"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">K_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">K_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">K_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## ANOVA Table (type II tests)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##         Effect DFn DFd     F        p p&lt;.05   ges</span></span>
+<span><span class="co">## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471</span></span></code></pre></div>
+<p>A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as <code>gamesHowellTest(abundance ~ aquifer_code)</code> on the data:</p>
+<div class="sourceCode" id="cb182"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">K_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">##             treatment  group spaced_group estimate</span></span>
+<span><span class="co">## aquifer_1   aquifer_1  abcde       abcde  2.325000</span></span>
+<span><span class="co">## aquifer_10 aquifer_10 abcdef       abcdef 2.328571</span></span>
+<span><span class="co">## aquifer_2   aquifer_2     af       a    f 3.766667</span></span>
+<span><span class="co">## aquifer_3   aquifer_3     bd        b d   2.700000</span></span>
+<span><span class="co">## aquifer_4   aquifer_4      c         c    1.170588</span></span>
+<span><span class="co">## aquifer_5   aquifer_5     ce         c e  1.450000</span></span>
+<span><span class="co">## aquifer_6   aquifer_6    abf       ab   f 4.308333</span></span>
+<span><span class="co">## aquifer_7   aquifer_7      f            f 5.022222</span></span>
+<span><span class="co">## aquifer_8   aquifer_8  abcde       abcde  2.200000</span></span>
+<span><span class="co">## aquifer_9   aquifer_9     de          de  1.975758</span></span>
+<span><span class="co">##               std_err</span></span>
+<span><span class="co">## aquifer_1  0.43469338</span></span>
+<span><span class="co">## aquifer_10 0.76180059</span></span>
+<span><span class="co">## aquifer_2  0.10219806</span></span>
+<span><span class="co">## aquifer_3  0.15275252</span></span>
+<span><span class="co">## aquifer_4  0.06228770</span></span>
+<span><span class="co">## aquifer_5  0.06454972</span></span>
+<span><span class="co">## aquifer_6  0.57412098</span></span>
+<span><span class="co">## aquifer_7  0.52566830</span></span>
+<span><span class="co">## aquifer_8  0.25166115</span></span>
+<span><span class="co">## aquifer_9  0.22717927</span></span></code></pre></div>
+<p>Each aquifer gets its letters, its mean (<code>estimate</code>) and the standard error of that mean (<code>std_err</code>). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group’s own spread rather than the model’s pooled residual, the single estimate of the leftover scatter that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.</p>
+<p>What the ANOVA adds is a single answer to “is there any difference at all?” and a measure of how big the effect is. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.</p>
+<div id="concept-check-59" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-59"><i class="fas fa-link"></i></a>
+</h4>
+<p>Magnesium was measured in the same wells. Fill in the blank with the predictor that sorts the wells into aquifers, then press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">Mg_model &lt;- buildModel(
+  data = filter(hawaii_aquifers, analyte == "Mg"),
+  model_type = "linear_regression",
+  formula = abundance ~ ____
+)
+
+Mg_model %&gt;%
+  anovaTest()</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="The ges column is the share of the variation explained by the factor. A ges of 0.53 means aquifer accounts for roughly half of the variation in magnesium. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
+<p class="scq">
+Self-check: the magnesium ANOVA reports ges = 0.53. What does that mean?
+</p>
+<p><label><input type="radio"> Aquifer explains roughly half of the variation in magnesium</label>
+<label><input type="radio"> About half of the aquifers differ significantly from the others</label>
+<label><input type="radio"> Magnesium is 53% higher in some aquifers than in others</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="reading-the-anova-table" class="section level3 unnumbered">
+<h3>reading the ANOVA table<a class="anchor" aria-label="anchor" href="#reading-the-anova-table"><i class="fas fa-link"></i></a>
+</h3>
+<p>Each row of an ANOVA table is one term in the model, and its columns say how much of the variation that term explains and whether that is more than chance would allow. A full ANOVA table also has a row for the residuals, the variation left over after every term has been fitted; <code>anovaTest()</code> does not print that row, but reports its degrees of freedom in every row as <code>DFd</code>.</p>
+<p><strong>Degrees of freedom work like a budget.</strong> Every measurement adds one unit to the budget, so the potassium data, with 106 measurements, have 106 units to spend. Every value the model estimates costs one unit, and each kind of term has a fixed price:</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Term in the model</th>
+<th>Cost in degrees of freedom</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>the overall average</td>
+<td>1 (always part of the model, so it has no row of its own)</td>
+</tr>
+<tr class="even">
+<td>a factor with <em>k</em> groups</td>
+<td>
+<em>k</em> − 1 (the overall average already accounts for one group)</td>
+</tr>
+<tr class="odd">
+<td>a numeric predictor</td>
+<td>1 (one slope)</td>
+</tr>
+<tr class="even">
+<td>an interaction between two terms</td>
+<td>the costs of the two terms multiplied together</td>
+</tr>
+<tr class="odd">
+<td>the residuals</td>
+<td>whatever is left over</td>
+</tr>
+</tbody>
+</table></div>
+<p>A term’s cost is its <code>DFn</code>, and what is left for the residuals is <code>DFd</code>. In the potassium model, the ten aquifers cost 9, the overall average costs 1, and the residuals get the remaining 106 − 10 = 96.</p>
+<p>The budget matters because every value the model estimates lets it bend toward the data a little, so even a term with no real effect explains some variation by chance: on average, about as much per unit spent as the residuals hold per unit. F therefore divides each part by its cost before comparing them. Aquifer explains 150.4 units of squared variation (its sum of squares, which <code>anovaTest()</code> does not print) at a cost of 9, and the residuals hold 169.2 at a cost of 96, so F = (150.4 / 9) / (169.2 / 96) = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 whatever it costs, which is what lets terms of different cost be compared on the same scale. The size of the residual budget matters too: the more units left over, the better the estimate of the leftover scatter, and the more the F can be trusted.</p>
+<p>Because F is a rate per unit spent, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. The size of an effect is in the <code>ges</code> column (generalized eta squared), the share of the variation explained by the term once the other terms are set aside. Here, aquifer explains roughly 47% of the variation in potassium (150.4 out of 150.4 + 169.2).</p>
+<div id="concept-check-60" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-60"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank so the table works out the residual degrees of freedom from the budget, then press Run and compare <code>DFn</code> and <code>DFd</code> with the ANOVA table above.</p>
+<div class="webr-cell">
+<textarea class="webr-code">K_data %&gt;%
+  summarize(n = n(), groups = n_distinct(aquifer_code)) %&gt;%
+  mutate(DFn = groups - 1, DFd = n - ____)</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="The budget is 24 units, one per plot. Four fertilizers cost 4 − 1 = 3 (DFn), the overall average costs 1, and the residuals get the remaining 24 − 4 = 20 (DFd).">
+<p class="scq">
+Self-check: a trial compares four fertilizers with six plots each. What are DFn and DFd for the fertilizer row?
+</p>
+<p><label><input type="radio"> DFn = 4, DFd = 24</label>
+<label><input type="radio"> DFn = 3, DFd = 20</label>
+<label><input type="radio"> DFn = 3, DFd = 23</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="the-kruskal-test" class="section level3 unnumbered">
+<h3>the Kruskal test<a class="anchor" aria-label="anchor" href="#the-kruskal-test"><i class="fas fa-link"></i></a>
+</h3>
+<p>The rank-based cousin of the ANOVA is the Kruskal test. It is the Wilcox test extended to more than two groups: it pools every value from every group, ranks them all together, and asks whether the groups’ average ranks differ by more than chance would allow. It behaves much like an ANOVA run on the ranks, which is why it does not need normally distributed data. It answers only the “any difference at all?” question for a single factor, and which groups differ is then a question for the Dunn test from the comparing groups chapter. Rank-based versions of the designs in the rest of this chapter do exist, but they are more specialized and are not covered here.</p>
+<div class="sourceCode" id="cb183"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">kruskalTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 6</span></span>
+<span><span class="co">##   .y.           n statistic    df             p method      </span></span>
+<span><span class="co">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span><span class="co">## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…</span></span></code></pre></div>
+<div id="concept-check-61" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-61"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the rank-based test of whether potassium differs among the aquifers, then press Run.</p>
+<div class="webr-cell">
+<textarea class="webr-code">K_data %&gt;%
+  ____(abundance ~ aquifer_code)</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="Like the ANOVA, the Kruskal test answers only whether any of the groups differ, here on ranks rather than raw values, so it does not need normally distributed data. Which groups differ is the job of the Dunn test, and the Kruskal test does not handle two factors.">
+<p class="scq">
+Self-check: when is the Kruskal test the right choice?
+</p>
+<p><label><input type="radio"> To find which pairs of groups differ</label>
+<label><input type="radio"> To test two factors and their interaction</label>
+<label><input type="radio"> To ask whether any of several groups differ, when the data within groups are not normal</label></p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="two-factors-and-interactions" class="section level2 unnumbered">
+<h2>two factors and interactions<a class="anchor" aria-label="anchor" href="#two-factors-and-interactions"><i class="fas fa-link"></i></a>
+</h2>
+<p>Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA estimates the effect of each factor and asks whether the two <strong>interact</strong>, meaning whether the effect of one factor depends on the level of the other. As an example, consider sodium and chloride in four of the aquifers:</p>
+<div class="sourceCode" id="cb184"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nacl</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span>,</span>
+<span>         <span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_2"</span>, <span class="st">"aquifer_3"</span>, <span class="st">"aquifer_4"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nacl_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">nacl</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span> <span class="op">*</span> <span class="va">aquifer_code</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nacl_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## ANOVA Table (type II tests)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                 Effect DFn DFd      F        p p&lt;.05   ges</span></span>
+<span><span class="co">## 1              analyte   1  68 14.514 3.02e-04     * 0.176</span></span>
+<span><span class="co">## 2         aquifer_code   3  68 15.171 1.17e-07     * 0.401</span></span>
+<span><span class="co">## 3 analyte:aquifer_code   3  68  2.646 5.60e-02       0.105</span></span></code></pre></div>
+<p>The <code>*</code> in the formula asks for both factors and their interaction. The output has one row for each, and the budget still balances: the 76 measurements pay 1 for the overall average, 1 for analyte (two levels), 3 for aquifer (four levels) and 1 × 3 = 3 for the interaction, which leaves 68 for the residuals. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.</p>
+<div class="sourceCode" id="cb185"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nacl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">analyte</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>mean_abundance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">mean_abundance</span>, color <span class="op">=</span> <span class="va">analyte</span>, group <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-580"></span>
+<img src="index_files/figure-html/unnamed-chunk-580-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
+Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.
+</p>
+</div>
+<p>The interaction row is not “the two factors together”. It measures only the extra variation explained by letting the effect of one factor differ across the levels of the other, on top of a model that already has both factors. Most of the explaining is usually done by the factors themselves, so the interaction row is often the smallest, and that is expected. When an interaction is real, though, the main effects on their own can mislead: “the treatment raises yield” is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.</p>
+<div id="concept-check-62" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-62"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the symbol that asks for both factors and their interaction, then press Run and find the interaction row.</p>
+<div class="webr-cell">
+<textarea class="webr-code">nacl_model &lt;- buildModel(
+  data = nacl,
+  model_type = "linear_regression",
+  formula = abundance ~ analyte ____ aquifer_code
+)
+
+nacl_model %&gt;%
+  anovaTest()</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Parallel lines mean the gap between the two analytes is the same in every aquifer, so the effect of one factor does not depend on the other: no interaction. Lines that converge, diverge or cross are what an interaction looks like.">
+<p class="scq">
+Self-check: in an interaction plot, the lines for the two analytes run parallel across the aquifers. What does that suggest?
+</p>
+<p><label><input type="radio"> Neither factor has an effect</label>
+<label><input type="radio"> There is no interaction: the gap between the analytes is the same in every aquifer</label>
+<label><input type="radio"> There is a strong interaction between analyte and aquifer</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="other-designs" class="section level2 unnumbered">
+<h2>other designs<a class="anchor" aria-label="anchor" href="#other-designs"><i class="fas fa-link"></i></a>
+</h2>
+<p>The same model-then-table approach covers several designs that come up in laboratory work. They are named here so they can be recognized; each has its own literature.</p>
+<ul>
+<li>
+<strong>Blocking.</strong> Samples run on different days, plates or instrument batches can shift by batch alone. A <strong>block</strong> is a factor that is not of interest but adds variation; including it, as in <code>response ~ treatment + batch</code>, removes that variation from the residuals and makes the factor of interest easier to detect.</li>
+<li>
+<strong>Adjusting for a covariate (ANCOVA).</strong> When groups also differ in a numeric variable that affects the response, such as plant size, adding it to the formula, <code>response ~ treatment + plant_size</code>, compares the groups at the same value of the covariate. With <code>*</code> instead of <code>+</code>, the model gives each group its own slope, which is the comparing-slopes analysis from the regression chapter.</li>
+<li>
+<strong>Repeated measures.</strong> When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. These designs need a mixed model, which tracks which measurements belong to which subject.</li>
+<li>
+<strong>Many responses at once.</strong> MANOVA extends ANOVA to several responses measured on each sample but assumes they are jointly normal, which large chemical profiles rarely are. PERMANOVA works from a distance matrix, as built in the distances and scaling chapter, and gets its p-value by shuffling the group labels, so it is the usual choice for metabolomics and community profiles.</li>
+</ul>
+<div id="concept-check-63" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-63"><i class="fas fa-link"></i></a>
+</h4>
+<div class="selfcheck" data-answer="0" data-explain="Each leaf is measured four times, so the 48 measurements are not 48 independent units of evidence. Treating them as independent overstates the evidence; a repeated-measures (mixed model) design tracks which measurements come from which leaf.">
+<p class="scq">
+Self-check: twelve leaves are each measured on four days, giving 48 measurements. Why is a one-way ANOVA on all 48 a problem?
+</p>
+<p><label><input type="radio"> The four measurements of each leaf are not independent, so the test overstates the evidence</label>
+<label><input type="radio"> An ANOVA needs at least 100 measurements</label>
+<label><input type="radio"> Day is a numeric predictor, so ANOVA cannot use it</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="checking-the-model" class="section level2 unnumbered">
+<h2>checking the model<a class="anchor" aria-label="anchor" href="#checking-the-model"><i class="fas fa-link"></i></a>
+</h2>
+<p>An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement’s distance from its group mean) should be roughly normal and have similar spread across groups, and the measurements should be independent. The <code>check_model()</code> habit from the regression chapter applies here unchanged:</p>
+<div class="sourceCode" id="cb186"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">check_model</span><span class="op">(</span><span class="va">K_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-581"></span>
+<img src="index_files/figure-html/unnamed-chunk-581-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
+Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.
+</p>
+</div>
+<p>Unequal spreads matter most to the ANOVA’s F, which compares every term with one pooled estimate of the leftover scatter. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.</p>
+<div id="concept-check-64" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-64"><i class="fas fa-link"></i></a>
+</h4>
+<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled estimate of the leftover spread fits every group.">
+<p class="scq">
+Self-check: in the residuals-against-fitted-values panel, some aquifers’ stripes are far taller than others. Which assumption does that call into question?
+</p>
+<p><label><input type="radio"> That the measurements are independent</label>
+<label><input type="radio"> That the factor has an effect</label>
+<label><input type="radio"> That every group has a similar spread</label></p>
+</div>
+<hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><p><span id="anova-summary"></span></p>
+</div>
+</div>
+<div id="chapter-summary-10" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-10"><i class="fas fa-link"></i></a>
+</h2>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<p>An ANOVA splits the variation in a response into the part each term explains and the part left over. <strong>Build the model, then ask it questions:</strong> fit it once with a formula (response on the left, factors on the right, <code>*</code> for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. <strong>Read the table with the degrees-of-freedom budget in mind:</strong> each measurement adds one unit, a factor with <em>k</em> groups costs <em>k</em> − 1, an interaction costs the product of its terms’ costs, and the rest goes to the residuals. F is each term’s variation per unit spent over the residual variation per unit, so it is evidence that a term matters; <code>ges</code> is how much it matters. <strong>With two factors, read the interaction row first:</strong> if it is real, a main effect alone can mislead, and an interaction plot shows how. <strong>Check the model</strong> before trusting it: residuals roughly normal with similar spread, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>What it is for</th>
+<th>How it is used in this chapter</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>buildModel(formula = )</code></td>
+<td>fitting the model the ANOVA is read from</td>
+<td>
+<code>response ~ factor</code>, or <code>response ~ factor_1 * factor_2</code> for an interaction, with <code>model_type = "linear_regression"</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>anovaTest()</code></td>
+<td>the ANOVA table: one row per term, with <code>DFn</code>, <code>DFd</code>, <code>F</code>, <code>p</code> and <code>ges</code>
+</td>
+<td>piped after the model</td>
+</tr>
+<tr class="odd">
+<td>
+<code>gamesHowellTest()</code>, <code>pGroups()</code>
+</td>
+<td>which groups differ, as letters, using each group’s own spread</td>
+<td>piped after the same one-factor model</td>
+</tr>
+<tr class="even">
+<td><code>kruskalTest(abundance ~ aquifer_code)</code></td>
+<td>rank-based test of any difference, one factor</td>
+<td>on the data, followed by <code>dunnTest()</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>check_model()</code></td>
+<td>diagnostic panels for the residuals</td>
+<td>given <code>model$model</code>
+</td>
+</tr>
+</tbody>
+</table></div>
+<hr>
+<!-- ## exercises {-}
+
+TODO: the two Rothamsted escape-room scenarios (rooms/anova/cellars and rooms/anova/glasshouses), as cards in the course pattern, once each scenario.json is status: ready. -->
+</div>
+<div id="further-reading-10" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://lindeloev.github.io/tests-as-linear/">Common statistical tests are linear models</a>. Jonas Lindeløv shows that the t-test, one- and two-way ANOVA and ANCOVA are all the same linear model with different predictors, with R code side by side. It is the clearest account of the idea this chapter is built on.</p></li>
+<li><p><a href="https://www.nature.com/articles/nmeth.3005">Analysis of variance and blocking</a>. Martin Krzywinski and Naomi Altman’s short <em>Nature Methods</em> column (2014) explains the between- and within-group split behind F, and how a blocking factor removes nuisance variation from the error term.</p></li>
+<li><p><a href="https://www.biostathandbook.com/twowayanova.html">Two-way anova</a>. John McDonald’s <em>Handbook of Biological Statistics</em> walks through two-way designs with and without replication, what an interaction test does, and why main effects can mislead when an interaction is present.</p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/emmeans/vignettes/interactions.html">Interaction analysis in emmeans</a>. The vignette for the package the course uses to compare slopes between groups shows how to follow up an interaction: comparisons within each level of the other factor, interaction plots, and comparing slopes between groups.</p></li>
+</ul>
+<hr>
+<hr>
+<hr>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="regression-models.html">regression models</a></div>
+<div class="next"><a href="machine-learning.html">machine learning models</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#anova">analysis of variance</a></li>
+<li>
+<a class="nav-link" href="#anova-is-a-linear-model">ANOVA is a linear model</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#one-factor">one factor</a></li>
+<li><a class="nav-link" href="#reading-the-anova-table">reading the ANOVA table</a></li>
+<li><a class="nav-link" href="#the-kruskal-test">the Kruskal test</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#two-factors-and-interactions">two factors and interactions</a></li>
+<li><a class="nav-link" href="#other-designs">other designs</a></li>
+<li><a class="nav-link" href="#checking-the-model">checking the model</a></li>
+<li><a class="nav-link" href="#chapter-summary-10">chapter summary</a></li>
+<li><a class="nav-link" href="#further-reading-10">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-03.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
+</body>
+</html>
