@@ -237,7 +237,15 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf){.summary-pdf target="_blank"}
 
+::: {.summary-top}
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/3_datavis_1_flowchart.png', dpi = NA)
+```
+
 Objects store data (like: `my_object <- 7`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `filter(my_data, chemical_species == "FAs")`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** `aes()` (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.
+
+:::
 
 | Function or operator | What it does | What we vary |
 |---|---|---|

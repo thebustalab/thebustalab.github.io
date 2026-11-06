@@ -367,7 +367,15 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/3_datavis_1.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<div class="summary-top">
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-75"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/3_datavis_1_flowchart.png" alt="Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%"><p class="caption">
+Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands.
+</p>
+</div>
 <p>Objects store data (like: <code>my_object &lt;- 7</code>), and functions act on it: <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> keeps only the rows that meet a logical condition, such as <code>filter(my_data, chemical_species == "FAs")</code>. A ggplot is then built in three steps: name the data with <code>ggplot(data = ...)</code>, map variables onto the axes with <code>aes()</code>, and add one or more geoms with <code>+</code>. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a <strong>variable</strong> in the data goes <strong>inside</strong> <code>aes()</code> (<code>geom_point(aes(color = harvesting_regime))</code>), and a feature set to a <strong>constant</strong> goes <strong>outside</strong> <code>aes()</code> (<code>geom_point(size = 5)</code>). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.</p>
+</div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -501,7 +509,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-81-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -587,7 +595,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-98-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-99-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
