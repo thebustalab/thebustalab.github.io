@@ -204,7 +204,7 @@ check(isTRUE(all.equal(pt_course$p, pt_welch$p)), "pairwiseTTest is unpooled (We
 ## ===================================================================================================
 cat("Phase 3: anovaTest(model)\n")
 d2 <- d; d2$h <- rep(c("p", "q"), length.out = nrow(d2)); d2 <- d2[-c(1, 5, 9), ]   # unbalanced two-way
-a_data <- as.data.frame(anovaTest(d2, y ~ grp * h))
+a_data <- anovaTest(d2, y ~ grp * h)
 a_model <- as.data.frame(anovaTest(buildModel(data = d2, formula = y ~ grp * h)))
 check(isTRUE(all.equal(a_data, a_model, check.attributes = FALSE)), "two-way unbalanced: model path = data path")
 a_anc_data <- as.data.frame(anovaTest(d, y ~ x * grp))
@@ -214,7 +214,26 @@ msg <- tryCatch({ tukeyTest(buildModel(data = d2, formula = y ~ grp * h), compar
 check(grepl("part of an interaction", msg), "means of a factor inside an interaction: the student is told")
 src_all <- paste(readLines("phylochemistry.R"), collapse = "\n")
 check(grepl('"emmeans"', src_all), "emmeans is in phylochemistry's install list")
-check("x:grp" %in% a_slope$Effect, "slope model ANOVA has the interaction row")
+check("x:grp" %in% a_slope$term, "slope model ANOVA has the interaction row")
+## The course table matches the ANOVA instrument (2026-11-05): term rows, then noise, then total; shares add to 1.
+inst <- data.frame(
+    species = rep(c("A", "B", "C"), each = 10),
+    fert = rep(rep(c("control", "fertilised"), each = 5), 3),
+    y = c(30,34,33,36,32, 36,39,35,41,37, 44,47,42,46,45, 55,58,52,56,57, 38,41,36,40,39, 40,43,39,42,41))
+ai <- as.data.frame(anovaTest(inst, y ~ species * fert))
+check(identical(names(ai), c("term", "sum_of_squares", "free_values", "variance", "F", "p", "share")), "anovaTest columns are the instrument's")
+check(identical(ai$term, c("species", "fert", "species:fert", "noise", "total")), "rows: terms, noise, total")
+check(isTRUE(all.equal(ai$sum_of_squares, c(1164, 258.1, 98.47, 104, 1625))), "sums of squares match the instrument (4 significant figures)")
+check(identical(ai$free_values, c(2L, 1L, 2L, 24L, 29L)), "free values match the instrument (29 = 30 - 1 spoken for)")
+check(abs(sum(ai$share[ai$term != "total"]) - 1) < 0.0025, "shares of the term and noise rows add to 1 (to rounding)")
+check(abs(ai$F[1] - ai$variance[1] / ai$variance[4]) < 0.05, "F is a row's variance over the noise variance")
+check(all(is.na(ai[ai$term == "total", c("variance", "F", "p")])), "total row carries no variance, F or p")
+## One factor: share is exactly what rstatix called ges
+one <- as.data.frame(anovaTest(inst, y ~ species))
+ges1 <- rstatix::anova_test(data = inst, y ~ species)$ges
+check(isTRUE(all.equal(one$share[1], ges1)), "one factor: share equals ges")
+check(is.data.frame(ai) && !inherits(ai, "tbl_df"), "a plain data.frame, so no column is hidden when printed")
+check(grepl("one formula", err_of(anovaTest(inst))), "data with no formula: plain error")
 check(grepl("on its own", err_of(anovaTest(m, y ~ x))), "formula given to a model: plain error")
 
 ## ===================================================================================================

@@ -378,7 +378,11 @@
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
         tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
-        # anovaTest() takes data + formula, or a fitted linear model from buildModel() (same table, type II).
+        # anovaTest() takes data + formula, or a fitted linear model from buildModel(), and returns the course's
+        # ANOVA table, matching the ANOVA instrument column for column: one row per term, then noise, then total.
+        # Sequential sums of squares (stats::anova), so the rows add up to the total and share sums to 1 (to rounding).
+        # Columns: term, sum_of_squares, free_values (degrees of freedom), variance (sum_of_squares / free_values),
+        # F (variance / noise variance), p, share (sum_of_squares / total sum of squares).
         anovaTest <- function( data, ... ) {
             if (inherits(data, "lm") ||
                 (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))) {
@@ -388,9 +392,31 @@
                 if (!inherits(data, "lm") && data$model_type != "linear_regression") {
                     stop("anovaTest(): only linear regression models have an ANOVA table.", call. = FALSE)
                 }
-                return(rstatix::anova_test( if (inherits(data, "lm")) data else data$model ))
+                fit <- if (inherits(data, "lm")) data else data$model
+            } else {
+                dots <- list(...)
+                fml <- if (!is.null(dots$formula)) dots$formula else if (length(dots) > 0 && inherits(dots[[1]], "formula")) dots[[1]] else NULL
+                if (is.null(fml) || length(dots) > 1) {
+                    stop("anovaTest(): give a data table and one formula, e.g. anovaTest(abundance ~ aquifer_code), or a model from buildModel().", call. = FALSE)
+                }
+                fit <- stats::lm(fml, data = dplyr::ungroup(data))
             }
-            rstatix::anova_test( data = ungroup(data), ... )
+            tab <- stats::anova(fit)
+            ss <- tab[["Sum Sq"]]
+            df <- tab[["Df"]]
+            terms <- trimws(rownames(tab))
+            terms[length(terms)] <- "noise"
+            # A plain data.frame, rounded for reading, so a narrow console never hides a column (a tibble
+            # truncated the term names and pushed `share` off the edge).
+            data.frame(
+                term = c(terms, "total"),
+                sum_of_squares = signif(c(ss, sum(ss)), 4),
+                free_values = c(df, sum(df)),
+                variance = signif(c(ss / df, NA), 4),
+                F = round(c(tab[["F value"]], NA), 2),
+                p = signif(c(tab[["Pr(>F)"]], NA), 3),
+                share = round(c(ss / sum(ss), 1), 3)
+            )
         }
         # tukeyTest() takes either data + formula (rstatix, tukey_hsd's first argument is x, not data) or a
         # fitted linear model from buildModel(): then it compares the model's group means, or with

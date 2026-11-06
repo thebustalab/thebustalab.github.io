@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-03"
+date: "2026-11-06"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -6111,15 +6111,24 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start regression models -->
 
-# regression models {-}
+# regression models {#regression-models -}
+
+::: {.chapter-card}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression, comparing slopes between groups of samples, and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", "Which predictors have coefficients significantly different from zero?", or "Does the response rise with this predictor at the same rate in every group?"
+<div class="cc-title-slot"></div>
 
-<hr>
+**Does one measurement rise or fall with another, and by how much?** Which of several predictors matters most, and does the response rise at the same rate in every group? What value should we expect for a sample whose response was never measured? Regression models answer both kinds of question, those about relationships and those about prediction. Both run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models with one predictor and with several, reads what they say about the data, compares slopes between groups, uses a fitted line to predict values for new samples, and checks whether a model can be trusted. The machine learning models chapter builds on the same steps with more flexible models.
 
-A regression model predicts a number from one or more measured predictors, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several predictors matters most? The second is about prediction: what value should we expect for a sample whose response was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#regression-models-summary){.cc-btn .ghost}
+
+<div class="figure" style="text-align: center">
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-515)Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
+</div>
+
+:::
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -6128,7 +6137,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","perfor
 
 ## model use {-}
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses.
+A numerical model has two main uses: inferential and predictive.
 
 - Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
@@ -6177,8 +6186,8 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-516-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-516)Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-517-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-517)Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 It looks like there might be a relationship! Let's build a linear regression model and use it inferentially to examine the details of that relationship:
@@ -6248,7 +6257,7 @@ Note that a variable whose name contains a space or a hyphen, like iso-Leucine, 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png" alt="Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-521)Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one.</p>
+<p class="caption">(\#fig:unnamed-chunk-522)Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one.</p>
 </div>
 
 We can also use a function called `predictWithModel()` to make predictions using the model. We give it the data we want predictions for and the model. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance:
@@ -6285,8 +6294,8 @@ ggplot(predictions_from_basic_linear_model) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-523-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-523)Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-524-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-524)Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.</p>
 </div>
 
 Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals: the distance between each of our points and our line.
@@ -6300,8 +6309,8 @@ ggplot(predictions_from_basic_linear_model) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-524-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-524)Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-525-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-525)Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data.</p>
 </div>
 
 We can calculate the sum of the squared residuals:
@@ -6312,7 +6321,7 @@ sum((predictions_from_basic_linear_model$Valine - predictions_from_basic_linear_
 ## [1] 1.285459
 ```
 
-Let's call that the "residual sum of the squares". Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
+Let's call that the "residual sum of the squares". It is the **noise**: the spread the model leaves unexplained. Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
 
 
 ``` r
@@ -6322,11 +6331,11 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-526-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-526)A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-527-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-527)A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
-A pretty bad model. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
+The flat line ignores iso-Leucine, so it misses the rise in Valine that the points show. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
 
 
 ``` r
@@ -6337,8 +6346,8 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-527-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-527)Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-528-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-528)Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 ``` r
@@ -6363,7 +6372,7 @@ total_sum_of_squares <- sum(
 
 That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
 
-- The amount of variance in the response variable explained by the predictor variable.
+- The share of the variation in the response explained by the predictor, with the noise holding the rest (the analysis of variance chapter splits that share among several predictors).
 - How much better the line of best fit describes the data than the flat line.
 
 Now, let's put it all together and make it pretty:
@@ -6393,8 +6402,8 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-529-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-529)A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-530)A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6597,8 +6606,8 @@ plot_grid(plot1, plot2, nrow = 1, labels = "AUTO")
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-534-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-534)Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-535-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-535)Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6764,8 +6773,8 @@ predictWithModel(data = elements, model = state_model) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-539-1.png" alt="Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-539)Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table.</p>
+<img src="index_files/figure-html/unnamed-chunk-540-1.png" alt="Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-540)Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table.</p>
 </div>
 
 Each state now has its own line. To ask which slopes differ from which, we pass the model to `tukeyTest()` and name the numeric predictor whose slope should be compared with `slopes_of`. The Tukey test compares the slopes of every pair of groups and corrects the p-values for the number of comparisons, much as the comparing groups chapter's tests do for means. Piping the result into `pGroups()` gives each group a letter, as before, along with its slope (`estimate`) and that slope's standard error:
@@ -6843,8 +6852,8 @@ check_model(multiple_regression_model$model)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-541-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-541)Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-542-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-542)Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6871,47 +6880,50 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-<hr>
+[]{#regression-models-summary}
 
 ## chapter summary {-}
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.summary-pdf target="_blank"}
 
-::: {.summary-top}
-
-<div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-542)Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
-</div>
-
-Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the response relates to the predictors. A **predictive** use applies the model to a table whose response was never measured. Three decisions follow. **How many predictors:** more predictors can explain more of the variation in the response, which r-squared shows. **Whether to scale:** scale the predictors before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the predictors, and any influential points with `check_model()`.
-
-:::
+Building a regression model starts with what it is for. An **inferential** use reads the coefficients, their p-values and r-squared to describe how the response relates to the predictors; a **predictive** use applies the model to a table whose response was never measured. Four decisions follow. **How many predictors:** more can explain more of the variation, as r-squared shows. **Whether to scale:** scale the predictors before ranking their coefficients by size, but predict with the model built on the data as measured. **Whether slopes differ between groups:** join the predictor and the group with `*`, not `+` (one shared slope), then compare the slopes with `tukeyTest(slopes_of = )`. **Whether to trust it:** check the residuals, the predictors and any influential points with `check_model()`.
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
 | `Hmisc::impute()` | filling in missing values, because `buildModel()` stops on any | the fill value (here each column's median) |
-| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (the predictors, one column or several), `output_variable` (the response); or instead a `formula`, `response ~ predictor * group` |
+| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one or more predictors), `output_variable` (the response); or a `formula`, `response ~ predictor * group` |
 | `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
 | `predictWithModel()` | predictions for any table with the same predictor columns, returned as that table with a new `predicted_<response>` column | `data`, and `model` (the whole `buildModel()` output) |
-| `mutate(across(c(...), scale))` | putting predictors on a mean of zero and a standard deviation of one before comparing coefficients | which predictors to scale |
+| `mutate(across(c(...), scale))` | giving predictors a mean of 0 and a standard deviation of 1 before comparing coefficients | which predictors to scale |
 | `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
-| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ, given a model built with a `*` formula; letters plus each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
-| `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |
+| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ in a model built with `*`; letters and each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
+| `check_model()` | diagnostic panels: posterior predictive check, linearity, equal variance, normal residuals, collinearity, influential points | given `model$model` |
 
-<!-- ## exercises {-}
+<!-- PARKED until both regression rooms are status "ready" in their scenario.json (each is "in_development"): a live card publishes its Canvas assignment. To go live, delete this line and the closing line under the chunk.
 
-To practice creating models, try the following:
+<hr>
 
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca" contains the Dimension 1 coordinate "Dim_1" for each sample, as well as the abundance of each analyte in that sample.
+## exercises {-}
 
-2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim_1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
 
-3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
-
-4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` dataset and diagnose each patient in `metabolomics_unknown`.
-
-5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/cover.png" alt="The Water Master cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Water Master</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Regression &middot; slopes, predicting with a model + ranking scaled predictors</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the new water master of a diamond town on the desert plateau, and the season&rsquo;s first string of gravel barges waits at the foot of the lock flight. Work them up to the reservoir before the evening fog closes in, and decide along the way which newly surveyed gravel pits are worth mining.</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/cover.png" alt="Dunes cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Dunes</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Regression &middot; slopes, predicting with a model + ranking scaled predictors</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">It is October 1928, the diamond town&rsquo;s water runs out in December, and the last wagon train is leaving across the desert. Win a rope, sled down the dunes to the tidal flats, and find out whether the town was right to give up on its stranded water steamer.</div>
+</div>
+</div>
+</div>
 
 -->
 
@@ -6942,37 +6954,50 @@ To practice creating models, try the following:
 
 <div class="cc-title-slot"></div>
 
-**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the variation in a set of measurements into a part explained by each factor and a part left over, then asks whether each factor explains more than chance would, how large its effect is, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, two factors and their interaction, reading the ANOVA table, and checking the model.
+**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#anova-summary){.cc-btn .ghost}
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-575)Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.</p>
+<p class="caption">(\#fig:unnamed-chunk-577)Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.</p>
 </div>
 
 :::
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
-window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }, { name: "fertilizer_trial", url: "/integrated_bioanalytics/data/fertilizer_trial.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
 </script>
 
 ## ANOVA is a linear model {-}
 
 The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?
 
-The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, each divided by its degrees of freedom (explained below), and a large F means the groups differ by more than chance would allow.
+The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a **sum of squares**: each measurement's distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group's average. That leftover spread is the **noise**, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. The F statistic compares the two, each divided by its number of free values (explained below), and a large F means the groups differ by more than noise would allow.
 
-This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a **factor**). The formula is written the same way: the response on the left of the `~`, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and, for a single factor, `gamesHowellTest()`.
+The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones `anovaTest()` prints, and the next sections explain each of them.
+
+<div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_one_factor.json"></div>
+
+This is the same machinery as the regression chapter, where the r-squared was the share of the total sum of squares a model explains. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a **factor**). The formula is written the same way: the response on the left of the `~`, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and, for a single factor, `gamesHowellTest()`.
 
 #### concept check {-}
 
-<div class="selfcheck" data-answer="2" data-explain="F compares the variation between groups (how far the group averages sit from the overall average) with the variation within groups (how far measurements sit from their own group's average), each per degree of freedom. If the groups do not really differ, the two are about the same size and F is near 1.">
+The same 30 plants are in `fertilizer_trial`. Fill in the blank with the factor the instrument grouped the plants by, then press Run and compare the table with the instrument's.
+
+<div class="webr-cell"><textarea class="webr-code">fertilizer_trial %>%
+  buildModel(
+    model_type = "linear_regression",
+    formula = height_cm ~ ____
+  ) %>%
+  anovaTest()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="F compares the spread between groups (how far the group averages sit from the grand mean) with the noise (how far measurements sit from their own group's average), each divided by its free values. If the groups do not really differ, the two are about the same size and F is near 1.">
 <p class="scq">Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does that say?</p>
 <label><input type="radio"> Potassium varies a lot within each aquifer</label>
 <label><input type="radio"> Every aquifer differs from every other aquifer</label>
-<label><input type="radio"> The aquifer averages differ from one another by much more than the scatter within aquifers would produce by chance</label>
+<label><input type="radio"> The aquifer averages differ from one another by much more than the noise within aquifers would produce</label>
 </div>
 
 <hr>
@@ -6991,13 +7016,19 @@ K_model <- buildModel(
 
 K_model %>%
   anovaTest()
-## ANOVA Table (type II tests)
-## 
-##         Effect DFn DFd     F        p p<.05   ges
-## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
+##           term sum_of_squares free_values variance    F
+## 1 aquifer_code          150.4           9   16.710 9.49
+## 2        noise          169.2          96    1.762   NA
+## 3        total          319.6         105       NA   NA
+##          p share
+## 1 3.28e-10 0.471
+## 2       NA 0.529
+## 3       NA 1.000
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as `gamesHowellTest(abundance ~ aquifer_code)` on the data:
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The `share` column says how much: aquifer explains about 47% of the variation in potassium, and the remaining 53% is noise. The next section reads the rest of the table.
+
+The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as `gamesHowellTest(abundance ~ aquifer_code)` on the data:
 
 
 ``` r
@@ -7028,9 +7059,9 @@ K_model %>%
 ## aquifer_9  0.22717927
 ```
 
-Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the model's pooled residual, the single estimate of the leftover scatter that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
+Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the noise variance, the single pooled estimate of the leftover spread that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
 
-What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
+What the ANOVA adds is a single answer to "is there any difference at all?" and the share of the variation the factor explains. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
 
 #### concept check {-}
 
@@ -7045,8 +7076,8 @@ Magnesium was measured in the same wells. Fill in the blank with the predictor t
 Mg_model %>%
   anovaTest()</textarea></div>
 
-<div class="selfcheck" data-answer="0" data-explain="The ges column is the share of the variation explained by the factor. A ges of 0.53 means aquifer accounts for roughly half of the variation in magnesium. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
-<p class="scq">Self-check: the magnesium ANOVA reports ges = 0.53. What does that mean?</p>
+<div class="selfcheck" data-answer="0" data-explain="The share column is each row's sum of squares as a share of the total. A share of 0.53 on the aquifer row means aquifer explains roughly half of the variation in magnesium, and the noise row holds the other half. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
+<p class="scq">Self-check: the magnesium ANOVA gives the aquifer row a share of 0.53. What does that mean?</p>
 <label><input type="radio"> Aquifer explains roughly half of the variation in magnesium</label>
 <label><input type="radio"> About half of the aquifers differ significantly from the others</label>
 <label><input type="radio"> Magnesium is 53% higher in some aquifers than in others</label>
@@ -7056,37 +7087,42 @@ Mg_model %>%
 
 ### reading the ANOVA table {-}
 
-Each row of an ANOVA table is one term in the model, and its columns say how much of the variation that term explains and whether that is more than chance would allow. A full ANOVA table also has a row for the residuals, the variation left over after every term has been fitted; `anovaTest()` does not print that row, but reports its degrees of freedom in every row as `DFd`.
+Each row of an ANOVA table is one term in the model, followed by a row for the noise and a row for the total. Reading across a row:
 
-**Degrees of freedom work like a budget.** Every measurement adds one unit to the budget, so the potassium data, with 106 measurements, have 106 units to spend. Every value the model estimates costs one unit, and each kind of term has a fixed price:
+- `sum_of_squares` is the spread the row accounts for. The rows above the total add up to the total.
+- `free_values` is the row's degrees of freedom, explained below.
+- `variance` is the sum of squares divided by the free values: the spread per free value.
+- `F` is the row's variance divided by the noise variance.
+- `p` is how often noise alone would give an F this large.
+- `share` is the row's sum of squares as a share of the total: the **share of the variation explained**. Every row's share except the total's adds up to 1, and the noise row's share is the part left unexplained.
 
-| Term in the model | Cost in degrees of freedom |
+**Free values are what is left once the values the model fixes are spoken for.** Each measurement starts out free to take any value. The total row is measured from the grand mean, and once the grand mean is fixed, one measurement is spoken for: knowing the grand mean and all the other measurements pins down the last one. So the 106 potassium measurements leave 105 free values. A factor works the same way on its group means. The ten aquifer means must average out to the grand mean, so once nine of them are known, the tenth is spoken for, which leaves 10 − 1 = 9 free. The noise gets whatever is left: 105 − 9 = 96. Each kind of row has a fixed rule:
+
+| Row of the table | Free values |
 |---|---|
-| the overall average | 1 (always part of the model, so it has no row of its own) |
-| a factor with *k* groups | *k* − 1 (the overall average already accounts for one group) |
+| total | the number of measurements − 1 (the grand mean speaks for one) |
+| a factor with *k* groups | *k* − 1 (the grand mean speaks for one group mean) |
 | a numeric predictor | 1 (one slope) |
-| an interaction between two terms | the costs of the two terms multiplied together |
-| the residuals | whatever is left over |
+| an interaction between two terms | the free values of the two terms multiplied together |
+| noise | whatever is left: the total's free values minus every other row's |
 
-A term's cost is its `DFn`, and what is left for the residuals is `DFd`. In the potassium model, the ten aquifers cost 9, the overall average costs 1, and the residuals get the remaining 106 − 10 = 96.
+Free values matter because every value a term is free to set lets the model bend toward the data a little, so even a factor with no real effect picks up some spread by chance: on average, about as much per free value as the noise holds. Dividing by free values turns each spread into a variance, and F compares a row's variance with the noise variance. Aquifer accounts for 150.4 units of spread over 9 free values, a variance of 16.7; the noise holds 169.2 over 96, a variance of 1.76; so F = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 however many free values it has, which is what lets terms of different sizes be compared on the same scale. The noise's free values matter too: the more there are, the better the noise variance is estimated, and the more the F can be trusted.
 
-The budget matters because every value the model estimates lets it bend toward the data a little, so even a term with no real effect explains some variation by chance: on average, about as much per unit spent as the residuals hold per unit. F therefore divides each part by its cost before comparing them. Aquifer explains 150.4 units of squared variation (its sum of squares, which `anovaTest()` does not print) at a cost of 9, and the residuals hold 169.2 at a cost of 96, so F = (150.4 / 9) / (169.2 / 96) = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 whatever it costs, which is what lets terms of different cost be compared on the same scale. The size of the residual budget matters too: the more units left over, the better the estimate of the leftover scatter, and the more the F can be trusted.
-
-Because F is a rate per unit spent, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. The size of an effect is in the `ges` column (generalized eta squared), the share of the variation explained by the term once the other terms are set aside. Here, aquifer explains roughly 47% of the variation in potassium (150.4 out of 150.4 + 169.2).
+Because F is a ratio per free value, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. How much it matters is the `share` column. Aquifer accounts for 150.4 of the 319.6 units of total spread, a share of 0.47, so aquifer explains about 47% of the variation in potassium and 53% is noise. With a single factor, the share is exactly the r-squared from the regression chapter.
 
 #### concept check {-}
 
-Fill in the blank so the table works out the residual degrees of freedom from the budget, then press Run and compare `DFn` and `DFd` with the ANOVA table above.
+Fill in the blank so the table works out the noise's free values from the rules above, then press Run and compare the result with the `free_values` column of the ANOVA table.
 
 <div class="webr-cell"><textarea class="webr-code">K_data %>%
   summarize(n = n(), groups = n_distinct(aquifer_code)) %>%
-  mutate(DFn = groups - 1, DFd = n - ____)</textarea></div>
+  mutate(total_free = n - 1, aquifer_free = groups - 1, noise_free = total_free - ____)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="The budget is 24 units, one per plot. Four fertilizers cost 4 − 1 = 3 (DFn), the overall average costs 1, and the residuals get the remaining 24 − 4 = 20 (DFd).">
-<p class="scq">Self-check: a trial compares four fertilizers with six plots each. What are DFn and DFd for the fertilizer row?</p>
-<label><input type="radio"> DFn = 4, DFd = 24</label>
-<label><input type="radio"> DFn = 3, DFd = 20</label>
-<label><input type="radio"> DFn = 3, DFd = 23</label>
+<div class="selfcheck" data-answer="1" data-explain="The 24 plots leave 24 − 1 = 23 free values once the grand mean is spoken for. The four fertilizer means leave 4 − 1 = 3 free, since the grand mean speaks for one of them, and the noise gets what is left: 23 − 3 = 20.">
+<p class="scq">Self-check: a trial compares four fertilizers with six plots each. How many free values do the fertilizer row and the noise row have?</p>
+<label><input type="radio"> fertilizer 4, noise 24</label>
+<label><input type="radio"> fertilizer 3, noise 20</label>
+<label><input type="radio"> fertilizer 3, noise 23</label>
 </div>
 
 <hr>
@@ -7121,9 +7157,42 @@ Fill in the blank with the rank-based test of whether potassium differs among th
 
 <hr>
 
+### checking the model {-}
+
+An ANOVA makes the same assumptions as the linear models in the regression chapter, and they are all assumptions about the noise: each measurement's distance from its group mean (which `check_model()` calls a residual) should be roughly normal and have a similar spread in every group, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
+
+
+``` r
+check_model(K_model$model)
+```
+
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-581-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-581)Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.</p>
+</div>
+
+Unequal spreads matter most to the ANOVA's F, which compares every term with one noise variance pooled across all the groups. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
+
+#### concept check {-}
+
+<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled noise variance fits every group.">
+<p class="scq">Self-check: in the residuals-against-fitted-values panel, some aquifers' stripes are far taller than others. Which assumption does that call into question?</p>
+<label><input type="radio"> That the measurements are independent</label>
+<label><input type="radio"> That the factor has an effect</label>
+<label><input type="radio"> That every group has a similar spread</label>
+</div>
+
+<hr>
+
 ## two factors and interactions {-}
 
-Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA estimates the effect of each factor and asks whether the two **interact**, meaning whether the effect of one factor depends on the level of the other. As an example, consider sodium and chloride in four of the aquifers:
+Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA splits the spread into a part for each factor, a part for their **interaction**, and the noise, and asks whether the two interact, meaning whether the effect of one factor depends on the level of the other.
+
+The instrument below adds a second factor to the 30 plants: half of each species was given fertilizer. After the species row, the fertilizer row draws how far each fertilizer mean sits from the grand mean. The interaction row then asks where each species-and-fertilizer combination would sit if fertilizer did the same for every species (the dashed lines), and draws how far each real combination sits from there. The noise is now each plant's distance from its own combination's mean, and it is far smaller than in the one-factor table, because the fertilizer and interaction rows now explain spread that used to count as noise.
+
+<div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_two_factors.json"></div>
+
+As an example in real data, consider sodium and chloride in four of the aquifers:
 
 
 ``` r
@@ -7139,15 +7208,21 @@ nacl_model <- buildModel(
 
 nacl_model %>%
   anovaTest()
-## ANOVA Table (type II tests)
-## 
-##                 Effect DFn DFd      F        p p<.05   ges
-## 1              analyte   1  68 14.514 3.02e-04     * 0.176
-## 2         aquifer_code   3  68 15.171 1.17e-07     * 0.401
-## 3 analyte:aquifer_code   3  68  2.646 5.60e-02       0.105
+##                   term sum_of_squares free_values variance
+## 1              analyte           7031           1   7031.0
+## 2         aquifer_code          22050           3   7349.0
+## 3 analyte:aquifer_code           3845           3   1282.0
+## 4                noise          32940          68    484.4
+## 5                total          65860          75       NA
+##       F        p share
+## 1 14.51 3.02e-04 0.107
+## 2 15.17 1.17e-07 0.335
+## 3  2.65 5.60e-02 0.058
+## 4    NA       NA 0.500
+## 5    NA       NA 1.000
 ```
 
-The `*` in the formula asks for both factors and their interaction. The output has one row for each, and the budget still balances: the 76 measurements pay 1 for the overall average, 1 for analyte (two levels), 3 for aquifer (four levels) and 1 × 3 = 3 for the interaction, which leaves 68 for the residuals. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
+The `*` in the formula asks for both factors and their interaction. The table has one row for each, then the noise and the total, and the free values still follow the rules: the 76 measurements leave 75 once the grand mean is spoken for, analyte (two levels) takes 1, aquifer (four levels) takes 3, the interaction takes 1 × 3 = 3, and the noise keeps the remaining 68. Analyte explains about 11% of the variation (chloride is more abundant than sodium overall) and aquifer about 33%. The interaction row asks whether the gap between chloride and sodium is the same in every aquifer. It explains about 6% of the variation, and its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
 
 
 ``` r
@@ -7161,11 +7236,11 @@ nacl %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-580-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-580)Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.</p>
+<img src="index_files/figure-html/unnamed-chunk-583-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-583)Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.</p>
 </div>
 
-The interaction row is not "the two factors together". It measures only the extra variation explained by letting the effect of one factor differ across the levels of the other, on top of a model that already has both factors. Most of the explaining is usually done by the factors themselves, so the interaction row is often the smallest, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
+The interaction row is not "the two factors together". It holds only the extra spread explained by letting the effect of one factor differ across the levels of the other, on top of what the two factors explain on their own. Most of the explaining is usually done by the factors themselves, so the interaction row often has the smallest share, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
 
 #### concept check {-}
 
@@ -7193,7 +7268,7 @@ nacl_model %>%
 
 The same model-then-table approach covers several designs that come up in laboratory work. They are named here so they can be recognized; each has its own literature.
 
-- **Blocking.** Samples run on different days, plates or instrument batches can shift by batch alone. A **block** is a factor that is not of interest but adds variation; including it, as in `response ~ treatment + batch`, removes that variation from the residuals and makes the factor of interest easier to detect.
+- **Blocking.** Samples run on different days, plates or instrument batches can shift by batch alone. A **block** is a factor that is not of interest but adds variation; including it, as in `response ~ treatment + batch`, moves that variation out of the noise and makes the factor of interest easier to detect.
 - **Adjusting for a covariate (ANCOVA).** When groups also differ in a numeric variable that affects the response, such as plant size, adding it to the formula, `response ~ treatment + plant_size`, compares the groups at the same value of the covariate. With `*` instead of `+`, the model gives each group its own slope, which is the comparing-slopes analysis from the regression chapter.
 - **Repeated measures.** When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. These designs need a mixed model, which tracks which measurements belong to which subject.
 - **Many responses at once.** MANOVA extends ANOVA to several responses measured on each sample but assumes they are jointly normal, which large chemical profiles rarely are. PERMANOVA works from a distance matrix, as built in the distances and scaling chapter, and gets its p-value by shuffling the group labels, so it is the usual choice for metabolomics and community profiles.
@@ -7209,34 +7284,8 @@ The same model-then-table approach covers several designs that come up in labora
 
 <hr>
 
-## checking the model {-}
-
-An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement's distance from its group mean) should be roughly normal and have similar spread across groups, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
-
-
-``` r
-check_model(K_model$model)
-```
-
-<div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-581-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-581)Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.</p>
-</div>
-
-Unequal spreads matter most to the ANOVA's F, which compares every term with one pooled estimate of the leftover scatter. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
-
-#### concept check {-}
-
-<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled estimate of the leftover spread fits every group.">
-<p class="scq">Self-check: in the residuals-against-fitted-values panel, some aquifers' stripes are far taller than others. Which assumption does that call into question?</p>
-<label><input type="radio"> That the measurements are independent</label>
-<label><input type="radio"> That the factor has an effect</label>
-<label><input type="radio"> That every group has a similar spread</label>
-</div>
-
-<hr>
-
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=1"; mountAll();</script>
 
 []{#anova-summary}
 
@@ -7244,15 +7293,15 @@ Unequal spreads matter most to the ANOVA's F, which compares every term with one
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.summary-pdf target="_blank"}
 
-An ANOVA splits the variation in a response into the part each term explains and the part left over. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table with the degrees-of-freedom budget in mind:** each measurement adds one unit, a factor with *k* groups costs *k* − 1, an interaction costs the product of its terms' costs, and the rest goes to the residuals. F is each term's variation per unit spent over the residual variation per unit, so it is evidence that a term matters; `ges` is how much it matters. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: residuals roughly normal with similar spread, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
+An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table row by row:** each row's free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with *k* groups keeps *k* − 1, an interaction multiplies its terms', and the noise gets the rest). A row's variance is its sum of squares per free value, F is that variance over the noise variance, so it is evidence that a term matters, and `share` is how much: the row's share of the variation explained, with every row's share adding up to 1. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
 | `buildModel(formula = )` | fitting the model the ANOVA is read from | `response ~ factor`, or `response ~ factor_1 * factor_2` for an interaction, with `model_type = "linear_regression"` |
-| `anovaTest()` | the ANOVA table: one row per term, with `DFn`, `DFd`, `F`, `p` and `ges` | piped after the model |
+| `anovaTest()` | the ANOVA table: a row per term, then noise and total, with `sum_of_squares`, `free_values`, `variance`, `F`, `p` and `share` | piped after the model |
 | `gamesHowellTest()`, `pGroups()` | which groups differ, as letters, using each group's own spread | piped after the same one-factor model |
 | `kruskalTest(abundance ~ aquifer_code)` | rank-based test of any difference, one factor | on the data, followed by `dunnTest()` |
-| `check_model()` | diagnostic panels for the residuals | given `model$model` |
+| `check_model()` | diagnostic panels for the noise (residuals) | given `model$model` |
 
 <hr>
 
@@ -7382,8 +7431,8 @@ random_forest_model$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-595-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-595)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-597-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-597)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
 </div>
 
 We can use the model to make predictions with the `predictWithModel()` function:
@@ -7405,8 +7454,8 @@ ggplot(random_forest_predictions) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-596-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-596)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-598)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical response from a set of predictors. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the `model_type` to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
@@ -7460,8 +7509,8 @@ rfc$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-598-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-598)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
+<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-600)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
 </div>
 
 We can also make predictions on data the model has not seen, here the six patients that were held out. For a classification model, `predictWithModel()` adds one `probability_` column per category and a `predicted_class` column holding the most probable one, so we can set the predictions beside the real status:
@@ -7617,11 +7666,11 @@ select(search_results, term, title)
 ##    term                       title                         
 ##    <chr>                      <chr>                         
 ##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
-##  2 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
-##  3 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  3 beta-amyrin synthase       [Cloning and bioinformatics a…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
 ##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Genome Mining and Gene Expres…
+##  6 friedelin synthase         Functional characterization o…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
@@ -7662,7 +7711,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-615-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-617-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -7686,8 +7735,8 @@ search_results_embedded[1:3,1:10]
 ##   entry_number term  date       journal title doi   abstract
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
 ## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
-## 2            2 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
-## 3            3 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 3            3 beta… 2022-09-28 Zhongg… [Clo… 10.1… Dipsaci…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -7712,7 +7761,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-617-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-619-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -7736,7 +7785,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-618-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-620-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -7776,7 +7825,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-619-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-621-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -7809,16 +7858,16 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… Ginsenosi…
-##  2 β-Amyrin biosynthesis: catalytic mechanism an… oxidosqua…
-##  3 β-Amyrin synthase from Conyza blinii expresse… Oxidosqua…
-##  4 Friedelin in Maytenus ilicifolia Is Produced … Friedelin…
+##  2 β-Amyrin synthase from Conyza blinii expresse… Oxidosqua…
+##  3 [Cloning and bioinformatics analysis of β-amy… Dipsacus …
+##  4 Friedelin in Maytenus ilicifolia Is Produced … friedelin…
 ##  5 Friedelin Synthase from Maytenus ilicifolia: … Friedelin…
-##  6 Genome Mining and Gene Expression Reveal Mayt… Maytansin…
-##  7 Current status and prospects of herbicide-res… herbicide…
+##  6 Functional characterization of an oxidosquale… Friedelin…
+##  7 Current status and prospects of herbicide-res… Herbicide…
 ##  8 Sorghum (Sorghum bicolor).                     Sorghum t…
-##  9 Potential food applications of sorghum (Sorgh… Sorghum, …
-## 10 Regulatory mechanisms underlying cuticular wa… plant cut…
-## 11 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
+##  9 Potential food applications of sorghum (Sorgh… sorghum, …
+## 10 Regulatory mechanisms underlying cuticular wa… Plant cut…
+## 11 Cuticular wax in wheat: biosynthesis, genetic… plant cut…
 ## 12 Update on Cuticular Wax Biosynthesis and Its … Plant cut…
 ```
 
@@ -7832,7 +7881,7 @@ select(search_results, title, generation)
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/13_language_models_flowchart.png" alt="Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-621)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
+<p class="caption">(\#fig:unnamed-chunk-623)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
 </div>
 
 Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
@@ -7990,7 +8039,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-645-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-647-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -8178,7 +8227,7 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png" alt="Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-660)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
+<p class="caption">(\#fig:unnamed-chunk-662)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
 </div>
 
 A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
@@ -8309,7 +8358,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-676-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-678-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -8337,7 +8386,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-677-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-679-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
@@ -8382,7 +8431,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-679-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-681-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -8398,7 +8447,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-680-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-682-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so we recommend it:
 
@@ -8407,7 +8456,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-681-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-683-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient function is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
@@ -8478,7 +8527,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-683-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-685-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -8498,7 +8547,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-684-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-686-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -8574,7 +8623,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-689-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-691-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -8609,7 +8658,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-690-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-692-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -8621,7 +8670,7 @@ plot_grid(
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png" alt="Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-691)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
+<p class="caption">(\#fig:unnamed-chunk-693)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
 </div>
 
 Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
@@ -8861,7 +8910,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-715-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-717-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -9547,7 +9596,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-742-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-744-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -9671,7 +9720,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-761-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-763-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### 3D scatter plots {-}
 
@@ -9759,7 +9808,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-763-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-765-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -9782,7 +9831,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-764-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-766-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -9807,7 +9856,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-765-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-767-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -9880,7 +9929,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-770-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-772-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -9892,7 +9941,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-771-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-773-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -9908,7 +9957,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-772-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-774-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -9923,7 +9972,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-773-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-775-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -9952,7 +10001,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-774-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-776-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -9977,7 +10026,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-775-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-777-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -10024,7 +10073,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-776-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-778-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -10045,7 +10094,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-777-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-779-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 <hr>

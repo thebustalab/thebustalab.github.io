@@ -10,7 +10,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <div class="cc-title-slot"></div>
 
-**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the variation in a set of measurements into a part explained by each factor and a part left over, then asks whether each factor explains more than chance would, how large its effect is, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, two factors and their interaction, reading the ANOVA table, and checking the model.
+**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#anova-summary){.cc-btn .ghost}
 
@@ -22,24 +22,37 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
-window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }, { name: "fertilizer_trial", url: "/integrated_bioanalytics/data/fertilizer_trial.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K'); nacl <- dplyr::filter(hawaii_aquifers, analyte %in% c('Na', 'Cl'), aquifer_code %in% c('aquifer_1', 'aquifer_2', 'aquifer_3', 'aquifer_4'))" };
 </script>
 
 ## ANOVA is a linear model {-}
 
 The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?
 
-The central idea of ANOVA is that the variation in a set of measurements can be split into parts. Some of the variation lies between groups: the group averages differ from the overall average. The rest lies within groups: individual measurements scatter around their own group's average. If the groups truly do not differ, the between-group part should be about the size expected from the within-group scatter alone. The F statistic is the ratio of the two, each divided by its degrees of freedom (explained below), and a large F means the groups differ by more than chance would allow.
+The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a **sum of squares**: each measurement's distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group's average. That leftover spread is the **noise**, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. The F statistic compares the two, each divided by its number of free values (explained below), and a large F means the groups differ by more than noise would allow.
 
-This is the same machinery as the regression chapter. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a **factor**). The formula is written the same way: the response on the left of the `~`, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and, for a single factor, `gamesHowellTest()`.
+The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones `anovaTest()` prints, and the next sections explain each of them.
+
+<div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_one_factor.json"></div>
+
+This is the same machinery as the regression chapter, where the r-squared was the share of the total sum of squares a model explains. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a **factor**). The formula is written the same way: the response on the left of the `~`, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with `buildModel()` and a formula, as in the regression chapter's section on comparing slopes between groups, then ask that one model questions with `anovaTest()` and, for a single factor, `gamesHowellTest()`.
 
 #### concept check {-}
 
-<div class="selfcheck" data-answer="2" data-explain="F compares the variation between groups (how far the group averages sit from the overall average) with the variation within groups (how far measurements sit from their own group's average), each per degree of freedom. If the groups do not really differ, the two are about the same size and F is near 1.">
+The same 30 plants are in `fertilizer_trial`. Fill in the blank with the factor the instrument grouped the plants by, then press Run and compare the table with the instrument's.
+
+<div class="webr-cell"><textarea class="webr-code">fertilizer_trial %>%
+  buildModel(
+    model_type = "linear_regression",
+    formula = height_cm ~ ____
+  ) %>%
+  anovaTest()</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="F compares the spread between groups (how far the group averages sit from the grand mean) with the noise (how far measurements sit from their own group's average), each divided by its free values. If the groups do not really differ, the two are about the same size and F is near 1.">
 <p class="scq">Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does that say?</p>
 <label><input type="radio"> Potassium varies a lot within each aquifer</label>
 <label><input type="radio"> Every aquifer differs from every other aquifer</label>
-<label><input type="radio"> The aquifer averages differ from one another by much more than the scatter within aquifers would produce by chance</label>
+<label><input type="radio"> The aquifer averages differ from one another by much more than the noise within aquifers would produce</label>
 </div>
 
 <hr>
@@ -59,7 +72,9 @@ K_model %>%
   anovaTest()
 ```
 
-A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as `gamesHowellTest(abundance ~ aquifer_code)` on the data:
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. The `share` column says how much: aquifer explains about 47% of the variation in potassium, and the remaining 53% is noise. The next section reads the rest of the table.
+
+The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as `gamesHowellTest(abundance ~ aquifer_code)` on the data:
 
 ```{r}
 K_model %>%
@@ -67,9 +82,9 @@ K_model %>%
   pGroups()
 ```
 
-Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the model's pooled residual, the single estimate of the leftover scatter that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
+Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the noise variance, the single pooled estimate of the leftover spread that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
 
-What the ANOVA adds is a single answer to "is there any difference at all?" and a measure of how big the effect is. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
+What the ANOVA adds is a single answer to "is there any difference at all?" and the share of the variation the factor explains. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
 
 #### concept check {-}
 
@@ -84,8 +99,8 @@ Magnesium was measured in the same wells. Fill in the blank with the predictor t
 Mg_model %>%
   anovaTest()</textarea></div>
 
-<div class="selfcheck" data-answer="0" data-explain="The ges column is the share of the variation explained by the factor. A ges of 0.53 means aquifer accounts for roughly half of the variation in magnesium. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
-<p class="scq">Self-check: the magnesium ANOVA reports ges = 0.53. What does that mean?</p>
+<div class="selfcheck" data-answer="0" data-explain="The share column is each row's sum of squares as a share of the total. A share of 0.53 on the aquifer row means aquifer explains roughly half of the variation in magnesium, and the noise row holds the other half. It says nothing about how many aquifers differ, or by how much in percent; which aquifers differ is a question for the Games-Howell test.">
+<p class="scq">Self-check: the magnesium ANOVA gives the aquifer row a share of 0.53. What does that mean?</p>
 <label><input type="radio"> Aquifer explains roughly half of the variation in magnesium</label>
 <label><input type="radio"> About half of the aquifers differ significantly from the others</label>
 <label><input type="radio"> Magnesium is 53% higher in some aquifers than in others</label>
@@ -95,37 +110,42 @@ Mg_model %>%
 
 ### reading the ANOVA table {-}
 
-Each row of an ANOVA table is one term in the model, and its columns say how much of the variation that term explains and whether that is more than chance would allow. A full ANOVA table also has a row for the residuals, the variation left over after every term has been fitted; `anovaTest()` does not print that row, but reports its degrees of freedom in every row as `DFd`.
+Each row of an ANOVA table is one term in the model, followed by a row for the noise and a row for the total. Reading across a row:
 
-**Degrees of freedom work like a budget.** Every measurement adds one unit to the budget, so the potassium data, with 106 measurements, have 106 units to spend. Every value the model estimates costs one unit, and each kind of term has a fixed price:
+- `sum_of_squares` is the spread the row accounts for. The rows above the total add up to the total.
+- `free_values` is the row's degrees of freedom, explained below.
+- `variance` is the sum of squares divided by the free values: the spread per free value.
+- `F` is the row's variance divided by the noise variance.
+- `p` is how often noise alone would give an F this large.
+- `share` is the row's sum of squares as a share of the total: the **share of the variation explained**. Every row's share except the total's adds up to 1, and the noise row's share is the part left unexplained.
 
-| Term in the model | Cost in degrees of freedom |
+**Free values are what is left once the values the model fixes are spoken for.** Each measurement starts out free to take any value. The total row is measured from the grand mean, and once the grand mean is fixed, one measurement is spoken for: knowing the grand mean and all the other measurements pins down the last one. So the 106 potassium measurements leave 105 free values. A factor works the same way on its group means. The ten aquifer means must average out to the grand mean, so once nine of them are known, the tenth is spoken for, which leaves 10 − 1 = 9 free. The noise gets whatever is left: 105 − 9 = 96. Each kind of row has a fixed rule:
+
+| Row of the table | Free values |
 |---|---|
-| the overall average | 1 (always part of the model, so it has no row of its own) |
-| a factor with *k* groups | *k* − 1 (the overall average already accounts for one group) |
+| total | the number of measurements − 1 (the grand mean speaks for one) |
+| a factor with *k* groups | *k* − 1 (the grand mean speaks for one group mean) |
 | a numeric predictor | 1 (one slope) |
-| an interaction between two terms | the costs of the two terms multiplied together |
-| the residuals | whatever is left over |
+| an interaction between two terms | the free values of the two terms multiplied together |
+| noise | whatever is left: the total's free values minus every other row's |
 
-A term's cost is its `DFn`, and what is left for the residuals is `DFd`. In the potassium model, the ten aquifers cost 9, the overall average costs 1, and the residuals get the remaining 106 − 10 = 96.
+Free values matter because every value a term is free to set lets the model bend toward the data a little, so even a factor with no real effect picks up some spread by chance: on average, about as much per free value as the noise holds. Dividing by free values turns each spread into a variance, and F compares a row's variance with the noise variance. Aquifer accounts for 150.4 units of spread over 9 free values, a variance of 16.7; the noise holds 169.2 over 96, a variance of 1.76; so F = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 however many free values it has, which is what lets terms of different sizes be compared on the same scale. The noise's free values matter too: the more there are, the better the noise variance is estimated, and the more the F can be trusted.
 
-The budget matters because every value the model estimates lets it bend toward the data a little, so even a term with no real effect explains some variation by chance: on average, about as much per unit spent as the residuals hold per unit. F therefore divides each part by its cost before comparing them. Aquifer explains 150.4 units of squared variation (its sum of squares, which `anovaTest()` does not print) at a cost of 9, and the residuals hold 169.2 at a cost of 96, so F = (150.4 / 9) / (169.2 / 96) = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 whatever it costs, which is what lets terms of different cost be compared on the same scale. The size of the residual budget matters too: the more units left over, the better the estimate of the leftover scatter, and the more the F can be trusted.
-
-Because F is a rate per unit spent, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. The size of an effect is in the `ges` column (generalized eta squared), the share of the variation explained by the term once the other terms are set aside. Here, aquifer explains roughly 47% of the variation in potassium (150.4 out of 150.4 + 169.2).
+Because F is a ratio per free value, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. How much it matters is the `share` column. Aquifer accounts for 150.4 of the 319.6 units of total spread, a share of 0.47, so aquifer explains about 47% of the variation in potassium and 53% is noise. With a single factor, the share is exactly the r-squared from the regression chapter.
 
 #### concept check {-}
 
-Fill in the blank so the table works out the residual degrees of freedom from the budget, then press Run and compare `DFn` and `DFd` with the ANOVA table above.
+Fill in the blank so the table works out the noise's free values from the rules above, then press Run and compare the result with the `free_values` column of the ANOVA table.
 
 <div class="webr-cell"><textarea class="webr-code">K_data %>%
   summarize(n = n(), groups = n_distinct(aquifer_code)) %>%
-  mutate(DFn = groups - 1, DFd = n - ____)</textarea></div>
+  mutate(total_free = n - 1, aquifer_free = groups - 1, noise_free = total_free - ____)</textarea></div>
 
-<div class="selfcheck" data-answer="1" data-explain="The budget is 24 units, one per plot. Four fertilizers cost 4 − 1 = 3 (DFn), the overall average costs 1, and the residuals get the remaining 24 − 4 = 20 (DFd).">
-<p class="scq">Self-check: a trial compares four fertilizers with six plots each. What are DFn and DFd for the fertilizer row?</p>
-<label><input type="radio"> DFn = 4, DFd = 24</label>
-<label><input type="radio"> DFn = 3, DFd = 20</label>
-<label><input type="radio"> DFn = 3, DFd = 23</label>
+<div class="selfcheck" data-answer="1" data-explain="The 24 plots leave 24 − 1 = 23 free values once the grand mean is spoken for. The four fertilizer means leave 4 − 1 = 3 free, since the grand mean speaks for one of them, and the noise gets what is left: 23 − 3 = 20.">
+<p class="scq">Self-check: a trial compares four fertilizers with six plots each. How many free values do the fertilizer row and the noise row have?</p>
+<label><input type="radio"> fertilizer 4, noise 24</label>
+<label><input type="radio"> fertilizer 3, noise 20</label>
+<label><input type="radio"> fertilizer 3, noise 23</label>
 </div>
 
 <hr>
@@ -155,9 +175,36 @@ Fill in the blank with the rank-based test of whether potassium differs among th
 
 <hr>
 
+### checking the model {-}
+
+An ANOVA makes the same assumptions as the linear models in the regression chapter, and they are all assumptions about the noise: each measurement's distance from its group mean (which `check_model()` calls a residual) should be roughly normal and have a similar spread in every group, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
+
+```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset."}
+check_model(K_model$model)
+```
+
+Unequal spreads matter most to the ANOVA's F, which compares every term with one noise variance pooled across all the groups. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
+
+#### concept check {-}
+
+<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled noise variance fits every group.">
+<p class="scq">Self-check: in the residuals-against-fitted-values panel, some aquifers' stripes are far taller than others. Which assumption does that call into question?</p>
+<label><input type="radio"> That the measurements are independent</label>
+<label><input type="radio"> That the factor has an effect</label>
+<label><input type="radio"> That every group has a similar spread</label>
+</div>
+
+<hr>
+
 ## two factors and interactions {-}
 
-Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA estimates the effect of each factor and asks whether the two **interact**, meaning whether the effect of one factor depends on the level of the other. As an example, consider sodium and chloride in four of the aquifers:
+Many experiments vary more than one thing at once: a treatment and a genotype, a fertilizer and a soil type, an analyte and a site. A two-way ANOVA splits the spread into a part for each factor, a part for their **interaction**, and the noise, and asks whether the two interact, meaning whether the effect of one factor depends on the level of the other.
+
+The instrument below adds a second factor to the 30 plants: half of each species was given fertilizer. After the species row, the fertilizer row draws how far each fertilizer mean sits from the grand mean. The interaction row then asks where each species-and-fertilizer combination would sit if fertilizer did the same for every species (the dashed lines), and draws how far each real combination sits from there. The noise is now each plant's distance from its own combination's mean, and it is far smaller than in the one-factor table, because the fertilizer and interaction rows now explain spread that used to count as noise.
+
+<div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_two_factors.json"></div>
+
+As an example in real data, consider sodium and chloride in four of the aquifers:
 
 ```{r}
 nacl <- hawaii_aquifers %>%
@@ -174,7 +221,7 @@ nacl_model %>%
   anovaTest()
 ```
 
-The `*` in the formula asks for both factors and their interaction. The output has one row for each, and the budget still balances: the 76 measurements pay 1 for the overall average, 1 for analyte (two levels), 3 for aquifer (four levels) and 1 × 3 = 3 for the interaction, which leaves 68 for the residuals. Analyte matters (chloride is more abundant than sodium overall), aquifer matters, and the interaction row asks whether the gap between chloride and sodium is the same in every aquifer. Here its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
+The `*` in the formula asks for both factors and their interaction. The table has one row for each, then the noise and the total, and the free values still follow the rules: the 76 measurements leave 75 once the grand mean is spoken for, analyte (two levels) takes 1, aquifer (four levels) takes 3, the interaction takes 1 × 3 = 3, and the noise keeps the remaining 68. Analyte explains about 11% of the variation (chloride is more abundant than sodium overall) and aquifer about 33%. The interaction row asks whether the gap between chloride and sodium is the same in every aquifer. It explains about 6% of the variation, and its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.
 
 ```{r, fig.cap = "Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.", fig.width = 6, fig.height = 4}
 nacl %>%
@@ -186,7 +233,7 @@ nacl %>%
     theme_bw()
 ```
 
-The interaction row is not "the two factors together". It measures only the extra variation explained by letting the effect of one factor differ across the levels of the other, on top of a model that already has both factors. Most of the explaining is usually done by the factors themselves, so the interaction row is often the smallest, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
+The interaction row is not "the two factors together". It holds only the extra spread explained by letting the effect of one factor differ across the levels of the other, on top of what the two factors explain on their own. Most of the explaining is usually done by the factors themselves, so the interaction row often has the smallest share, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
 
 #### concept check {-}
 
@@ -214,7 +261,7 @@ nacl_model %>%
 
 The same model-then-table approach covers several designs that come up in laboratory work. They are named here so they can be recognized; each has its own literature.
 
-- **Blocking.** Samples run on different days, plates or instrument batches can shift by batch alone. A **block** is a factor that is not of interest but adds variation; including it, as in `response ~ treatment + batch`, removes that variation from the residuals and makes the factor of interest easier to detect.
+- **Blocking.** Samples run on different days, plates or instrument batches can shift by batch alone. A **block** is a factor that is not of interest but adds variation; including it, as in `response ~ treatment + batch`, moves that variation out of the noise and makes the factor of interest easier to detect.
 - **Adjusting for a covariate (ANCOVA).** When groups also differ in a numeric variable that affects the response, such as plant size, adding it to the formula, `response ~ treatment + plant_size`, compares the groups at the same value of the covariate. With `*` instead of `+`, the model gives each group its own slope, which is the comparing-slopes analysis from the regression chapter.
 - **Repeated measures.** When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. These designs need a mixed model, which tracks which measurements belong to which subject.
 - **Many responses at once.** MANOVA extends ANOVA to several responses measured on each sample but assumes they are jointly normal, which large chemical profiles rarely are. PERMANOVA works from a distance matrix, as built in the distances and scaling chapter, and gets its p-value by shuffling the group labels, so it is the usual choice for metabolomics and community profiles.
@@ -230,28 +277,8 @@ The same model-then-table approach covers several designs that come up in labora
 
 <hr>
 
-## checking the model {-}
-
-An ANOVA makes the same assumptions as the linear models in the regression chapter: the residuals (each measurement's distance from its group mean) should be roughly normal and have similar spread across groups, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
-
-```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset."}
-check_model(K_model$model)
-```
-
-Unequal spreads matter most to the ANOVA's F, which compares every term with one pooled estimate of the leftover scatter. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
-
-#### concept check {-}
-
-<div class="selfcheck" data-answer="2" data-explain="The homogeneity-of-variance panel plots residuals against fitted values. If the stripes for some groups are much taller than for others, the groups have different spreads, which breaks the ANOVA's assumption that one pooled estimate of the leftover spread fits every group.">
-<p class="scq">Self-check: in the residuals-against-fitted-values panel, some aquifers' stripes are far taller than others. Which assumption does that call into question?</p>
-<label><input type="radio"> That the measurements are independent</label>
-<label><input type="radio"> That the factor has an effect</label>
-<label><input type="radio"> That every group has a similar spread</label>
-</div>
-
-<hr>
-
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=1"; mountAll();</script>
 
 []{#anova-summary}
 
@@ -259,15 +286,15 @@ Unequal spreads matter most to the ANOVA's F, which compares every term with one
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.summary-pdf target="_blank"}
 
-An ANOVA splits the variation in a response into the part each term explains and the part left over. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table with the degrees-of-freedom budget in mind:** each measurement adds one unit, a factor with *k* groups costs *k* − 1, an interaction costs the product of its terms' costs, and the rest goes to the residuals. F is each term's variation per unit spent over the residual variation per unit, so it is evidence that a term matters; `ges` is how much it matters. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: residuals roughly normal with similar spread, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
+An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table row by row:** each row's free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with *k* groups keeps *k* − 1, an interaction multiplies its terms', and the noise gets the rest). A row's variance is its sum of squares per free value, F is that variance over the noise variance, so it is evidence that a term matters, and `share` is how much: the row's share of the variation explained, with every row's share adding up to 1. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
 | `buildModel(formula = )` | fitting the model the ANOVA is read from | `response ~ factor`, or `response ~ factor_1 * factor_2` for an interaction, with `model_type = "linear_regression"` |
-| `anovaTest()` | the ANOVA table: one row per term, with `DFn`, `DFd`, `F`, `p` and `ges` | piped after the model |
+| `anovaTest()` | the ANOVA table: a row per term, then noise and total, with `sum_of_squares`, `free_values`, `variance`, `F`, `p` and `share` | piped after the model |
 | `gamesHowellTest()`, `pGroups()` | which groups differ, as letters, using each group's own spread | piped after the same one-factor model |
 | `kruskalTest(abundance ~ aquifer_code)` | rank-based test of any difference, one factor | on the data, followed by `dunnTest()` |
-| `check_model()` | diagnostic panels for the residuals | given `model$model` |
+| `check_model()` | diagnostic panels for the noise (residuals) | given `model$model` |
 
 <hr>
 

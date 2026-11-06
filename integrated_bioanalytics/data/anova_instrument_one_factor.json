@@ -1,0 +1,168 @@
+{
+ "response": "height_cm",
+ "unit": "cm",
+ "rows": [
+  {
+   "y": 30,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "y": 34,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "y": 33,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "y": 36,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "y": 32,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "y": 36,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 39,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 35,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 41,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 37,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 44,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "y": 47,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "y": 42,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "y": 46,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "y": 45,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "y": 55,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 58,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 52,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 56,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 57,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 38,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "y": 41,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "y": 36,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "y": 40,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "y": 39,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "y": 40,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 43,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 39,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 42,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "y": 41,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  }
+ ],
+ "title": "One factor: species",
+ "factors": [
+  {
+   "key": "species",
+   "label": "Species",
+   "levelLabels": {
+    "species_A": "A",
+    "species_B": "B",
+    "species_C": "C"
+   }
+  }
+ ]
+}

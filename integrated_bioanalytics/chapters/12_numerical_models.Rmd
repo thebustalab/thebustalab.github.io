@@ -1,16 +1,24 @@
 <!-- start regression models -->
 
-# regression models {-}
+# regression models {#regression-models -}
+
+::: {.chapter-card}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-Regression modeling uses the concept of a fitted linear equation relating a response variable to one or more predictor variables to describe the relationships in a dataset and to predict response values for new samples, using single or multiple linear regression, comparing slopes between groups of samples, and checking the fit through the residuals and the correlation among predictors. This analysis can be used to answer questions such as "By how much does the response change per unit increase in this predictor?", "What concentration does this calibration curve predict for a sample with this detector signal?", "Which predictors have coefficients significantly different from zero?", or "Does the response rise with this predictor at the same rate in every group?"
+<div class="cc-title-slot"></div>
 
-<hr>
+**Does one measurement rise or fall with another, and by how much?** Which of several predictors matters most, and does the response rise at the same rate in every group? What value should we expect for a sample whose response was never measured? Regression models answer both kinds of question, those about relationships and those about prediction. Both run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models with one predictor and with several, reads what they say about the data, compares slopes between groups, uses a fitted line to predict values for new samples, and checks whether a model can be trusted. The machine learning models chapter builds on the same steps with more flexible models.
 
-A regression model predicts a number from one or more measured predictors, and it answers two kinds of question. The first is about a relationship: does one measurement rise or fall with another, by how much, and which of several predictors matters most? The second is about prediction: what value should we expect for a sample whose response was never measured, such as a metabolite in a new patient's blood? Both questions run through analytical chemistry, from the calibration curve that turns a detector signal into a concentration to studies asking which metabolites track a disease. This chapter fits straight-line models, reads what they say about the relationships in the data, uses them to predict values for samples that were never part of the fit, and checks whether a model can be trusted. The machine learning chapter builds on the same functions with more flexible models.
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#regression-models-summary){.cc-btn .ghost}
+
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
+```
+
+:::
 
 <link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
 <script>
@@ -19,7 +27,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","perfor
 
 ## model use {-}
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses.
+A numerical model has two main uses: inferential and predictive.
 
 - Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
@@ -137,7 +145,7 @@ We can calculate the sum of the squared residuals:
 sum((predictions_from_basic_linear_model$Valine - predictions_from_basic_linear_model$predicted_Valine)^2)
 ```
 
-Let's call that the "residual sum of the squares". Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
+Let's call that the "residual sum of the squares". It is the **noise**: the spread the model leaves unexplained. Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
@@ -145,7 +153,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(Valine)))
 ```
 
-A pretty bad model. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
+The flat line ignores iso-Leucine, so it misses the rise in Valine that the points show. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
 
 ```{r, fig.width = 6, fig.height = 4, fig.cap = "Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data."}
 ggplot(metabolomics_data) +
@@ -170,7 +178,7 @@ total_sum_of_squares <- sum(
 
 That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". The R squared value can be thought of as:
 
-- The amount of variance in the response variable explained by the predictor variable.
+- The share of the variation in the response explained by the predictor, with the noise holding the rest (the analysis of variance chapter splits that share among several predictors).
 - How much better the line of best fit describes the data than the flat line.
 
 Now, let's put it all together and make it pretty:
@@ -548,46 +556,53 @@ check_model(multiple_regression_model$____)</textarea></div>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
 
-<hr>
+[]{#regression-models-summary}
 
 ## chapter summary {-}
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf){.summary-pdf target="_blank"}
 
-::: {.summary-top}
-
-```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps."}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png', dpi = NA)
-```
-
-Building a regression model starts with determining what the model will be used for. An **inferential** use reads the model's inner workings (the coefficients, their p-values, and r-squared) to describe how the response relates to the predictors. A **predictive** use applies the model to a table whose response was never measured. Three decisions follow. **How many predictors:** more predictors can explain more of the variation in the response, which r-squared shows. **Whether to scale:** scale the predictors before ranking them by the size of their coefficients, but predict with the model built on the data as measured. **Whether to trust it:** check the residuals, the predictors, and any influential points with `check_model()`.
-
-:::
+Building a regression model starts with what it is for. An **inferential** use reads the coefficients, their p-values and r-squared to describe how the response relates to the predictors; a **predictive** use applies the model to a table whose response was never measured. Four decisions follow. **How many predictors:** more can explain more of the variation, as r-squared shows. **Whether to scale:** scale the predictors before ranking their coefficients by size, but predict with the model built on the data as measured. **Whether slopes differ between groups:** join the predictor and the group with `*`, not `+` (one shared slope), then compare the slopes with `tukeyTest(slopes_of = )`. **Whether to trust it:** check the residuals, the predictors and any influential points with `check_model()`.
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
 | `Hmisc::impute()` | filling in missing values, because `buildModel()` stops on any | the fill value (here each column's median) |
-| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (the predictors, one column or several), `output_variable` (the response); or instead a `formula`, `response ~ predictor * group` |
+| `buildModel()` | fitting a model | `data`, `model_type = "linear_regression"`, `input_variables` (one or more predictors), `output_variable` (the response); or a `formula`, `response ~ predictor * group` |
 | `$model`, `$metrics` | the fitted model, and a table of its r-squared, coefficients and p-values | `filter(type == "coefficient")`, `filter(type == "statistic")`, `filter(variable == "r_squared")` |
 | `predictWithModel()` | predictions for any table with the same predictor columns, returned as that table with a new `predicted_<response>` column | `data`, and `model` (the whole `buildModel()` output) |
-| `mutate(across(c(...), scale))` | putting predictors on a mean of zero and a standard deviation of one before comparing coefficients | which predictors to scale |
+| `mutate(across(c(...), scale))` | giving predictors a mean of 0 and a standard deviation of 1 before comparing coefficients | which predictors to scale |
 | `arrange(desc(abs(value)))` | ranking coefficients by size | drop the intercept first with `variable != "(Intercept)"` |
-| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ, given a model built with a `*` formula; letters plus each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
-| `check_model()` | diagnostic panels: posterior predictive check, linearity, homogeneity of variance, normality of residuals, collinearity, influential observations | given `model$model` |
+| `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ in a model built with `*`; letters and each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
+| `check_model()` | diagnostic panels: posterior predictive check, linearity, equal variance, normal residuals, collinearity, influential points | given `model$model` |
 
-<!-- ## exercises {-}
+<!-- PARKED until both regression rooms are status "ready" in their scenario.json (each is "in_development"): a live card publishes its Canvas assignment. To go live, delete this line and the closing line under the chunk.
 
-To practice creating models, try the following:
+<hr>
 
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca" contains the Dimension 1 coordinate "Dim_1" for each sample, as well as the abundance of each analyte in that sample.
+## exercises {-}
 
-2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim_1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
-
-3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
-
-4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` dataset and diagnose each patient in `metabolomics_unknown`.
-
-5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
+```{r echo=FALSE, results='asis', eval=identical(knitr:::pandoc_to(), 'html')}
+cat('
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/cover.png" alt="The Water Master cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/diamonds/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Water Master</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Regression &middot; slopes, predicting with a model + ranking scaled predictors</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the new water master of a diamond town on the desert plateau, and the season&rsquo;s first string of gravel barges waits at the foot of the lock flight. Work them up to the reservoir before the evening fog closes in, and decide along the way which newly surveyed gravel pits are worth mining.</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/cover.png" alt="Dunes cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Dunes</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Regression &middot; slopes, predicting with a model + ranking scaled predictors</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">It is October 1928, the diamond town&rsquo;s water runs out in December, and the last wagon train is leaving across the desert. Win a rope, sled down the dunes to the tidal flats, and find out whether the town was right to give up on its stranded water steamer.</div>
+</div>
+</div>
+</div>
+')
+```
 
 -->
 
