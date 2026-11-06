@@ -212,9 +212,25 @@ def build_packet(pandoc):
     return out
 
 
+def sheet_inputs(f):
+    """The chapter plus every image its sheet prints: the summary's own include_graphics() images and the
+    chapter-opening flowchart the sheet leads with. A redrawn flowchart with an unchanged chapter must
+    still rebuild the sheet (test_build_summary_sheets.py)."""
+    rmd = open(f, encoding="utf-8").read()
+    names = set(re.findall(r"images/([A-Za-z0-9._-]+)", summary_section(rmd) or ""))
+    flow = re.search(r"images/([A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*)", rmd)
+    if flow:
+        names.add(flow.group(1))
+    return [f] + [p for p in (os.path.join(IMAGES, n) for n in sorted(names)) if os.path.exists(p)]
+
+
+def newest_input(f):
+    return max(os.path.getmtime(p) for p in sheet_inputs(f))
+
+
 def packet_stale():
     out = os.path.join(HERE, PACKET)
-    return not os.path.exists(out) or any(os.path.getmtime(out) < os.path.getmtime(f) for f in reading_order())
+    return not os.path.exists(out) or any(os.path.getmtime(out) < newest_input(f) for f in reading_order())
 
 
 def pdf_for(f):
@@ -222,7 +238,7 @@ def pdf_for(f):
 
 
 def is_stale(f):
-    return not os.path.exists(pdf_for(f)) or os.path.getmtime(pdf_for(f)) < os.path.getmtime(f)
+    return not os.path.exists(pdf_for(f)) or os.path.getmtime(pdf_for(f)) < newest_input(f)
 
 
 def main():
