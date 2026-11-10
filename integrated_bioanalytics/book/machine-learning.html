@@ -117,7 +117,7 @@
 <div id="why-hold-data-back" class="section level2 unnumbered">
 <h2>why hold data back<a class="anchor" aria-label="anchor" href="#why-hold-data-back"><i class="fas fa-link"></i></a>
 </h2>
-<p>Increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’, which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
+<p>Increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’, which means that the model is capturing noise and random fluctuations in the training data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
 <p>To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.</p>
 <p>The examples below use <code>metabolomics_data</code> with its missing values filled in by the median of each column, as in the regression chapter:</p>
 <div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
@@ -126,11 +126,11 @@
 <div id="random-forests" class="section level2 unnumbered">
 <h2>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
 </h2>
-<p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of predictors are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree’s output, or minimizing mean squared error for regression tasks, guiding the construction of a reliable ensemble model. The forest’s final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).</p>
-<p>We can use the <code>buildModel()</code> function to make a random forest model. We need to specify data, a model type, the predictors and the response (<code>input_variables</code> and <code>output_variable</code>), and in the case of a random forest model, we also need to provide a list of tuning parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code>. Here is more information on those parameters:</p>
+<p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of predictors are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing the purity of the groups a split makes (for classification), or minimizing mean squared error (for regression), guiding the construction of a reliable ensemble model. The forest’s final prediction is derived either through averaging the trees’ predictions (for regression) or a majority vote (for classification).</p>
+<p>We can use the <code>buildModel()</code> function to make a random forest model. We need to specify data, a model type, the <code>predictors</code> and the <code>response</code>, and in the case of a random forest model, we also need to provide a list of tuning parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code>. Here is more information on those parameters:</p>
 <ul>
-<li><p><code>n_vars_tried_at_split</code> (often called “mtry” in other packages): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more reliable and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of <code>n_vars_tried_at_split</code> increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.</p></li>
-<li><p><code>n_trees</code> (often referred to as “num.trees” or “n_estimators” in other packages): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model’s performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.</p></li>
+<li><p><code>n_vars_tried_at_split</code> (often called “mtry” in other packages): this parameter specifies the number of predictors that are randomly sampled as candidates at each split point in the construction of a tree. The main idea behind selecting a subset of the predictors is to introduce randomness into the model, which helps in making the model more reliable and less likely to overfit to the training data. By trying out different numbers of predictors, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of <code>n_vars_tried_at_split</code> increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.</p></li>
+<li><p><code>n_trees</code> (often referred to as “num.trees” or “n_estimators” in other packages): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the response from the predictors it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model’s performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.</p></li>
 <li><p><code>min_leaf_size</code> (often referred to as “min_n” in other packages): this parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. Careful tuning of this parameter strikes a balance between the model’s ability to capture the underlying patterns in the data and its generalization to unseen data.</p></li>
 </ul>
 <p><code>buildModel()</code> explores a number of settings for these parameters, then selects the combination with the highest predictive accuracy. In this function:</p>
@@ -140,9 +140,9 @@
 <li>
 <code>model_type</code> defines the type of model to build, with “random_forest_regression” indicating a random forest model for regression tasks.</li>
 <li>
-<code>input_variables</code> selects the features or predictors for the model, here using columns 3 to 32 from <code>metabolomics_data</code> as predictors.</li>
+<code>predictors</code> selects the predictors for the model, here columns 3 to 32 of <code>metabolomics_data</code>.</li>
 <li>
-<code>output_variable</code> is the target variable for prediction, in this case, “Valine”.</li>
+<code>response</code> is the variable the model predicts, in this case, “Valine”.</li>
 </ul>
 <p>The <code>optimization_parameters</code> argument takes a list to define the grid of parameter values to try: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_leaf_size</code>. The <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code> function generates sequences of numbers and is used here to create ranges for each parameter:</p>
 <ul>
@@ -158,8 +158,8 @@
 <code class="sourceCode R"><span><span class="va">random_forest_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>    model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
-<span>    input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
-<span>    output_variable <span class="op">=</span> <span class="st">"Valine"</span>,</span>
+<span>    predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
+<span>    response <span class="op">=</span> <span class="st">"Valine"</span>,</span>
 <span>    optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>      n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">20</span>,<span class="fl">5</span><span class="op">)</span>,</span>
 <span>      n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span>,<span class="fl">10</span><span class="op">)</span>,</span>
@@ -168,10 +168,10 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">random_forest_model</span><span class="op">)</span></span>
-<span><span class="co">## [1] "model_type"      "output_variable" "metrics"        </span></span>
-<span><span class="co">## [4] "model"</span></span></code></pre></div>
+<span><span class="co">## [1] "model_type" "response"   "predictors" "metrics"   </span></span>
+<span><span class="co">## [5] "model"</span></span></code></pre></div>
 <p>The above code builds our random forest model. Its output provides both the model itself and key components indicating the performance and configuration of the model. Here’s a breakdown of each part of the output:</p>
-<p><code>$model_type</code> tells us what type of model this is, and <code>$output_variable</code> names the variable the model predicts.</p>
+<p><code>$model_type</code> tells us what type of model this is, <code>$response</code> names the response the model predicts, and <code>$predictors</code> lists the predictors it was built from.</p>
 <p><code>$model</code> shows the configuration of the best random forest model that was created.</p>
 <p><code>$metrics</code> provides detailed results of model performance across the different combinations of the random forest parameters. For each combination, it shows:</p>
 <ul>
@@ -199,8 +199,8 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-599"></span>
-<img src="index_files/figure-html/unnamed-chunk-599-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-601"></span>
+<img src="index_files/figure-html/unnamed-chunk-601-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%"><p class="caption">
 Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.
 </p>
 </div>
@@ -219,8 +219,8 @@ Prediction error of random forest models for valine across the parameter grid. T
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">predicted_Valine</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-600"></span>
-<img src="index_files/figure-html/unnamed-chunk-600-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-602"></span>
+<img src="index_files/figure-html/unnamed-chunk-602-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%"><p class="caption">
 Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest’s predictions as a maroon line. Each point is one patient. Data: metabolomics_data.
 </p>
 </div>
@@ -232,8 +232,8 @@ Valine abundance predicted by the best random forest model. Scatter plot of meas
 <span><span class="va">rfc</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">34</span>, <span class="fl">41</span><span class="op">:</span><span class="fl">93</span><span class="op">)</span>,<span class="op">]</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">75</span><span class="op">]</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"patient_status"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">75</span><span class="op">]</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"patient_status"</span>,</span>
 <span>  optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>    n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">50</span>,<span class="fl">5</span><span class="op">)</span>,</span>
 <span>    n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">100</span>,<span class="fl">10</span><span class="op">)</span>,</span>
@@ -267,8 +267,8 @@ Valine abundance predicted by the best random forest model. Scatter plot of meas
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-602"></span>
-<img src="index_files/figure-html/unnamed-chunk-602-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-604"></span>
+<img src="index_files/figure-html/unnamed-chunk-604-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%"><p class="caption">
 Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.
 </p>
 </div>
@@ -297,7 +297,7 @@ Accuracy of random forest classifiers for patient status across the parameter gr
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-11"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12c_machine_learning.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A <strong>random forest</strong> builds many decision trees, each from a random subset of the data and trying a random subset of the inputs at each split, then averages their outputs (regression) or takes a majority vote (classification). The kind of output decides the <code>model_type</code>. <code>buildModel()</code> tries every combination of settings in the <code>optimization_parameters</code> grid and reports each one’s cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. <code>predictWithModel()</code> then applies the best model to new samples.</p>
+<p>Flexible models are judged by how well they predict data they have not seen, because a model that is too complex fits the noise in its training data. A <strong>random forest</strong> builds many decision trees, each from a random subset of the data and trying a random subset of the predictors at each split, then averages their predictions (regression) or takes a majority vote (classification). The kind of response decides the <code>model_type</code>. <code>buildModel()</code> tries every combination of settings in the <code>optimization_parameters</code> grid and reports each one’s cross-validated metric: RMSE for regression, where lower is better, and accuracy for classification, where higher is better. <code>predictWithModel()</code> then applies the best model to new samples.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -313,21 +313,21 @@ Accuracy of random forest classifiers for patient status across the parameter gr
 <tr class="odd">
 <td><code>model_type = "random_forest_regression"</code></td>
 <td>a forest that predicts a number, such as Valine abundance</td>
-<td>used with a numeric <code>output_variable</code>
+<td>used with a numeric <code>response</code>
 </td>
 </tr>
 <tr class="even">
 <td><code>model_type = "random_forest_classification"</code></td>
 <td>a forest that predicts a category, such as <code>patient_status</code>
 </td>
-<td>used with a categorical <code>output_variable</code>
+<td>used with a categorical <code>response</code>
 </td>
 </tr>
 <tr class="odd">
 <td><code>buildModel()</code></td>
 <td>building and tuning the forest</td>
 <td>
-<code>data</code>, <code>model_type</code>, <code>input_variables</code>, <code>output_variable</code>, <code>optimization_parameters</code>
+<code>data</code>, <code>model_type</code>, <code>predictors</code>, <code>response</code>, <code>optimization_parameters</code>
 </td>
 </tr>
 <tr class="even">
@@ -337,7 +337,7 @@ Accuracy of random forest classifiers for patient status across the parameter gr
 </tr>
 <tr class="odd">
 <td><code>n_vars_tried_at_split</code></td>
-<td>how many inputs are candidates at each split</td>
+<td>how many predictors are candidates at each split</td>
 <td>smaller values make the forest more random</td>
 </tr>
 <tr class="even">
@@ -359,7 +359,7 @@ Accuracy of random forest classifiers for patient status across the parameter gr
 </tr>
 <tr class="odd">
 <td><code>predictWithModel()</code></td>
-<td>predictions for samples the model was not built on, returned as the input table with <code>predicted_&lt;output&gt;</code> (regression) or <code>probability_</code> and <code>predicted_class</code> columns (classification) added</td>
+<td>predictions for samples the model was not built on, returned as the same table with <code>predicted_&lt;response&gt;</code> (regression) or <code>probability_</code> and <code>predicted_class</code> columns (classification) added</td>
 <td>
 <code>data</code>, and <code>model</code> (the whole <code>buildModel()</code> output)</td>
 </tr>
@@ -410,7 +410,7 @@ Accuracy of random forest classifiers for patient status across the parameter gr
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

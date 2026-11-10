@@ -113,7 +113,7 @@
 <p>Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, correlation, cosine, or a metric suited to abundance, presence and absence, or mixed data) to convert a table of samples and variables into a distance matrix holding one value for every pair of samples, with scaling determining how much each variable contributes to those values. This analysis can be used to answer questions such as “Under the chosen metric, which sample in this reference set is closest to the unknown?” or “Does scaling the variables change which pairs of samples are closest?”</p>
 <hr>
 <p>Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a <strong>distance matrix</strong>: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. <strong>Scaling decides which variables count. The distance metric decides what “similar” means.</strong> Neither choice has a single right answer, but both change the result, so both should be made on purpose.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "wood_smoke", url: "/phylochemistry/sample_data/wood_smoke_data.csv" }, { name: "hops_components", url: "/phylochemistry/sample_data/hops_components.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- alaska_lake_data %>% select(-element_type) %>% pivot_wider(names_from = 'element', values_from = 'mg_per_L'); wood_smoke_wide <- wood_smoke %>% select(wood_type, species, compound, abundance_mg_g) %>% pivot_wider(names_from = 'compound', values_from = 'abundance_mg_g')" };
 </script><div id="distance-matrices" class="section level2 unnumbered">
@@ -779,7 +779,7 @@ Self-check: how does Gower distance score a categorical variable such as country
 <label><input type="radio"> It ignores categorical variables</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><hr>
 </div>
 </div>
 </div>
@@ -915,7 +915,7 @@ Escape-room cards go here once this chapter has rooms.
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

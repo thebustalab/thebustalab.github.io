@@ -25,7 +25,7 @@ find_defs <- function(e, wanted, found = list()) {
     }
     found
 }
-wanted <- c("buildModel", "predictWithModel", "tukeyTest", "anovaTest", "pGroups", "gamesHowellTest", "pairwiseTTest")
+wanted <- c("buildModel", "buildModel2", "predictWithModel", "tukeyTest", "anovaTest", "pGroups", "gamesHowellTest", "pairwiseTTest")
 defs <- find_defs(parse("phylochemistry.R"), wanted)
 for (d in defs) eval(d, envir = globalenv())
 stopifnot(exists("buildModel"), exists("predictWithModel"))
@@ -48,11 +48,13 @@ d$rep <- NULL
 ## ===================================================================================================
 cat("Phase 1: buildModel(formula =)\n")
 
-## variable-list path keeps its four parts and its numbers
+## variable-list path: its parts (response, predictors; no old output_variable part) and its numbers
 m_old <- buildModel(data = d[, c("x", "y")], model_type = "linear_regression",
-                    input_variables = "x", output_variable = "y")
-check(identical(names(m_old), c("model_type", "output_variable", "model", "metrics")),
-      "variable-list result still has exactly four parts")
+                    predictors = "x", response = "y")
+check(identical(names(m_old), c("model_type", "response", "predictors", "model", "metrics")),
+      "variable-list result has exactly its six parts")
+check(m_old$response == "y" && identical(m_old$predictors, "x") && is.null(m_old$output_variable),
+      "response and predictors are stored; no output_variable part (old objects still predict via the fallback)")
 check(isTRUE(all.equal(m_old$metrics$value[m_old$metrics$variable == "x"],
                        unname(coef(lm(y ~ x, d))["x"]))),
       "variable-list slope equals lm()'s, at full precision")
@@ -63,7 +65,7 @@ check(all(m_old$metrics$std_err[m_old$metrics$type == "coefficient"] ==
 ## formula path with an interaction: per-group slopes equal separate per-group fits
 m <- buildModel(data = d, formula = y ~ x * grp)
 check(m$model_type == "linear_regression", "formula alone defaults to linear regression")
-check(m$output_variable == "y", "output variable read from the formula")
+check(m$response == "y" && identical(m$predictors, c("x", "grp")), "response and predictors read from the formula")
 check(is.factor(m$data$grp) && identical(levels(m$data$grp), c("A", "B-2", "C")),
       "text group column stored as a factor")
 check(inherits(m$formula, "formula"), "formula stored on the result")
@@ -106,12 +108,43 @@ check(isTRUE(all.equal(tukeyTest(mn, slopes_of = "iso-Leucine")$p.adj, tukeyTest
 check(grepl("not a calculation", err_of(buildModel(data = d, formula = log(y) ~ x))),
       "a calculated response is refused (it would mislabel predictions)")
 check(grepl("dot", err_of(buildModel(data = d, formula = y ~ .))), "a dot formula is refused")
+check(grepl("not both", err_of(buildModel(data = d, formula = y ~ x, predictors = "x"))),
+      "formula plus predictors is refused")
 check(grepl("not both", err_of(buildModel(data = d, formula = y ~ x, input_variables = "x"))),
-      "formula plus input_variables is refused")
+      "formula plus the old input_variables is refused too")
 check(grepl("linear_regression", err_of(buildModel(data = d, model_type = "random_forest_regression", formula = y ~ x))),
       "formula with a forest is refused")
 check(grepl("not present", err_of(buildModel(data = d, formula = y ~ nope))),
       "a missing formula column is named")
+
+## predictors / response replaced input_variables / output_variable (2026-11-07); the old names are silent aliases
+cat("Aliases: input_variables / output_variable\n")
+m_new_lin <- buildModel(data = d, model_type = "linear_regression", predictors = c("x", "grp"), response = "y")
+m_alias_lin <- buildModel(data = d, model_type = "linear_regression", input_variables = c("x", "grp"), output_variable = "y")
+check(identical(coef(m_new_lin$model), coef(m_alias_lin$model)) && identical(m_new_lin$metrics, m_alias_lin$metrics),
+      "old names give an identical linear fit")
+check(m_alias_lin$response == "y" && identical(m_alias_lin$predictors, c("x", "grp")),
+      "old names fill $response and $predictors")
+check(identical(buildModel(d, "linear_regression", c("x", "grp"), "y")$metrics, m_new_lin$metrics),
+      "positional call (data, model_type, predictors, response) works")
+d_lg <- d; d_lg$high <- ifelse(d_lg$y > median(d_lg$y), "yes", "no")
+m_new_lg <- suppressWarnings(buildModel(data = d_lg, model_type = "logistic_regression", predictors = "x", response = "high"))
+m_alias_lg <- suppressWarnings(buildModel(data = d_lg, model_type = "logistic_regression", input_variables = "x", output_variable = "high"))
+check(identical(coef(m_new_lg$model), coef(m_alias_lg$model)), "old names give an identical logistic fit")
+check(identical(predictWithModel(data = d_lg, model = m_new_lg), predictWithModel(data = d_lg, model = m_alias_lg)),
+      "old-name logistic model predicts identically")
+check(grepl("only once", err_of(buildModel(data = d, model_type = "linear_regression", predictors = "x", input_variables = "x", response = "y"))),
+      "predictors and input_variables both given: plain error")
+check(grepl("only once", err_of(buildModel(data = d, model_type = "linear_regression", predictors = "x", response = "y", output_variable = "y"))),
+      "response and output_variable both given: plain error")
+old_shape <- list(model_type = m_new_lin$model_type, output_variable = m_new_lin$response,
+                  model = m_new_lin$model, metrics = m_new_lin$metrics)   # what buildModel returned before 2026-11-07
+check(identical(names(old_shape), c("model_type", "output_variable", "model", "metrics")), "old-shaped object built (only $output_variable)")
+check(identical(predictWithModel(data = d, model = old_shape), predictWithModel(data = d, model = m_new_lin)) &&
+      "predicted_y" %in% names(predictWithModel(data = d, model = old_shape)),
+      "an old-shaped model object (no $response) still predicts, into predicted_y")
+check(identical(buildModel2(d, "linear_regression", c("x", "grp"), "y")$metrics, m_new_lin$metrics),
+      "buildModel2 alias still works")
 
 ## ===================================================================================================
 ## Phase 2: tukeyTest(model) and pGroups()
@@ -163,7 +196,7 @@ check(all(nchar(sp$spaced_group) == 2) && !any(grepl(" ", sp$spaced_group, fixed
 
 ## a bare lm works too, and plain errors
 check(isTRUE(all.equal(tukeyTest(lm(y ~ x * grp, d), slopes_of = "x")$p.adj, tk_s$p.adj)), "bare lm accepted")
-check(grepl("no group", err_of(tukeyTest(buildModel(data = d, formula = y ~ x)))), "no group input: plain error")
+check(grepl("no factor", err_of(tukeyTest(buildModel(data = d, formula = y ~ x)))), "no factor: plain error")
 check(grepl("slopes_of", err_of(tukeyTest(m, slopes_of = "grp"))), "slopes_of must be numeric")
 check(grepl("for a model", err_of(tukeyTest(d, y ~ grp, slopes_of = "x"))), "slopes_of on a data table: plain error")
 check(grepl("already contains", err_of(tukeyTest(m, y ~ grp))), "formula given to a model: plain error")
@@ -192,7 +225,7 @@ check(all(c(gh_data$group1, gh_data$group2) %in% c("A", "B-2", "C-x-1")), "games
 gh_model <- gamesHowellTest(buildModel(data = hy, formula = y ~ g))
 check(isTRUE(all.equal(gh_model$p.adj, gh_data$p.adj)) && identical(gh_model$group1, gh_data$group1), "gamesHowellTest model path = data path")
 check(isTRUE(all.equal(sort(pGroups(gh_model)$estimate), sort(as.numeric(tapply(hy$y, hy$g, mean))))), "gamesHowellTest model path carries group means for pGroups")
-check(grepl("one group input", err_of(gamesHowellTest(m))), "gamesHowellTest on a slope model: plain error pointing to tukeyTest(slopes_of)")
+check(grepl("one predictor, a factor", err_of(gamesHowellTest(m))), "gamesHowellTest on a slope model: plain error pointing to tukeyTest(slopes_of)")
 ## pairwiseTTest is unpooled (Welch per pair) by default since 2026-11-03
 pw2 <- data.frame(g = rep(c("a", "b", "c"), c(4, 4, 4)), y = c(1, 2, 3, 4, 2, 3, 9, 11, 5, 5.5, 6, 6.2))
 pt_course <- pairwiseTTest(pw2, y ~ g)

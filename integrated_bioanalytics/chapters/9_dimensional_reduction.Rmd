@@ -18,7 +18,7 @@ alaska_lake_data
 
 We can see that this dataset consists of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure.
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')" };
 </script>
@@ -372,7 +372,7 @@ ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
 
 <hr>
 

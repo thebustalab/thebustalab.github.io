@@ -113,7 +113,7 @@
 <p>Data wrangling uses the concept of single-purpose functions, chained together with the pipe, to view, subset, reshape between wide and long formats, summarize by group, order, and add calculated columns to a dataset. This analysis can be used to answer questions such as “What is the mean height of each tree species in this dataset?” or “Which samples have the highest measured concentration of this analyte?”</p>
 <hr>
 <p>Data wrangling refers to the process of organizing, cleaning up, and making a “raw” data set more ready for downstream analysis. It is a key piece of any data analysis process, because data rarely arrive in the shape an analysis needs. Plotting with ggplot calls for a long table with one observation per row, while the clustering and dimensional-reduction methods later in the book want a wide table with one row per sample. Many scientific questions, such as how tall each tree species in New York City grows on average, are also answered not by the raw data but by summaries computed group by group. The verbs in this chapter return throughout the rest of the book, from counting the connections of each node in a network to summarizing the members of each cluster, and grouping and summarizing is the core move in this chapter’s escape rooms. Here we will look at a few different aspects of wrangling, starting with how to look at a data set, then subsetting, pivoting, and summarizing data. (Getting an <em>outside</em> data set into R in the first place is a setup step rather than a wrangling one, so it lives under “data import” in the installation appendix.)</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "fadb_sample", url: "/phylochemistry/sample_data/fadb_sample.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script><div id="viewing-data" class="section level2 unnumbered">
@@ -700,7 +700,7 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 <label><input type="radio"> mutate() returns one row per group; summarize() keeps every row</label>
 <label><input type="radio"> they are the same; mutate() is just the newer name</label></p>
 </div>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><hr>
 </div>
 </div>
 <div id="chapter-summary-2" class="section level2 unnumbered">
@@ -916,7 +916,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -118,7 +118,7 @@
 <li><p>An <strong>interaction network</strong> is a structure we are given. Here the data are already a list of connections that were observed in the world: journeys taken, messages sent, proteins that bind, and so forth. An edge means “this thing did something to, or with, this other thing”. There is no threshold to choose, because the edges are the observations.</p></li>
 </ul>
 <p>That distinction is worth fixing firmly in mind now, because two networks built from these two different sources can look identical on the page but mean opposite things. A gene co-expression network is a <em>similarity</em> network: an edge says that the expression levels of two genes rise and fall together across the samples measured, which is something computed rather than observed. A protein-protein interaction network is an <em>interaction</em> network: an edge says that two proteins were observed to bind. These two distinct sorts of networks are easy to confuse, since both are drawn as dots and lines and both are about the molecules of the cell. But a well-connected gene in the first is simply a gene whose expression profile is unremarkable, while a well-connected protein in the second may be the most important molecule in the system.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "passenger_flows", url: "/phylochemistry/sample_data/passenger_flows.csv" }, { name: "us_airports", url: "/phylochemistry/sample_data/us_airports.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)})" };
 </script><div id="similarity-networks" class="section level2 unnumbered">
@@ -653,7 +653,7 @@ Self-check: a colleague ranks these airports by passenger volume and proposes pr
 <label><input type="radio"> Passenger volume cannot be calculated from this data set</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><hr>
 </div>
 </div>
 </div>
@@ -812,7 +812,7 @@ A shift on the derelict railway beneath a dye district, and a lichen that used t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

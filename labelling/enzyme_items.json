@@ -988,5 +988,23 @@
     },
     "source_topic": "pks",
     "discovered": "2026-11-03"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_2b5999af5b9b",
+    "title": "The Role of Gly533 and Lys729 Residues in the Catalytic Activity and Friedelin Production of Monteverdia ilicifolia and Populus davidiana Synthases",
+    "authors": "Weslei Bruno Botero; Vinícius Bonatto; Luis F. de Oliveira; Rafael V. C. Guido; Cleslei Fernando Zanelli; Sandro Roberto Valentini; Tatiana M. Souza-Moreira; Maysa Furlan",
+    "journal": "ACS Omega",
+    "year": 2026,
+    "doi": "10.1021/acsomega.6c07069",
+    "link": "https://doi.org/10.1021/acsomega.6c07069",
+    "abstract": "Abstract Friedelin is a pentacyclic triterpene that exhibits a wide range of biological potential and is the precursor of bioactive quinonemethide triterpenes such as celastrol and pristimerin. This compound is synthesized by a specific oxidosqualene cyclase named friedelin synthase (FRS). This enzyme converts 2,3-oxidosqualene through rearrangement steps and promotes the production of a terpene with a ketone group at position C-3. Despite this, the precise mechanism of this oxidation remains unclear, highlighting the need to unveil FRS amino acid residues that are correlated with this specificity, catalytic efficiency, and friedelin production. For this reason, we performed site-directed mutagenesis in key residues and evaluated their production after heterologous expression in S. cerevisiaeusing GC-MS. Using multiple sequence alignment, we selected the residues Lys729, Tyr609, and Gly533 from Monteverdia ilicifolia FRS and correlated residues in Populus davidiana FRS for several mutations. Our results showed that the Lys729 residue is essential for enzyme activity and stability, while Tyr609 is not mandatory for friedelin production. Gly533Ala resulted in a notable improvement in the production of friedelin in MiFRS (3.633 ± 0.203 mg/L) and PdFRS (1.535 ± 0.169 mg/L) in comparison with wild type enzymes. Further molecular dynamics simulations showed that this particular mutation does not change significantly the structure of the enzyme but allows closer and stronger interactions that result in an increase in the amount of product formed by the mutant enzyme. In general, this work improves the understanding of residue interactions and shows a promising outlook for large-scale production of this compound.",
+    "prefill": {
+      "enzyme_name": "MiFRS",
+      "product": "friedelin",
+      "doi": "doi:10.1021/acsomega.6c07069"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-10"
   }
 ]

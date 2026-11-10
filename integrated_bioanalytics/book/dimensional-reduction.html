@@ -132,7 +132,7 @@
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p>We can see that this dataset consists of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- tidyr::pivot_wider(dplyr::select(alaska_lake_data, -element_type), names_from = 'element', values_from = 'mg_per_L')" };
 </script><div id="pca" class="section level2 unnumbered">
@@ -567,7 +567,7 @@ Self-check: the picture changes a little each time the cell runs. What can you s
 <label><input type="radio"> Which analyte drives Dim_1, from the direction of the separation</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><hr>
 </div>
 </div>
 <div id="chapter-summary-7" class="section level2 unnumbered">
@@ -728,7 +728,7 @@ You wake on a starlit beach inside a ring of standing arches, sick from a telepo
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

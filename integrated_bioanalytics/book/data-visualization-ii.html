@@ -112,7 +112,7 @@
 <p>Data visualization II uses the concept of layered plot components to prepare a plot for presentation, adding geoms such as trend lines and heat maps, dividing the data into panels with facets, controlling axes, colors, and non-data elements with scales and themes, and combining multiple plots into one figure with subplots. This chapter’s content can be used to answer questions such as “Does the relationship between these two variables appear the same in each subset of the data?” or “Which samples have high or low values of which variables?”</p>
 <hr>
 <p>In the last chapter we learned the core grammar of ggplot: pick the data, map variables to the axes with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>, and choose one or more geometric objects to represent the data with a <code>geom_*()</code>. That trio is enough to make a quick plot for ourselves, but a figure for a lab report, a poster or a paper has to do more: show the trend through two continuous measurements, lay out a whole table of abundances as a heat map, compare subsets side by side in panels, and read cleanly to someone who has never seen the data. These tools come back in many of the later chapters, wherever a result has to be shown to someone else. In this chapter we will look at (i) more geoms, (ii) how to split a plot into small multiples with facets, (iii) how to adjust the appearance of scales, (iv) control the non-data parts of a plot with themes, and (v) stitch several plots together into one figure. Together these take a plot from one that simply works to one that is genuinely nice to look at.</p>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RColorBrewer","cowplot"], datasets: [{ name: "solvents", url: "/phylochemistry/sample_data/solvents.csv" }, { name: "algae_data", url: "/phylochemistry/sample_data/algae_data.csv" }, { name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(ggrepel); library(RColorBrewer); library(cowplot)})" };
 </script><div id="more-geoms" class="section level2 unnumbered">
@@ -393,7 +393,7 @@ Self-check: what do you pass to <code>plot_grid()</code>?
 <label><input type="radio"> a single geom to add to a plot</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><hr>
 </div>
 </div>
 <div id="chapter-summary-1" class="section level2 unnumbered">
@@ -605,7 +605,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

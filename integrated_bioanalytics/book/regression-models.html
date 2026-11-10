@@ -123,7 +123,7 @@ Choosing what to do with a regression model. This decision flowchart starts from
 </p>
 </div>
 </div>
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","performance","see"], datasets: [{ name: "metabolomics_data", url: "/phylochemistry/sample_data/metabolomics_data.csv" }, { name: "metabolomics_unknown", url: "/phylochemistry/sample_data/metabolomics_unknown.csv" }, { name: "meteorite_fragments", url: "/phylochemistry/sample_data/meteorite_fragments.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr); library(performance)}); metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))" };
 </script><div id="model-use" class="section level2 unnumbered">
@@ -137,8 +137,8 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","Hmisc","perfor
 <p>The straight-line models in this chapter serve both purposes at once: their inner workings are simple enough to read directly, and they can also be used to predict. More flexible models, whose inner workings are harder to read and which are judged mainly on their predictive accuracy, are the subject of the machine learning chapter.</p>
 <p>In this course, we will build models using a function called <code>buildModel()</code>. To use it, we give it our data and tell it which sets of values we want to relate. To do that, we need to specify (at least) two things:</p>
 <ul>
-<li><p><code>input_variables</code>: the <strong>predictors</strong> (also called inputs or features), the variables the model uses to make its prediction. They are the variables that go on the right of a formula and, in a plot, on the x axis (a second predictor is usually shown with color or facets). Depending on the model, these could be continuous or categorical variables.</p></li>
-<li><p><code>output_variable</code>: the <strong>response</strong> (also called the output), the variable that the model should predict. It is the variable that goes on the left of a formula and on the y axis of a plot. Depending on the model, it could be a continuous value (regression) or a category/class (classification).</p></li>
+<li><p><code>predictors</code>: the variables the model uses to make its prediction. They are the variables that go on the right of a formula and, in a plot, on the x axis (a second predictor is usually shown with color or facets). Depending on the model, these could be continuous or categorical variables.</p></li>
+<li><p><code>response</code>: the variable that the model should predict. It is the variable that goes on the left of a formula and on the y axis of a plot. Depending on the model, it could be a continuous value (regression) or a category/class (classification).</p></li>
 </ul>
 <p>For model building, we also need to handle missing data. <code>buildModel()</code> stops if the data contain any missing values, so one way forward is to impute them, which means filling in each missing value with something. There are many ways to do this; here we use the median value of each column, with the <code>impute()</code> function from the <code>Hmisc</code> package:</p>
 <div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
@@ -180,13 +180,13 @@ Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="st">"iso-Leucine"</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span>  predictors <span class="op">=</span> <span class="st">"iso-Leucine"</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">basic_regression_model</span><span class="op">)</span></span>
-<span><span class="co">## [1] "model_type"      "output_variable" "model"          </span></span>
-<span><span class="co">## [4] "metrics"</span></span></code></pre></div>
-<p>The output of <code>buildModel()</code> consists of four things: the model_type, the name of the response (output) variable, the model itself, and the metrics describing the model and its performance. Let’s look at the model:</p>
+<span><span class="co">## [1] "model_type" "response"   "predictors" "model"     </span></span>
+<span><span class="co">## [5] "metrics"</span></span></code></pre></div>
+<p>The output of <code>buildModel()</code> holds the model_type, the names of the response and the predictors, the model itself, and the metrics describing the model and its performance. Let’s look at the model:</p>
 <div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">model</span></span>
 <span><span class="co">## </span></span>
@@ -276,7 +276,7 @@ Residuals of the linear model of valine on iso-leucine. Scatter plot of measured
 <div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">Valine</span> <span class="op">-</span> <span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">predicted_Valine</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">## [1] 1.285459</span></span></code></pre></div>
-<p>Let’s call that the “residual sum of the squares”. It is the <strong>noise</strong>: the spread the model leaves unexplained. Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let’s compare it to a super simple model that is just defined by the mean y value of the input data.</p>
+<p>Let’s call that the “residual sum of the squares”. It is the <strong>noise</strong>: the spread the model leaves unexplained. Does that mean our model is good? On its own, the number cannot tell us; it has to be compared to something. Let’s compare it to a super simple model that is just defined by the mean of the response in the data.</p>
 <div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`iso-Leucine`</span>, y <span class="op">=</span> <span class="va">Valine</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -354,8 +354,8 @@ A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of
 <textarea class="webr-code">basic_regression_model &lt;- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = "iso-Leucine",
-  output_variable = "____"
+  predictors = "iso-Leucine",
+  response = "____"
 )
 
 basic_regression_model$metrics %&gt;%
@@ -485,11 +485,11 @@ Self-check: which of the seven new patients does the model predict to have the h
 </h2>
 <p>Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor. (Other texts call the predictors independent or explanatory variables, and the response the dependent variable.) Simple linear regression uses one predictor to predict the value of the response, using a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more predictors, with a typical form of y = m1x1 + m2x2 + … + b. While simple linear regression describes a straight-line relationship between one predictor and the response, multiple linear regression fits a multi-dimensional plane in the variable space, providing a more nuanced picture of how the predictors together influence the response. It can give more accurate predictions, though it also requires more careful consideration of assumptions and of correlations among the predictors themselves. Let’s try it with the first 30 metabolites in our data set:</p>
 <div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multiple_input_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">multiple_predictor_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"statistic"</span><span class="op">)</span></span>
@@ -501,7 +501,7 @@ Self-check: which of the seven new patients does the model predict to have the h
 <span><span class="co">## 1          NA</span></span>
 <span><span class="co">## 2          NA</span></span>
 <span><span class="co">## 3          NA</span></span>
-<span><span class="va">multiple_input_regression_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"statistic"</span><span class="op">)</span></span>
+<span><span class="va">multiple_predictor_regression_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"statistic"</span><span class="op">)</span></span>
 <span><span class="co">##               variable     value std_err      type p_value</span></span>
 <span><span class="co">## 1            r_squared 0.8941597      NA statistic      NA</span></span>
 <span><span class="co">## 2    total_sum_squares 2.1544636      NA statistic      NA</span></span>
@@ -514,21 +514,21 @@ Self-check: which of the seven new patients does the model predict to have the h
 <div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_comparison_data</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
-<span>    single_input_predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>    single_predictor_predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>      model <span class="op">=</span> <span class="va">basic_regression_model</span></span>
 <span>    <span class="op">)</span><span class="op">$</span><span class="va">predicted_Valine</span>,</span>
-<span>    multiple_input_predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>    multiple_predictor_predicted_Valine <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
-<span>      model <span class="op">=</span> <span class="va">multiple_input_regression_model</span></span>
+<span>      model <span class="op">=</span> <span class="va">multiple_predictor_regression_model</span></span>
 <span>    <span class="op">)</span><span class="op">$</span><span class="va">predicted_Valine</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model_comparison_data</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Valine</span>, y <span class="op">=</span> <span class="va">single_input_predicted_Valine</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Valine</span>, y <span class="op">=</span> <span class="va">single_predictor_predicted_Valine</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model_comparison_data</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Valine</span>, y <span class="op">=</span> <span class="va">multiple_input_predicted_Valine</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Valine</span>, y <span class="op">=</span> <span class="va">multiple_predictor_predicted_Valine</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, nrow <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -542,14 +542,14 @@ Predicted against measured valine abundance for two linear models. (A) Predictio
 </h4>
 <p>Fill in the blank with the metric that measures how much of the variation in Valine a model explains, then press Run.</p>
 <div class="webr-cell">
-<textarea class="webr-code">multiple_input_regression_model &lt;- buildModel(
+<textarea class="webr-code">multiple_predictor_regression_model &lt;- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = colnames(metabolomics_data)[3:32],
-  output_variable = "Valine"
+  predictors = colnames(metabolomics_data)[3:32],
+  response = "Valine"
 )
 
-multiple_input_regression_model$metrics %&gt;%
+multiple_predictor_regression_model$metrics %&gt;%
   filter(variable == "____")</textarea>
 </div>
 <div class="selfcheck" data-answer="0" data-explain="The 30-predictor model has an r-squared of about 0.89, against 0.40 for the iso-Leucine model, so across these 93 patients it accounts for far more of the variation in Valine. A higher r-squared does not show that any one predictor causes the change, and the model still has an intercept.">
@@ -573,14 +573,14 @@ Self-check: what does the higher r-squared of the 30-predictor model tell us?
 </ul>
 <p>It is tempting to rank the predictors by the size of their coefficients, but a coefficient is measured in the units of its own predictor, so raw coefficients cannot be compared with each other. Let’s see what goes wrong, with a model of Valine built from four metabolites:</p>
 <div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">four_input_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">four_predictor_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Phenylalanine"</span>, <span class="st">"2-Aminoadipate"</span>, <span class="st">"Tryptophan"</span>, <span class="st">"Propionate"</span><span class="op">)</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Phenylalanine"</span>, <span class="st">"2-Aminoadipate"</span>, <span class="st">"Tryptophan"</span>, <span class="st">"Propionate"</span><span class="op">)</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">four_input_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="va">four_predictor_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##           variable      value    std_err        type</span></span>
@@ -594,19 +594,17 @@ Self-check: what does the higher r-squared of the 30-predictor model tell us?
 <span><span class="co">## 3 2.548435e-05 0.0001274218</span></span>
 <span><span class="co">## 4 7.666589e-02 0.1533317727</span></span></code></pre></div>
 <p>Phenylalanine has by far the largest coefficient. But Phenylalanine barely varies from patient to patient: its standard deviation is about 0.12, against about 0.4 for 2-Aminoadipate and Propionate. A one-unit change in Phenylalanine is therefore an enormous change, far bigger than anything seen in the data, so its coefficient is large simply because its unit is large.</p>
-<p>The fix is to put every predictor on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). Each coefficient then means “the change in the response for a one-standard-deviation change in this predictor”, which can be compared across predictors:</p>
+<p>The fix is to put every predictor on the same footing before fitting, by scaling each one to a mean of zero and a standard deviation of one (scaling is introduced in the distances and scaling chapter). <code>buildModel()</code> does this when given <code>scale_variance = TRUE</code>, the same argument <code>runMatrixAnalysis()</code> uses. It scales the numeric predictors only, never the response, so each coefficient then means “the change in the response for a one-standard-deviation change in this predictor”, which can be compared across predictors:</p>
 <div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scaled_metabolomics_data</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">Phenylalanine</span>, <span class="va">`2-Aminoadipate`</span>, <span class="va">Tryptophan</span>, <span class="va">Propionate</span><span class="op">)</span>, <span class="va">scale</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">scaled_four_input_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">scaled_metabolomics_data</span>,</span>
+<code class="sourceCode R"><span><span class="va">scaled_four_predictor_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Phenylalanine"</span>, <span class="st">"2-Aminoadipate"</span>, <span class="st">"Tryptophan"</span>, <span class="st">"Propionate"</span><span class="op">)</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Phenylalanine"</span>, <span class="st">"2-Aminoadipate"</span>, <span class="st">"Tryptophan"</span>, <span class="st">"Propionate"</span><span class="op">)</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span>,</span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">scaled_four_input_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="va">scaled_four_predictor_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##           variable      value    std_err        type</span></span>
@@ -622,34 +620,40 @@ Self-check: what does the higher r-squared of the 30-predictor model tell us?
 <p>After scaling, 2-Aminoadipate has the largest coefficient and Phenylalanine drops to third. The scaled ranking also agrees with the p-values, where 2-Aminoadipate has the smallest. Three further points:</p>
 <ul>
 <li>The intercept is left out of the ranking with <code>variable != "(Intercept)"</code>. It is not a measurement but the model’s baseline (after scaling it is simply the mean Valine abundance), so it does not belong in a list of predictors.</li>
-<li>Scaling changes the units of the coefficients, not the fit. Both models have the same r-squared and make the same predictions:</li>
+<li>In a linear model, scaling changes the units of the coefficients, not the fit. Both models have the same r-squared, and they make the same predictions for new patients:</li>
 </ul>
 <div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">four_input_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">variable</span> <span class="op">==</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">four_predictor_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">variable</span> <span class="op">==</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
 <span><span class="co">##    variable     value std_err      type p_value p_value_adj</span></span>
 <span><span class="co">## 1 r_squared 0.5278067      NA statistic      NA          NA</span></span>
-<span><span class="va">scaled_four_input_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">variable</span> <span class="op">==</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
+<span><span class="va">scaled_four_predictor_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">variable</span> <span class="op">==</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
 <span><span class="co">##    variable     value std_err      type p_value p_value_adj</span></span>
-<span><span class="co">## 1 r_squared 0.5278067      NA statistic      NA          NA</span></span></code></pre></div>
+<span><span class="co">## 1 r_squared 0.5278067      NA statistic      NA          NA</span></span>
+<span></span>
+<span><span class="fu">predictWithModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">metabolomics_unknown</span>, model <span class="op">=</span> <span class="va">four_predictor_model</span><span class="op">)</span><span class="op">$</span><span class="va">predicted_Valine</span></span>
+<span><span class="co">## [1] 4.788360 4.740230 4.642298 4.793729 4.820495 4.648666</span></span>
+<span><span class="co">## [7] 4.617385</span></span>
+<span><span class="fu">predictWithModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">metabolomics_unknown</span>, model <span class="op">=</span> <span class="va">scaled_four_predictor_model</span><span class="op">)</span><span class="op">$</span><span class="va">predicted_Valine</span></span>
+<span><span class="co">## [1] 4.788360 4.740230 4.642298 4.793729 4.820495 4.648666</span></span>
+<span><span class="co">## [7] 4.617385</span></span></code></pre></div>
 <ul>
-<li>Use the scaled model to compare predictors, and the model built on the data as measured to make predictions. A model fitted on scaled predictors expects scaled predictors, so giving it the raw columns of a new table, such as <code>metabolomics_unknown</code>, produces nonsense.</li>
+<li>
+<code>scale_variance</code> is <code>FALSE</code> by default, so coefficients come back in the units the predictors were measured in, the form needed when a slope is itself the answer (the change in signal per unit of concentration on a calibration curve, for example). Turn it on to compare which predictor matters most, and leave it off to read coefficients in real units. Either model can make predictions: a model built with <code>scale_variance = TRUE</code> stores the mean and standard deviation of each predictor in the data it was built on, and <code>predictWithModel()</code> scales a new table with those same values, so the new table goes in as measured. (Scaling the columns by hand with <code>mutate(across(c(...), scale))</code> before <code>buildModel()</code> gives the same coefficients, but that model then needs every new table scaled with the original data’s means and standard deviations, a step that is easy to get wrong.)</li>
 </ul>
 <div id="concept-check-55" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-55"><i class="fas fa-link"></i></a>
 </h4>
-<p>Fill in the blank with the function that puts each predictor on a mean of zero and a standard deviation of one, then press Run to rank the predictors.</p>
+<p>Fill in the blank with the value that makes <code>buildModel()</code> scale the predictors, then press Run to rank them.</p>
 <div class="webr-cell">
-<textarea class="webr-code">scaled_metabolomics_data &lt;- metabolomics_data %&gt;%
-  mutate(across(c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"), ____))
-
-scaled_four_input_model &lt;- buildModel(
-  data = scaled_metabolomics_data,
+<textarea class="webr-code">scaled_four_predictor_model &lt;- buildModel(
+  data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
-  output_variable = "Valine"
+  predictors = c("Phenylalanine", "2-Aminoadipate", "Tryptophan", "Propionate"),
+  response = "Valine",
+  scale_variance = ____
 )
 
-scaled_four_input_model$metrics %&gt;%
+scaled_four_predictor_model$metrics %&gt;%
   filter(type == "coefficient", variable != "(Intercept)") %&gt;%
   arrange(desc(abs(value)))</textarea>
 </div>
@@ -669,7 +673,7 @@ Self-check: why does Phenylalanine have the largest coefficient in the model bui
 <h2>comparing slopes between groups<a class="anchor" aria-label="anchor" href="#comparing-slopes-between-groups"><i class="fas fa-link"></i></a>
 </h2>
 <p>The predictors so far have all been numbers. A model can also take a categorical predictor, a column that names a group, and that opens up a common question: does the response rise with a predictor at the same rate in every group? Consider the elements of the periodic table. Density increases with atomic mass, but an element that is a gas at room temperature is about a thousand times less dense than a solid of similar mass, so one line through all of the elements would describe none of them well.</p>
-<p>To give each group its own line, we describe the model with a formula instead of <code>input_variables</code> and <code>output_variable</code>. A formula puts the response on the left of a <code>~</code> and the predictors on the right, the same way as in the comparing groups chapter. Joining two predictors with <code>*</code> gives each group its own intercept and its own slope, while joining them with <code>+</code> would give each group its own intercept but force every group to share one slope (parallel lines). Elements whose density or state is not recorded are filtered out first, because <code>buildModel()</code> stops on missing values:</p>
+<p>To give each group its own line, we describe the model with a formula instead of <code>predictors</code> and <code>response</code>. A formula puts the response on the left of a <code>~</code> and the predictors on the right, the same way as in the comparing groups chapter. Joining two predictors with <code>*</code> gives each group its own intercept and its own slope, while joining them with <code>+</code> would give each group its own intercept but force every group to share one slope (parallel lines). Elements whose density or state is not recorded are filtered out first, because <code>buildModel()</code> stops on missing values:</p>
 <div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">elements</span> <span class="op">&lt;-</span> <span class="va">periodic_table</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">density_g_per_mL</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">state_at_RT</span><span class="op">)</span><span class="op">)</span></span>
@@ -740,7 +744,7 @@ Self-check: every find site gets the same letter. What does that tell us?
 <p>Residual-based assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:</p>
 <ul>
 <li><p>Linearity: examines if residuals show a random scatter around zero, indicating a linear relationship between the predictors and the response variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.</p></li>
-<li><p>Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.</p></li>
+<li><p>Homoscedasticity (homogeneity of variance): looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the predictors.</p></li>
 <li><p>Normality of residuals: assesses whether residuals follow a normal distribution, which matters for statistical inference in regression. To check this characteristic, a quantile-quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.</p></li>
 </ul>
 </li>
@@ -763,8 +767,8 @@ Self-check: every find site gets the same letter. What does that tell us?
 <code class="sourceCode R"><span><span class="va">multiple_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
-<span>  output_variable <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">check_model</span><span class="op">(</span><span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -782,8 +786,8 @@ Diagnostic checks for a linear model of valine abundance on eight metabolites. P
 <textarea class="webr-code">multiple_regression_model &lt;- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = colnames(metabolomics_data)[3:10],
-  output_variable = "Valine"
+  predictors = colnames(metabolomics_data)[3:10],
+  response = "Valine"
 )
 
 check_model(multiple_regression_model$____)</textarea>
@@ -792,19 +796,19 @@ check_model(multiple_regression_model$____)</textarea>
 <p class="scq">
 Self-check: in a plot of residuals against fitted values, the residuals form a funnel that widens to the right. Which assumption does that call into question?
 </p>
-<p><label><input type="radio"> That the inputs are not strongly correlated with each other</label>
+<p><label><input type="radio"> That the predictors are not strongly correlated with each other</label>
 <label><input type="radio"> That the variance of the residuals is the same across fitted values</label>
 <label><input type="radio"> That the residuals follow a normal distribution</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script><p><span id="regression-models-summary"></span></p>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><p><span id="regression-models-summary"></span></p>
 </div>
 </div>
 <div id="chapter-summary-9" class="section level2 unnumbered">
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-9"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12_numerical_models.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>Building a regression model starts with what it is for. An <strong>inferential</strong> use reads the coefficients, their p-values and r-squared to describe how the response relates to the predictors; a <strong>predictive</strong> use applies the model to a table whose response was never measured. Four decisions follow. <strong>How many predictors:</strong> more can explain more of the variation, as r-squared shows. <strong>Whether to scale:</strong> scale the predictors before ranking their coefficients by size, but predict with the model built on the data as measured. <strong>Whether slopes differ between groups:</strong> join the predictor and the group with <code>*</code>, not <code>+</code> (one shared slope), then compare the slopes with <code>tukeyTest(slopes_of = )</code>. <strong>Whether to trust it:</strong> check the residuals, the predictors and any influential points with <code>check_model()</code>.</p>
+<p>Building a regression model starts with what it is for. An <strong>inferential</strong> use reads the coefficients, their p-values and r-squared to describe how the response relates to the predictors; a <strong>predictive</strong> use applies the model to a table whose response was never measured. Four decisions follow. <strong>How many predictors:</strong> more can explain more of the variation, as r-squared shows. <strong>Whether to scale:</strong> build with <code>scale_variance = TRUE</code> before ranking coefficients by size, and leave it off to read them in real units. The fit and the predictions are the same either way. <strong>Whether slopes differ between groups:</strong> join the predictor and the group with <code>*</code>, not <code>+</code> (one shared slope), then compare the slopes with <code>tukeyTest(slopes_of = )</code>. <strong>Whether to trust it:</strong> check the residuals, the predictors and any influential points with <code>check_model()</code>.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -826,7 +830,7 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 <td><code>buildModel()</code></td>
 <td>fitting a model</td>
 <td>
-<code>data</code>, <code>model_type = "linear_regression"</code>, <code>input_variables</code> (one or more predictors), <code>output_variable</code> (the response); or a <code>formula</code>, <code>response ~ predictor * group</code>
+<code>data</code>, <code>model_type = "linear_regression"</code>, <code>predictors</code> (one or more), <code>response</code>; or a <code>formula</code>, <code>response ~ predictor * group</code>
 </td>
 </tr>
 <tr class="odd">
@@ -845,9 +849,10 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 <code>data</code>, and <code>model</code> (the whole <code>buildModel()</code> output)</td>
 </tr>
 <tr class="odd">
-<td><code>mutate(across(c(...), scale))</code></td>
-<td>giving predictors a mean of 0 and a standard deviation of 1 before comparing coefficients</td>
-<td>which predictors to scale</td>
+<td><code>buildModel(scale_variance = TRUE)</code></td>
+<td>giving the numeric predictors a mean of 0 and a standard deviation of 1 before comparing coefficients, with <code>predictWithModel()</code> scaling new data to match</td>
+<td>
+<code>TRUE</code> to rank predictors, <code>FALSE</code> (the default) for coefficients in real units</td>
 </tr>
 <tr class="even">
 <td><code>arrange(desc(abs(value)))</code></td>
@@ -904,7 +909,7 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 </h2>
 <ul>
 <li><p><a href="https://github.com/easystats/performance">performance R package</a>. Provides simple tools to evaluate statistical model quality, checking things like fit, overparameterization, and assumption violations across mixed-effects, Bayesian, and many other model types.</p></li>
-<li><p><a href="https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html">Understand ridge regression and hyperparameter selection</a>. Explains why ridge regression stabilizes coefficients when inputs are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.</p></li>
+<li><p><a href="https://gallantlab.org/voxelwise_tutorials/notebooks/shortclips/04_understand_ridge_regression.html">Understand ridge regression and hyperparameter selection</a>. Explains why ridge regression stabilizes coefficients when predictors are correlated, shows how the penalty trades bias for variance, and demonstrates hyperparameter selection via cross-validation.</p></li>
 <li><p><a href="https://rpubs.com/jmkelly91/881590">Ridge, Lasso, and Elastic Net Tutorial</a>. Covers how elastic net blends ridge and lasso behavior to handle collinearity while allowing variable selection, with tuning tips and interpretability notes in an applied workflow.</p></li>
 <li><p><a href="https://allmodelsarewrong.github.io/regular.html">Regularization Techniques</a>. Frames PLSR and other regularization methods in the broader context of dimension reduction for predictive modeling, emphasizing latent components and when to prefer each approach.</p></li>
 </ul>
@@ -945,7 +950,7 @@ Self-check: in a plot of residuals against fitted values, the residuals form a f
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

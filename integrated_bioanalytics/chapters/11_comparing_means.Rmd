@@ -18,7 +18,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 :::
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "hawaii_aquifers", url: "/phylochemistry/sample_data/hawaii_aquifers.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); K_data <- dplyr::filter(hawaii_aquifers, analyte == 'K')" };
 </script>
@@ -482,7 +482,7 @@ Fill in the blank with the column that splits the data into one sodium-versus-ch
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
 
 []{#comparing-means-summary}
 

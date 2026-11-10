@@ -10,7 +10,7 @@ Distance analysis uses the concept of a distance metric (Euclidean, Manhattan, c
 
 Many of the analyses in the rest of this book start from one question: which samples are alike? A similarity network joins samples that are alike, hierarchical clustering merges them into a tree, k-means and dbscan sort them into groups, ordination methods such as MDS place them near one another on a plot, and matching an unknown GC-MS spectrum or retrieving a related protein from a library means finding the entry most like a query. Every one of those methods runs on a **distance matrix**: a table holding one number for every pair of samples that says how different the two are. This chapter is about building that matrix well, which comes down to two decisions that are easy to make by accident. **Scaling decides which variables count. The distance metric decides what "similar" means.** Neither choice has a single right answer, but both change the result, so both should be made on purpose.
 
-<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=4">
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
 <script>
 window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datasets: [{ name: "alaska_lake_data", url: "/phylochemistry/sample_data/alaska_lake_data.csv" }, { name: "wood_smoke", url: "/phylochemistry/sample_data/wood_smoke_data.csv" }, { name: "hops_components", url: "/phylochemistry/sample_data/hops_components.csv" }], setup: "suppressMessages({library(dplyr); library(tidyr); library(ggplot2); library(readr)}); alaska_lake_data_wide <- alaska_lake_data %>% select(-element_type) %>% pivot_wider(names_from = 'element', values_from = 'mg_per_L'); wood_smoke_wide <- wood_smoke %>% select(wood_type, species, compound, abundance_mg_g) %>% pivot_wider(names_from = 'compound', values_from = 'abundance_mg_g')" };
 </script>
@@ -460,7 +460,7 @@ Fill in the blank with the metric that can compare hop varieties on a mix of num
 
 <hr>
 
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=4"></script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
 
 <hr>
 
