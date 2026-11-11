@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-10"
+date: "2026-11-11"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -6911,7 +6911,6 @@ Building a regression model starts with what it is for. An **inferential** use r
 | `tukeyTest(slopes_of = )`, `pGroups()` | which groups' slopes differ in a model built with `*`; letters and each group's slope | `slopes_of`, the numeric predictor whose slope is compared |
 | `check_model()` | diagnostic panels: posterior predictive check, linearity, equal variance, normal residuals, collinearity, influential points | given `model$model` |
 
-<!-- PARKED until both regression rooms are status "ready" in their scenario.json (each is "in_development"): a live card publishes its Canvas assignment. To go live, delete this line and the closing line under the chunk.
 
 <hr>
 
@@ -6927,6 +6926,9 @@ Building a regression model starts with what it is for. An **inferential** use r
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the new water master of a diamond town on the desert plateau, and the season&rsquo;s first string of gravel barges waits at the foot of the lock flight. Work them up to the reservoir before the evening fog closes in, and decide along the way which newly surveyed gravel pits are worth mining.</div>
 </div>
 </div>
+</div>
+
+<!-- PARKED until regression/dunes is status "ready" in its scenario.json (it is "in_development"): a live card publishes its Canvas assignment. To go live, paste this card inside the cat('...') above, before the flex-column's closing </div>, every line at column 0.
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
 <a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/cover.png" alt="Dunes cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
@@ -6935,8 +6937,6 @@ Building a regression model starts with what it is for. An **inferential** use r
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">It is October 1928, the diamond town&rsquo;s water runs out in December, and the last wagon train is leaving across the desert. Win a rope, sled down the dunes to the tidal flats, and find out whether the town was right to give up on its stranded water steamer.</div>
 </div>
 </div>
-</div>
-
 -->
 
 <hr>
