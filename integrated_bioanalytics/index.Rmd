@@ -1008,6 +1008,100 @@ runMatrixAnalysis(
 )
 ```
 
+## models
+
+Models in this course use two functions: `buildModel()` builds a model from a table, and
+`predictWithModel()` uses that model to make predictions for a table. (If you meet older material
+calling `buildModel2()`, it is the same function under its old name.)
+
+### basic template: one predictor, one response
+
+```{r, eval = FALSE}
+
+my_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictors = "iso-Leucine",
+  response = "Valine"
+)
+
+my_predictions <- predictWithModel(
+  data = metabolomics_unknown,
+  model = my_model
+)
+```
+
+That is the whole basic workflow, and `buildModel()` is only four questions:
+
+- `data`: which table to build the model from. It must have no missing values in the columns the
+  model uses (fill them in with `impute()` or remove those rows first).
+- `model_type`: which kind of model. The options are listed in the full template below.
+- `predictors`: which column (or columns) the model predicts **from**. For more than one, use
+  `c("col_1", "col_2")`.
+- `response`: which **one** column the model predicts.
+
+`predictWithModel()` is only two questions: which table to predict for (`data`), and which model to
+use (`model`, the whole output of `buildModel()`). The new table needs every predictor column, but it
+does not need the response. What comes back is that same table with new columns added:
+
+- regression models add `predicted_<response>`, for example `predicted_Valine`.
+- classification models add one `probability_<class>` column per class, plus `predicted_class`.
+
+### full template: buildModel()
+
+```{r, eval = FALSE}
+
+buildModel(
+  data, # the table to build the model from; no missing values in the columns the model uses
+  model_type = c(
+    "linear_regression",            # predicts a number with a straight-line relationship
+    "random_forest_regression",     # predicts a number with a random forest
+    "random_forest_classification", # predicts a category with a random forest
+    "logistic_regression",          # predicts one of two categories
+    "contrastive_learning"          # builds an embedding rather than a prediction
+  ),
+  predictors = NULL, # the column(s) to predict from, e.g. c("iso-Leucine", "Leucine")
+  response = NULL,   # the one column to predict
+  formula = NULL, # an alternative to predictors + response, for linear_regression only:
+                  #   response ~ predictor                 one predictor
+                  #   response ~ predictor_1 + predictor_2 each group its own intercept,
+                  #                                        one shared slope
+                  #   response ~ predictor_1 * predictor_2 each group its own intercept AND slope
+                  # Give either formula, or predictors and response, never both.
+  scale_variance = FALSE, # TRUE scales each numeric predictor to mean 0 and standard deviation 1
+                          # before fitting, so coefficients can be compared across predictors.
+                          # The response is never scaled. predictWithModel() scales new data the
+                          # same way automatically, so new tables always go in as measured.
+  fold_cross_validation = 10, # random forests only: the number of folds used in cross-validation
+                              # (2 or more)
+  optimization_parameters = list( # random forests only: the grid of settings to try
+    n_vars_tried_at_split = seq(10, 20, 5), # how many predictors each split may choose from
+    n_trees = seq(100, 200, 50),            # how many trees in the forest
+    min_leaf_size = 1                       # the fewest samples allowed in a leaf
+  )
+)
+```
+
+The output is a list. The parts you will use most:
+
+- `$model_type`, `$response` and `$predictors`: what the model is and what it relates.
+- `$model`: the fitted model itself.
+- `$metrics`: how well the model performs.
+
+### full template: predictWithModel()
+
+```{r, eval = FALSE}
+
+predictWithModel(
+  data,  # the table to predict for; it needs every predictor column the model was built on
+  model  # the output of buildModel() (the whole list, or just its $model)
+)
+```
+
+`predictWithModel()` works out the model type from the model itself, so you never need to tell it.
+It can only predict for groups the model has seen: if the new table contains a category that was not
+in the table used to build the model, it stops and says so.
+
 # loading analyzeGCMSdata {-}
 
 This page explains how to load a simple application for integrating and analyzing GC-MS data. With the app, you can analyze .CDF.csv files. CDF.csv files contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. To run the application, use the following guidelines:

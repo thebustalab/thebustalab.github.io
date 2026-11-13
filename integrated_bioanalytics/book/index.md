@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-11"
+date: "2026-11-13"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -257,7 +257,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 2. **Define how the variables map onto the axes.**
 
@@ -268,7 +268,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-66-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in the data.**
 
@@ -280,7 +280,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-67-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-70-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map the variables onto the geometric features of the shapes:
 
@@ -290,7 +290,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-71-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -318,7 +318,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-72-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -328,7 +328,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-70-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-73-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 **Important note:** Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. This shows up in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -341,7 +341,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-71-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-74-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 As is probably clear by now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -352,7 +352,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-72-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-75-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -360,7 +360,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-73-1.png" alt="" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-76-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -403,7 +403,7 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/3_datavis_1_flowchart.png" alt="Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-75)Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
+<p class="caption">(\#fig:unnamed-chunk-78)Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
 </div>
 
 Objects store data (like: `my_object <- 7`), and functions act on it: `filter()` keeps only the rows that meet a logical condition, such as `filter(my_data, chemical_species == "FAs")`. A ggplot is then built in three steps: name the data with `ggplot(data = ...)`, map variables onto the axes with `aes()`, and add one or more geoms with `+`. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a **variable** in the data goes **inside** `aes()` (`geom_point(aes(color = harvesting_regime))`), and a feature set to a **constant** goes **outside** `aes()` (`geom_point(size = 5)`). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.
@@ -491,7 +491,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-82-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-85-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -577,7 +577,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-99-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-102-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -634,7 +634,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-146-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -647,7 +647,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", linewidth = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-147-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-150-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data being plotted (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -660,7 +660,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_text(aes(label = solvent))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-151-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 That works, but with this many points the labels overlap and can be a bit unreadable. The `ggrepel` package largely solves this with `geom_text_repel()`, a near drop-in replacement that gently nudges the labels away from each other:
 
@@ -673,7 +673,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_text_repel(aes(label = solvent))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -704,7 +704,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -714,7 +714,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-151-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-154-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -724,7 +724,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-152-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-155-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in a plot without having to make the geoms more complicated. For situations that call for lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
@@ -736,7 +736,7 @@ ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) +
   facet_wrap(chemical_species~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-153-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-156-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -768,7 +768,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-154-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 The color scales provided by RColorBrewer are a particularly useful type of scale:
 
@@ -777,7 +777,7 @@ The color scales provided by RColorBrewer are a particularly useful type of scal
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-155-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 ggplot(mtcars) +
@@ -788,7 +788,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-159-1.png" alt="" width="100%" style="display: block; margin: auto;" />
   
 #### concept check {-}
 
@@ -823,7 +823,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-160-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -835,7 +835,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-158-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-161-1.png" alt="" width="100%" style="display: block; margin: auto;" />
   
 
 ``` r
@@ -847,7 +847,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-159-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-162-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Individual components of themes can also be changed. This can be a bit tricky, but running `?theme()` explains it all. Here is an example (and google will provide many, many more).
 
@@ -863,7 +863,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-160-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-163-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
@@ -888,8 +888,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-161-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-161)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-164-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-164)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
 In some cases, the following diagram illustrates a useful way to think about the `ggplot()` / `geom_*()` / `scale_*()` / `theme_*()` situation. It shows how we use these things together to achieve a sharp-looking plot:
@@ -940,7 +940,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -974,7 +974,7 @@ plot_grid(____, ____)</textarea></div>
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/4_datavis_2_flowchart.png" alt="Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-164)Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
+<p class="caption">(\#fig:unnamed-chunk-167)Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.</p>
 </div>
 
 The kind of data being plotted can help you choose which geom to use: `geom_smooth()` with `geom_point()` for two continuous variables, and `geom_tile()` (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, `geom_text_repel()` labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a `scale_*` command adjusts, themes control the non-data ink, and `plot_grid()` combines finished plots into one figure.
@@ -1336,7 +1336,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-196-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1347,7 +1347,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-194-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-197-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1507,7 +1507,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-201-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1557,7 +1557,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1595,7 +1595,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1764,7 +1764,7 @@ Fill in the blank with the verb that adds a new column without collapsing the ro
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/6_wrangling_summaries_flowchart.png" alt="Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-209)Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action.</p>
+<p class="caption">(\#fig:unnamed-chunk-212)Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action.</p>
 </div>
 
 Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. `group_by()` with `summarize()` collapses each group to a single row, while `mutate()` keeps every row and adds a column. The pipe (`%>%`) chains these steps together, and `view()` on the result is the quickest way to check that each step did what was intended.
@@ -2059,8 +2059,8 @@ plot1
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-253)Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" alt="Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-256)Pairwise distances between Alaskan lakes, computed on unscaled data. A heat map in which each tile is one pair of lakes, with lake names on both axes and fill color showing the euclidean distance between that pair across all thirteen measured variables. Light tiles indicate dissimilar pairs. Because the variables were not scaled before the distances were computed, the pattern is dominated by the single most abundant analyte. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -2120,8 +2120,8 @@ alaska_lake_data %>% filter(element == "Cl") %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-255)Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" alt="Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-258)Chloride abundance across Alaskan lakes. A bar chart showing the concentration of chloride (in mg per L, x-axis) in each of twenty Alaskan lakes (lake names on y-axis). Each bar is a single measurement of chloride in a single lake. North Killeak Lake stands out, and because chloride is measured in much larger numbers than the other analytes, this one lake and this one analyte dominate the unscaled distances above. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Chloride is far more abundant than all the other elements, and North Killeak Lake has very high chloride. This means that the distances we computed above are essentially controlled by chloride, not by all elements equally. What if we want equal control? The fix is to **scale** each variable before computing distances: subtract the column's mean and divide by its standard deviation. Every column then has a mean of 0 and a standard deviation of 1 (these are sometimes called z-scores), so a difference of one standard deviation counts the same whether it is in chloride, phosphorus, pH or water temperature. Base R's `scale()` does it like this:
@@ -2168,8 +2168,8 @@ plot_grid(plot1, plot2, ncol = 1, labels = c("A", "B"))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-257)The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-260-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-260)The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -2613,7 +2613,7 @@ Fill in the blank with the metric that can compare hop varieties on a mix of num
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/distance_flowchart.png" alt="Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-267)Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.</p>
+<p class="caption">(\#fig:unnamed-chunk-270)Choosing a distance metric. This decision flowchart starts from what is in the columns of a data set and ends at a recommended setting for the distance_method argument of runMatrixAnalysis, together with the matching scale_variance setting. Yellow boxes are questions about the data and green boxes are recommended metrics.</p>
 </div>
 
 Two decisions go into every distance matrix. **Scaling decides which variables count**: scale measurements that are in different units so that no single variable dominates, and leave raw amounts unscaled when you want distances to reflect potential differences in the scales that your variables occupy. **The distance metric decides what "similar" means**: the same size and values, the same pattern, the same composition, the same things present, or the same mix of measurements and categories. The flowchart and the table below summarize the choices.
@@ -2789,8 +2789,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-294-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-294)A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-297-1.png" alt="A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-297)A similarity network of Alaskan lakes drawn with no threshold. Each point is one of twenty lakes, positioned by a force-directed layout, with fill color showing which of three national parks the lake sits in. Each line is an edge joining a pair of lakes, with line width and opacity both encoding similarity, calculated as 1 / (1 + scaled euclidean distance). Because no threshold has been applied, every pair of lakes is joined, which produces the 'hairball' seen here. Node positions carry no information. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Well, that is a network, but all points are connected, making it a hairball. What we need to do is define, using a threshold, which connections are sufficiently strong to constitute a connection between the two nodes:
@@ -2857,8 +2857,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-296-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-296)The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-299-1.png" alt="The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-299)The same similarity network drawn at four similarity thresholds. Each panel shows the twenty Alaskan lakes as points, colored by park, joined by an edge only where the similarity between that pair exceeds the threshold given above the panel (10, 20, 25 and 30, left to right). Line width and opacity encode similarity. Raising the threshold removes weak edges and eventually breaks the network into separate pieces, so the structure you see is a consequence of a chosen threshold rather than a property of the lakes. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725.</p>
 </div>
 
 Minor note: a long-style distance matrix lists every pair twice, once as A to B and once as B to A, with the same distance both times. `buildNetwork()` spots this, keeps one edge per pair, and prints a message reporting that it has treated the network as undirected. That is the right thing to do here, and we will come back to *why* (and to when it is the wrong thing to do) under "directed and undirected", below.
@@ -3001,8 +3001,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-299-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-299)An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-302-1.png" alt="An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-302)An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -3197,8 +3197,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-304-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-304)What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-307-1.png" alt="What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-307)What happens to the air travel network when a single airport is removed. Each panel shows the network rebuilt after dropping every route touching one airport, with points for the remaining airports and lines for the remaining routes; line width and opacity encode passenger numbers, and the strip above each panel names the airport that was removed. Left: Atlanta, the busiest airport in the data, has been removed, and the remaining airports are all still joined to one another. Right: Ketchikan, which ranks 27th of 29 by passenger volume, has been removed, and the network has fallen into two separate pieces, the smaller of which is the seven Alaskan airports. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725.</p>
 </div>
 
 Based on the above, we can say the following: take the busiest airport out and the picture barely changes: everything that is left can still be reached from everything else. Take Ketchikan out and the network falls into two clearly separate clumps, with the Alaskan airports floating free of the rest of the country. A node whose removal breaks a network into more pieces than it was in before is called an **articulation point**, and in this data set Ketchikan is the only one.
@@ -3264,7 +3264,7 @@ Fill in the blank with the function that shows you just the first few rows, so y
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/7_networks_flowchart.png" alt="Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-305)Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.</p>
+<p class="caption">(\#fig:unnamed-chunk-308)Choosing a kind of network. This decision flowchart starts from what a reader should learn from an edge and ends at the kind of network to build, with the buildNetwork setting or the preparation steps that go with it. Yellow boxes are questions about the data and green boxes are recommended networks.</p>
 </div>
 
 The first decision that must be made when working with networks is determining what an edge means. A **similarity network** is built: distances become similarities, and a chosen threshold decides which pairs are joined, so the network is always undirected and its shape depends on that threshold. An **interaction network** is given by the data themselves: each row is an observed connection, there is no threshold, and the edges may be directed. We use a metric called 'degree' to count a node's connections and a metric called 'strength' adds up a node's traffic. However, neither degree nor strength accounts for whether a node holds different portions of a network together (an articulation point) - only removing the node and counting the pieces that remain can tell us about that. Importantly, the positions of nodes in a force-directed layout carry no quantitative information.
@@ -3386,8 +3386,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-328-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-328)A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-331-1.png" alt="A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-331)A first, unstyled dendrogram of the Alaskan lakes. A tree diagram in which each tip is one lake and each join is the merge of two groups, with the horizontal position of a join recording how far apart those two groups were when they merged; joins near the root therefore mark very different groups. Tip labels are the combined lake and park identifiers, and every tip is drawn at the same horizontal position because a hierarchical clustering dendrogram is ultrametric. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 Cool! Though that plot could use some tweaking... let's try:
@@ -3407,8 +3407,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-329-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-329)The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-332-1.png" alt="The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-332)The same dendrogram, with lake names as tip labels and park identity shown on the tips. A tree diagram in which each tip is one of twenty Alaskan lakes, the tip label gives the lake name, and the fill color of the tip point gives the national park the lake sits in (BELA, GAAR or NOAT). Each join marks the merge of two groups and is positioned at the distance at which they merged. North Killeak and White Fish join only at the far right, which marks them as the two most distinctive lakes in the set. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
@@ -3439,8 +3439,8 @@ ggtree() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-330-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-330)The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-333-1.png" alt="The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-333)The Alaskan lakes re-clustered with the two most distinctive lakes removed. A tree diagram of the same form as the previous figure but with eighteen tips: North Killeak and White Fish were dropped before the distances were recomputed. The tip label gives the lake name and the tip fill color gives the national park. Removing the two outliers rescales the horizontal axis, which makes the structure among the remaining lakes readable. Data are the 'alaska_lake_data' dataset used in UMD CHEM5725, clustered on thirteen scaled analytes with Ward linkage.</p>
 </div>
 
 #### concept check {-}
@@ -3552,8 +3552,8 @@ plot_grid(single_plot, complete_plot, nrow = 1, rel_widths = c(1, 1.3), labels =
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-332-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-332)Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties.</p>
+<img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-335)Single and complete linkage build very different trees from identical distances. Two dendrograms of the same thirty-two solvents, in which each tip is one solvent, the tip fill color gives the solvent category recorded in the dataset, and each join is positioned at the distance at which the two groups it joins merged. A) Single linkage, which merges on the closest pair of members and produces a lopsided, staircase-shaped tree in which water, acetic acid and carbon disulfide are left to join at the very end. B) Complete linkage, which merges only once all members are close and produces four compact, chemically recognizable groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties.</p>
 </div>
 
 The two trees were built from identical distances, but they tell very different stories. Single linkage produces a lopsided, staircase-like tree. There are a few small clusters (the small alcohols, the chlorinated solvents), but they hang one after another off a single long backbone, and water, acetic acid, and carbon disulfide are left to join on their own at the very end. Cutting this tree into four groups would give one giant group and three lone solvents. Complete linkage gives compact groups that a chemist would recognize: the small polar protic solvents (water, methanol, ethanol, the propanols, acetic acid, and acetonitrile); the volatile, low-boiling solvents (ether, acetone, ethyl acetate, THF, pentane and hexane); the heavier, higher-boiling solvents (the aromatics, DMF, pyridine, octanol and so on); and the dense chlorinated solvents, which carbon disulfide joins.
@@ -3721,7 +3721,7 @@ ggtree() +
 ## Replacing NAs in your data with mean
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-335-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 #### concept check {-}
 
@@ -3791,8 +3791,8 @@ ggtree(solvents_cut) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-337-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-337)The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-340-1.png" alt="The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-340)The solvent dendrogram cut at a height of 5. A tree diagram in which each tip is one of thirty-two solvents, the tip label gives the solvent name, and the fill color of the tip point gives the group it falls into when the tree is cut at that height. The dashed vertical line is the cut itself: the three joins to its left were severed, leaving the four groups, and every join to its right had already happened and holds its group together. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
 </div>
 
 The dashed line drawn by `geom_cut()` is the cut. Everything to its right has already merged, so each color is one unbroken piece of the tree; the three joins to its left were severed, which is what left four groups rather than one. Count them on the figure: severing three joins always leaves four pieces. The groups here are the compact families complete linkage found: the dense chlorinated solvents on their own, the polar protic solvents together, and so on.
@@ -3825,8 +3825,8 @@ data.frame(height = seq(2,6,0.1)) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-338-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-338)The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-341-1.png" alt="The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-341)The number of groups is not something chosen in advance -- it depends on where the tree is cut. A scatter plot with a connecting line, in which the x axis is the height at which the solvent dendrogram was cut and the y axis is the number of groups that cut leaves. Each point is one cut, taken every 0.1 units from a height of 2 to a height of 6. The curve falls in steps rather than smoothly, and the wide flat stretch from about 4.5 to 5.9 is the stability that argues for reporting four groups. Data are the 'solvents' dataset used in UMD CHEM5725, clustered on six scaled physical properties with complete linkage.</p>
 </div>
 
 Fifteen groups at a height of 2, nine at 3, six at 4, four at 5, and only two at 6. Notice that the four-group result is **stable over a wide stretch**: anywhere from a height of about 4.5 to 5.9 gives the same four groups. That stability is the argument for reporting four. A gap like that in the tree means the next merge happens a long way above the ones before it, so four groups is not a delicate result that a slightly different cut would overturn. A number of groups that only survives a narrow band of heights is one to be suspicious of.
@@ -3915,8 +3915,8 @@ tree_plot
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-341-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-341)A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.</p>
+<img src="index_files/figure-html/unnamed-chunk-344-1.png" alt="A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-344)A dendrogram of the chemical bloom samples, drawn on a deliberately fixed y scale. A tree diagram in which each tip is one of seventy-eight samples, the tip label is the sample identifier, and each join is positioned at the distance at which the two groups it joins merged. The y axis is fixed to the range 0 to 80 so that this panel can later be aligned tip-for-tip with a heat map of the same samples. Data are the 'chemical_blooms' dataset used in UMD CHEM5725, clustered on nine scaled compound classes with Ward linkage.</p>
 </div>
 
 Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity, since they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
@@ -3935,8 +3935,8 @@ heat_plot
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-342-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-342)Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-345-1.png" alt="Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-345)Compound abundances for the same samples, in the tree's own tip order. A heat map in which each column is one of nine compound classes, each row is one sample, and fill color gives that compound class's abundance in that sample. The y axis reuses the y coordinate supplied by ggtree rather than the sample name, so the rows appear in the order the tips appear in the dendrogram. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
@@ -3947,8 +3947,8 @@ plot_grid(tree_plot, heat_plot, axis = "tb", align = "h", labels = c("A", "B"))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-343-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-343)The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-346-1.png" alt="The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-346)The dendrogram and the heat map aligned. A two-panel figure combining the tree and the compound heat map on a shared y scale, so that each row of tiles sits beside the tip it belongs to and blocks of chemically similar samples can be read off directly. A) The dendrogram, each tip one sample. B) The heat map, each column one compound class and fill color giving abundance. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
@@ -3963,8 +3963,8 @@ chemical_blooms %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-344-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-344)What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-347-1.png" alt="What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-347)What happens when the heat map is built from the raw table instead. A heat map of the same nine compound classes and the same seventy-eight samples, but with the y axis mapped to the sample name, which orders the rows alphabetically. The blocks visible in the previous figure are gone, because the row order now has nothing to do with the clustering. Data are the 'chemical_blooms' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -3999,7 +3999,7 @@ Using AK_tree from the first concept check, fill in the blank with the coordinat
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/8_hierarchical_clustering_flowchart.png" alt="Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-345)Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.</p>
+<p class="caption">(\#fig:unnamed-chunk-348)Choosing a linkage and a cut. This decision flowchart starts from scaled data and ends at a value for the agglomeration_method argument of runMatrixAnalysis, then a check with a second linkage, then a value for the parameters argument that cuts the tree. Yellow boxes are questions about the data and green boxes are recommended settings or conclusions.</p>
 </div>
 
 Hierarchical clustering merges the two closest groups, again and again, until every sample is connected by one tree structure. **The linkage rule decides what "closest" means for a group**, and different rules build different trees from the same distances. **A tree is read across, not down** (assuming it's drawn with the root on the left and leaves on the right): how far out from the tips two paths meet shows how different two samples are, and adjacent tips are not necessarily similar. **Cutting the tree turns it into groups**: choosing a height as the basis for the cut lets the data drive how many clusters are created, whereas setting a number of groups will force the tree to be cut into that number of clusters.
@@ -4120,8 +4120,8 @@ ggplot(meteorite_fragments, aes(x = iron_percent, y = density_g_per_cm3)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-372-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-372)Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps.</p>
+<img src="index_files/figure-html/unnamed-chunk-375-1.png" alt="Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-375)Iron content and density of 37 meteorite fragments. A scatter plot with iron content on the horizontal axis and density on the vertical axis; the points fall into three separate clumps, at low, middle and high iron content and density, with two points lying between the clumps.</p>
 </div>
 
 Three groups stand out right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what the eye just did. Let's try it using `runMatrixAnalysis`. We set `analysis = "kmeans"`, name the columns to cluster on, and give the number of clusters we want to the `parameters` argument as `n_clusters` (the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter). Below we ask for three clusters, and the next section shows how to arrive at that number. (With `parameters` left out altogether, desktop R opens a small application for choosing the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, the number of clusters always has to be given explicitly.)
@@ -4173,8 +4173,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-374-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-374)The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster.</p>
+<img src="index_files/figure-html/unnamed-chunk-377-1.png" alt="The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-377)The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster.</p>
 </div>
 
 The three clusters match three real kinds of meteorite. Stony meteorites are mostly silicate rock with a little metal mixed in, iron meteorites are almost solid iron-nickel metal (and so are more than twice as dense), and the rarer stony-iron meteorites are roughly half and half. Notice too what happened to the two fragments that sat between the clumps: k-means put each of them into a cluster anyway. K-means has no way to say "this one does not belong to any group", and that is one of the things the dbscan method below does differently.
@@ -4246,8 +4246,8 @@ ggplot(meteorite_elbow, aes(x = k, y = within_cluster_variance)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-376-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-376)Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.</p>
+<img src="index_files/figure-html/unnamed-chunk-379-1.png" alt="Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-379)Elbow plot for the meteorite fragments. Within-cluster variance falls steeply from one to two to three clusters and then levels off, so the bend in the line is at three clusters.</p>
 </div>
 
 Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice). Even a sharp elbow belongs to the columns that were clustered, not to the samples alone: the same samples clustered on a different set of measurements can bend just as sharply at a different number of groups, and both answers can be right.
@@ -4325,8 +4325,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-379-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-379)The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse.</p>
+<img src="index_files/figure-html/unnamed-chunk-382-1.png" alt="The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-382)The meteorite fragments colored by dbscan cluster. The same three clumps form three clusters, but the two in-between fragments are left unassigned (NA) and have no ellipse.</p>
 </div>
 
 dbscan finds the same three groups, but this time the two in-between fragments are left out, with `NA` as their cluster. For a meteorite hunter that is the more useful answer: a fragment that fits none of the known kinds is exactly the one worth a closer look.
@@ -4459,8 +4459,8 @@ plot_1 + plot_2
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-382-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-382)Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.</p>
+<img src="index_files/figure-html/unnamed-chunk-385-1.png" alt="Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-385)Left: the meteorite fragments colored by dbscan cluster. Right: mean nickel and silica content in each cluster, shown as horizontal bars with the clusters on the vertical axis, with error bars showing one standard deviation and the individual fragments overlaid. Nickel rises and silica falls from the low-iron cluster to the high-iron cluster.</p>
 </div>
 
 The clusters were found from iron and density alone, yet they also separate cleanly on nickel and silica: the iron-rich cluster carries the most nickel (iron meteorites are an iron-nickel alloy) and almost no silica, while the stony cluster is the reverse. When a grouping found from some measurements also explains measurements it never saw, that is good evidence the groups are real rather than an artifact of the method.
@@ -4498,7 +4498,7 @@ Finally, nothing limits clustering to two columns: any number of columns can be 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/10_flat_clustering_flowchart.png" alt="Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-383)Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings.</p>
+<p class="caption">(\#fig:unnamed-chunk-386)Choosing a flat clustering method. This decision flowchart starts from a set of samples to sort into groups and ends at a runMatrixAnalysis analysis and its parameters setting. Yellow boxes are questions about the samples and green boxes are recommended settings.</p>
 </div>
 
 Flat clustering sorts samples straight into groups. **K-means** places every sample in the cluster whose center it sits closest to, so it needs the number of clusters determined ahead of time and can never leave a sample out of a cluster. **Dbscan** grows clusters outwards from points with enough close neighbors and can leave a sample that fits no cluster as `NA`. For k-means, plot the within-cluster variance against k and examine whether there is a bend in the plot (the elbow). A sharp elbow means the number of groups is a property of the data, and a gentle one means that the data are not obviously structured into clusters. Both methods scale the data first by default. Once samples have clusters, the `cluster` column works like any other grouping column.
@@ -4715,7 +4715,7 @@ PCA looks at all the variance in a high dimensional data set and chooses new axe
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" alt="Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-420)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
+<p class="caption">(\#fig:unnamed-chunk-423)Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.</p>
 </div>
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
@@ -4787,8 +4787,8 @@ ggplot(data = AK_lakes_pca, aes(x = Dim_1, y = Dim_2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-422-1.png" alt="Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-422)Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-425-1.png" alt="Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-425)Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
 </div>
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
@@ -4864,8 +4864,8 @@ ggplot(AK_lakes_pca_ord) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-424-1.png" alt="Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-424)Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-427-1.png" alt="Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-427)Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
 </div>
 
 Great! Here is how to read the ordination plot:
@@ -4921,8 +4921,8 @@ ggplot() +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-426-1.png" alt="Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-426)Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-429-1.png" alt="Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-429)Alaskan lake scores and analyte loadings on shared axes. A PCA biplot, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, filled by the national park it is in, and each colored segment is one analyte, drawn from the origin to its loading on the two components. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
 </div>
 
 Note that ordination data need not be plotted as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
@@ -4937,8 +4937,8 @@ AK_lakes_pca_ord %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-427-1.png" alt="Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-427)Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-430-1.png" alt="Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-430)Loadings of each analyte on the first principal component of the Alaskan lake chemistry. A dot plot, with the loading on the first principal component (Dim_1) on the x-axis and the analyte on the y-axis. Each square is one analyte, filled by analyte. Analytes far from zero in either direction contribute most to the first component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -4997,8 +4997,8 @@ ggplot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-428-1.png" alt="How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-428)How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-431-1.png" alt="How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-431)How much of the variance in the Alaskan lake chemistry each principal component explains. A line plot (often called a scree plot), with the principal component number on the x-axis and the percentage of the total variance that component explains on the y-axis. Each point is one principal component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.</p>
 </div>
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished by adding `coord_fixed()` to a ggplot.
@@ -5042,7 +5042,7 @@ Static plots are great for reporting, but exploring PCA interactively can make i
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-430)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
+<p class="caption">(\#fig:unnamed-chunk-433)Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.</p>
 </div>
 
 The function takes three key arguments:
@@ -5106,8 +5106,8 @@ wq %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-433-1.png" alt="Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-433)Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-436-1.png" alt="Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-436)Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.</p>
 </div>
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
@@ -5132,8 +5132,8 @@ runMatrixAnalysis(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-434-1.png" alt="Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-434)Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-437-1.png" alt="Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-437)Red and white wines separated by their chemistry, using a non-linear method. A scatter plot of a UMAP (uniform manifold approximation and projection) embedding, with the first UMAP dimension (Dim_1) on the x-axis and the second (Dim_2) on the y-axis; the axes have no units and no direct chemical meaning. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.</p>
 </div>
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
@@ -5191,7 +5191,7 @@ ggplot(AK_lakes_tsne, aes(x = Dim_1, y = Dim_2, fill = park)) +
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/9_dimensional_reduction_flowchart.png" alt="Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-436)Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.</p>
+<p class="caption">(\#fig:unnamed-chunk-439)Choosing a dimensionality reduction. This decision flowchart starts from a data set with too many variables to plot directly and ends at a value for the analysis argument of runMatrixAnalysis. Yellow boxes are questions about the data or the goal and green boxes are recommended analyses.</p>
 </div>
 
 Dimensionality reduction places samples with many measurements on a two-dimensional plot, where nearby samples have similar profiles. **PCA is the one to use when the axes need explaining**: each principal component is a combination of the analytes, the ordination shows which analytes drive each one (ranked by the size of the loading, ignoring its sign), and the scree plot shows how much of the variance each principal component describes. PCA scales every analyte first, and the ordination plot needs `coord_fixed()` so that distances in the two directions can be compared. **UMAP and t-SNE are non-linear** and can reveal clusters or curved gradients that PCA misses, but their axes have no quantitative meaning and each run can come out a little differently, so these should only be used to interpret local structures, not data set-wide layout.
@@ -5269,7 +5269,7 @@ ________________________________________________________________________________
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/11_comparing_means_flowchart.png" alt="Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-461)Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.</p>
+<p class="caption">(\#fig:unnamed-chunk-464)Choosing a test for comparing groups. This decision flowchart starts from the number of groups being compared and ends at the function to run. Yellow boxes are questions about the data and green boxes are recommended tests.</p>
 </div>
 
 :::
@@ -5332,8 +5332,8 @@ ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-463-1.png" alt="Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-463)Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-466-1.png" alt="Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-466)Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the number of distinct wells sampled (x axis) for each of the ten aquifers (y axis); each bar is one aquifer. Every aquifer is represented by more than one well, so the wells can be treated as repeated, independent measurements of their aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
@@ -5384,8 +5384,8 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-464-1.png" alt="Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models)." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-464)Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models).</p>
+<img src="index_files/figure-html/unnamed-chunk-467-1.png" alt="Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models)." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-467)Highway fuel economy of cars with four, six and eight cylinders, drawn three ways at once. For each cylinder count (x axis, also encoded by fill color), the half-eye on the right shows the density of highway fuel economy (miles per gallon, y axis), the boxplot shows the median and quartiles, and the dots on the left show every individual car, one dot per car. Data are the 'mpg' dataset from the ggplot2 package (US EPA fuel economy data for 1999 and 2008 models).</p>
 </div>
 
 Look at what this shows that a bar chart would not: how many observations there actually are, whether the distribution is skewed, and whether any group is bimodal. All three change which statistical test would be needed to complete the work described in the next section.
@@ -5468,8 +5468,8 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-466-1.png" alt="Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-466)Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-469-1.png" alt="Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-469)Potassium in aquifers 1 and 6. Boxplots of potassium abundance (y axis) for the two aquifers (x axis), with each point one measurement from a well drawing on that aquifer; there are twelve measurements in each aquifer. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Are these data normally distributed? Let's get a first approximation by looking at a plot:
@@ -5484,8 +5484,8 @@ K_data_1_6 %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-467-1.png" alt="Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-467)Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-470-1.png" alt="Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-470)Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. With twelve measurements per aquifer, it is hard to judge by eye whether either distribution is normal. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shapiro test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
@@ -5569,8 +5569,8 @@ ggplot(orchards, aes(x = orchard, y = nitrate)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-471-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-471)Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.</p>
+<img src="index_files/figure-html/unnamed-chunk-474-1.png" alt="Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-474)Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (mg/kg, y axis) for the north and south orchards (x axis); each point is one soil sample. Most south samples sit below every north sample, but eight very high south readings pull the south mean above the north mean. Data are a constructed teaching example.</p>
 </div>
 
 ``` r
@@ -5654,8 +5654,8 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-473-1.png" alt="Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-473)Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-476-1.png" alt="Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-476)Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well drawing on that aquifer. The number of measurements ranges from three (aquifers 3 and 8) to thirty-three (aquifer 9). Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Let's check visually to see if each group is normally distributed:
@@ -5671,8 +5671,8 @@ K_data %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-474-1.png" alt="Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-474)Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-477-1.png" alt="Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-477)Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Again, it is somewhat hard to tell visually if these data are normally distributed, so let's check with the Shapiro test. Don't forget: with the Shapiro test, we are looking within each group and so need to `group_by()`:
@@ -5775,8 +5775,8 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-478-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-478)Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-481-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-481)Potassium in the ten Hawaiian aquifers, labeled by Games-Howell test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each maroon point one measurement from a well. The letters at the right come from a Games-Howell test on all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 ("af") and aquifer 6 ("abf") share the letters "a" and "f", so their means do not differ significantly. Aquifer 4 ("c") and aquifer 6 share no letter, so their means do differ. Because each pair is judged on its own two spreads, aquifers whose wells agree closely, such as aquifers 4 and 5, can be told apart from others by small differences in mean, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
@@ -5853,8 +5853,8 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-480-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-480)Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-483-1.png" alt="Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p &gt; 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-483)Potassium in the ten Hawaiian aquifers, labeled by Dunn test groups. Boxplots of potassium abundance (x axis) for each aquifer (y axis), with each black point one measurement from a well. The letters at the right come from a Dunn test, a rank-based comparison of all 45 pairs of aquifers: aquifers that share a letter do not differ significantly (adjusted p > 0.05), and aquifers with no letter in common do. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Note that these groupings are different from those generated by the Games-Howell test.
@@ -5888,8 +5888,8 @@ hawaii_aquifers %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-481-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-481)Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-484-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-484)Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer; each violin shows the distribution of one analyte in one aquifer and each point is one measurement from a well. The comparison of interest is the pair of violins within each panel, not the panels against each other. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 Fortunately, we can use an approach that is very similar to what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro test, as usual (note that we group using two variables so that each analyte within each aquifer is considered as an individual distribution):
@@ -6020,8 +6020,8 @@ hawaii_aquifers %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-485-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-485)Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p > 0.05, and one, two, three or four stars mean p < 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-488-1.png" alt="Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p &gt; 0.05, and one, two, three or four stars mean p &lt; 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-488)Sodium and chloride in each of the ten Hawaiian aquifers, annotated with pairwise t-test results. Violin plots (gold) of abundance (y axis) for chloride and sodium (x axis), one panel per aquifer, with each maroon point one measurement from a well. The bracket in each panel joins the two analytes compared, and its label gives the significance of a pairwise t-test with Holm-adjusted p values across all ten aquifers: ns means p > 0.05, and one, two, three or four stars mean p < 0.05, 0.01, 0.001 or 0.0001. Data are from the 'hawaii_aquifers' dataset used in UMD CHEM5725.</p>
 </div>
 
 #### concept check {-}
@@ -6134,7 +6134,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/12_numerical_models_flowchart.png" alt="Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-517)Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
+<p class="caption">(\#fig:unnamed-chunk-520)Choosing what to do with a regression model. This decision flowchart starts from what the model is for and ends at the steps for reading, ranking, comparing slopes between groups, or predicting with it, all of which finish with check_model(). Yellow boxes are questions about the analysis and green boxes are recommended steps.</p>
 </div>
 
 :::
@@ -6195,8 +6195,8 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-519-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-519)Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-522-1.png" alt="Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-522)Valine and iso-leucine abundance in patient blood samples. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; the points rise from left to right. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 It looks like there might be a relationship! Let's build a linear regression model and use it inferentially to examine the details of that relationship:
@@ -6266,7 +6266,7 @@ Note that a variable whose name contains a space or a hyphen, like iso-Leucine, 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/predictwithmodel.png" alt="Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-524)Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one.</p>
+<p class="caption">(\#fig:unnamed-chunk-527)Using a model to make predictions. A fitted model takes values of the predictor variable and returns the value of the response variable that the model expects for each one.</p>
 </div>
 
 We can also use a function called `predictWithModel()` to make predictions using the model. We give it the data we want predictions for and the model. Here we predict a Valine abundance for every patient in the data set, from their iso-Leucine abundance:
@@ -6303,8 +6303,8 @@ ggplot(predictions_from_basic_linear_model) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-526-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-526)Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-529-1.png" alt="Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-529)Measured and predicted valine abundance. Scatter plot with iso-leucine abundance on the horizontal axis and valine abundance on the vertical axis; blue points are measured values and the red line and points are the values predicted by a linear model of valine on iso-leucine. Each blue point is one patient. Data: metabolomics_data.</p>
 </div>
 
 Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals: the distance between each of our points and our line.
@@ -6318,8 +6318,8 @@ ggplot(predictions_from_basic_linear_model) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-527-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-527)Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-530)Residuals of the linear model of valine on iso-leucine. Scatter plot of measured valine against iso-leucine abundance with the model's line; each vertical segment joins a measured value to the model's prediction for it, so its length is that patient's residual. Data: metabolomics_data.</p>
 </div>
 
 We can calculate the sum of the squared residuals:
@@ -6340,8 +6340,8 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-529-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-529)A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-532)A mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance, the prediction of a model that ignores iso-leucine. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 The flat line ignores iso-Leucine, so it misses the rise in Valine that the points show. How much better is our linear model than the flat line model? Let's measure the distance between each point and the flat line:
@@ -6355,8 +6355,8 @@ ggplot(metabolomics_data) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-530-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-530)Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-533-1.png" alt="Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-533)Residuals of the mean-only model of valine abundance. Scatter plot of valine against iso-leucine abundance with a horizontal line at the mean valine abundance; each vertical segment joins a measured value to the mean. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 ``` r
@@ -6411,8 +6411,8 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-532-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-532)A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-535-1.png" alt="A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-535)A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6615,8 +6615,8 @@ plot_grid(plot1, plot2, nrow = 1, labels = "AUTO")
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-537-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-537)Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-540-1.png" alt="Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-540)Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6785,8 +6785,8 @@ predictWithModel(data = elements, model = state_model) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-542-1.png" alt="Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-542)Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table.</p>
+<img src="index_files/figure-html/unnamed-chunk-545-1.png" alt="Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-545)Density rises with atomic mass for solids but barely at all for gases. Scatter plot with atomic mass on the horizontal axis and density in g/mL on the vertical axis; color shows each element's state at room temperature (g, gas; l, liquid; s, solid), and each line is the fit for one state from a linear model with an atomic mass by state interaction. Each point is one element. Data: periodic_table.</p>
 </div>
 
 Each state now has its own line. To ask which slopes differ from which, we pass the model to `tukeyTest()` and name the numeric predictor whose slope should be compared with `slopes_of`. The Tukey test compares the slopes of every pair of groups and corrects the p-values for the number of comparisons, much as the comparing groups chapter's tests do for means. Piping the result into `pGroups()` gives each group a letter, as before, along with its slope (`estimate`) and that slope's standard error:
@@ -6864,8 +6864,8 @@ check_model(multiple_regression_model$model)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-544-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-544)Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-547-1.png" alt="Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-547)Diagnostic checks for a linear model of valine abundance on eight metabolites. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted valine; linearity and homogeneity of variance, each plotting residuals against fitted values; influential observations, plotting standardized residuals against leverage; collinearity, showing the variance inflation factor of each predictor; and normality of residuals as a quantile-quantile plot. Data: metabolomics_data.</p>
 </div>
 
 #### concept check {-}
@@ -6926,18 +6926,15 @@ Building a regression model starts with what it is for. An **inferential** use r
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">You are the new water master of a diamond town on the desert plateau, and the season&rsquo;s first string of gravel barges waits at the foot of the lock flight. Work them up to the reservoir before the evening fog closes in, and decide along the way which newly surveyed gravel pits are worth mining.</div>
 </div>
 </div>
-</div>
-
-<!-- PARKED until regression/dunes is status "ready" in its scenario.json (it is "in_development"): a live card publishes its Canvas assignment. To go live, paste this card inside the cat('...') above, before the flex-column's closing </div>, every line at column 0.
 <div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
-<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/cover.png" alt="Dunes cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/cover.png" alt="Low Water cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
-<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Dunes</a>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/regression/dunes/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Low Water</a>
 <div style="opacity:.65;font-size:13px;margin-top:2px;">Regression &middot; slopes, predicting with a model + ranking scaled predictors</div>
 <div style="margin-top:8px;font-size:13px;line-height:1.4;">It is October 1928, the diamond town&rsquo;s water runs out in December, and the last wagon train is leaving across the desert. Win a rope, sled down the dunes to the tidal flats, and find out whether the town was right to give up on its stranded water steamer.</div>
 </div>
 </div>
--->
+</div>
 
 <hr>
 
@@ -6972,7 +6969,7 @@ Building a regression model starts with what it is for. An **inferential** use r
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-579)Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.</p>
+<p class="caption">(\#fig:unnamed-chunk-582)Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.</p>
 </div>
 
 :::
@@ -6986,7 +6983,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 
 The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?
 
-The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a **sum of squares**: each measurement's distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group's average. That leftover spread is the **noise**, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. The F statistic compares the two, each divided by its number of free values (explained below), and a large F means the groups differ by more than noise would allow.
+The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a **sum of squares**: each measurement's distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group's average. That leftover spread is the **noise**, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. Divided by its number of free values (explained below), each part becomes a variance: the **variance between groups** and the **variance within groups**. The F statistic is the first divided by the second, and a large F means the groups differ by more than noise would allow.
 
 The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones `anovaTest()` prints, and the next sections explain each of them.
 
@@ -7005,7 +7002,7 @@ The same 30 plants are in `fertilizer_trial`. Fill in the blank with the factor 
   ) %>%
   anovaTest()</textarea></div>
 
-<div class="selfcheck" data-answer="2" data-explain="F compares the spread between groups (how far the group averages sit from the grand mean) with the noise (how far measurements sit from their own group's average), each divided by its free values. If the groups do not really differ, the two are about the same size and F is near 1.">
+<div class="selfcheck" data-answer="2" data-explain="F is the variance between groups (how far the group averages sit from the grand mean) divided by the variance within groups (the noise: how far measurements sit from their own group's average), each a spread divided by its free values. If the groups do not really differ, the two are about the same size and F is near 1.">
 <p class="scq">Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does that say?</p>
 <label><input type="radio"> Potassium varies a lot within each aquifer</label>
 <label><input type="radio"> Every aquifer differs from every other aquifer</label>
@@ -7071,7 +7068,7 @@ K_model %>%
 ## aquifer_9  0.22717927
 ```
 
-Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the noise variance, the single pooled estimate of the leftover spread that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
+Each aquifer gets its letters, its mean (`estimate`) and the standard error of that mean (`std_err`). The standard errors differ a great deal from aquifer to aquifer, because the Games-Howell test uses each group's own spread rather than the variance within groups, the single pooled estimate of the noise that the ANOVA uses. Aquifers 4 and 5, whose wells agree closely, have small standard errors and are told apart from several others, while aquifer 10, whose seven wells scatter widely, shares a letter with every other aquifer.
 
 What the ANOVA adds is a single answer to "is there any difference at all?" and the share of the variation the factor explains. The ANOVA and the Games-Howell test can disagree. An ANOVA can be significant while no single pair is, for example when two groups together sit above a third but neither does on its own, and a Games-Howell test can occasionally flag a pair when the overall ANOVA is not significant. They are answering different questions.
 
@@ -7099,12 +7096,12 @@ Mg_model %>%
 
 ### reading the ANOVA table {-}
 
-Each row of an ANOVA table is one term in the model, followed by a row for the noise and a row for the total. Reading across a row:
+`anovaTest()` prints one row for each term in the model, then a row for the noise and a row for the total. Read the total row first: it holds all of the spread in the response, and every other row is a part of it. Reading across a row:
 
 - `sum_of_squares` is the spread the row accounts for. The rows above the total add up to the total.
 - `free_values` is the row's degrees of freedom, explained below.
-- `variance` is the sum of squares divided by the free values: the spread per free value.
-- `F` is the row's variance divided by the noise variance.
+- `variance` is the sum of squares divided by the free values: the spread per free value. On a factor's row this is the **variance between groups**; on the noise row it is the **variance within groups**.
+- `F` is the row's variance divided by the noise variance (the variance within groups).
 - `p` is how often noise alone would give an F this large.
 - `share` is the row's sum of squares as a share of the total: the **share of the variation explained**. Every row's share except the total's adds up to 1, and the noise row's share is the part left unexplained.
 
@@ -7118,7 +7115,7 @@ Each row of an ANOVA table is one term in the model, followed by a row for the n
 | an interaction between two terms | the free values of the two terms multiplied together |
 | noise | whatever is left: the total's free values minus every other row's |
 
-Free values matter because every value a term is free to set lets the model bend toward the data a little, so even a factor with no real effect picks up some spread by chance: on average, about as much per free value as the noise holds. Dividing by free values turns each spread into a variance, and F compares a row's variance with the noise variance. Aquifer accounts for 150.4 units of spread over 9 free values, a variance of 16.7; the noise holds 169.2 over 96, a variance of 1.76; so F = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 however many free values it has, which is what lets terms of different sizes be compared on the same scale. The noise's free values matter too: the more there are, the better the noise variance is estimated, and the more the F can be trusted.
+Free values matter because every value a term is free to set lets the model bend toward the data a little, so even a factor with no real effect picks up some spread by chance: on average, about as much per free value as the noise holds. Dividing by free values turns each spread into a variance, and F compares a row's variance with the noise variance. Aquifer accounts for 150.4 units of spread over 9 free values, a variance between groups of 16.7; the noise holds 169.2 over 96, a variance within groups of 1.76; so F = 16.7 / 1.76 = 9.5. A term with no real effect gives an F near 1 however many free values it has, which is what lets terms of different sizes be compared on the same scale. The noise's free values matter too: the more there are, the better the noise variance is estimated, and the more the F can be trusted.
 
 Because F is a ratio per free value, it is evidence that a term matters, not a measure of how much it matters: a factor with many groups can explain a great deal of variation and still have a modest F. How much it matters is the `share` column. Aquifer accounts for 150.4 of the 319.6 units of total spread, a share of 0.47, so aquifer explains about 47% of the variation in potassium and 53% is noise. With a single factor, the share is exactly the r-squared from the regression chapter.
 
@@ -7179,11 +7176,11 @@ check_model(K_model$model)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-583-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-583)Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.</p>
+<img src="index_files/figure-html/unnamed-chunk-586-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-586)Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.</p>
 </div>
 
-Unequal spreads matter most to the ANOVA's F, which compares every term with one noise variance pooled across all the groups. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
+Unequal spreads matter most to the ANOVA's F, which compares every term with one variance within groups, pooled across all the groups. The Games-Howell test used above to find which groups differ already judges each pair on its own two spreads, so it does not depend on this assumption. When the spreads clearly differ between groups, a Welch ANOVA is the unequal-variance counterpart of the ANOVA, and the rank-based Kruskal test is another way out for a single factor.
 
 #### concept check {-}
 
@@ -7248,8 +7245,8 @@ nacl %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-585-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-585)Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.</p>
+<img src="index_files/figure-html/unnamed-chunk-588-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-588)Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.</p>
 </div>
 
 The interaction row is not "the two factors together". It holds only the extra spread explained by letting the effect of one factor differ across the levels of the other, on top of what the two factors explain on their own. Most of the explaining is usually done by the factors themselves, so the interaction row often has the smallest share, and that is expected. When an interaction is real, though, the main effects on their own can mislead: "the treatment raises yield" is not a useful summary if it raises yield in one soil and lowers it in another. Read the interaction row first.
@@ -7297,7 +7294,7 @@ The same model-then-table approach covers several designs that come up in labora
 <hr>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
-<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=2"; mountAll();</script>
+<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=3"; mountAll();</script>
 
 ## practice {-}
 
@@ -7321,7 +7318,7 @@ The same model-then-table approach covers several designs that come up in labora
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.summary-pdf target="_blank"}
 
-An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table row by row:** each row's free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with *k* groups keeps *k* − 1, an interaction multiplies its terms', and the noise gets the rest). A row's variance is its sum of squares per free value, F is that variance over the noise variance, so it is evidence that a term matters, and `share` is how much: the row's share of the variation explained, with every row's share adding up to 1. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
+An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. **Build the model, then ask it questions:** fit it once with a formula (response on the left, factors on the right, `*` for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. **Read the table from the total row:** each row's free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with *k* groups keeps *k* − 1, an interaction multiplies its terms', and the noise gets the rest). A row's variance is its sum of squares per free value (between groups on a factor's row, within groups on the noise row), F is that variance over the variance within groups, so it is evidence that a term matters, and `share` is how much: the row's share of the variation explained, with every row's share adding up to 1. **With two factors, read the interaction row first:** if it is real, a main effect alone can mislead, and an interaction plot shows how. **Check the model** before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.
 
 | Function | What it is for | How it is used in this chapter |
 |---|---|---|
@@ -7333,15 +7330,21 @@ An ANOVA splits the spread in a response (its sum of squares) into the part each
 
 <hr>
 
-<!-- ## exercises {-}
+<!-- DRAFT, not live (2026-11-13): to publish, delete this comment wrapper and set the chunk's eval to identical(knitr:::pandoc_to(), 'html'), once both scenario.json files are status: ready.
 
-TODO: the two Rothamsted escape-room scenarios (rooms/anova/cellars and rooms/anova/glasshouses), as cards in the course pattern, once each scenario.json is status: ready. -->
+## exercises {-}
+
+
+
+<hr>
+
+-->
 
 ## further reading {-}
 
 - [Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/). Jonas Lindeløv shows that the t-test, one- and two-way ANOVA and ANCOVA are all the same linear model with different predictors, with R code side by side. It is the clearest account of the idea this chapter is built on.
 
-- [Analysis of variance and blocking](https://www.nature.com/articles/nmeth.3005). Martin Krzywinski and Naomi Altman's short *Nature Methods* column (2014) explains the between- and within-group split behind F, and how a blocking factor removes nuisance variation from the error term.
+- [Analysis of variance and blocking](https://www.nature.com/articles/nmeth.3005). Martin Krzywinski and Naomi Altman's short *Nature Methods* column (2014) explains the between- and within-group split behind F, and how a blocking factor removes nuisance variation from the noise.
 
 - [Two-way anova](https://www.biostathandbook.com/twowayanova.html). John McDonald's *Handbook of Biological Statistics* walks through two-way designs with and without replication, what an interaction test does, and why main effects can mislead when an interaction is present.
 
@@ -7459,8 +7462,8 @@ random_forest_model$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-601-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-601)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-606-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-606)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
 </div>
 
 We can use the model to make predictions with the `predictWithModel()` function:
@@ -7482,8 +7485,8 @@ ggplot(random_forest_predictions) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-602-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-602)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-607-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-607)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical response from a set of predictors. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the `model_type` to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
@@ -7537,8 +7540,8 @@ rfc$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-604-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-604)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
+<img src="index_files/figure-html/unnamed-chunk-609-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-609)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
 </div>
 
 We can also make predictions on data the model has not seen, here the six patients that were held out. For a classification model, `predictWithModel()` adds one `probability_` column per category and a `predicted_class` column holding the most probable one, so we can set the predictions beside the real status:
@@ -7697,8 +7700,8 @@ select(search_results, term, title)
 ##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
 ##  3 beta-amyrin synthase       [Cloning and bioinformatics a…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  5 friedelin synthase         Genome Mining and Gene Expres…
-##  6 friedelin synthase         The Methionine 549 and Leucin…
+##  5 friedelin synthase         Friedelin Synthase from Mayte…
+##  6 friedelin synthase         Functional characterization o…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  9 sorghum bicolor            Potential food applications o…
@@ -7739,7 +7742,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-621-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-626-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -7789,7 +7792,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-623-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-628-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -7813,7 +7816,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-624-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-629-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -7853,7 +7856,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-625-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-630-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -7886,16 +7889,16 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… Ginsenosi…
-##  2 β-Amyrin synthase from Conyza blinii expresse… Oxidosqua…
+##  2 β-Amyrin synthase from Conyza blinii expresse… Conyza bl…
 ##  3 [Cloning and bioinformatics analysis of β-amy… Dipsacus …
-##  4 Friedelin in Maytenus ilicifolia Is Produced … friedelin…
-##  5 Genome Mining and Gene Expression Reveal Mayt… maytansin…
-##  6 The Methionine 549 and Leucine 552 Residues o… Friedelin…
-##  7 Current status and prospects of herbicide-res… herbicide…
+##  4 Friedelin in Maytenus ilicifolia Is Produced … Triterpen…
+##  5 Friedelin Synthase from Maytenus ilicifolia: … Friedelin…
+##  6 Functional characterization of an oxidosquale… Friedelin…
+##  7 Current status and prospects of herbicide-res… Herbicide…
 ##  8 Sorghum (Sorghum bicolor).                     Sorghum t…
-##  9 Potential food applications of sorghum (Sorgh… sorghum, …
+##  9 Potential food applications of sorghum (Sorgh… Sorghum, …
 ## 10 Regulatory mechanisms underlying cuticular wa… Plant cut…
-## 11 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
+## 11 Cuticular wax in wheat: biosynthesis, genetic… plant cut…
 ## 12 Update on Cuticular Wax Biosynthesis and Its … plant cut…
 ```
 
@@ -7909,7 +7912,7 @@ select(search_results, title, generation)
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/13_language_models_flowchart.png" alt="Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-627)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
+<p class="caption">(\#fig:unnamed-chunk-632)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
 </div>
 
 Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
@@ -8067,7 +8070,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-651-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-656-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -8255,7 +8258,7 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png" alt="Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-666)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
+<p class="caption">(\#fig:unnamed-chunk-671)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
 </div>
 
 A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
@@ -8386,7 +8389,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-682-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-687-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -8414,7 +8417,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-683-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-688-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
@@ -8459,7 +8462,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-685-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-690-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -8475,7 +8478,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-686-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-691-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so we recommend it:
 
@@ -8484,7 +8487,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-687-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-692-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient function is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
@@ -8555,7 +8558,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-689-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-694-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -8575,7 +8578,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-690-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-695-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -8651,7 +8654,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-695-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-700-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -8686,7 +8689,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-696-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-701-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -8698,7 +8701,7 @@ plot_grid(
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png" alt="Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-697)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
+<p class="caption">(\#fig:unnamed-chunk-702)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
 </div>
 
 Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
@@ -8938,7 +8941,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-721-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-726-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -9624,7 +9627,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-748-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-753-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -9748,7 +9751,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-767-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-772-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### 3D scatter plots {-}
 
@@ -9836,7 +9839,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-769-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-774-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -9859,7 +9862,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-770-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-775-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -9884,7 +9887,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-771-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-776-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -9957,7 +9960,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-776-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-781-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -9969,7 +9972,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-777-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-782-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -9985,7 +9988,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-778-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-783-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -10000,7 +10003,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-779-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-784-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -10029,7 +10032,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-780-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-785-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -10054,7 +10057,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-781-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-786-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -10101,7 +10104,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-782-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-787-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -10122,7 +10125,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-783-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-788-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 <hr>
@@ -10470,6 +10473,103 @@ runMatrixAnalysis(
                                      # if you are about to build a network from the distances.
 )
 ```
+
+## models
+
+Models in this course use two functions: `buildModel()` builds a model from a table, and
+`predictWithModel()` uses that model to make predictions for a table. (If you meet older material
+calling `buildModel2()`, it is the same function under its old name.)
+
+### basic template: one predictor, one response
+
+
+``` r
+
+my_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictors = "iso-Leucine",
+  response = "Valine"
+)
+
+my_predictions <- predictWithModel(
+  data = metabolomics_unknown,
+  model = my_model
+)
+```
+
+That is the whole basic workflow, and `buildModel()` is only four questions:
+
+- `data`: which table to build the model from. It must have no missing values in the columns the
+  model uses (fill them in with `impute()` or remove those rows first).
+- `model_type`: which kind of model. The options are listed in the full template below.
+- `predictors`: which column (or columns) the model predicts **from**. For more than one, use
+  `c("col_1", "col_2")`.
+- `response`: which **one** column the model predicts.
+
+`predictWithModel()` is only two questions: which table to predict for (`data`), and which model to
+use (`model`, the whole output of `buildModel()`). The new table needs every predictor column, but it
+does not need the response. What comes back is that same table with new columns added:
+
+- regression models add `predicted_<response>`, for example `predicted_Valine`.
+- classification models add one `probability_<class>` column per class, plus `predicted_class`.
+
+### full template: buildModel()
+
+
+``` r
+
+buildModel(
+  data, # the table to build the model from; no missing values in the columns the model uses
+  model_type = c(
+    "linear_regression",            # predicts a number with a straight-line relationship
+    "random_forest_regression",     # predicts a number with a random forest
+    "random_forest_classification", # predicts a category with a random forest
+    "logistic_regression",          # predicts one of two categories
+    "contrastive_learning"          # builds an embedding rather than a prediction
+  ),
+  predictors = NULL, # the column(s) to predict from, e.g. c("iso-Leucine", "Leucine")
+  response = NULL,   # the one column to predict
+  formula = NULL, # an alternative to predictors + response, for linear_regression only:
+                  #   response ~ predictor                 one predictor
+                  #   response ~ predictor_1 + predictor_2 each group its own intercept,
+                  #                                        one shared slope
+                  #   response ~ predictor_1 * predictor_2 each group its own intercept AND slope
+                  # Give either formula, or predictors and response, never both.
+  scale_variance = FALSE, # TRUE scales each numeric predictor to mean 0 and standard deviation 1
+                          # before fitting, so coefficients can be compared across predictors.
+                          # The response is never scaled. predictWithModel() scales new data the
+                          # same way automatically, so new tables always go in as measured.
+  fold_cross_validation = 10, # random forests only: the number of folds used in cross-validation
+                              # (2 or more)
+  optimization_parameters = list( # random forests only: the grid of settings to try
+    n_vars_tried_at_split = seq(10, 20, 5), # how many predictors each split may choose from
+    n_trees = seq(100, 200, 50),            # how many trees in the forest
+    min_leaf_size = 1                       # the fewest samples allowed in a leaf
+  )
+)
+```
+
+The output is a list. The parts you will use most:
+
+- `$model_type`, `$response` and `$predictors`: what the model is and what it relates.
+- `$model`: the fitted model itself.
+- `$metrics`: how well the model performs.
+
+### full template: predictWithModel()
+
+
+``` r
+
+predictWithModel(
+  data,  # the table to predict for; it needs every predictor column the model was built on
+  model  # the output of buildModel() (the whole list, or just its $model)
+)
+```
+
+`predictWithModel()` works out the model type from the model itself, so you never need to tell it.
+It can only predict for groups the model has seen: if the new table contains a category that was not
+in the table used to build the model, it stops and says so.
 
 # loading analyzeGCMSdata {-}
 

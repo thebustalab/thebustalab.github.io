@@ -204,6 +204,111 @@ stays the same.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
+<div id="models" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
+</h2>
+<p>Models in this course use two functions: <code>buildModel()</code> builds a model from a table, and
+<code>predictWithModel()</code> uses that model to make predictions for a table. (If you meet older material
+calling <code>buildModel2()</code>, it is the same function under its old name.)</p>
+<div id="basic-template-one-predictor-one-response" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> basic template: one predictor, one response<a class="anchor" aria-label="anchor" href="#basic-template-one-predictor-one-response"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb283"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="st">"iso-Leucine"</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_unknown</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">my_model</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>That is the whole basic workflow, and <code>buildModel()</code> is only four questions:</p>
+<ul>
+<li>
+<code>data</code>: which table to build the model from. It must have no missing values in the columns the
+model uses (fill them in with <code>impute()</code> or remove those rows first).</li>
+<li>
+<code>model_type</code>: which kind of model. The options are listed in the full template below.</li>
+<li>
+<code>predictors</code>: which column (or columns) the model predicts <strong>from</strong>. For more than one, use
+<code>c("col_1", "col_2")</code>.</li>
+<li>
+<code>response</code>: which <strong>one</strong> column the model predicts.</li>
+</ul>
+<p><code>predictWithModel()</code> is only two questions: which table to predict for (<code>data</code>), and which model to
+use (<code>model</code>, the whole output of <code>buildModel()</code>). The new table needs every predictor column, but it
+does not need the response. What comes back is that same table with new columns added:</p>
+<ul>
+<li>regression models add <code>predicted_&lt;response&gt;</code>, for example <code>predicted_Valine</code>.</li>
+<li>classification models add one <code>probability_&lt;class&gt;</code> column per class, plus <code>predicted_class</code>.</li>
+</ul>
+</div>
+<div id="full-template-buildmodel" class="section level3" number="4.2.2">
+<h3>
+<span class="header-section-number">4.2.2</span> full template: buildModel()<a class="anchor" aria-label="anchor" href="#full-template-buildmodel"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb284"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>, <span class="co"># the table to build the model from; no missing values in the columns the model uses</span></span>
+<span>  model_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"linear_regression"</span>,            <span class="co"># predicts a number with a straight-line relationship</span></span>
+<span>    <span class="st">"random_forest_regression"</span>,     <span class="co"># predicts a number with a random forest</span></span>
+<span>    <span class="st">"random_forest_classification"</span>, <span class="co"># predicts a category with a random forest</span></span>
+<span>    <span class="st">"logistic_regression"</span>,          <span class="co"># predicts one of two categories</span></span>
+<span>    <span class="st">"contrastive_learning"</span>          <span class="co"># builds an embedding rather than a prediction</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># the column(s) to predict from, e.g. c("iso-Leucine", "Leucine")</span></span>
+<span>  response <span class="op">=</span> <span class="cn">NULL</span>,   <span class="co"># the one column to predict</span></span>
+<span>  formula <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># an alternative to predictors + response, for linear_regression only:</span></span>
+<span>                  <span class="co">#   response ~ predictor                 one predictor</span></span>
+<span>                  <span class="co">#   response ~ predictor_1 + predictor_2 each group its own intercept,</span></span>
+<span>                  <span class="co">#                                        one shared slope</span></span>
+<span>                  <span class="co">#   response ~ predictor_1 * predictor_2 each group its own intercept AND slope</span></span>
+<span>                  <span class="co"># Give either formula, or predictors and response, never both.</span></span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># TRUE scales each numeric predictor to mean 0 and standard deviation 1</span></span>
+<span>                          <span class="co"># before fitting, so coefficients can be compared across predictors.</span></span>
+<span>                          <span class="co"># The response is never scaled. predictWithModel() scales new data the</span></span>
+<span>                          <span class="co"># same way automatically, so new tables always go in as measured.</span></span>
+<span>  fold_cross_validation <span class="op">=</span> <span class="fl">10</span>, <span class="co"># random forests only: the number of folds used in cross-validation</span></span>
+<span>                              <span class="co"># (2 or more)</span></span>
+<span>  optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span> <span class="co"># random forests only: the grid of settings to try</span></span>
+<span>    n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">5</span><span class="op">)</span>, <span class="co"># how many predictors each split may choose from</span></span>
+<span>    n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">50</span><span class="op">)</span>,            <span class="co"># how many trees in the forest</span></span>
+<span>    min_leaf_size <span class="op">=</span> <span class="fl">1</span>                       <span class="co"># the fewest samples allowed in a leaf</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The output is a list. The parts you will use most:</p>
+<ul>
+<li>
+<code>$model_type</code>, <code>$response</code> and <code>$predictors</code>: what the model is and what it relates.</li>
+<li>
+<code>$model</code>: the fitted model itself.</li>
+<li>
+<code>$metrics</code>: how well the model performs.</li>
+</ul>
+</div>
+<div id="full-template-predictwithmodel" class="section level3" number="4.2.3">
+<h3>
+<span class="header-section-number">4.2.3</span> full template: predictWithModel()<a class="anchor" aria-label="anchor" href="#full-template-predictwithmodel"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb285"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,  <span class="co"># the table to predict for; it needs every predictor column the model was built on</span></span>
+<span>  <span class="va">model</span>  <span class="co"># the output of buildModel() (the whole list, or just its $model)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>predictWithModel()</code> works out the model type from the model itself, so you never need to tell it.
+It can only predict for groups the model has seen: if the new table contains a category that was not
+in the table used to build the model, it stops and says so.</p>
+</div>
+</div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="r-faq.html">r faq</a></div>
@@ -216,6 +321,13 @@ stays the same.</p>
 <a class="nav-link" href="#matrix-analyses"><span class="header-section-number">4.1</span> matrix analyses</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#basic-template-a-wide-data-frame"><span class="header-section-number">4.1.1</span> basic template: a wide data frame</a></li>
 <li><a class="nav-link" href="#full-template"><span class="header-section-number">4.1.2</span> full template</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#models"><span class="header-section-number">4.2</span> models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#basic-template-one-predictor-one-response"><span class="header-section-number">4.2.1</span> basic template: one predictor, one response</a></li>
+<li><a class="nav-link" href="#full-template-buildmodel"><span class="header-section-number">4.2.2</span> full template: buildModel()</a></li>
+<li><a class="nav-link" href="#full-template-predictwithmodel"><span class="header-section-number">4.2.3</span> full template: predictWithModel()</a></li>
 </ul>
 </li>
 </ul>
@@ -235,7 +347,7 @@ stays the same.</p>
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-11.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
