@@ -120,8 +120,8 @@
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="anova.html#anova-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-582"></span>
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%"><p class="caption">
-Choosing an analysis of variance. This decision flowchart starts from the number of factors in the experiment and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from what was measured in each sample and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%"><p class="caption">
+Choosing an analysis of variance. This decision flowchart starts from what was measured in each sample and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.
 </p>
 </div>
 </div>
@@ -443,6 +443,76 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <hr>
 </div>
 </div>
+<div id="whole-profiles-permanova" class="section level2 unnumbered">
+<h2>whole profiles: PERMANOVA<a class="anchor" aria-label="anchor" href="#whole-profiles-permanova"><i class="fas fa-link"></i></a>
+</h2>
+<p>Many analyses in chemistry measure many things in every sample: a GC-MS profile of dozens of compounds, a metabolomics panel, the major ions in a water sample. The question is then often about the whole profile: does treatment change the leaf chemistry, do two sites have different water? Running a separate ANOVA on every compound multiplies the number of tests and still never answers the question about the profile as a whole. MANOVA extends ANOVA to several responses, but it assumes they are jointly normal, which chemical profiles rarely are. <strong>PERMANOVA</strong> (permutational multivariate analysis of variance) makes the same split as an ANOVA, with two changes: it measures spread as <strong>distances between samples’ profiles</strong>, the distances from the distances and scaling chapter, and it gets its p-value by <strong>shuffling the group labels</strong> instead of reading it off the F distribution.</p>
+<p>The instrument below uses the same 30 plants as before, now with two compounds, limonene and pinene, measured in a leaf extract from each one. Two compounds keep each plant’s profile drawable as a point; a real profile has many more, and every distance is then measured across all of them at once. The total spread is every plant’s squared distance from the grand center (the center of all 30 profiles), and each factor’s row is how far its group centers sit from the grand center. Switching the spread to “between every pair” gives the same total from the distances between plants alone, with no center needed, which is why PERMANOVA can work with any distance, including Bray-Curtis. The last button shuffles the labels.</p>
+<div class="permanova-instrument" data-config="/integrated_bioanalytics/data/permanova_instrument_two_factors.json">
+
+</div>
+<p>The shuffling is the new idea. If species made no difference to the profile, the species labels would be arbitrary, and dealing them out to the plants at random would make the species row stand out from the noise about as much as the real labels do. Shuffling 999 times and counting how often a shuffle does at least as well gives the p-value: (that count + 1) ÷ (999 + 1). It needs no assumption about the shape of the data, and it has two consequences worth knowing: the p-value changes slightly from run to run, and it can never be smaller than 1 ÷ (number of shuffles + 1), so with 999 shuffles the smallest possible value is 0.001.</p>
+<p><code>permanovaTest()</code> runs the analysis and prints the same columns as <code>anovaTest()</code>. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside <code><a href="https://rdrr.io/r/base/cbind.html">cbind()</a></code>:</p>
+<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fertilizer_trial</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">permanovaTest</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">limonene</span>, <span class="va">pinene</span><span class="op">)</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
+<span><span class="co">##                 term sum_of_squares free_values variance</span></span>
+<span><span class="co">## 1            species         2847.0           2  1424.00</span></span>
+<span><span class="co">## 2         fertilizer          337.8           1   337.80</span></span>
+<span><span class="co">## 3 species:fertilizer          152.1           2    76.07</span></span>
+<span><span class="co">## 4              noise          473.6          24    19.73</span></span>
+<span><span class="co">## 5              total         3811.0          29       NA</span></span>
+<span><span class="co">##       F     p share</span></span>
+<span><span class="co">## 1 72.15 0.001 0.747</span></span>
+<span><span class="co">## 2 17.12 0.001 0.089</span></span>
+<span><span class="co">## 3  3.85 0.019 0.040</span></span>
+<span><span class="co">## 4    NA    NA 0.124</span></span>
+<span><span class="co">## 5    NA    NA 1.000</span></span></code></pre></div>
+<p>Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species’ profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. With a single response and the default Euclidean distance, <code>permanovaTest()</code> gives exactly the sums of squares and F values of <code>anovaTest()</code>; only the way p is found differs.</p>
+<p>Most of the course’s data sets are long, with one row per measurement, like <code>hawaii_aquifers</code>, where each well’s water chemistry is spread over nine rows, one per analyte. <code>permanovaTest()</code> takes long data directly: the value column goes on the left of the formula, <code>profile =</code> names the column that says which compound (or analyte) each row holds, and <code>sample =</code> names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:</p>
+<div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dissolved_solids"</span>, <span class="st">"HCO3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">permanovaTest</span><span class="op">(</span></span>
+<span>    <span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span>,</span>
+<span>    profile <span class="op">=</span> <span class="st">"analyte"</span>,</span>
+<span>    sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"well_name"</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span><span class="op">)</span>,</span>
+<span>    distance <span class="op">=</span> <span class="st">"bray"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">##           term sum_of_squares free_values variance    F</span></span>
+<span><span class="co">## 1 aquifer_code          4.259           9  0.47320 9.59</span></span>
+<span><span class="co">## 2        noise          4.739          96  0.04936   NA</span></span>
+<span><span class="co">## 3        total          8.997         105       NA   NA</span></span>
+<span><span class="co">##       p share</span></span>
+<span><span class="co">## 1 0.001 0.473</span></span>
+<span><span class="co">## 2    NA 0.527</span></span>
+<span><span class="co">## 3    NA 1.000</span></span></code></pre></div>
+<p>The choice of distance matters here just as it did in the distances and scaling chapter. With Euclidean distance on the raw abundances, the ions that vary most from well to well dominate every distance (chloride alone accounts for over 60% of the total spread and sodium for about a fifth), and aquifer explains about 34% of the variation; with Bray-Curtis, which compares the composition of the water, it explains about 47%. One caution applies to every PERMANOVA: a significant result can also come from groups that differ only in how spread out they are, not in where their profiles sit, and the risk is highest when the groups are very different in size. The aquifers here range from 3 to 33 wells and do differ in spread, so this result is best read as “the aquifers’ water chemistry differs”, in position, in spread, or both. A PCA plot of the profiles, colored by group (dimensional reduction chapter), shows which.</p>
+<div id="concept-check-64" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-64"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the distance that compares the composition of the water, then press Run and compare the share with the one from Euclidean distance (the default, if the <code>distance</code> line is deleted).</p>
+<div class="webr-cell">
+<textarea class="webr-code">hawaii_aquifers %&gt;%
+  filter(!analyte %in% c("dissolved_solids", "HCO3")) %&gt;%
+  permanovaTest(
+    abundance ~ aquifer_code,
+    profile = "analyte",
+    sample = c("well_name", "longitude", "latitude"),
+    distance = "____"
+  )</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="Each shuffle deals the group labels out to the samples at random, which is what the data would look like if the groups made no difference. The p-value is the share of shuffles that make the factor stand out from the noise at least as much as the real labels do, so a p of 0.001 from 999 shuffles means no shuffle did as well.">
+<p class="scq">
+Self-check: PERMANOVA’s p-value for a factor is 0.001, from 999 shuffles. What does that mean?
+</p>
+<p><label><input type="radio"> 0.1% of the variation in the profile is explained by the factor</label>
+<label><input type="radio"> None of the 999 shuffled labelings made the factor stand out from the noise as much as the real labels did</label>
+<label><input type="radio"> The profiles are normally distributed within each group</label></p>
+</div>
+<hr>
+</div>
+</div>
 <div id="other-designs" class="section level2 unnumbered">
 <h2>other designs<a class="anchor" aria-label="anchor" href="#other-designs"><i class="fas fa-link"></i></a>
 </h2>
@@ -454,11 +524,9 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <strong>Adjusting for a covariate (ANCOVA).</strong> When groups also differ in a numeric variable that affects the response, such as plant size, adding it to the formula, <code>response ~ treatment + plant_size</code>, compares the groups at the same value of the covariate. With <code>*</code> instead of <code>+</code>, the model gives each group its own slope, which is the comparing-slopes analysis from the regression chapter.</li>
 <li>
 <strong>Repeated measures.</strong> When the same subject is measured more than once (the same plant over several weeks, the same patient before and after a treatment), the measurements are not independent, and treating them as if they were overstates the evidence. These designs need a mixed model, which tracks which measurements belong to which subject.</li>
-<li>
-<strong>Many responses at once.</strong> MANOVA extends ANOVA to several responses measured on each sample but assumes they are jointly normal, which large chemical profiles rarely are. PERMANOVA works from a distance matrix, as built in the distances and scaling chapter, and gets its p-value by shuffling the group labels, so it is the usual choice for metabolomics and community profiles.</li>
 </ul>
-<div id="concept-check-64" class="section level4 unnumbered">
-<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-64"><i class="fas fa-link"></i></a>
+<div id="concept-check-65" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-65"><i class="fas fa-link"></i></a>
 </h4>
 <div class="selfcheck" data-answer="0" data-explain="Each leaf is measured four times, so the 48 measurements are not 48 independent units of evidence. Treating them as independent overstates the evidence; a repeated-measures (mixed model) design tracks which measurements come from which leaf.">
 <p class="scq">
@@ -469,7 +537,7 @@ Self-check: twelve leaves are each measured on four days, giving 48 measurements
 <label><input type="radio"> Day is a numeric predictor, so ANOVA cannot use it</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=3"; mountAll();</script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=4"; mountAll();</script><script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=1"; mountAll();</script>
 </div>
 </div>
 <div id="practice" class="section level2 unnumbered">
@@ -496,7 +564,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-10"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. <strong>Build the model, then ask it questions:</strong> fit it once with a formula (response on the left, factors on the right, <code>*</code> for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. <strong>Read the table from the total row:</strong> each row’s free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with <em>k</em> groups keeps <em>k</em> − 1, an interaction multiplies its terms’, and the noise gets the rest). A row’s variance is its sum of squares per free value (between groups on a factor’s row, within groups on the noise row), F is that variance over the variance within groups, so it is evidence that a term matters, and <code>share</code> is how much: the row’s share of the variation explained, with every row’s share adding up to 1. <strong>With two factors, read the interaction row first:</strong> if it is real, a main effect alone can mislead, and an interaction plot shows how. <strong>Check the model</strong> before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test.</p>
+<p>An ANOVA splits the spread in a response (its sum of squares) into the part each term explains and the part left over, the noise. <strong>Build the model, then ask it questions:</strong> fit it once with a formula (response on the left, factors on the right, <code>*</code> for an interaction), read the ANOVA table, then, for a single factor, use the Games-Howell test on the same model to find which groups differ. <strong>Read the table from the total row:</strong> each row’s free values are what is left once the values the model fixes are spoken for (the grand mean speaks for one measurement, a factor with <em>k</em> groups keeps <em>k</em> − 1, an interaction multiplies its terms’, and the noise gets the rest). A row’s variance is its sum of squares per free value (between groups on a factor’s row, within groups on the noise row), F is that variance over the variance within groups, so it is evidence that a term matters, and <code>share</code> is how much: the row’s share of the variation explained, with every row’s share adding up to 1. <strong>With two factors, read the interaction row first:</strong> if it is real, a main effect alone can mislead, and an interaction plot shows how. <strong>Check the model</strong> before trusting it: noise roughly normal with a similar spread in every group, and measurements independent (repeated measurements of one subject need a mixed model). For a single factor with non-normal data, use the Kruskal test, then the Dunn test. <strong>For a whole profile, use PERMANOVA</strong> (p from shuffled labels; a difference in spread alone can also make it significant).</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -517,10 +585,12 @@ Harvest Home is the world we play together in class, and you can also play it on
 </td>
 </tr>
 <tr class="even">
-<td><code>anovaTest()</code></td>
+<td>
+<code>anovaTest()</code>, <code>permanovaTest()</code>
+</td>
 <td>the ANOVA table: a row per term, then noise and total, with <code>sum_of_squares</code>, <code>free_values</code>, <code>variance</code>, <code>F</code>, <code>p</code> and <code>share</code>
 </td>
-<td>piped after the model</td>
+<td>piped after the model; for a whole profile, <code>permanovaTest(cbind(...) ~ factors)</code> on the data</td>
 </tr>
 <tr class="odd">
 <td>
@@ -561,6 +631,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 <li><p><a href="https://lindeloev.github.io/tests-as-linear/">Common statistical tests are linear models</a>. Jonas Lindeløv shows that the t-test, one- and two-way ANOVA and ANCOVA are all the same linear model with different predictors, with R code side by side. It is the clearest account of the idea this chapter is built on.</p></li>
 <li><p><a href="https://www.nature.com/articles/nmeth.3005">Analysis of variance and blocking</a>. Martin Krzywinski and Naomi Altman’s short <em>Nature Methods</em> column (2014) explains the between- and within-group split behind F, and how a blocking factor removes nuisance variation from the noise.</p></li>
 <li><p><a href="https://www.biostathandbook.com/twowayanova.html">Two-way anova</a>. John McDonald’s <em>Handbook of Biological Statistics</em> walks through two-way designs with and without replication, what an interaction test does, and why main effects can mislead when an interaction is present.</p></li>
+<li><p><a href="https://doi.org/10.1111/j.1442-9993.2001.01070.pp.x">A new method for non-parametric multivariate analysis of variance</a>. Marti Anderson’s paper in <em>Austral Ecology</em> (2001) introduced PERMANOVA: the split of a distance matrix into the parts each factor explains, and a p-value from shuffling the labels.</p></li>
 <li><p><a href="https://cran.r-project.org/web/packages/emmeans/vignettes/interactions.html">Interaction analysis in emmeans</a>. The vignette for the package the course uses to compare slopes between groups shows how to follow up an interaction: comparisons within each level of the other factor, interaction plots, and comparing slopes between groups.</p></li>
 </ul>
 <hr>
@@ -584,6 +655,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 </ul>
 </li>
 <li><a class="nav-link" href="#two-factors-and-interactions">two factors and interactions</a></li>
+<li><a class="nav-link" href="#whole-profiles-permanova">whole profiles: PERMANOVA</a></li>
 <li><a class="nav-link" href="#other-designs">other designs</a></li>
 <li><a class="nav-link" href="#practice">practice</a></li>
 <li><a class="nav-link" href="#chapter-summary-10">chapter summary</a></li>
@@ -605,7 +677,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-13.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-17.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

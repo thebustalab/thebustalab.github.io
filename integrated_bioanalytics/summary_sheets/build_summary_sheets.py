@@ -94,12 +94,17 @@ def chapter_title(rmd):
 
 
 def summary_section(rmd):
+    """The text under the summary heading, up to the next ## heading. HTML comments are hidden on the web
+    page, so they are dropped first: neither their text nor a ## heading inside one (a commented-out
+    exercises section) may reach the sheet (test_build_summary_sheets.py)."""
     i = rmd.find(HEADING)
     if i < 0:
         return None
-    body = rmd[i + len(HEADING):]
+    body = re.sub(r"<!--.*?-->", "", rmd[i + len(HEADING):], flags=re.S)
     m = re.search(r"^## ", body, re.M)
-    return body[: m.start()] if m else body
+    body = body[: m.start()] if m else body
+    j = body.find("<!--")          # an unclosed comment hides everything after it on the page too
+    return body[:j] if j >= 0 else body
 
 
 def chunks_to_images(md):

@@ -1006,5 +1006,59 @@
     },
     "source_topic": "osc",
     "discovered": "2026-11-10"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_7eb99f5e24fa",
+    "title": "Spatial metabolomics reveals brassinosteroid-mediated compartmentalization of saikosaponin biosynthesis in Bupleurum chinense DC. under abiotic stress",
+    "authors": "Linlin Yang; Shengwei Zhou; Xupeng Gu; Jie Wan; 初雷霞; Ning Dong; Dan Gao; Qiteng Ding; Weisheng Feng; Chengming Dong",
+    "journal": "Plant Physiology and Biochemistry",
+    "year": 2026,
+    "doi": "10.1016/j.plaphy.2026.111839):",
+    "link": "https://doi.org/10.1016/j.plaphy.2026.111839):",
+    "abstract": "Although the biosynthesis of active ingredients in medicinal plants is co-regulated by diverse environmental stimuli, the endocrine mechanism by which brassinosteroids (BRs) coordinate physiological resilience with the in situ spatial distribution of saikosaponins in Bupleurum chinense DC. under combined drought and salinity remains largely elusive. We hypothesized that exogenous brassinosteroids (BRs) application alleviates oxidative impairment provoked by single and combined osmotic/ionic stresses while orchestrating the tissue-level topological routing of saikosaponin biosynthesis. Here, B. chinense seedlings were exposed to drought (15% PEG6000), salinity (150 mM NaCl), and combined stress with or without root-applied BRs (0.2 mg/L). Plant growth, foliar cytomembrane integrity, antioxidant enzyme kinetics, and key transcriptional profiles were evaluated and integrated with matrix-assisted laser desorption/ionization mass spectrometry imaging (MALDI-MSI)-based spatial metabolomics. Stress-induced morphological inhibition and membrane lesion ranked salinity > combined stress > drought. Exogenous BRs markedly counteracted stress-evoked membrane lipid peroxidation by sustaining CAT, SOD, and POD activities and curtailing H 2 O 2 and superoxide accumulation, as corroborated by in situ DAB and NBT cytochemical visualization. Under drought and salinity, BRs further amplified the stress-elicited elevation of SS-a, SS-c, SS-d, and total saikosaponins through coordinated transcriptional activation of MVA/MEP pathway genes and pentacyclic triterpene synthases (HMGR, FPS, SS, SE, and β-AS). In sharp contrast, under combined drought and salinity, BRs application failed to upregulate these biosynthetic genes, revealing an antagonistic metabolic arrest driven by acute carbon allocation trade-offs. Spatial metabolomics demonstrated that common precursors (IPP, FPP, and 2,3-oxidosqualene) displayed an ubiquitous distribution across the whole root cross-section (cork, cortex, phloem, and xylem), whereas bioactive saikosaponins (SS-a, SS-c, SS-e, SS-f, and acetyl-SS-a) were preferentially compartmentalized in the secondary phloem and periderm. Exogenous BRs dynamically intensified precursor flux toward the outer cortical/phloem sink under single stress regimes. In summary, this work systematically characterizes BRs-regulated spatial patterns of saikosaponins under combined stress. It offers theoretical evidence for decoding stress adaptation mechanisms of B. chinense and provides practical support for optimizing its ecological cultivation techniques.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.plaphy.2026.111839):"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-17"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_085e0137bb44",
+    "title": "FabI-targeting pentacyclic triterpenoid celastrol resensitizes multidrug-resistant Gram-negative bacteria to polymyxins",
+    "authors": "Zewen Wen; Xiaoju Liu; Junhua Ma; Chengchun Chen; Kewei Fan; Jinxin Zheng; Zhong Chen; Shibo Jiang; Tieying Hou; Yu Zz",
+    "journal": "Phytomedicine",
+    "year": 2026,
+    "doi": "10.1016/j.phymed.2026.158649):",
+    "link": "https://doi.org/10.1016/j.phymed.2026.158649):",
+    "abstract": "BACKGROUND: Pentacyclic triterpenoids are diverse class of plant-derived bioactive scaffolds, but their potential to resensitize resistant Gram-negative pathogens to antibiotics remains underexplored. Polymyxins are last-line drugs for multidrug-resistant (MDR) Gram-negative infections, yet the global dissemination of mcr genes and chromosomal mutations in pmrAB/phoPQ compromise their efficacy. PURPOSE: This study aimed to evaluate the antibacterial potential of the natural triterpenoid celastrol (CEL, derived from Tripterygium wilfordii). We specifically investigated its ability to function as a polymyxin adjuvant to potentiate polymyxin activity against MDR Gram-negative pathogens and elucidated the underlying molecular mechanism. STUDY DESIGN/METHODS: Antibacterial activity and potentiation efficacy with polymyxins were assessed in vitro by MIC determination, checkerboard assays, and time-kill analyses against clinical isolates and engineered resistant strains. To elucidate the precise mechanism, biophysical target validations, comprising drug affinity responsive target stability (DARTS), biolayer interferometry (BLI), limited proteolysis-MS (LiP-MS), molecular dynamics (MD) simulations, and FabI enzymatic assays, were systematically coupled with cellular and omics analyses, such as intracellular accumulation, genetic validation, metabolic rescue, lipidomics, and qPCR. Therapeutic efficacy was tested in murine peritonitis and cutaneous abscess models. RESULTS: CEL effectively potentiated polymyxin activity and resensitized Escherichia coli and Klebsiella pneumoniae harboring mcr-1 or pmrAB/phoPQ mutations to polymyxins. Mechanistically, biophysical and structural analyses demonstrated that CEL directly binds to and inhibits the enoyl-ACP reductase FabI. Furthermore, genetic validations and metabolic rescue assays confirmed that FabI-mediated type II fatty acid synthesis (FASII) pathway disruption triggers perturbation of lipid homeostasis. In vivo assays confirmed that the combination therapy significantly reduced bacterial burden in infected mice. CONCLUSION: Our findings demonstrate that the plant-derived pentacyclic triterpenoid CEL targets FabI and functions as an effective polymyxin adjuvant. By inhibiting the FASII pathway, CEL potentiates polymyxin activity and resensitizes multidrug-resistant Gram-negative pathogens to polymyxins, highlighting a promising phytopharmacological strategy to restore the clinical utility of last-resort antibiotics against MDR infections.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1016/j.phymed.2026.158649):"
+    },
+    "source_topic": "osc",
+    "discovered": "2026-11-17"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_2997e8e772ac",
+    "title": "Unravelling the Functional Diversity of Type III Polyketide Synthases in Fungi",
+    "authors": "Nika Sokolova; Stepan S. Denisov; Thomas Hackl; Kristina Haslinger",
+    "journal": "Angewandte Chemie International Edition",
+    "year": 2025,
+    "doi": "10.1002/anie.202514786",
+    "link": "https://doi.org/10.1002/anie.202514786",
+    "abstract": "Type III polyketide synthases (T3PKSs) are enzymes that produce diverse compounds of ecological and clinical importance. While well-studied in plants, only a handful of T3PKSs from fungi have been characterised to date. Here, we developed a comprehensive workflow for kingdom-wide characterisation of T3PKSs. Using publicly available genomes, we mined more than 1000 putative enzymes and analysed their active site architecture and genomic neighbourhood. From there, we selected 37 representative PKS candidates for cell-free expression and prototyping with a diverse set of Coenzyme A activated substrates, revealing unique patterns in substrate and cyclisation specificity, as well as the preferred number of malonyl-Coenzyme A extensions. Using the 341 enzyme-substrate pairs generated in this study, we trained a machine learning model to predict T3PKS substrate specificity and experimentally validated it with an extended panel of non-natural substrates. In addition, we applied the model to identify two more promiscuous T3PKSs from fungi. We anticipate that the ML model will be useful for in silico screening of T3PKSs, while the insight into the product scope of these enzymes offers interesting starting points for further exploration.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.1002/anie.202514786"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-17"
   }
 ]

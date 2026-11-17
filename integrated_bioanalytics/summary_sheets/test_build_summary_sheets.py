@@ -64,6 +64,30 @@ with tempfile.TemporaryDirectory() as td:
     os.utime(table, (t + 20, t + 20))
     check(b.is_stale(rmd), "summary image redrawn after the PDF: stale")
 
+# 2026-11-17: ch.12b's sheet printed the text of a commented-out exercises section ("<!-- DRAFT, not
+# live ..."), because the section was cut at the "## exercises" heading INSIDE the comment.
+HIDDEN = """## chapter summary {-}
+
+Visible summary.
+
+<!-- a closed note that must not print -->
+
+<!-- DRAFT, not live: hidden text
+
+## exercises {-}
+
+hidden cards
+
+-->
+
+## further reading {-}
+"""
+sec = b.summary_section(HIDDEN)
+check("Visible summary." in sec, "summary text survives comment stripping")
+check("DRAFT" not in sec and "closed note" not in sec and "hidden cards" not in sec, "HTML comments never reach the sheet")
+check("further reading" not in sec, "section still stops at the next real ## heading")
+check("DRAFT" not in (b.summary_section("## chapter summary {-}\n\nText.\n\n<!-- unclosed DRAFT\n") or ""), "an unclosed comment hides the rest")
+
 print()
 if fails:
     print(f"{len(fails)} FAILURE(S)")

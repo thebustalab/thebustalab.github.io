@@ -215,7 +215,8 @@
                     "see",        # performance::check_model diagnostic plots (ch11)
                     "ranger",     # parsnip random-forest engine (ch11)
                     "igraph",     # buildNetwork (requireNamespace)
-                    "emmeans"     # tukeyTest() on a buildModel() model -> emmeans::emmeans / emtrends (ch12, ANOVA)
+                    "emmeans",    # tukeyTest() on a buildModel() model -> emmeans::emmeans / emtrends (ch12, ANOVA)
+                    "vegan"       # permanovaTest() -> vegan::vegdist / adonis2 (ANOVA chapter)
                 )
                 Bioc_core <- c("ggtree")
 
@@ -416,6 +417,93 @@
                 F = round(c(tab[["F value"]], NA), 2),
                 p = signif(c(tab[["Pr(>F)"]], NA), 3),
                 share = round(c(ss / sum(ss), 1), 3)
+            )
+        }
+        # permanovaTest() is the ANOVA table for a whole profile (PERMANOVA, vegan::adonis2): the same rows and
+        # columns as anovaTest(), but the spread is measured as distances between samples' profiles, and p comes
+        # from shuffling the group labels (so it varies a little from run to run and cannot go below
+        # 1 / (permutations + 1)). Two ways in:
+        #   wide data, one row per sample:  permanovaTest(cbind(limonene, pinene) ~ species * fertilizer)
+        #   long data, one row per value:   permanovaTest(abundance ~ aquifer_code, profile = "analyte", sample = "well_name")
+        # distance = any vegan::vegdist method ("euclidean" by default; "bray" for abundance profiles). With one
+        # response and "euclidean" it gives anovaTest()'s sums of squares and F exactly. Rows: one per term,
+        # added in order (balanced designs: order does not matter), then noise, then total.
+        # Everything is inline, not in helpers, because the WebR shim generator carries only the ...Test functions.
+        permanovaTest <- function( data, formula, distance = "euclidean", permutations = 999, profile = NULL, sample = NULL ) {
+            if (missing(formula) || !inherits(formula, "formula") || length(formula) != 3) {
+                stop("permanovaTest(): give a data table and a formula, e.g. permanovaTest(cbind(limonene, pinene) ~ species * fertilizer).", call. = FALSE)
+            }
+            if (!requireNamespace("vegan", quietly = TRUE)) {
+                stop("permanovaTest(): needs the vegan package: install.packages(\"vegan\").", call. = FALSE)
+            }
+            data <- as.data.frame(dplyr::ungroup(data))
+            group_vars <- all.vars(formula[[3]])
+            value_vars <- all.vars(formula[[2]])
+            # The left side must be plain column names (one, or several inside cbind()): a transformation such
+            # as log(x) would otherwise be dropped without a word, since only the names are read.
+            lhs <- formula[[2]]
+            lhs_parts <- if (is.call(lhs) && identical(lhs[[1]], as.name("cbind"))) as.list(lhs)[-1] else list(lhs)
+            if (!all(vapply(lhs_parts, is.name, logical(1)))) {
+                stop("permanovaTest(): the left side must be column names, e.g. cbind(limonene, pinene); transform a column with mutate() first.", call. = FALSE)
+            }
+            missing_cols <- setdiff(c(group_vars, value_vars, profile, sample), names(data))
+            if (length(missing_cols) > 0) {
+                stop("permanovaTest(): no column called ", paste(missing_cols, collapse = ", "), " in the data.", call. = FALSE)
+            }
+            if (!is.null(profile) || !is.null(sample)) {
+                if (is.null(profile) || is.null(sample)) {
+                    stop("permanovaTest(): long data needs both profile = (the column naming each measurement, e.g. \"analyte\") and sample = (the column or columns naming each sample).", call. = FALSE)
+                }
+                if (length(value_vars) != 1) {
+                    stop("permanovaTest(): with long data the left side is the one value column, e.g. abundance ~ aquifer_code.", call. = FALSE)
+                }
+                # sample = may name several columns that together identify a sample (two wells can share a name)
+                sample_id <- do.call(paste, c(lapply(data[sample], as.character), sep = " / "))
+                dup <- anyDuplicated(data.frame(sample_id, data[[profile]]))
+                if (dup > 0) {
+                    stop("permanovaTest(): sample ", sample_id[dup], " has more than one value for ", profile, " ", data[[profile]][dup],
+                         ". If the rows are exact copies, remove them first with distinct(); if they are different samples, add the column that tells them apart to sample =.", call. = FALSE)
+                }
+                design <- unique(data.frame(sample_id, data[group_vars], stringsAsFactors = FALSE))
+                if (anyDuplicated(design$sample_id) > 0) {
+                    stop("permanovaTest(): sample ", design$sample_id[anyDuplicated(design$sample_id)], " appears in more than one group; each sample must belong to one.", call. = FALSE)
+                }
+                wide <- tapply(data[[value_vars]], list(sample_id, as.character(data[[profile]])), function(v) v[1])
+                if (anyNA(wide)) {
+                    stop("permanovaTest(): some samples are missing some ", profile, " values; every sample needs the full profile.", call. = FALSE)
+                }
+                design <- design[match(rownames(wide), design$sample_id), group_vars, drop = FALSE]
+                profiles <- wide
+            } else {
+                profiles <- as.matrix(data[value_vars])
+                design <- data[group_vars]
+                if (anyNA(profiles)) {
+                    stop("permanovaTest(): the profile columns contain missing values; filter or fill them first.", call. = FALSE)
+                }
+            }
+            if (anyNA(design)) {
+                stop("permanovaTest(): ", paste(group_vars[vapply(design, anyNA, logical(1))], collapse = ", "),
+                     " has missing values; filter those samples out first.", call. = FALSE)
+            }
+            for (v in group_vars) if (is.character(design[[v]])) design[[v]] <- factor(design[[v]])
+            dists <- vegan::vegdist(profiles, method = distance)
+            fml <- stats::as.formula(call("~", quote(dists), formula[[3]]))
+            environment(fml) <- environment()
+            tab <- vegan::adonis2(fml, data = design, permutations = permutations, by = "terms")
+            ss <- tab[["SumOfSqs"]]
+            df <- tab[["Df"]]
+            n <- length(ss)
+            terms <- trimws(rownames(tab))
+            terms[n - 1] <- "noise"
+            terms[n] <- "total"
+            data.frame(
+                term = terms,
+                sum_of_squares = signif(ss, 4),
+                free_values = df,
+                variance = signif(c(ss[-n] / df[-n], NA), 4),
+                F = round(tab[["F"]], 2),
+                p = signif(tab[["Pr(>F)"]], 3),
+                share = round(tab[["R2"]], 3)
             )
         }
         # tukeyTest() takes either data + formula (rstatix, tukey_hsd's first argument is x, not data) or a

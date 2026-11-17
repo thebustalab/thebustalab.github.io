@@ -1,0 +1,209 @@
+{
+ "title": "PERMANOVA: does the leaf profile depend on species and fertilizer?",
+ "noun": "plants",
+ "x": {
+  "key": "limonene",
+  "label": "limonene (µg per g leaf)"
+ },
+ "y": {
+  "key": "pinene",
+  "label": "pinene (µg per g leaf)"
+ },
+ "factors": [
+  {
+   "key": "species",
+   "label": "Species",
+   "levelLabels": {
+    "species_A": "A",
+    "species_B": "B",
+    "species_C": "C"
+   }
+  },
+  {
+   "key": "fertilizer",
+   "label": "Fertilizer"
+  }
+ ],
+ "rows": [
+  {
+   "x": 11,
+   "y": 29,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "x": 8,
+   "y": 27,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "x": 14,
+   "y": 31,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "x": 13,
+   "y": 29,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "x": 11,
+   "y": 31,
+   "species": "species_A",
+   "fertilizer": "control"
+  },
+  {
+   "x": 18,
+   "y": 29,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 19,
+   "y": 31,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 19,
+   "y": 28,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 16,
+   "y": 33,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 18,
+   "y": 36,
+   "species": "species_A",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 28,
+   "y": 13,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "x": 27,
+   "y": 11,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "x": 26,
+   "y": 19,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "x": 28,
+   "y": 17,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "x": 26,
+   "y": 16,
+   "species": "species_B",
+   "fertilizer": "control"
+  },
+  {
+   "x": 47,
+   "y": 19,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 34,
+   "y": 19,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 39,
+   "y": 15,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 36,
+   "y": 19,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 39,
+   "y": 10,
+   "species": "species_B",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 22,
+   "y": 20,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "x": 15,
+   "y": 19,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "x": 19,
+   "y": 18,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "x": 17,
+   "y": 22,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "x": 27,
+   "y": 22,
+   "species": "species_C",
+   "fertilizer": "control"
+  },
+  {
+   "x": 24,
+   "y": 19,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 24,
+   "y": 20,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 19,
+   "y": 21,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 16,
+   "y": 27,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  },
+  {
+   "x": 22,
+   "y": 21,
+   "species": "species_C",
+   "fertilizer": "fertilized"
+  }
+ ]
+}
