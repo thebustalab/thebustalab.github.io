@@ -343,7 +343,7 @@ The same model-then-table approach covers several designs that come up in labora
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
 <script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=4"; mountAll();</script>
-<script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=1"; mountAll();</script>
+<script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=2"; mountAll();</script>
 
 ## practice {-}
 
@@ -354,8 +354,8 @@ cat('
 <a href="https://thebustalab.github.io/escape_rooms/rooms/anova/harvest/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/anova/harvest/cover.png" alt="Harvest Home cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
 <div>
 <a href="https://thebustalab.github.io/escape_rooms/rooms/anova/harvest/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Harvest Home</a>
-<div style="opacity:.65;font-size:13px;margin-top:2px;">ANOVA &middot; one factor, two factors and interactions &middot; ungraded practice</div>
-<div style="margin-top:8px;font-size:13px;line-height:1.4;">Harvest Home is the world we play together in class, and you can also play it on your own. Each station hands you a fresh ANOVA task: build the model, read the share column, and choose the answer. Nothing is graded, so take as many tasks as you like, and if a task stumps you, Show me opens a worked answer after your first wrong try.</div>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">ANOVA &middot; several one-factor models, interactions and PERMANOVA &middot; ungraded practice</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">Harvest Home is the world we play together in class, and you can also play it on your own. Each station hands you a fresh task, from comparing one-factor ANOVAs to reading an interaction to running a PERMANOVA on a mineral profile: build the model, read the share column, and choose the answer. Nothing is graded, so take as many tasks as you like, and if a task stumps you, Show me opens a worked answer after your first wrong try.</div>
 </div>
 </div>
 </div>
