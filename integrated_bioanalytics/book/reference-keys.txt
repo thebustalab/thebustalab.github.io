@@ -64,12 +64,12 @@ fig:unnamed-chunk-547
 fig:unnamed-chunk-582
 fig:unnamed-chunk-586
 fig:unnamed-chunk-588
-fig:unnamed-chunk-612
-fig:unnamed-chunk-613
+fig:unnamed-chunk-614
 fig:unnamed-chunk-615
-fig:unnamed-chunk-638
-fig:unnamed-chunk-677
-fig:unnamed-chunk-708
+fig:unnamed-chunk-617
+fig:unnamed-chunk-640
+fig:unnamed-chunk-679
+fig:unnamed-chunk-710
 fig:unnamed-chunk-31
 part-data-visualization
 part-exploratory-analysis

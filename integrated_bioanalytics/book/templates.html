@@ -122,7 +122,7 @@ it was retired in September 2026 — calling it now returns a message telling yo
 </h3>
 <p>A <strong>wide</strong> data frame has one row per sample and one column per analyte. <code>chemical_blooms</code> is exactly
 that shape: a <code>label</code> column naming each plant, and then one column for each compound class.</p>
-<div class="sourceCode" id="cb283"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb284"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
@@ -155,7 +155,7 @@ stays the same.</p>
 <h3>
 <span class="header-section-number">4.1.2</span> full template<a class="anchor" aria-label="anchor" href="#full-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb284"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb285"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># data to use for analysis</span></span>
@@ -215,7 +215,7 @@ calling <code>buildModel2()</code>, it is the same function under its old name.)
 <h3>
 <span class="header-section-number">4.2.1</span> basic template: one predictor, one response<a class="anchor" aria-label="anchor" href="#basic-template-one-predictor-one-response"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb285"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb286"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
@@ -253,7 +253,7 @@ does not need the response. What comes back is that same table with new columns 
 <h3>
 <span class="header-section-number">4.2.2</span> full template: buildModel()<a class="anchor" aria-label="anchor" href="#full-template-buildmodel"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb286"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb287"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">buildModel</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># the table to build the model from; no missing values in the columns the model uses</span></span>
@@ -298,7 +298,7 @@ does not need the response. What comes back is that same table with new columns 
 <h3>
 <span class="header-section-number">4.2.3</span> full template: predictWithModel()<a class="anchor" aria-label="anchor" href="#full-template-predictwithmodel"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb287"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb288"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,  <span class="co"># the table to predict for; it needs every predictor column the model was built on</span></span>
@@ -347,7 +347,7 @@ in the table used to build the model, it stops and says so.</p>
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-17.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -10,7 +10,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <div class="cc-title-slot"></div>
 
-**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction.
+**How much of the variation does each factor explain?** Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction. It then turns to variants of ANOVA, with particular attention to PERMANOVA, which makes the same split for a whole chemical profile at once, and closes by naming the designs a laboratory often meets: blocks, covariates and repeated measures.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#anova-summary){.cc-btn .ghost}
 
@@ -31,7 +31,7 @@ The comparing groups chapter asked whether groups differ, and which pairs. ANOVA
 
 The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a **sum of squares**: each measurement's distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group's average. That leftover spread is the **noise**, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. Divided by its number of free values (explained below), each part becomes a variance: the **variance between groups** and the **variance within groups**. The F statistic is the first divided by the second, and a large F means the groups differ by more than noise would allow.
 
-The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones `anovaTest()` prints, and the next sections explain each of them.
+The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones `anovaTest()` prints, and the next sections explain each of them. Every row of the table is built from distances like these, an idea the PERMANOVA section at the end of the chapter carries from one measurement to a whole profile.
 
 <div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_one_factor.json"></div>
 
@@ -267,7 +267,7 @@ The instrument below uses the same 30 plants as before, now with two compounds, 
 
 The shuffling is the new idea. If species made no difference to the profile, the species labels would be arbitrary, and dealing them out to the plants at random would make the species row stand out from the noise about as much as the real labels do. Shuffling 999 times and counting how often a shuffle does at least as well gives the p-value: (that count + 1) ÷ (999 + 1). It needs no assumption about the shape of the data, and it has two consequences worth knowing: the p-value changes slightly from run to run, and it can never be smaller than 1 ÷ (number of shuffles + 1), so with 999 shuffles the smallest possible value is 0.001.
 
-`permanovaTest()` runs the analysis and prints the same columns as `anovaTest()`. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside `cbind()`:
+`permanovaTest()` runs the analysis and prints the same columns as `anovaTest()`. It takes the data and a formula directly, with no `buildModel()` step first: a PERMANOVA fits no model to a single response, it splits the distances between the samples' profiles, so there is nothing to build beforehand, and the distance to use is one of its own arguments. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside `cbind()`:
 
 ```{r include=FALSE}
 # The cells load fertilizer_trial from WEBR_CELL_CONFIG; the knit session reads the same file here.
@@ -283,7 +283,21 @@ fertilizer_trial %>%
   permanovaTest(cbind(limonene, pinene) ~ species * fertilizer)
 ```
 
-Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species' profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. With a single response and the default Euclidean distance, `permanovaTest()` gives exactly the sums of squares and F values of `anovaTest()`; only the way p is found differs.
+Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species' profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. PERMANOVA is ANOVA carried out on distances, and with a single response the two agree exactly. The distance between two plants' limonene values, squared, is just the squared difference between them, so splitting those distances gives the same sums of squares, free values, variances, F values and shares as the linear model. Only p differs, because one comes from shuffling and the other from the F distribution:
+
+```{r}
+buildModel(
+  data = fertilizer_trial,
+  model_type = "linear_regression",
+  formula = limonene ~ species * fertilizer
+) %>%
+  anovaTest()
+
+fertilizer_trial %>%
+  permanovaTest(limonene ~ species * fertilizer)
+```
+
+For a single response, `buildModel()` with `anovaTest()` remains the route to use: it gives an exact p, and the same model then answers the follow-up questions (which groups differ, and whether the noise looks the way the test assumes). PERMANOVA earns its place when the response is a whole profile.
 
 Most of the course's data sets are long, with one row per measurement, like `hawaii_aquifers`, where each well's water chemistry is spread over nine rows, one per analyte. `permanovaTest()` takes long data directly: the value column goes on the left of the formula, `profile =` names the column that says which compound (or analyte) each row holds, and `sample =` names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:
 
@@ -342,7 +356,7 @@ The same model-then-table approach covers several designs that come up in labora
 <hr>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
-<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=4"; mountAll();</script>
+<script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=5"; mountAll();</script>
 <script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=2"; mountAll();</script>
 
 ## practice {-}

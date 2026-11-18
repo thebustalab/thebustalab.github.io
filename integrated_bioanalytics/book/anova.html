@@ -116,7 +116,7 @@
 <div class="cc-title-slot">
 
 </div>
-<p><strong>How much of the variation does each factor explain?</strong> Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction.</p>
+<p><strong>How much of the variation does each factor explain?</strong> Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction. It then turns to variants of ANOVA, with particular attention to PERMANOVA, which makes the same split for a whole chemical profile at once, and closes by naming the designs a laboratory often meets: blocks, covariates and repeated measures.</p>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="anova.html#anova-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-582"></span>
@@ -133,7 +133,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 </h2>
 <p>The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?</p>
 <p>The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a <strong>sum of squares</strong>: each measurement’s distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group’s average. That leftover spread is the <strong>noise</strong>, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. Divided by its number of free values (explained below), each part becomes a variance: the <strong>variance between groups</strong> and the <strong>variance within groups</strong>. The F statistic is the first divided by the second, and a large F means the groups differ by more than noise would allow.</p>
-<p>The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones <code>anovaTest()</code> prints, and the next sections explain each of them.</p>
+<p>The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones <code>anovaTest()</code> prints, and the next sections explain each of them. Every row of the table is built from distances like these, an idea the PERMANOVA section at the end of the chapter carries from one measurement to a whole profile.</p>
 <div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_one_factor.json">
 
 </div>
@@ -452,7 +452,7 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 
 </div>
 <p>The shuffling is the new idea. If species made no difference to the profile, the species labels would be arbitrary, and dealing them out to the plants at random would make the species row stand out from the noise about as much as the real labels do. Shuffling 999 times and counting how often a shuffle does at least as well gives the p-value: (that count + 1) ÷ (999 + 1). It needs no assumption about the shape of the data, and it has two consequences worth knowing: the p-value changes slightly from run to run, and it can never be smaller than 1 ÷ (number of shuffles + 1), so with 999 shuffles the smallest possible value is 0.001.</p>
-<p><code>permanovaTest()</code> runs the analysis and prints the same columns as <code>anovaTest()</code>. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside <code><a href="https://rdrr.io/r/base/cbind.html">cbind()</a></code>:</p>
+<p><code>permanovaTest()</code> runs the analysis and prints the same columns as <code>anovaTest()</code>. It takes the data and a formula directly, with no <code>buildModel()</code> step first: a PERMANOVA fits no model to a single response, it splits the distances between the samples’ profiles, so there is nothing to build beforehand, and the distance to use is one of its own arguments. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside <code><a href="https://rdrr.io/r/base/cbind.html">cbind()</a></code>:</p>
 <div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fertilizer_trial</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">permanovaTest</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">limonene</span>, <span class="va">pinene</span><span class="op">)</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
@@ -468,9 +468,44 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <span><span class="co">## 3  3.85 0.019 0.040</span></span>
 <span><span class="co">## 4    NA    NA 0.124</span></span>
 <span><span class="co">## 5    NA    NA 1.000</span></span></code></pre></div>
-<p>Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species’ profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. With a single response and the default Euclidean distance, <code>permanovaTest()</code> gives exactly the sums of squares and F values of <code>anovaTest()</code>; only the way p is found differs.</p>
-<p>Most of the course’s data sets are long, with one row per measurement, like <code>hawaii_aquifers</code>, where each well’s water chemistry is spread over nine rows, one per analyte. <code>permanovaTest()</code> takes long data directly: the value column goes on the left of the formula, <code>profile =</code> names the column that says which compound (or analyte) each row holds, and <code>sample =</code> names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:</p>
+<p>Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species’ profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. PERMANOVA is ANOVA carried out on distances, and with a single response the two agree exactly. The distance between two plants’ limonene values, squared, is just the squared difference between them, so splitting those distances gives the same sums of squares, free values, variances, F values and shares as the linear model. Only p differs, because one comes from shuffling and the other from the F distribution:</p>
 <div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">fertilizer_trial</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">limonene</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">##                 term sum_of_squares free_values variance</span></span>
+<span><span class="co">## 1            species         1749.0           2   874.60</span></span>
+<span><span class="co">## 2         fertilizer          320.1           1   320.10</span></span>
+<span><span class="co">## 3 species:fertilizer          151.3           2    75.63</span></span>
+<span><span class="co">## 4              noise          265.2          24    11.05</span></span>
+<span><span class="co">## 5              total         2486.0          29       NA</span></span>
+<span><span class="co">##       F        p share</span></span>
+<span><span class="co">## 1 79.15 2.71e-11 0.704</span></span>
+<span><span class="co">## 2 28.97 1.58e-05 0.129</span></span>
+<span><span class="co">## 3  6.84 4.45e-03 0.061</span></span>
+<span><span class="co">## 4    NA       NA 0.107</span></span>
+<span><span class="co">## 5    NA       NA 1.000</span></span>
+<span></span>
+<span><span class="va">fertilizer_trial</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">permanovaTest</span><span class="op">(</span><span class="va">limonene</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
+<span><span class="co">##                 term sum_of_squares free_values variance</span></span>
+<span><span class="co">## 1            species         1749.0           2   874.60</span></span>
+<span><span class="co">## 2         fertilizer          320.1           1   320.10</span></span>
+<span><span class="co">## 3 species:fertilizer          151.3           2    75.63</span></span>
+<span><span class="co">## 4              noise          265.2          24    11.05</span></span>
+<span><span class="co">## 5              total         2486.0          29       NA</span></span>
+<span><span class="co">##       F     p share</span></span>
+<span><span class="co">## 1 79.15 0.001 0.704</span></span>
+<span><span class="co">## 2 28.97 0.001 0.129</span></span>
+<span><span class="co">## 3  6.84 0.007 0.061</span></span>
+<span><span class="co">## 4    NA    NA 0.107</span></span>
+<span><span class="co">## 5    NA    NA 1.000</span></span></code></pre></div>
+<p>For a single response, <code>buildModel()</code> with <code>anovaTest()</code> remains the route to use: it gives an exact p, and the same model then answers the follow-up questions (which groups differ, and whether the noise looks the way the test assumes). PERMANOVA earns its place when the response is a whole profile.</p>
+<p>Most of the course’s data sets are long, with one row per measurement, like <code>hawaii_aquifers</code>, where each well’s water chemistry is spread over nine rows, one per analyte. <code>permanovaTest()</code> takes long data directly: the value column goes on the left of the formula, <code>profile =</code> names the column that says which compound (or analyte) each row holds, and <code>sample =</code> names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:</p>
+<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dissolved_solids"</span>, <span class="st">"HCO3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">permanovaTest</span><span class="op">(</span></span>
@@ -537,7 +572,7 @@ Self-check: twelve leaves are each measured on four days, giving 48 measurements
 <label><input type="radio"> Day is a numeric predictor, so ANOVA cannot use it</label></p>
 </div>
 <hr>
-<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=4"; mountAll();</script><script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=2"; mountAll();</script>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><script type="module">import { mountAll } from "/escape_rooms/shared/anova_instrument.js?v=5"; mountAll();</script><script type="module">import { mountAll } from "/escape_rooms/shared/permanova_instrument.js?v=2"; mountAll();</script>
 </div>
 </div>
 <div id="practice" class="section level2 unnumbered">
@@ -677,7 +712,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-17.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
