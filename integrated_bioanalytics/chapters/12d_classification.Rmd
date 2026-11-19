@@ -1,0 +1,479 @@
+<!-- start classification models -->
+
+# classification models {#classification-models -}
+
+::: {.chapter-card}
+
+<!-- TODO cover image: no title plate exists yet for this chapter. When one does, add the usual chunk here:
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/<name>.png', dpi = NA)
+```
+-->
+
+<div class="cc-title-slot"></div>
+
+**Is the answer for this sample yes or no?** Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one that tasters will rate as excellent? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples it was never shown, asks which predictors matter most, and judges how well the calls hold up, including why a high accuracy can hide a model that misses every case that matters. It carries the regression chapter's steps over from numbers to categories, and the machine learning chapter builds on it with more flexible models.
+
+[One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#classification-models-summary){.cc-btn .ghost}
+
+<!-- TODO decision flowchart: none drawn yet. When one is (graphviz source in notes/, PNG in images/), add it here:
+```{r fig.align='center', echo=FALSE, out.width = "100%", fig.cap = "Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>."}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/12d_classification_flowchart.png', dpi = NA)
+```
+-->
+
+:::
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "wine_quality", url: "/phylochemistry/sample_data/wine_quality.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); red_wines <- wine_quality %>% filter(type == 'red') %>% mutate(wine = row_number(), excellent = ifelse(quality_score >= 7, 'yes', 'no'), record = ifelse(row_number() %% 4 == 0, 'held back', 'training')); training_wines <- filter(red_wines, record == 'training'); held_back_wines <- filter(red_wines, record == 'held back')" };
+</script>
+
+## from numbers to categories {-}
+
+The regression chapter predicted numbers: a Valine abundance, a density. Many questions instead have a response that is a category, and the simplest case is a category with two values, yes or no. A model that predicts a category is a **classification model**.
+
+This chapter works with the red wines in the `wine_quality` dataset. Each wine has a set of chemical measurements (its alcohol content, its acidity, its sulfur dioxide, its density and so on) and a `quality_score` given by a panel of tasters. We will call a wine excellent if it scored 7 or more, and store that as a column of yes and no. We also give each wine a number, so that any one of them can be found again later:
+
+```{r}
+red_wines <- wine_quality %>%
+  filter(type == "red") %>%
+  mutate(
+    wine = row_number(),
+    excellent = ifelse(quality_score >= 7, "yes", "no")
+  )
+
+red_wines %>%
+  group_by(excellent) %>%
+  summarize(n = n())
+```
+
+Of the 1,599 red wines, 217 are excellent, about one in seven. So "yes" is the rare answer here, a fact that matters at the end of the chapter.
+
+Why not simply use the regression chapter's tools? A linear model needs a number for its response, so we could code each excellent wine as 1 and every other wine as 0, then fit a straight line of that number against alcohol content:
+
+```{r}
+red_wines_as_numbers <- red_wines %>%
+  mutate(excellent_number = ifelse(excellent == "yes", 1, 0))
+
+straight_line_model <- buildModel(
+  data = red_wines_as_numbers,
+  model_type = "linear_regression",
+  predictors = "alcohol",
+  response = "excellent_number"
+)
+```
+
+A prediction from this line is meant to be read as the chance that a wine is excellent. Let's see what the line predicts across a range of alcohol contents, from a weak 4% up to the 22% of a strong port:
+
+```{r}
+alcohol_range <- data.frame(alcohol = seq(4, 22, by = 0.5))
+
+straight_line_predictions <- predictWithModel(
+  data = alcohol_range,
+  model = straight_line_model
+)
+
+straight_line_predictions %>%
+  summarize(
+    lowest = min(predicted_excellent_number),
+    highest = max(predicted_excellent_number)
+  )
+```
+
+```{r, fig.width = 6.5, fig.height = 4, fig.cap = "A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only."}
+ggplot() +
+  geom_point(data = red_wines_as_numbers, aes(x = alcohol, y = excellent_number), alpha = 0.1) +
+  geom_line(data = straight_line_predictions, aes(x = alcohol, y = predicted_excellent_number), color = "red") +
+  geom_hline(yintercept = c(0, 1), linetype = "dashed") +
+  theme_bw()
+```
+
+The line has to pass through a cloud of 0s and 1s, and a straight line has no floor and no ceiling. Carried out from 4 to 22 percent alcohol, it falls below 0 at the weak end and climbs past 1 at the strong end (no wine in the table is that strong, but a model should still give a sensible answer), and neither value can be a probability. The fix is a model whose predictions bend into an S-shape: close to 0 at one end, close to 1 at the other, and never beyond either. That model is **logistic regression**, and it takes the yes/no column itself as its response, with no recoding to numbers.
+
+One detail is worth knowing once. A logistic regression model predicts the probability of one of the two values. For a column of "yes" and "no", `buildModel()` always models "yes"; for a column of `TRUE` and `FALSE` it models `TRUE`; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.
+
+#### concept check {-}
+
+Fill in the blank with the lowest tasters' score that counts as excellent, then press Run to count the excellent red wines.
+
+<div class="webr-cell"><textarea class="webr-code">red_wines <- wine_quality %>%
+  filter(type == "red") %>%
+  mutate(excellent = ifelse(quality_score >= ____, "yes", "no"))
+
+red_wines %>%
+  group_by(excellent) %>%
+  summarize(n = n())</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="A probability has to lie between 0 and 1, but a straight line keeps rising (or falling) for ever, so far enough along the predictor it predicts values below 0 or above 1. Logistic regression bends its predictions into an S-shape that stays between 0 and 1.">
+<p class="scq">Self-check: why is a straight line a poor model for a yes/no response coded as 1 and 0?</p>
+<label><input type="radio"> A straight line cannot be fitted to a response that only takes two values</label>
+<label><input type="radio"> Its predictions are meant to be probabilities, but a straight line runs below 0 and above 1</label>
+<label><input type="radio"> A straight line always predicts exactly 0 or exactly 1</label>
+</div>
+
+<hr>
+
+## a model from one predictor {-}
+
+Before building a model, we set some of the data aside. The final section of this chapter judges a model by how well it does on wines it was never shown, and that test only means something if those wines really were kept out of the fitting. So the table needs a column saying which wines are used for building (the **training** wines) and which are **held back** for the test. Here, every fourth wine is held back:
+
+```{r}
+red_wines <- red_wines %>%
+  mutate(record = ifelse(row_number() %% 4 == 0, "held back", "training"))
+
+training_wines <- red_wines %>%
+  filter(record == "training")
+
+held_back_wines <- red_wines %>%
+  filter(record == "held back")
+```
+
+Marking the split with a column, rather than drawing rows at random each time, means everyone who runs this code holds back exactly the same wines and gets exactly the same answers. In many datasets (including the ones in this chapter's exercises) the column comes with the data, and the only step is the `filter()`. The held-back wines are the **test set**, and from here on every model is built on `training_wines` alone.
+
+A logistic regression model is built with `buildModel()`, the same function as in the regression chapter, with `model_type = "logistic_regression"`. The predictors and the response are named exactly as before, and the response is the yes/no column:
+
+```{r}
+alcohol_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = "alcohol",
+  response = "excellent"
+)
+
+alcohol_model$metrics %>%
+  filter(type == "coefficient")
+```
+
+The alcohol coefficient is positive, so the model's probability that a wine is excellent rises with its alcohol content. (Logistic regression coefficients are measured on a scale called the log-odds, not in probability units, so we read their sign and, after scaling, their size, rather than translating them into a change in probability.)
+
+`predictWithModel()` works just as it did for regression, and adds two columns to whatever table it is given. **`probability_yes`** is the model's probability that the response is "yes", and **`predicted_class`** is the call the model makes from it, yes or no:
+
+```{r}
+alcohol_predictions <- predictWithModel(
+  data = training_wines,
+  model = alcohol_model
+)
+
+alcohol_predictions %>%
+  select(wine, alcohol, excellent, probability_yes, predicted_class) %>%
+  head()
+```
+
+To read the probability for one wine, filter for it:
+
+```{r}
+alcohol_predictions %>%
+  filter(wine == 10) %>%
+  select(wine, alcohol, probability_yes)
+```
+
+Predicting across a range of alcohol contents shows the S-shape that the straight line could not give:
+
+```{r, fig.width = 6.5, fig.height = 4, fig.cap = "A logistic regression model keeps its predicted probabilities between 0 and 1. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that a red wine is excellent on the vertical axis; each faint point is one training wine, placed at 1 if it is excellent and at 0 if it is not, and the blue line is the probability predicted by a logistic regression model of excellence on alcohol. Data: wine_quality, red wines in the training set."}
+alcohol_curve <- predictWithModel(
+  data = data.frame(alcohol = seq(8, 15, by = 0.1)),
+  model = alcohol_model
+)
+
+ggplot() +
+  geom_point(data = training_wines, aes(x = alcohol, y = ifelse(excellent == "yes", 1, 0)), alpha = 0.1) +
+  geom_line(data = alcohol_curve, aes(x = alcohol, y = probability_yes), color = "blue") +
+  theme_bw()
+```
+
+#### concept check {-}
+
+Fill in the blank with the model type that predicts a yes/no response, then press Run to read the probability for wine 10.
+
+<div class="webr-cell"><textarea class="webr-code">alcohol_model <- buildModel(
+  data = training_wines,
+  model_type = "____",
+  predictors = "alcohol",
+  response = "excellent"
+)
+
+predictWithModel(data = training_wines, model = alcohol_model) %>%
+  filter(wine == 10) %>%
+  select(wine, alcohol, probability_yes)</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="probability_yes is the model's estimate of how likely the response is to be yes for that wine, given its predictors. It is not the share of wines that are excellent, and it is not a call: the call is in predicted_class.">
+<p class="scq">Self-check: a wine has a probability_yes of 0.3. What does that mean?</p>
+<label><input type="radio"> 30% of the red wines are excellent</label>
+<label><input type="radio"> The model has called this wine excellent</label>
+<label><input type="radio"> Given its alcohol content, the model puts the chance that this wine is excellent at 0.3</label>
+</div>
+
+<hr>
+
+## several predictors, and predicting held-back cases {-}
+
+Alcohol is one of many measurements in the table. As with multiple regression, a classification model can use several predictors at once, by naming them all:
+
+```{r}
+wine_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent"
+)
+```
+
+The point of the held-back wines is that the model has never seen them. Giving them to `predictWithModel()` asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:
+
+```{r}
+held_back_predictions <- predictWithModel(
+  data = held_back_wines,
+  model = wine_model
+)
+
+held_back_predictions %>%
+  select(wine, excellent, probability_yes, predicted_class) %>%
+  head()
+```
+
+How does a probability become a call? Through a **cut-off**. `predictWithModel()` calls a wine "yes" when its `probability_yes` is 0.5 or more, and "no" otherwise. We can count how many held-back wines fall on each side:
+
+```{r}
+held_back_predictions %>%
+  group_by(predicted_class) %>%
+  summarize(n = n())
+```
+
+```{r, fig.width = 6.5, fig.height = 4, fig.cap = "Each held-back wine's predicted probability of being excellent, against the 0.5 cut-off. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that the wine is excellent, from a logistic regression model on five chemical predictors, on the vertical axis; color shows whether the tasters rated the wine excellent, and the dashed line marks the 0.5 cut-off above which the model calls a wine excellent. Each point is one held-back red wine. Data: wine_quality, red wines in the held-back set."}
+ggplot(held_back_predictions, aes(x = alcohol, y = probability_yes, color = excellent)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  theme_bw()
+```
+
+Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. `predictWithModel()` has no argument for the cut-off. **Moving the cut-off is a `mutate()` on the probability column**, writing a new call from `probability_yes`:
+
+```{r}
+held_back_predictions %>%
+  mutate(called_at_0.3 = ifelse(probability_yes >= 0.3, "yes", "no")) %>%
+  group_by(called_at_0.3) %>%
+  summarize(n = n())
+```
+
+A lower cut-off calls more wines yes, and a higher one calls fewer. The probabilities themselves do not change: only the line drawn across them moves.
+
+#### concept check {-}
+
+Fill in the blank with a cut-off of 0.2, then press Run to see how many held-back wines are called excellent at that cut-off.
+
+<div class="webr-cell"><textarea class="webr-code">wine_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent"
+)
+
+predictWithModel(data = held_back_wines, model = wine_model) %>%
+  mutate(called_at_low_cutoff = ifelse(probability_yes >= ____, "yes", "no")) %>%
+  group_by(called_at_low_cutoff) %>%
+  summarize(n = n())</textarea></div>
+
+<div class="selfcheck" data-answer="0" data-explain="Every wine with a probability of 0.5 or more also has one of 0.2 or more, so lowering the cut-off can only add yes calls, never remove them. The probabilities are unchanged; only the line that turns them into calls has moved.">
+<p class="scq">Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2 do?</p>
+<label><input type="radio"> Calls at least as many wines excellent, and usually more, without changing any wine's probability</label>
+<label><input type="radio"> Calls fewer wines excellent, because the model has become stricter</label>
+<label><input type="radio"> Changes each wine's probability_yes, then calls them at 0.5 as before</label>
+</div>
+
+<hr>
+
+## which predictors matter most {-}
+
+With several predictors in the model, a natural question is which of them drives the probability. The regression chapter met the same question and the same trap, and the fix carries over unchanged. Here are the coefficients of the five-predictor model, ranked by size:
+
+```{r}
+wine_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
+  arrange(desc(abs(value)))
+```
+
+These raw coefficients mostly reflect units. Density barely changes from one wine to the next, so a change of one whole gram per milliliter is far larger than any difference between two wines in the table, and its coefficient is the largest of the five for that reason alone. Total sulfur dioxide is the opposite case: it is measured in milligrams per liter and spreads over a range of a hundred or more, so one unit of it is a tiny change and its coefficient is tiny. Ranking these numbers ranks the units, not the predictors.
+
+The fix is the regression chapter's: scale each predictor to a mean of zero and a standard deviation of one before fitting (scaling is introduced in the distances and scaling chapter), with `scale_variance = TRUE`. Each coefficient then describes a one-standard-deviation change in its predictor, which is comparable across predictors:
+
+```{r}
+scaled_wine_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent",
+  scale_variance = TRUE
+)
+
+scaled_wine_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
+  arrange(desc(abs(value)))
+```
+
+After scaling, the ranking no longer follows the units: each coefficient is the change in log-odds for a one-standard-deviation change in that predictor, so the predictor at the top of this list is the one that moves the probability most. Three further points:
+
+- The ranking uses the size of each coefficient, `abs(value)`, because the sign only gives the direction. A negative coefficient, such as the one on volatile acidity (the vinegary acids a fault in winemaking produces), means the probability of yes falls as that predictor rises, and it can matter just as much as a positive one.
+- As in linear regression, scaling changes the units of the coefficients, not the model. The scaled and unscaled models give every wine the same probability, and `predictWithModel()` scales a new table with the training wines' means and standard deviations, so the held-back wines go in as measured.
+- Scaling the predictor columns by hand with `mutate(across(c(...), scale))` before `buildModel()` gives the same coefficients, provided it is done on the training rows. It is a sound way to rank predictors, but a model built that way then needs every new table scaled with the training rows' means and standard deviations before it can predict, so `scale_variance = TRUE` is the safer route when the model will also be used for predictions.
+
+#### concept check {-}
+
+Fill in the blank with the value that makes `buildModel()` scale the predictors, then press Run to rank them.
+
+<div class="webr-cell"><textarea class="webr-code">scaled_wine_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent",
+  scale_variance = ____
+)
+
+scaled_wine_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)") %>%
+  arrange(desc(abs(value)))</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="A coefficient is the change in the log-odds for a one-unit change in its predictor. Density varies so little between wines that one gram per milliliter is far beyond anything in the data, so its raw coefficient is huge whatever its real influence. Scaling puts every predictor on the same footing first.">
+<p class="scq">Self-check: why does density have such a large coefficient in the model built on the raw, unscaled predictors?</p>
+<label><input type="radio"> Density is the strongest influence on whether a wine is excellent</label>
+<label><input type="radio"> Density barely varies between wines, so one unit of it is an enormous change</label>
+<label><input type="radio"> Density has the most missing values of the five predictors</label>
+</div>
+
+<hr>
+
+## judging a classifier on held-back cases {-}
+
+A classification model is judged by its calls on the held-back wines: cases it never saw, whose true answers we know. The obvious first number is **accuracy**, the share of calls that are right:
+
+```{r}
+held_back_predictions %>%
+  summarize(accuracy = mean(predicted_class == excellent))
+```
+
+`predicted_class == excellent` is `TRUE` for every wine the model called correctly, and the mean of a column of `TRUE` and `FALSE` is the share that are `TRUE`.
+
+Accuracy alone can mislead, and this dataset shows how. Consider a "model" that ignores the chemistry and calls every wine "no":
+
+```{r}
+held_back_predictions %>%
+  mutate(always_no = "no") %>%
+  summarize(
+    model_accuracy = mean(predicted_class == excellent),
+    always_no_accuracy = mean(always_no == excellent)
+  )
+```
+
+Only 46 of the 399 held-back wines are excellent, so calling every wine "no" is right for the other 353: an accuracy of about 88%, from a rule that has learned nothing. Whenever yes is rare, the always-"no" rule scores a high accuracy, and a real model's accuracy has to be read against it.
+
+What the always-"no" rule cannot do is find a single excellent wine. So the second question to ask of a classifier is about the yes cases themselves. Of the held-back wines that really are excellent, how many did the model **catch** (call yes), and how many did it **miss** (call no)?
+
+```{r}
+held_back_predictions %>%
+  filter(excellent == "yes") %>%
+  summarize(
+    excellent_wines = n(),
+    caught = sum(predicted_class == "yes"),
+    missed = sum(predicted_class == "no")
+  )
+```
+
+The always-"no" rule catches none of these 46 wines and misses all of them, however high its accuracy. Two classifiers with almost the same accuracy can differ completely here, and a model that catches some of the excellent wines is far more useful than one that catches none. The caught and missed counts are what show the difference. So report caught and missed beside accuracy, never accuracy alone.
+
+The cut-off from earlier in the chapter matters here too. Lowering it catches more of the excellent wines, at the cost of more false calls (an ordinary wine called excellent):
+
+```{r}
+held_back_predictions %>%
+  filter(excellent == "yes") %>%
+  summarize(
+    caught_at_0.5 = sum(probability_yes >= 0.5),
+    caught_at_0.3 = sum(probability_yes >= 0.3)
+  )
+```
+
+Where to put the cut-off depends on what a miss costs compared with a false call: a missed excellent wine is a lost sale, but a missed disease is a missed diagnosis.
+
+#### concept check {-}
+
+Fill in the blank with the value that keeps only the wines that really are excellent, then press Run to count how many the model caught and missed.
+
+<div class="webr-cell"><textarea class="webr-code">wine_model <- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent"
+)
+
+predictWithModel(data = held_back_wines, model = wine_model) %>%
+  filter(excellent == "____") %>%
+  summarize(
+    excellent_wines = n(),
+    caught = sum(predicted_class == "yes"),
+    missed = sum(predicted_class == "no")
+  )</textarea></div>
+
+<div class="selfcheck" data-answer="2" data-explain="When yes is rare, calling everything no is right for every no case, so its accuracy is high. But it catches none of the yes cases. Accuracy has to be read beside the number caught and missed.">
+<p class="scq">Self-check: a rule that calls every held-back wine "no" scores an accuracy of about 88%. What does that show?</p>
+<label><input type="radio"> The rule is a good classifier for excellent wines</label>
+<label><input type="radio"> Any model with an accuracy below 88% must have a mistake in its code</label>
+<label><input type="radio"> When yes is rare, accuracy can be high for a rule that catches no yes cases at all, so caught and missed must be reported too</label>
+</div>
+
+<hr>
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
+
+[]{#classification-models-summary}
+
+## chapter summary {-}
+
+[Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.summary-pdf target="_blank"}
+
+A yes/no response needs a classification model, not a straight line: a straight line's predictions run below 0 and above 1. **Set data aside first:** filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. **Read the output:** `probability_yes` is the model's probability of yes, and `predicted_class` is the call at a cut-off of 0.5. Move the cut-off with a `mutate()` on the probability, knowing that a lower cut-off catches more yes cases and makes more false calls. **Rank predictors only after scaling,** by the size of the coefficient, because raw coefficients mostly reflect units. **Judge on the held-back rows,** and never on accuracy alone: when yes is rare, calling everything "no" scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed.
+
+| Function or step | What it is for | What we set or vary |
+|---|---|---|
+| `filter(record == "training")` | splitting the data into training rows and held-back rows by a column, not at random | the column and its two values |
+| `buildModel()` | fitting a logistic regression model to a yes/no response | `data` (training rows), `model_type = "logistic_regression"`, `predictors` (one or more), `response` |
+| `predictWithModel()` | a probability and a call for every row of any table with the same predictor columns | `data` (e.g. the held-back rows), `model`; adds `probability_yes` and `predicted_class` |
+| `mutate(ifelse(probability_yes >= ...))` | moving the cut-off | the cut-off value |
+| `buildModel(scale_variance = TRUE)` | comparing coefficients across predictors | `TRUE` to rank predictors; rank with `arrange(desc(abs(value)))` |
+| `summarize(mean(predicted_class == response))` | accuracy | compare against calling every row "no" |
+| `filter(response == "yes")` + `summarize(sum(...))` | the yes cases caught and missed | which call counts as caught (`"yes"`) or missed (`"no"`) |
+
+<hr>
+
+## exercises {-}
+
+The exercises for this chapter open here once their worlds are ready.
+
+<!-- PARKED until watch's scenario.json is `status: ready` (chapters/AGENTS.md: a card goes live only for a ready scenario, as for the ANOVA pair). To publish: remove this comment wrapper and set eval back to identical(knitr:::pandoc_to(), 'html'). Add the Staff Only + Good Seeing cards beside it when those two are ready.
+The practice world below runs both class days of this chapter and can be played on your own at any time. The two graded escape rooms for this chapter, *Staff Only* and *Good Seeing*, will be linked here when they open.
+
+```{r echo=FALSE, results='asis', eval=FALSE}
+cat('
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/classification/watch/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/classification/watch/cover.png" alt="Morning Watch cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/classification/watch/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Morning Watch</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">Classification &middot; probabilities, cut-offs, scaled predictors + caught and missed &middot; practice world</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">Dawn on the volcano island. Work through the monitoring station&rsquo;s earlier records and a second collection of photographic plates, and practice every step of this chapter before the graded rooms open.</div>
+</div>
+</div>
+</div>
+')
+```
+-->
+
+<hr>
+
+## further reading {-}
+
+- [An Introduction to Statistical Learning](https://www.statlearning.com/). A free textbook whose classification chapter introduces logistic regression, the choice of a cut-off and the trade-off between catching yes cases and making false calls, with worked examples in R.
+
+- [Classification, Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/classification). A short interactive module on thresholds, accuracy and its limits with imbalanced classes, and the confusion matrix that the caught and missed counts in this chapter are part of.
+
+- [Wine Quality dataset, UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/186/wine+quality). The source of this chapter's red wines: physicochemical measurements and tasters' scores for Portuguese vinho verde wines, with the original study that modeled the scores.
+
+<!-- end classification models -->

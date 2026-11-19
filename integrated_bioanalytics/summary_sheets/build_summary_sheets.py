@@ -121,6 +121,13 @@ def chunks_to_images(md):
     return re.sub(r"```\{r[^\n]*\}\n.*?\n```", repl, md, flags=re.S)
 
 
+def uncommented(rmd):
+    """The chapter with HTML comments removed: a commented-out flowchart (a TODO placeholder) is not one."""
+    body = re.sub(r"<!--.*?-->", "", rmd, flags=re.S)
+    j = body.find("<!--")          # an unclosed comment hides everything after it on the page too
+    return body[:j] if j >= 0 else body
+
+
 def sheet_body(rmd, pandoc, suffix=": summary"):
     """The sheet's inner HTML (heading, subtitle, summary), or None if the chapter has no summary.
     The packet passes suffix="" because its cover already says these are the chapter summaries."""
@@ -131,7 +138,7 @@ def sheet_body(rmd, pandoc, suffix=": summary"):
     if "include_graphics" not in section:
         # The chapter-opening card holds the decision flowchart (since 2026-10-29); the sheet still
         # leads with it.
-        flow = re.search(r"```\{r[^\n]*\}\n[^\n]*images/[A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*[^\n]*\n```", rmd)
+        flow = re.search(r"```\{r[^\n]*\}\n[^\n]*images/[A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*[^\n]*\n```", uncommented(rmd))
         if flow:
             section = flow.group(0) + "\n\n" + section
     md = chunks_to_images(section)
@@ -223,7 +230,7 @@ def sheet_inputs(f):
     still rebuild the sheet (test_build_summary_sheets.py)."""
     rmd = open(f, encoding="utf-8").read()
     names = set(re.findall(r"images/([A-Za-z0-9._-]+)", summary_section(rmd) or ""))
-    flow = re.search(r"images/([A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*)", rmd)
+    flow = re.search(r"images/([A-Za-z0-9._-]*flowchart[A-Za-z0-9._-]*)", uncommented(rmd))
     if flow:
         names.add(flow.group(1))
     return [f] + [p for p in (os.path.join(IMAGES, n) for n in sorted(names)) if os.path.exists(p)]

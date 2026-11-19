@@ -377,7 +377,105 @@
     ## Rename some stats functions so they use camelCase
 
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
-        tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
+        # tTest() takes data + formula (rstatix::t_test, unchanged), or a fitted linear model from buildModel()
+        # with slopes_of =: then it compares that numeric predictor's slope between every pair of groups with
+        # a Welch-style t-test. Each group's slope and standard error come from a line fitted to that group
+        # alone, so no group's scatter is pooled with another's (tukeyTest(slopes_of =) pools them). p.adj is
+        # Holm-adjusted by default; estimate = group2 slope - group1 slope, so pGroups() reads it like tukeyTest.
+        tTest <- function( data, ..., compare = NULL, slopes_of = NULL, p.adjust.method = "holm" ) {
+            is_model <- inherits(data, "lm") ||
+                (is.list(data) && !is.data.frame(data) && !is.null(data$model_type) && !is.null(data$model))
+            if (!is_model) {
+                if (!is.null(compare) || !is.null(slopes_of)) {
+                    stop("tTest(): compare = and slopes_of = are for a model from buildModel(). With a data table, give a formula, e.g. tTest(abundance ~ aquifer_code).", call. = FALSE)
+                }
+                return(rstatix::t_test( data = data, ..., p.adjust.method = p.adjust.method ))
+            }
+            if (length(list(...)) > 0) {
+                stop("tTest(): a model already contains its formula. Use slopes_of = (which numeric predictor) and, if the model has more than one factor, compare = (which groups).", call. = FALSE)
+            }
+            if (is.null(slopes_of)) {
+                stop("tTest(): with a model, name the numeric predictor whose slopes to compare, e.g. tTest(model, slopes_of = \"temperature\"). To compare group means, give the data and a formula instead.", call. = FALSE)
+            }
+            if (inherits(data, "lm")) {
+                fit <- data
+            } else {
+                if (data$model_type != "linear_regression") {
+                    stop("tTest(): only linear regression models can be t-tested.", call. = FALSE)
+                }
+                fit <- data$model
+            }
+            mf <- stats::model.frame(fit)
+            inputs <- all.vars(stats::formula(fit)[[3]])
+            groups <- inputs[!vapply(mf[inputs], is.numeric, logical(1))]
+            if (is.null(compare)) {
+                if (length(groups) == 0) {
+                    stop("tTest(): this model has no factor (a text predictor) to compare. Build it with one, e.g. formula = rate ~ temperature * chemistry.", call. = FALSE)
+                }
+                if (length(groups) > 1) {
+                    stop("tTest(): this model has more than one factor (", paste(groups, collapse = ", "), "). Choose one with compare =.", call. = FALSE)
+                }
+                compare <- groups
+            }
+            if (!compare %in% groups) {
+                stop("tTest(): compare = should name a factor (a text predictor) of the model: ", paste(groups, collapse = ", "), ".", call. = FALSE)
+            }
+            numeric_inputs <- setdiff(inputs, groups)
+            if (!slopes_of %in% numeric_inputs) {
+                stop("tTest(): slopes_of = should name a numeric predictor of the model: ", paste(numeric_inputs, collapse = ", "), ".", call. = FALSE)
+            }
+            others <- setdiff(inputs, c(compare, slopes_of))
+            if (length(others) > 0) {
+                stop("tTest(): slopes_of = fits one line per group, so the model can hold only ", slopes_of, " and ", compare, ", not also ", paste(others, collapse = ", "), ". Use tukeyTest(slopes_of =) for this model.", call. = FALSE)
+            }
+            y <- stats::model.response(mf)
+            x <- mf[[slopes_of]]
+            g <- mf[[compare]]
+            group_levels <- if (is.factor(g)) levels(droplevels(g)) else sort(unique(as.character(g)))
+            if (length(group_levels) < 2) {
+                stop("tTest(): ", compare, " has only one group, so there are no slopes to compare.", call. = FALSE)
+            }
+            per_group <- lapply(group_levels, function(lv) {
+                keep <- as.character(g) == lv
+                gx <- x[keep]
+                gy <- y[keep]
+                if (length(unique(gx)) < 2 || length(gx) < 3) {
+                    stop("tTest(): group ", lv, " needs at least three points at two or more values of ", slopes_of, " to give a slope and its standard error.", call. = FALSE)
+                }
+                s <- summary(stats::lm(gy ~ gx))$coefficients
+                c(slope = s["gx", "Estimate"], se = s["gx", "Std. Error"], df = length(gx) - 2, n = length(gx))
+            })
+            per_group <- as.data.frame(do.call(rbind, per_group))
+            pairs <- combn(length(group_levels), 2)
+            a <- per_group[pairs[1, ], ]
+            b <- per_group[pairs[2, ], ]
+            se_diff <- sqrt(a$se^2 + b$se^2)
+            welch_df <- (a$se^2 + b$se^2)^2 / (a$se^4 / a$df + b$se^4 / b$df)
+            statistic <- (b$slope - a$slope) / se_diff
+            p <- 2 * stats::pt(-abs(statistic), welch_df)
+            p_adj <- stats::p.adjust(p, method = p.adjust.method)
+            out <- tibble::tibble(
+                term = compare,
+                group1 = group_levels[pairs[1, ]],
+                group2 = group_levels[pairs[2, ]],
+                n1 = a$n,
+                n2 = b$n,
+                estimate = b$slope - a$slope,
+                statistic = statistic,
+                df = welch_df,
+                p = p,
+                p.adj = p_adj,
+                p.adj.signif = as.character(stats::symnum(p_adj,
+                    cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 1),
+                    symbols = c("****", "***", "**", "*", "ns"), na = ""))
+            )
+            attr(out, "estimates") <- data.frame(
+                group = group_levels,
+                estimate = per_group$slope,
+                std_err = per_group$se
+            )
+            out
+        }
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
         # anovaTest() takes data + formula, or a fitted linear model from buildModel(), and returns the course's
         # ANOVA table, matching the ANOVA instrument column for column: one row per term, then noise, then total.

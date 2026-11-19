@@ -25,7 +25,7 @@ find_defs <- function(e, wanted, found = list()) {
     }
     found
 }
-wanted <- c("buildModel", "buildModel2", "predictWithModel", "tukeyTest", "anovaTest", "pGroups", "gamesHowellTest", "pairwiseTTest")
+wanted <- c("buildModel", "buildModel2", "predictWithModel", "tukeyTest", "tTest", "anovaTest", "pGroups", "gamesHowellTest", "pairwiseTTest")
 defs <- find_defs(parse("phylochemistry.R"), wanted)
 for (d in defs) eval(d, envir = globalenv())
 stopifnot(exists("buildModel"), exists("predictWithModel"))
@@ -268,6 +268,53 @@ check(isTRUE(all.equal(one$share[1], ges1)), "one factor: share equals ges")
 check(is.data.frame(ai) && !inherits(ai, "tbl_df"), "a plain data.frame, so no column is hidden when printed")
 check(grepl("one formula", err_of(anovaTest(inst))), "data with no formula: plain error")
 check(grepl("on its own", err_of(anovaTest(m, y ~ x))), "formula given to a model: plain error")
+
+## ===================================================================================================
+## tTest(): data path unchanged; model + slopes_of = compares slopes unpooled (Welch), Holm-adjusted
+## ===================================================================================================
+cat("tTest: data path and slopes_of\n")
+check(identical(tTest(d, y ~ grp), rstatix::t_test(data = d, y ~ grp)), "data + formula: identical to rstatix::t_test")
+check(identical(tTest(d, y ~ grp, var.equal = TRUE, p.adjust.method = "bonferroni"),
+                rstatix::t_test(data = d, y ~ grp, var.equal = TRUE, p.adjust.method = "bonferroni")),
+      "data path passes var.equal and p.adjust.method through")
+check(identical(tTest(data = d, formula = y ~ grp, ref.group = "A"), rstatix::t_test(data = d, formula = y ~ grp, ref.group = "A")),
+      "data path with named data/formula/ref.group")
+## unequal scatter: C is five times noisier than A and B-2
+set.seed(2)
+dv <- d
+dv$y <- 1 + slope[dv$grp] * dv$x + rnorm(nrow(dv), sd = ifelse(dv$grp == "C", 2, 0.4))
+mv <- buildModel(data = dv, formula = y ~ x * grp)
+tt <- tTest(mv, slopes_of = "x")
+sep <- lapply(split(dv, dv$grp), function(s) summary(lm(y ~ x, data = s))$coefficients["x", ])
+check(identical(tt$group1, c("A", "A", "B-2")) && identical(tt$group2, c("B-2", "C", "C")), "every pair, in level order")
+check(isTRUE(all.equal(attr(tt, "estimates")$estimate, unname(sapply(sep, `[[`, "Estimate")))), "slopes = separate per-group fits")
+check(isTRUE(all.equal(attr(tt, "estimates")$std_err, unname(sapply(sep, `[[`, "Std. Error")))),
+      "each slope's SE from its own group alone (no pooled variance)")
+se_pooled_A <- as.data.frame(summary(emmeans::emtrends(mv$model, specs = "grp", var = "x")))$SE[1]
+check(attr(tt, "estimates")$std_err[1] < se_pooled_A / 2, "quiet group's SE is not inflated by the noisy group (unlike tukeyTest)")
+seA <- sep$A[["Std. Error"]]; seC <- sep$C[["Std. Error"]]
+tAC <- (sep$C[["Estimate"]] - sep$A[["Estimate"]]) / sqrt(seA^2 + seC^2)
+dfAC <- (seA^2 + seC^2)^2 / (seA^4 / 14 + seC^4 / 14)
+check(isTRUE(all.equal(tt$statistic[2], tAC)) && isTRUE(all.equal(tt$df[2], dfAC)) &&
+      isTRUE(all.equal(tt$p[2], 2 * pt(-abs(tAC), dfAC))), "A vs C: Welch t, Welch-Satterthwaite df, two-sided p")
+check(isTRUE(all.equal(tt$p.adj, p.adjust(tt$p, "holm"))), "p.adj is Holm by default")
+check(isTRUE(all.equal(tTest(mv, slopes_of = "x", p.adjust.method = "bonferroni")$p.adj, p.adjust(tt$p, "bonferroni"))),
+      "p.adjust.method = is honoured on the model path")
+check(isTRUE(all.equal(tt$estimate, tt$estimate)) && isTRUE(all.equal(tt$estimate[2], sep$C[["Estimate"]] - sep$A[["Estimate"]])),
+      "estimate = group2 slope - group1 slope (tukeyTest's orientation)")
+pg <- pGroups(tt)
+check(identical(sort(pg$treatment), c("A", "B-2", "C")) && !is.null(pg$estimate) && !is.null(pg$std_err),
+      "pGroups reads it: letters plus each group's slope and SE")
+check(pg["A", "group"] != pg["C", "group"] && pg["A", "group"] == pg["B-2", "group"], "letters: C differs, A and B-2 share")
+check(isTRUE(all.equal(tTest(mv$model, slopes_of = "x")$p, tt$p)), "a bare lm works too")
+## guards
+check(grepl("slopes_of =", err_of(tTest(mv))), "model without slopes_of: plain error")
+check(grepl("for a model", err_of(tTest(dv, y ~ grp, slopes_of = "x"))), "slopes_of with a data table: plain error")
+check(grepl("numeric predictor", err_of(tTest(mv, slopes_of = "grp"))), "slopes_of naming a factor: plain error")
+check(grepl("already contains", err_of(tTest(mv, y ~ grp, slopes_of = "x"))), "formula given to a model: plain error")
+dz <- dv; dz$z <- rnorm(nrow(dz))
+check(grepl("tukeyTest", err_of(tTest(buildModel(data = dz, formula = y ~ x * grp + z), slopes_of = "x"))),
+      "an extra predictor is refused, pointing at tukeyTest")
 
 ## ===================================================================================================
 cat(if (fails == 0) "\nALL PASS\n" else sprintf("\n%d FAILED\n", fails))

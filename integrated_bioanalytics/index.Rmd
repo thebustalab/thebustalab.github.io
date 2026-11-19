@@ -138,6 +138,9 @@ ________________________________________________________________________________
 
 # (PART) MODELS
 
+```{r child="chapters/12d_classification.Rmd"}
+```
+
 ```{r child="chapters/12c_machine_learning.Rmd"}
 ```
 

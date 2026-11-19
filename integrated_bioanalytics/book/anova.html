@@ -80,6 +80,7 @@
 <li><a class="" href="regression-models.html">regression models</a></li>
 <li><a class="active" href="anova.html">analysis of variance</a></li>
 <li class="book-part">MODELS</li>
+<li><a class="" href="classification-models.html">classification models</a></li>
 <li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
@@ -119,7 +120,7 @@
 <p><strong>How much of the variation does each factor explain?</strong> Designed experiments rarely vary one thing at a time: a field trial crosses fertilizers with crop varieties, a metabolomics study crosses treatments with genotypes, and samples are run in batches on different days. Analysis of variance splits the spread in a set of measurements into a part explained by each factor and a part left over, the noise, then asks whether each factor explains more than noise alone would, what share of the variation it explains, and whether two factors simply add up or depend on each other. This chapter treats ANOVA as a question asked of a fitted linear model: one factor, its rank-based counterpart, reading the ANOVA table, checking the model, and then two factors and their interaction. It then turns to variants of ANOVA, with particular attention to PERMANOVA, which makes the same split for a whole chemical profile at once, and closes by naming the designs a laboratory often meets: blocks, covariates and repeated measures.</p>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12b_anova.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="anova.html#anova-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-582"></span>
+<span style="display:block;" id="fig:unnamed-chunk-583"></span>
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/12b_anova_flowchart.png" alt="Choosing an analysis of variance. This decision flowchart starts from what was measured in each sample and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps." width="100%"><p class="caption">
 Choosing an analysis of variance. This decision flowchart starts from what was measured in each sample and ends at the function to run and the row of the table to read first. Yellow boxes are questions about the design and the data and green boxes are recommended steps.
 </p>
@@ -347,8 +348,8 @@ Self-check: when is the Kruskal test the right choice?
 <div class="sourceCode" id="cb184"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">check_model</span><span class="op">(</span><span class="va">K_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-586"></span>
-<img src="index_files/figure-html/unnamed-chunk-586-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-587"></span>
+<img src="index_files/figure-html/unnamed-chunk-587-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
 Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset.
 </p>
 </div>
@@ -412,8 +413,8 @@ Self-check: in the residuals-against-fitted-values panel, some aquifers’ strip
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-588"></span>
-<img src="index_files/figure-html/unnamed-chunk-588-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-589"></span>
+<img src="index_files/figure-html/unnamed-chunk-589-1.png" alt="Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
 Chloride and sodium in four Hawaiian aquifers. Interaction plot of mean abundance (y axis) for each aquifer (x axis), with one line and color per analyte; each point is the mean of all wells sampled in that aquifer. The gap between chloride and sodium is wide in aquifer 2 and narrow in aquifer 4, which is what the interaction term in the two-way ANOVA tests. Data are from the hawaii_aquifers dataset.
 </p>
 </div>
@@ -676,7 +677,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="regression-models.html">regression models</a></div>
-<div class="next"><a href="machine-learning.html">machine learning models</a></div>
+<div class="next"><a href="classification-models.html">classification models</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -712,7 +713,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

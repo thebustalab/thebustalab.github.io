@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Dark mode is the default; apply it before paint unless the reader has opted into light --><script>
+    (function () {
+      try {
+        if (localStorage.getItem('ib-theme') !== 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script><title>classification models | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="Is the answer for this sample yes or no? Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one...">
+<meta name="generator" content="bookdown 0.46 with bs4_book()">
+<meta property="og:title" content="classification models | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Is the answer for this sample yes or no? Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="classification models | Integrated Bioanalytics">
+<meta name="twitter:description" content="Is the answer for this sample yes or no? Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.10.0/transition.js"></script><script src="libs/bs3compat-0.10.0/tabs.js"></script><script src="libs/bs3compat-0.10.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <div class="d-flex">
+        <button id="dark-mode-toggle" class="btn btn-outline-primary ml-2 mt-1" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+      </div>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li class="book-part">EXPLORATORY ANALYSIS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="distances-and-scaling.html">distances and scaling</a></li>
+<li><a class="" href="networks.html">networks</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li class="book-part">STATISTICAL ANALYSIS</li>
+<li><a class="" href="comparing-means.html">comparing groups</a></li>
+<li><a class="" href="regression-models.html">regression models</a></li>
+<li><a class="" href="anova.html">analysis of variance</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="active" href="classification-models.html">classification models</a></li>
+<li><a class="" href="machine-learning.html">machine learning models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li><a class="" href="protein-language-models.html">protein language models</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="specialized-plots-and-maps.html">specialized plots and maps</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="classification-models" class="section level1 unnumbered">
+<h1>classification models<a class="anchor" aria-label="anchor" href="#classification-models"><i class="fas fa-link"></i></a>
+</h1>
+<div class="chapter-card">
+<!-- TODO cover image: no title plate exists yet for this chapter. When one does, add the usual chunk here:
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/<name>.png" alt="" width="100%" style="display: block; margin: auto;" />
+-->
+<div class="cc-title-slot">
+
+</div>
+<p><strong>Is the answer for this sample yes or no?</strong> Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one that tasters will rate as excellent? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples it was never shown, asks which predictors matter most, and judges how well the calls hold up, including why a high accuracy can hide a model that misses every case that matters. It carries the regression chapter’s steps over from numbers to categories, and the machine learning chapter builds on it with more flexible models.</p>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="classification-models.html#classification-models-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
+<!-- TODO decision flowchart: none drawn yet. When one is (graphviz source in notes/, PNG in images/), add it here:
+<div class="figure" style="text-align: center">
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12d_classification_flowchart.png" alt="Choosing &lt;thing&gt;. This decision flowchart starts from &lt;starting point&gt; and ends at &lt;end point&gt;. Yellow boxes are questions about &lt;...&gt; and green boxes are recommended &lt;...&gt;." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-613)Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>.</p>
+</div>
+-->
+</div>
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "wine_quality", url: "/phylochemistry/sample_data/wine_quality.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)}); red_wines <- wine_quality %>% filter(type == 'red') %>% mutate(wine = row_number(), excellent = ifelse(quality_score >= 7, 'yes', 'no'), record = ifelse(row_number() %% 4 == 0, 'held back', 'training')); training_wines <- filter(red_wines, record == 'training'); held_back_wines <- filter(red_wines, record == 'held back')" };
+</script><div id="from-numbers-to-categories" class="section level2 unnumbered">
+<h2>from numbers to categories<a class="anchor" aria-label="anchor" href="#from-numbers-to-categories"><i class="fas fa-link"></i></a>
+</h2>
+<p>The regression chapter predicted numbers: a Valine abundance, a density. Many questions instead have a response that is a category, and the simplest case is a category with two values, yes or no. A model that predicts a category is a <strong>classification model</strong>.</p>
+<p>This chapter works with the red wines in the <code>wine_quality</code> dataset. Each wine has a set of chemical measurements (its alcohol content, its acidity, its sulfur dioxide, its density and so on) and a <code>quality_score</code> given by a panel of tasters. We will call a wine excellent if it scored 7 or more, and store that as a column of yes and no. We also give each wine a number, so that any one of them can be found again later:</p>
+<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">red_wines</span> <span class="op">&lt;-</span> <span class="va">wine_quality</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"red"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    wine <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    excellent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">quality_score</span> <span class="op">&gt;=</span> <span class="fl">7</span>, <span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">excellent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 2</span></span>
+<span><span class="co">##   excellent     n</span></span>
+<span><span class="co">##   &lt;chr&gt;     &lt;int&gt;</span></span>
+<span><span class="co">## 1 no         1382</span></span>
+<span><span class="co">## 2 yes         217</span></span></code></pre></div>
+<p>Of the 1,599 red wines, 217 are excellent, about one in seven. So “yes” is the rare answer here, a fact that matters at the end of the chapter.</p>
+<p>Why not simply use the regression chapter’s tools? A linear model needs a number for its response, so we could code each excellent wine as 1 and every other wine as 0, then fit a straight line of that number against alcohol content:</p>
+<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">red_wines_as_numbers</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>excellent_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">straight_line_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">red_wines_as_numbers</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="st">"alcohol"</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"excellent_number"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>A prediction from this line is meant to be read as the chance that a wine is excellent. Let’s see what the line predicts across a range of alcohol contents, from a weak 4% up to the 22% of a strong port:</p>
+<div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alcohol_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>alcohol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">22</span>, by <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">straight_line_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alcohol_range</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">straight_line_model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">straight_line_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    lowest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">predicted_excellent_number</span><span class="op">)</span>,</span>
+<span>    highest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">predicted_excellent_number</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 2</span></span>
+<span><span class="co">##   lowest highest</span></span>
+<span><span class="co">##    &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 -0.705    1.65</span></span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">red_wines_as_numbers</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alcohol</span>, y <span class="op">=</span> <span class="va">excellent_number</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">straight_line_predictions</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alcohol</span>, y <span class="op">=</span> <span class="va">predicted_excellent_number</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-617"></span>
+<img src="index_files/figure-html/unnamed-chunk-617-1.png" alt="A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only." width="100%"><p class="caption">
+A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only.
+</p>
+</div>
+<p>The line has to pass through a cloud of 0s and 1s, and a straight line has no floor and no ceiling. Carried out from 4 to 22 percent alcohol, it falls below 0 at the weak end and climbs past 1 at the strong end (no wine in the table is that strong, but a model should still give a sensible answer), and neither value can be a probability. The fix is a model whose predictions bend into an S-shape: close to 0 at one end, close to 1 at the other, and never beyond either. That model is <strong>logistic regression</strong>, and it takes the yes/no column itself as its response, with no recoding to numbers.</p>
+<p>One detail is worth knowing once. A logistic regression model predicts the probability of one of the two values. For a column of “yes” and “no”, <code>buildModel()</code> always models “yes”; for a column of <code>TRUE</code> and <code>FALSE</code> it models <code>TRUE</code>; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.</p>
+<div id="concept-check-66" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-66"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the lowest tasters’ score that counts as excellent, then press Run to count the excellent red wines.</p>
+<div class="webr-cell">
+<textarea class="webr-code">red_wines &lt;- wine_quality %&gt;%
+  filter(type == "red") %&gt;%
+  mutate(excellent = ifelse(quality_score &gt;= ____, "yes", "no"))
+
+red_wines %&gt;%
+  group_by(excellent) %&gt;%
+  summarize(n = n())</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="A probability has to lie between 0 and 1, but a straight line keeps rising (or falling) for ever, so far enough along the predictor it predicts values below 0 or above 1. Logistic regression bends its predictions into an S-shape that stays between 0 and 1.">
+<p class="scq">
+Self-check: why is a straight line a poor model for a yes/no response coded as 1 and 0?
+</p>
+<p><label><input type="radio"> A straight line cannot be fitted to a response that only takes two values</label>
+<label><input type="radio"> Its predictions are meant to be probabilities, but a straight line runs below 0 and above 1</label>
+<label><input type="radio"> A straight line always predicts exactly 0 or exactly 1</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="a-model-from-one-predictor" class="section level2 unnumbered">
+<h2>a model from one predictor<a class="anchor" aria-label="anchor" href="#a-model-from-one-predictor"><i class="fas fa-link"></i></a>
+</h2>
+<p>Before building a model, we set some of the data aside. The final section of this chapter judges a model by how well it does on wines it was never shown, and that test only means something if those wines really were kept out of the fitting. So the table needs a column saying which wines are used for building (the <strong>training</strong> wines) and which are <strong>held back</strong> for the test. Here, every fourth wine is held back:</p>
+<div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">red_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>record <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu">row_number</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">4</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"held back"</span>, <span class="st">"training"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">training_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"training"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">held_back_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"held back"</span><span class="op">)</span></span></code></pre></div>
+<p>Marking the split with a column, rather than drawing rows at random each time, means everyone who runs this code holds back exactly the same wines and gets exactly the same answers. In many datasets (including the ones in this chapter’s exercises) the column comes with the data, and the only step is the <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The held-back wines are the <strong>test set</strong>, and from here on every model is built on <code>training_wines</code> alone.</p>
+<p>A logistic regression model is built with <code>buildModel()</code>, the same function as in the regression chapter, with <code>model_type = "logistic_regression"</code>. The predictors and the response are named exactly as before, and the response is the yes/no column:</p>
+<div class="sourceCode" id="cb195"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alcohol_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="st">"alcohol"</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"excellent"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">alcohol_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span><span class="op">)</span></span>
+<span><span class="co">##      variable      value    std_err        type</span></span>
+<span><span class="co">## 1 (Intercept) -13.471603 0.96287892 coefficient</span></span>
+<span><span class="co">## 2     alcohol   1.077528 0.08584569 coefficient</span></span>
+<span><span class="co">##        p_value  p_value_adj</span></span>
+<span><span class="co">## 1 1.770001e-44 3.540002e-44</span></span>
+<span><span class="co">## 2 3.879808e-36 3.879808e-36</span></span></code></pre></div>
+<p>The alcohol coefficient is positive, so the model’s probability that a wine is excellent rises with its alcohol content. (Logistic regression coefficients are measured on a scale called the log-odds, not in probability units, so we read their sign and, after scaling, their size, rather than translating them into a change in probability.)</p>
+<p><code>predictWithModel()</code> works just as it did for regression, and adds two columns to whatever table it is given. <strong><code>probability_yes</code></strong> is the model’s probability that the response is “yes”, and <strong><code>predicted_class</code></strong> is the call the model makes from it, yes or no:</p>
+<div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alcohol_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">alcohol_model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">alcohol_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 5</span></span>
+<span><span class="co">##    wine alcohol excellent probability_yes predicted_class</span></span>
+<span><span class="co">##   &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;          </span></span>
+<span><span class="co">## 1     1     9.4 no                 0.0341 no             </span></span>
+<span><span class="co">## 2     2     9.8 no                 0.0516 no             </span></span>
+<span><span class="co">## 3     3     9.8 no                 0.0516 no             </span></span>
+<span><span class="co">## 4     5     9.4 no                 0.0341 no             </span></span>
+<span><span class="co">## 5     6     9.4 no                 0.0341 no             </span></span>
+<span><span class="co">## 6     7     9.4 no                 0.0341 no</span></span></code></pre></div>
+<p>To read the probability for one wine, filter for it:</p>
+<div class="sourceCode" id="cb197"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alcohol_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wine</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">probability_yes</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 3</span></span>
+<span><span class="co">##    wine alcohol probability_yes</span></span>
+<span><span class="co">##   &lt;int&gt;   &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">## 1    10    10.5           0.104</span></span></code></pre></div>
+<p>Predicting across a range of alcohol contents shows the S-shape that the straight line could not give:</p>
+<div class="sourceCode" id="cb198"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alcohol_curve</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>alcohol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">15</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">alcohol_model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">training_wines</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alcohol</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">alcohol_curve</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alcohol</span>, y <span class="op">=</span> <span class="va">probability_yes</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-622"></span>
+<img src="index_files/figure-html/unnamed-chunk-622-1.png" alt="A logistic regression model keeps its predicted probabilities between 0 and 1. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that a red wine is excellent on the vertical axis; each faint point is one training wine, placed at 1 if it is excellent and at 0 if it is not, and the blue line is the probability predicted by a logistic regression model of excellence on alcohol. Data: wine_quality, red wines in the training set." width="100%"><p class="caption">
+A logistic regression model keeps its predicted probabilities between 0 and 1. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that a red wine is excellent on the vertical axis; each faint point is one training wine, placed at 1 if it is excellent and at 0 if it is not, and the blue line is the probability predicted by a logistic regression model of excellence on alcohol. Data: wine_quality, red wines in the training set.
+</p>
+</div>
+<div id="concept-check-67" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-67"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the model type that predicts a yes/no response, then press Run to read the probability for wine 10.</p>
+<div class="webr-cell">
+<textarea class="webr-code">alcohol_model &lt;- buildModel(
+  data = training_wines,
+  model_type = "____",
+  predictors = "alcohol",
+  response = "excellent"
+)
+
+predictWithModel(data = training_wines, model = alcohol_model) %&gt;%
+  filter(wine == 10) %&gt;%
+  select(wine, alcohol, probability_yes)</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="probability_yes is the model's estimate of how likely the response is to be yes for that wine, given its predictors. It is not the share of wines that are excellent, and it is not a call: the call is in predicted_class.">
+<p class="scq">
+Self-check: a wine has a probability_yes of 0.3. What does that mean?
+</p>
+<p><label><input type="radio"> 30% of the red wines are excellent</label>
+<label><input type="radio"> The model has called this wine excellent</label>
+<label><input type="radio"> Given its alcohol content, the model puts the chance that this wine is excellent at 0.3</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="several-predictors-and-predicting-held-back-cases" class="section level2 unnumbered">
+<h2>several predictors, and predicting held-back cases<a class="anchor" aria-label="anchor" href="#several-predictors-and-predicting-held-back-cases"><i class="fas fa-link"></i></a>
+</h2>
+<p>Alcohol is one of many measurements in the table. As with multiple regression, a classification model can use several predictors at once, by naming them all:</p>
+<div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wine_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alcohol"</span>, <span class="st">"volatile_acidity"</span>, <span class="st">"sulphates"</span>, <span class="st">"total_sulfur_dioxide"</span>, <span class="st">"density"</span><span class="op">)</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"excellent"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The point of the held-back wines is that the model has never seen them. Giving them to <code>predictWithModel()</code> asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:</p>
+<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">held_back_wines</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">wine_model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##    wine excellent probability_yes predicted_class</span></span>
+<span><span class="co">##   &lt;int&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;          </span></span>
+<span><span class="co">## 1     4 no                0.0524  no             </span></span>
+<span><span class="co">## 2     8 yes               0.0220  no             </span></span>
+<span><span class="co">## 3    12 no                0.0592  no             </span></span>
+<span><span class="co">## 4    16 no                0.00913 no             </span></span>
+<span><span class="co">## 5    20 no                0.128   no             </span></span>
+<span><span class="co">## 6    24 no                0.0136  no</span></span></code></pre></div>
+<p>How does a probability become a call? Through a <strong>cut-off</strong>. <code>predictWithModel()</code> calls a wine “yes” when its <code>probability_yes</code> is 0.5 or more, and “no” otherwise. We can count how many held-back wines fall on each side:</p>
+<div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 2</span></span>
+<span><span class="co">##   predicted_class     n</span></span>
+<span><span class="co">##   &lt;chr&gt;           &lt;int&gt;</span></span>
+<span><span class="co">## 1 no                370</span></span>
+<span><span class="co">## 2 yes                29</span></span></code></pre></div>
+<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">held_back_predictions</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">alcohol</span>, y <span class="op">=</span> <span class="va">probability_yes</span>, color <span class="op">=</span> <span class="va">excellent</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-626"></span>
+<img src="index_files/figure-html/unnamed-chunk-626-1.png" alt="Each held-back wine's predicted probability of being excellent, against the 0.5 cut-off. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that the wine is excellent, from a logistic regression model on five chemical predictors, on the vertical axis; color shows whether the tasters rated the wine excellent, and the dashed line marks the 0.5 cut-off above which the model calls a wine excellent. Each point is one held-back red wine. Data: wine_quality, red wines in the held-back set." width="100%"><p class="caption">
+Each held-back wine’s predicted probability of being excellent, against the 0.5 cut-off. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that the wine is excellent, from a logistic regression model on five chemical predictors, on the vertical axis; color shows whether the tasters rated the wine excellent, and the dashed line marks the 0.5 cut-off above which the model calls a wine excellent. Each point is one held-back red wine. Data: wine_quality, red wines in the held-back set.
+</p>
+</div>
+<p>Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. <code>predictWithModel()</code> has no argument for the cut-off. <strong>Moving the cut-off is a <code>mutate()</code> on the probability column</strong>, writing a new call from <code>probability_yes</code>:</p>
+<div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>called_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span>, <span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">called_at_0.3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 2</span></span>
+<span><span class="co">##   called_at_0.3     n</span></span>
+<span><span class="co">##   &lt;chr&gt;         &lt;int&gt;</span></span>
+<span><span class="co">## 1 no              338</span></span>
+<span><span class="co">## 2 yes              61</span></span></code></pre></div>
+<p>A lower cut-off calls more wines yes, and a higher one calls fewer. The probabilities themselves do not change: only the line drawn across them moves.</p>
+<div id="concept-check-68" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-68"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with a cut-off of 0.2, then press Run to see how many held-back wines are called excellent at that cut-off.</p>
+<div class="webr-cell">
+<textarea class="webr-code">wine_model &lt;- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent"
+)
+
+predictWithModel(data = held_back_wines, model = wine_model) %&gt;%
+  mutate(called_at_low_cutoff = ifelse(probability_yes &gt;= ____, "yes", "no")) %&gt;%
+  group_by(called_at_low_cutoff) %&gt;%
+  summarize(n = n())</textarea>
+</div>
+<div class="selfcheck" data-answer="0" data-explain="Every wine with a probability of 0.5 or more also has one of 0.2 or more, so lowering the cut-off can only add yes calls, never remove them. The probabilities are unchanged; only the line that turns them into calls has moved.">
+<p class="scq">
+Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2 do?
+</p>
+<p><label><input type="radio"> Calls at least as many wines excellent, and usually more, without changing any wine’s probability</label>
+<label><input type="radio"> Calls fewer wines excellent, because the model has become stricter</label>
+<label><input type="radio"> Changes each wine’s probability_yes, then calls them at 0.5 as before</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="which-predictors-matter-most-1" class="section level2 unnumbered">
+<h2>which predictors matter most<a class="anchor" aria-label="anchor" href="#which-predictors-matter-most-1"><i class="fas fa-link"></i></a>
+</h2>
+<p>With several predictors in the model, a natural question is which of them drives the probability. The regression chapter met the same question and the same trap, and the fix carries over unchanged. Here are the coefficients of the five-predictor model, ranked by size:</p>
+<div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wine_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">##               variable       value      std_err        type</span></span>
+<span><span class="co">## 1              density 14.92792540 55.707270516 coefficient</span></span>
+<span><span class="co">## 2            sulphates  3.35812659  0.576221181 coefficient</span></span>
+<span><span class="co">## 3     volatile_acidity -3.33114501  0.664929422 coefficient</span></span>
+<span><span class="co">## 4              alcohol  1.01902574  0.110519870 coefficient</span></span>
+<span><span class="co">## 5 total_sulfur_dioxide -0.01401004  0.004086754 coefficient</span></span>
+<span><span class="co">##        p_value  p_value_adj</span></span>
+<span><span class="co">## 1 7.887217e-01 1.000000e+00</span></span>
+<span><span class="co">## 2 5.614835e-09 2.807418e-08</span></span>
+<span><span class="co">## 3 5.449447e-07 2.179779e-06</span></span>
+<span><span class="co">## 4 2.962855e-20 1.777713e-19</span></span>
+<span><span class="co">## 5 6.076894e-04 1.823068e-03</span></span></code></pre></div>
+<p>These raw coefficients mostly reflect units. Density barely changes from one wine to the next, so a change of one whole gram per milliliter is far larger than any difference between two wines in the table, and its coefficient is the largest of the five for that reason alone. Total sulfur dioxide is the opposite case: it is measured in milligrams per liter and spreads over a range of a hundred or more, so one unit of it is a tiny change and its coefficient is tiny. Ranking these numbers ranks the units, not the predictors.</p>
+<p>The fix is the regression chapter’s: scale each predictor to a mean of zero and a standard deviation of one before fitting (scaling is introduced in the distances and scaling chapter), with <code>scale_variance = TRUE</code>. Each coefficient then describes a one-standard-deviation change in its predictor, which is comparable across predictors:</p>
+<div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scaled_wine_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alcohol"</span>, <span class="st">"volatile_acidity"</span>, <span class="st">"sulphates"</span>, <span class="st">"total_sulfur_dioxide"</span>, <span class="st">"density"</span><span class="op">)</span>,</span>
+<span>  response <span class="op">=</span> <span class="st">"excellent"</span>,</span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">scaled_wine_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">##               variable       value    std_err        type</span></span>
+<span><span class="co">## 1              alcohol  1.09173405 0.11840555 coefficient</span></span>
+<span><span class="co">## 2     volatile_acidity -0.59369471 0.11850732 coefficient</span></span>
+<span><span class="co">## 3            sulphates  0.54458762 0.09344583 coefficient</span></span>
+<span><span class="co">## 4 total_sulfur_dioxide -0.45069272 0.13146786 coefficient</span></span>
+<span><span class="co">## 5              density  0.02818328 0.10517291 coefficient</span></span>
+<span><span class="co">##        p_value  p_value_adj</span></span>
+<span><span class="co">## 1 2.962855e-20 1.481428e-19</span></span>
+<span><span class="co">## 2 5.449447e-07 1.634834e-06</span></span>
+<span><span class="co">## 3 5.614835e-09 2.245934e-08</span></span>
+<span><span class="co">## 4 6.076894e-04 1.215379e-03</span></span>
+<span><span class="co">## 5 7.887217e-01 7.887217e-01</span></span></code></pre></div>
+<p>After scaling, the ranking no longer follows the units: each coefficient is the change in log-odds for a one-standard-deviation change in that predictor, so the predictor at the top of this list is the one that moves the probability most. Three further points:</p>
+<ul>
+<li>The ranking uses the size of each coefficient, <code>abs(value)</code>, because the sign only gives the direction. A negative coefficient, such as the one on volatile acidity (the vinegary acids a fault in winemaking produces), means the probability of yes falls as that predictor rises, and it can matter just as much as a positive one.</li>
+<li>As in linear regression, scaling changes the units of the coefficients, not the model. The scaled and unscaled models give every wine the same probability, and <code>predictWithModel()</code> scales a new table with the training wines’ means and standard deviations, so the held-back wines go in as measured.</li>
+<li>Scaling the predictor columns by hand with <code>mutate(across(c(...), scale))</code> before <code>buildModel()</code> gives the same coefficients, provided it is done on the training rows. It is a sound way to rank predictors, but a model built that way then needs every new table scaled with the training rows’ means and standard deviations before it can predict, so <code>scale_variance = TRUE</code> is the safer route when the model will also be used for predictions.</li>
+</ul>
+<div id="concept-check-69" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-69"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the value that makes <code>buildModel()</code> scale the predictors, then press Run to rank them.</p>
+<div class="webr-cell">
+<textarea class="webr-code">scaled_wine_model &lt;- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent",
+  scale_variance = ____
+)
+
+scaled_wine_model$metrics %&gt;%
+  filter(type == "coefficient", variable != "(Intercept)") %&gt;%
+  arrange(desc(abs(value)))</textarea>
+</div>
+<div class="selfcheck" data-answer="1" data-explain="A coefficient is the change in the log-odds for a one-unit change in its predictor. Density varies so little between wines that one gram per milliliter is far beyond anything in the data, so its raw coefficient is huge whatever its real influence. Scaling puts every predictor on the same footing first.">
+<p class="scq">
+Self-check: why does density have such a large coefficient in the model built on the raw, unscaled predictors?
+</p>
+<p><label><input type="radio"> Density is the strongest influence on whether a wine is excellent</label>
+<label><input type="radio"> Density barely varies between wines, so one unit of it is an enormous change</label>
+<label><input type="radio"> Density has the most missing values of the five predictors</label></p>
+</div>
+<hr>
+</div>
+</div>
+<div id="judging-a-classifier-on-held-back-cases" class="section level2 unnumbered">
+<h2>judging a classifier on held-back cases<a class="anchor" aria-label="anchor" href="#judging-a-classifier-on-held-back-cases"><i class="fas fa-link"></i></a>
+</h2>
+<p>A classification model is judged by its calls on the held-back wines: cases it never saw, whose true answers we know. The obvious first number is <strong>accuracy</strong>, the share of calls that are right:</p>
+<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 1</span></span>
+<span><span class="co">##   accuracy</span></span>
+<span><span class="co">##      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1    0.897</span></span></code></pre></div>
+<p><code>predicted_class == excellent</code> is <code>TRUE</code> for every wine the model called correctly, and the mean of a column of <code>TRUE</code> and <code>FALSE</code> is the share that are <code>TRUE</code>.</p>
+<p>Accuracy alone can mislead, and this dataset shows how. Consider a “model” that ignores the chemistry and calls every wine “no”:</p>
+<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>always_no <span class="op">=</span> <span class="st">"no"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    model_accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span>,</span>
+<span>    always_no_accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">always_no</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 2</span></span>
+<span><span class="co">##   model_accuracy always_no_accuracy</span></span>
+<span><span class="co">##            &lt;dbl&gt;              &lt;dbl&gt;</span></span>
+<span><span class="co">## 1          0.897              0.885</span></span></code></pre></div>
+<p>Only 46 of the 399 held-back wines are excellent, so calling every wine “no” is right for the other 353: an accuracy of about 88%, from a rule that has learned nothing. Whenever yes is rare, the always-“no” rule scores a high accuracy, and a real model’s accuracy has to be read against it.</p>
+<p>What the always-“no” rule cannot do is find a single excellent wine. So the second question to ask of a classifier is about the yes cases themselves. Of the held-back wines that really are excellent, how many did the model <strong>catch</strong> (call yes), and how many did it <strong>miss</strong> (call no)?</p>
+<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    excellent_wines <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    caught <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
+<span>    missed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 3</span></span>
+<span><span class="co">##   excellent_wines caught missed</span></span>
+<span><span class="co">##             &lt;int&gt;  &lt;int&gt;  &lt;int&gt;</span></span>
+<span><span class="co">## 1              46     17     29</span></span></code></pre></div>
+<p>The always-“no” rule catches none of these 46 wines and misses all of them, however high its accuracy. Two classifiers with almost the same accuracy can differ completely here, and a model that catches some of the excellent wines is far more useful than one that catches none. The caught and missed counts are what show the difference. So report caught and missed beside accuracy, never accuracy alone.</p>
+<p>The cut-off from earlier in the chapter matters here too. Lowering it catches more of the excellent wines, at the cost of more false calls (an ordinary wine called excellent):</p>
+<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    caught_at_0.5 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>    caught_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 2</span></span>
+<span><span class="co">##   caught_at_0.5 caught_at_0.3</span></span>
+<span><span class="co">##           &lt;int&gt;         &lt;int&gt;</span></span>
+<span><span class="co">## 1            17            26</span></span></code></pre></div>
+<p>Where to put the cut-off depends on what a miss costs compared with a false call: a missed excellent wine is a lost sale, but a missed disease is a missed diagnosis.</p>
+<div id="concept-check-70" class="section level4 unnumbered">
+<h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-70"><i class="fas fa-link"></i></a>
+</h4>
+<p>Fill in the blank with the value that keeps only the wines that really are excellent, then press Run to count how many the model caught and missed.</p>
+<div class="webr-cell">
+<textarea class="webr-code">wine_model &lt;- buildModel(
+  data = training_wines,
+  model_type = "logistic_regression",
+  predictors = c("alcohol", "volatile_acidity", "sulphates", "total_sulfur_dioxide", "density"),
+  response = "excellent"
+)
+
+predictWithModel(data = held_back_wines, model = wine_model) %&gt;%
+  filter(excellent == "____") %&gt;%
+  summarize(
+    excellent_wines = n(),
+    caught = sum(predicted_class == "yes"),
+    missed = sum(predicted_class == "no")
+  )</textarea>
+</div>
+<div class="selfcheck" data-answer="2" data-explain="When yes is rare, calling everything no is right for every no case, so its accuracy is high. But it catches none of the yes cases. Accuracy has to be read beside the number caught and missed.">
+<p class="scq">
+Self-check: a rule that calls every held-back wine “no” scores an accuracy of about 88%. What does that show?
+</p>
+<p><label><input type="radio"> The rule is a good classifier for excellent wines</label>
+<label><input type="radio"> Any model with an accuracy below 88% must have a mistake in its code</label>
+<label><input type="radio"> When yes is rare, accuracy can be high for a rule that catches no yes cases at all, so caught and missed must be reported too</label></p>
+</div>
+<hr>
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script><p><span id="classification-models-summary"></span></p>
+</div>
+</div>
+<div id="chapter-summary-11" class="section level2 unnumbered">
+<h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-11"><i class="fas fa-link"></i></a>
+</h2>
+<p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
+<p>A yes/no response needs a classification model, not a straight line: a straight line’s predictions run below 0 and above 1. <strong>Set data aside first:</strong> filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. <strong>Read the output:</strong> <code>probability_yes</code> is the model’s probability of yes, and <code>predicted_class</code> is the call at a cut-off of 0.5. Move the cut-off with a <code>mutate()</code> on the probability, knowing that a lower cut-off catches more yes cases and makes more false calls. <strong>Rank predictors only after scaling,</strong> by the size of the coefficient, because raw coefficients mostly reflect units. <strong>Judge on the held-back rows,</strong> and never on accuracy alone: when yes is rare, calling everything “no” scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed.</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Function or step</th>
+<th>What it is for</th>
+<th>What we set or vary</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>filter(record == "training")</code></td>
+<td>splitting the data into training rows and held-back rows by a column, not at random</td>
+<td>the column and its two values</td>
+</tr>
+<tr class="even">
+<td><code>buildModel()</code></td>
+<td>fitting a logistic regression model to a yes/no response</td>
+<td>
+<code>data</code> (training rows), <code>model_type = "logistic_regression"</code>, <code>predictors</code> (one or more), <code>response</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>predictWithModel()</code></td>
+<td>a probability and a call for every row of any table with the same predictor columns</td>
+<td>
+<code>data</code> (e.g. the held-back rows), <code>model</code>; adds <code>probability_yes</code> and <code>predicted_class</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>mutate(ifelse(probability_yes &gt;= ...))</code></td>
+<td>moving the cut-off</td>
+<td>the cut-off value</td>
+</tr>
+<tr class="odd">
+<td><code>buildModel(scale_variance = TRUE)</code></td>
+<td>comparing coefficients across predictors</td>
+<td>
+<code>TRUE</code> to rank predictors; rank with <code>arrange(desc(abs(value)))</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>summarize(mean(predicted_class == response))</code></td>
+<td>accuracy</td>
+<td>compare against calling every row “no”</td>
+</tr>
+<tr class="odd">
+<td>
+<code>filter(response == "yes")</code> + <code>summarize(sum(...))</code>
+</td>
+<td>the yes cases caught and missed</td>
+<td>which call counts as caught (<code>"yes"</code>) or missed (<code>"no"</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<hr>
+</div>
+<div id="exercises-9" class="section level2 unnumbered">
+<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-9"><i class="fas fa-link"></i></a>
+</h2>
+<p>The exercises for this chapter open here once their worlds are ready.</p>
+<!-- PARKED until watch's scenario.json is `status: ready` (chapters/AGENTS.md: a card goes live only for a ready scenario, as for the ANOVA pair). To publish: remove this comment wrapper and set eval back to identical(knitr:::pandoc_to(), 'html'). Add the Staff Only + Good Seeing cards beside it when those two are ready.
+The practice world below runs both class days of this chapter and can be played on your own at any time. The two graded escape rooms for this chapter, *Staff Only* and *Good Seeing*, will be linked here when they open.
+
+
+-->
+<hr>
+</div>
+<div id="further-reading-11" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-11"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://www.statlearning.com/">An Introduction to Statistical Learning</a>. A free textbook whose classification chapter introduces logistic regression, the choice of a cut-off and the trade-off between catching yes cases and making false calls, with worked examples in R.</p></li>
+<li><p><a href="https://developers.google.com/machine-learning/crash-course/classification">Classification, Google Machine Learning Crash Course</a>. A short interactive module on thresholds, accuracy and its limits with imbalanced classes, and the confusion matrix that the caught and missed counts in this chapter are part of.</p></li>
+<li><p><a href="https://archive.ics.uci.edu/dataset/186/wine+quality">Wine Quality dataset, UCI Machine Learning Repository</a>. The source of this chapter’s red wines: physicochemical measurements and tasters’ scores for Portuguese vinho verde wines, with the original study that modeled the scores.</p></li>
+</ul>
+<!-- end classification models --><!-- start machine learning --><!-- DRAFT (2026-10-20): split out of 12_numerical_models.Rmd. Holds the training/testing and random-forest
+material while the chapter is written; plan in notes/modeling_split_notes.md -> Chapter C. -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="anova.html">analysis of variance</a></div>
+<div class="next"><a href="machine-learning.html">machine learning models</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#classification-models">classification models</a></li>
+<li><a class="nav-link" href="#from-numbers-to-categories">from numbers to categories</a></li>
+<li><a class="nav-link" href="#a-model-from-one-predictor">a model from one predictor</a></li>
+<li><a class="nav-link" href="#several-predictors-and-predicting-held-back-cases">several predictors, and predicting held-back cases</a></li>
+<li><a class="nav-link" href="#which-predictors-matter-most-1">which predictors matter most</a></li>
+<li><a class="nav-link" href="#judging-a-classifier-on-held-back-cases">judging a classifier on held-back cases</a></li>
+<li><a class="nav-link" href="#chapter-summary-11">chapter summary</a></li>
+<li><a class="nav-link" href="#exercises-9">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-11">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-19.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- Chapter-opening card: move the chapter title into the strip under the cover image (style.css). --><script>
+  document.querySelectorAll('.chapter-card .cc-title-slot').forEach(function (slot) {
+    var sec = slot.closest('.level1');
+    var h1 = sec && sec.querySelector(':scope > h1');
+    if (h1) slot.replaceWith(h1);
+  });
+</script><!-- Dark mode toggle handler --><script>
+  (function () {
+    var btn = document.getElementById('dark-mode-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function syncIcon() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (dark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme', 'dark'); }
+      try { localStorage.setItem('ib-theme', dark ? 'light' : 'dark'); } catch (e) {}
+      syncIcon();
+    });
+  })();
+</script>
+</body>
+</html>

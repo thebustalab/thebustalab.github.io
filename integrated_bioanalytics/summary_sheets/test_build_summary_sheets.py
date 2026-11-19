@@ -88,6 +88,32 @@ check("DRAFT" not in sec and "closed note" not in sec and "hidden cards" not in 
 check("further reading" not in sec, "section still stops at the next real ## heading")
 check("DRAFT" not in (b.summary_section("## chapter summary {-}\n\nText.\n\n<!-- unclosed DRAFT\n") or ""), "an unclosed comment hides the rest")
 
+# 2026-11-19: 12d_classification.Rmd carried a TODO flowchart chunk inside an HTML comment (no PNG drawn yet);
+# the sheet builder treated it as the chapter's flowchart and stopped deploy.sh with "summary image missing".
+TODO_FLOW = """# classification {-}
+
+<!-- TODO decision flowchart: none drawn yet.
+```{r echo=FALSE}
+knitr:::include_graphics('https://example.org/integrated_bioanalytics/images/98_todo_flowchart.png')
+```
+-->
+
+## chapter summary {-}
+
+Summary text.
+
+## exercises {-}
+"""
+check("98_todo_flowchart" not in b.uncommented(TODO_FLOW), "a commented-out flowchart is not the chapter's flowchart")
+with tempfile.TemporaryDirectory() as td:
+    images = os.path.join(td, "images")
+    os.makedirs(images)
+    b.HERE, b.IMAGES = td, images
+    rmd = os.path.join(td, "98_todo.Rmd")
+    open(rmd, "w").write(TODO_FLOW)
+    open(os.path.join(images, "98_todo_flowchart.png"), "wb").write(b"png")
+    check(b.sheet_inputs(rmd) == [rmd], "sheet inputs skip a commented-out flowchart")
+
 print()
 if fails:
     print(f"{len(fails)} FAILURE(S)")
