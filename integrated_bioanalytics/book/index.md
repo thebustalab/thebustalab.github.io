@@ -7449,14 +7449,31 @@ An ANOVA splits the spread in a response (its sum of squares) into the part each
 
 <hr>
 
-<!-- DRAFT, not live (2026-11-13): to publish, delete this comment wrapper and set the chunk's eval to identical(knitr:::pandoc_to(), 'html'), once both scenario.json files are status: ready.
-
 ## exercises {-}
 
 
+<div style="display:flex;flex-direction:column;gap:20px;margin:14px 0 8px;">
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/anova/cellars/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/anova/cellars/cover.png" alt="Shut In cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/anova/cellars/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">Shut In</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">ANOVA &middot; one factor, ranking factors by share + interactions + PERMANOVA &middot; two players</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">The staff of Rothamsted Experimental Station have gone home for the long weekend, and a storm has cut the power. One of you is locked in the cellars and the other is on the main floor of the house. Finish the hay-trial report by testing the Director&rsquo;s two claims, find out where an average misleads, and work out where the old service passage runs.</div>
+</div>
+</div>
+</div>
 
 <hr>
 
+<!-- PARKED, not live (2026-11-19): The Last Train card. When anova/glasshouses is status: ready, paste these lines into the cat() above, before its final closing </div>, every line at column 0.
+<div style="display:flex;gap:16px;align-items:flex-start;max-width:640px;">
+<a href="https://thebustalab.github.io/escape_rooms/rooms/anova/glasshouses/play.html" style="flex:none;"><img src="https://thebustalab.github.io/escape_rooms/rooms/anova/glasshouses/cover.png" alt="The Last Train cover" style="width:150px;height:150px;object-fit:cover;border-radius:10px;display:block;"></a>
+<div>
+<a href="https://thebustalab.github.io/escape_rooms/rooms/anova/glasshouses/play.html" style="font-weight:700;font-size:17px;color:inherit;text-decoration:none;">The Last Train</a>
+<div style="opacity:.65;font-size:13px;margin-top:2px;">ANOVA &middot; one factor, ranking factors by share + interactions + PERMANOVA</div>
+<div style="margin-top:8px;font-size:13px;line-height:1.4;">A storm has brought down the power line at Rothamsted, every electric clock on the station has stopped, and you have a report to finish before the morning train to London. Test the Director&rsquo;s claim that soil makes no difference to the barley, then find out how late you really are.</div>
+</div>
+</div>
 -->
 
 ## further reading {-}
