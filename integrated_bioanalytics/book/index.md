@@ -7600,7 +7600,7 @@ ggplot() +
 <p class="caption">(\#fig:unnamed-chunk-617)A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only.</p>
 </div>
 
-The line has to pass through a cloud of 0s and 1s, and a straight line has no floor and no ceiling. Carried out from 4 to 22 percent alcohol, it falls below 0 at the weak end and climbs past 1 at the strong end (no wine in the table is that strong, but a model should still give a sensible answer), and neither value can be a probability. The fix is a model whose predictions bend into an S-shape: close to 0 at one end, close to 1 at the other, and never beyond either. That model is **logistic regression**, and it takes the yes/no column itself as its response, with no recoding to numbers.
+The line has to pass through a cloud of 0s and 1s, and what it predicts is a number on that 0/1 code, not a category. In the middle, a reading such as 0.4 is unclear: does it mean the wine is probably not excellent, or that it has a 40% chance of being excellent? The line was never built to say. At the ends it is worse, because a straight line has no floor and no ceiling. Carried out from 4 to 22 percent alcohol, it falls below 0 at the weak end and climbs past 1 at the strong end (no wine in the table is that strong, but a model should still give a sensible answer), and neither value can be interpreted at all. The fix is a model built to give a probability: its predictions bend into an S-shape, close to 0 at one end, close to 1 at the other, and never beyond either, so a prediction of 0.4 means a 40% chance that the wine is excellent. That model is **logistic regression**, and it takes the yes/no column itself as its response, with no recoding to numbers.
 
 One detail is worth knowing once. A logistic regression model predicts the probability of one of the two values. For a column of "yes" and "no", `buildModel()` always models "yes"; for a column of `TRUE` and `FALSE` it models `TRUE`; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.
 
@@ -7663,6 +7663,8 @@ alcohol_model$metrics %>%
 ## 1 1.770001e-44 3.540002e-44
 ## 2 3.879808e-36 3.879808e-36
 ```
+
+How does `buildModel()` choose the curve? For each training wine, a candidate curve gives a probability to what actually happened: its probability of yes for an excellent wine, and one minus that for any other wine. Multiplying these probabilities across all the training wines gives the curve's **likelihood**, and `buildModel()` keeps the curve with the highest likelihood (the maximum-likelihood fit). It plays the part that least squares played for a straight line in the regression chapter: the best curve is the one under which the data we actually saw are most probable.
 
 The alcohol coefficient is positive, so the model's probability that a wine is excellent rises with its alcohol content. (Logistic regression coefficients are measured on a scale called the log-odds, not in probability units, so we read their sign and, after scaling, their size, rather than translating them into a change in probability.)
 
@@ -7737,7 +7739,7 @@ predictWithModel(data = training_wines, model = alcohol_model) %>%
   filter(wine == 10) %>%
   select(wine, alcohol, probability_yes)</textarea></div>
 
-<div class="selfcheck" data-answer="2" data-explain="probability_yes is the model's estimate of how likely the response is to be yes for that wine, given its predictors. It is not the share of wines that are excellent, and it is not a call: the call is in predicted_class.">
+<div class="selfcheck" data-answer="2" data-explain="probability_yes is the model's estimate of how likely the response is to be yes for that wine, given its predictors. It is not the share of all the wines in the table that are excellent, and it is not a call: the call is in predicted_class.">
 <p class="scq">Self-check: a wine has a probability_yes of 0.3. What does that mean?</p>
 <label><input type="radio"> 30% of the red wines are excellent</label>
 <label><input type="radio"> The model has called this wine excellent</label>

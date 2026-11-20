@@ -137,7 +137,8 @@
                 
                 CRAN_packages <- c(
                     # "imager",
-                    "minpack.lm", "XML"
+                    "minpack.lm", "XML",
+                    "DT", "rhandsontable"  # analyzeGCMSdata7 tables (moved out of the student core)
                 )
 
                 Bioconductor_packages <- c(
@@ -180,16 +181,20 @@
                 ## Core — chapters 1–11. These are ATTACHED (library()) at load.
                 CRAN_core <- c(
                     ## data IO + wrangling
-                        "tidyverse", "dplyr", "stringr", "readxl", "data.table",
-                        "jsonlite", "DT", "rhandsontable", "progress",
+                        "tidyverse", "dplyr", "stringr", # "readxl",
+                        "data.table", "jsonlite", "progress",
+                        # "DT", "rhandsontable" -> lab-only (bustalab block): used by analyzeGCMSdata7
                     ## ggplot ecosystem
-                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", "ggpmisc",
-                        "viridis", "RColorBrewer", "treemapify", "ggnewscale",
-                        "patchwork", "gridExtra", "grid",
+                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", # "ggpmisc",
+                        "viridis", "RColorBrewer", # "treemapify",
+                        "ggnewscale", "patchwork", "gridExtra", "grid",
                     ## statistics
-                        "rstatix", "agricolae", "multcompView", "performance", "Hmisc",
+                        "rstatix", # "agricolae",
+                        "multcompView", "performance", "Hmisc",
                     ## clustering / dimensional reduction
-                        "FactoMineR", "ape", "ips", "fpc", "dbscan", "Rtsne", "umap",
+                        ## (dbscan pkg unused: runMatrixAnalysis calls fpc::dbscan)
+                        "FactoMineR", "ape", "ips", "fpc", # "dbscan",
+                        "Rtsne", "umap",
                         "shipunov", "Rfast",
                     ## modelling — tidymodels (ch11)
                         "recipes", "rsample", "workflows", "tune", "yardstick", "parsnip",
@@ -197,8 +202,11 @@
                         "network", "ggnetwork",
                     ## shiny (interactive matrix/PCA visualisers) + install infrastructure
                         "shiny", "shinyjs", "shinythemes", "httpuv", "later",
-                        "parallel", "BiocManager", "remotes"
+                        "parallel", "BiocManager" # , "remotes"  (Github_packages is empty)
                 )
+                ## Commented out 2026-11-20 (no calls in ch1-12, the appendix or
+                ## phylochemistry.R): readxl, ggpmisc, treemapify, agricolae, dbscan,
+                ## remotes. Re-add here if a chapter starts using one.
 
                 ## Required by chapters 1–11 but only INSTALLED, never attached
                 ## globally: they are used via namespace (pkg::fn) or attached
