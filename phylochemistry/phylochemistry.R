@@ -185,7 +185,7 @@
                         "data.table", "jsonlite", "progress",
                         # "DT", "rhandsontable" -> lab-only (bustalab block): used by analyzeGCMSdata7
                     ## ggplot ecosystem
-                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", # "ggpmisc",
+                        "ggrepel", "cowplot", "ggforce", "ggside", "ggdist", "ggpmisc",
                         "viridis", "RColorBrewer", # "treemapify",
                         "ggnewscale", "patchwork", "gridExtra", "grid",
                     ## statistics
@@ -205,8 +205,9 @@
                         "parallel", "BiocManager" # , "remotes"  (Github_packages is empty)
                 )
                 ## Commented out 2026-11-20 (no calls in ch1-12, the appendix or
-                ## phylochemistry.R): readxl, ggpmisc, treemapify, agricolae, dbscan,
-                ## remotes. Re-add here if a chapter starts using one.
+                ## phylochemistry.R): readxl, treemapify, agricolae, dbscan,
+                ## remotes. Re-add here if a chapter starts using one. (ggpmisc stays:
+                ## ch12 uses annotate(geom = "table").)
 
                 ## Required by chapters 1–11 but only INSTALLED, never attached
                 ## globally: they are used via namespace (pkg::fn) or attached

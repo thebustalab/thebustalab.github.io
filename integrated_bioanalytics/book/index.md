@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-20"
+date: "2026-11-22"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -7504,16 +7504,14 @@ ________________________________________________________________________________
 
 <div class="cc-title-slot"></div>
 
-**Is the answer for this sample yes or no?** Many laboratory questions have two possible answers rather than a number: does a blood sample point to disease, will a batch pass inspection, is a wine one that tasters will rate as excellent? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples it was never shown, asks which predictors matter most, and judges how well the calls hold up, including why a high accuracy can hide a model that misses every case that matters. It carries the regression chapter's steps over from numbers to categories, and the machine learning chapter builds on it with more flexible models.
+**Does this unknown sample belong to group A or group B?** Many laboratory questions have two possible answers rather than a number: does a blood sample point to the presence of a disease or not, will a batch pass inspection or not, is a wine one that tasters will rate as excellent or poor? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and the user defines a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples the model was never shown as it was built, shows how to determine which predictors matter most, and illustrates how to judge how well a set of calls hold up, including coverage of common pitfalls in model metrics.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#classification-models-summary){.cc-btn .ghost}
 
-<!-- TODO decision flowchart: none drawn yet. When one is (graphviz source in notes/, PNG in images/), add it here:
 <div class="figure" style="text-align: center">
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12d_classification_flowchart.png" alt="Choosing &lt;thing&gt;. This decision flowchart starts from &lt;starting point&gt; and ends at &lt;end point&gt;. Yellow boxes are questions about &lt;...&gt; and green boxes are recommended &lt;...&gt;." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-613)Choosing <thing>. This decision flowchart starts from <starting point> and ends at <end point>. Yellow boxes are questions about <...> and green boxes are recommended <...>.</p>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/12d_classification_flowchart.png" alt="Choosing a classification analysis. This decision flowchart starts from the kind of response being predicted and ends at the functions to run and the results to read. Yellow boxes are questions about the response and the goal of the analysis and green boxes are recommended steps." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-613)Choosing a classification analysis. This decision flowchart starts from the kind of response being predicted and ends at the functions to run and the results to read. Yellow boxes are questions about the response and the goal of the analysis and green boxes are recommended steps.</p>
 </div>
--->
 
 :::
 
@@ -7524,9 +7522,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 
 ## from numbers to categories {-}
 
-The regression chapter predicted numbers: a Valine abundance, a density. Many questions instead have a response that is a category, and the simplest case is a category with two values, yes or no. A model that predicts a category is a **classification model**.
+The regression chapter predicted numbers: a Valine abundance, a density, and so forth. However, many questions instead have a response that is a category, and the simplest case is a category with two values, yes or no. A model that predicts a category is a **classification model**.
 
-This chapter works with the red wines in the `wine_quality` dataset. Each wine has a set of chemical measurements (its alcohol content, its acidity, its sulfur dioxide, its density and so on) and a `quality_score` given by a panel of tasters. We will call a wine excellent if it scored 7 or more, and store that as a column of yes and no. We also give each wine a number, so that any one of them can be found again later:
+This chapter works with the red wines in the `wine_quality` dataset. Each wine has a set of chemical measurements (its alcohol content, its acidity, its sulfur dioxide, its density, and so on) and a `quality_score` given by a panel of tasters. We will call a wine excellent if it scored 7 or more, and store that as a column of yes and no. We also give each wine a number, so that any one of them can be found again later:
 
 
 ``` r
@@ -7547,9 +7545,9 @@ red_wines %>%
 ## 2 yes         217
 ```
 
-Of the 1,599 red wines, 217 are excellent, about one in seven. So "yes" is the rare answer here, a fact that matters at the end of the chapter.
+Of the 1,599 red wines, 217 are excellent, about one in seven. So "yes" is the rare answer here. The concept of one category being rare will come back at the end of the chapter.
 
-Why not simply use the regression chapter's tools? A linear model needs a number for its response, so we could code each excellent wine as 1 and every other wine as 0, then fit a straight line of that number against alcohol content:
+At this point one may ask: why not simply use the regression chapter's tools? A linear model needs a number for its response, so we could code each excellent wine as 1 and every other wine as 0, then fit a straight line of that number against alcohol content:
 
 
 ``` r
@@ -7600,9 +7598,7 @@ ggplot() +
 <p class="caption">(\#fig:unnamed-chunk-617)A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only.</p>
 </div>
 
-The line has to pass through a cloud of 0s and 1s, and what it predicts is a number on that 0/1 code, not a category. In the middle, a reading such as 0.4 is unclear: does it mean the wine is probably not excellent, or that it has a 40% chance of being excellent? The line was never built to say. At the ends it is worse, because a straight line has no floor and no ceiling. Carried out from 4 to 22 percent alcohol, it falls below 0 at the weak end and climbs past 1 at the strong end (no wine in the table is that strong, but a model should still give a sensible answer), and neither value can be interpreted at all. The fix is a model built to give a probability: its predictions bend into an S-shape, close to 0 at one end, close to 1 at the other, and never beyond either, so a prediction of 0.4 means a 40% chance that the wine is excellent. That model is **logistic regression**, and it takes the yes/no column itself as its response, with no recoding to numbers.
-
-One detail is worth knowing once. A logistic regression model predicts the probability of one of the two values. For a column of "yes" and "no", `buildModel()` always models "yes"; for a column of `TRUE` and `FALSE` it models `TRUE`; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.
+The line above has to pass through a cloud of 0s and 1s, and what it predicts is a number, not a category. In the middle, a reading such as 0.4 is unclear: does it mean the wine is probably not excellent, or that it has a 40% chance of being excellent? It’s hard to say. Worse, a straight line has no floor and no ceiling: extrapolated out from 4 to 22 percent alcohol, it falls below 0 at the weak end and goes past 1 at the strong end (no wine in the table is that strong, but a model should ideally still give a sensible answer), and neither of those values can be interpreted at all. The fix is a model built to give a probability and operate appropriately at extreme values: its predictions need to bend into an S-shape, close to 0 at one end, close to 1 at the other, and never beyond either, so a prediction of 0.4 means a 40% chance that the wine is excellent. That model is **logistic regression**, and it takes the yes/no column itself as its response, with no recoding to numbers. A logistic regression model predicts the probability of one of the two values. For a column of "yes" and "no", `buildModel()` always models "yes"; for a column of `TRUE` and `FALSE` it models `TRUE`; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.
 
 #### concept check {-}
 
@@ -7627,7 +7623,7 @@ red_wines %>%
 
 ## a model from one predictor {-}
 
-Before building a model, we set some of the data aside. The final section of this chapter judges a model by how well it does on wines it was never shown, and that test only means something if those wines really were kept out of the fitting. So the table needs a column saying which wines are used for building (the **training** wines) and which are **held back** for the test. Here, every fourth wine is held back:
+Whenever we want to use a model to make predictions, we need to remember, at the outset, the way in which we estimate the accuracy of our predictions: (i) hold back some of the data and exclude it from training, then (ii) use that held back set to test how well the model does on data (wines, in the case of our example here) it was never shown. So, our data table needs a column saying which wines are used for building (the **training** wines) and which are **held back** for the test. Here, every fourth wine is held back:
 
 
 ``` r
@@ -7750,7 +7746,7 @@ predictWithModel(data = training_wines, model = alcohol_model) %>%
 
 ## several predictors, and predicting held-back cases {-}
 
-Alcohol is one of many measurements in the table. As with multiple regression, a classification model can use several predictors at once, by naming them all:
+Alcohol is one of many measurements in the table. As with multiple regression, a classification model can use several predictors at once, we just name them all at build time:
 
 
 ``` r
@@ -7762,7 +7758,7 @@ wine_model <- buildModel(
 )
 ```
 
-The point of the held-back wines is that the model has never seen them. Giving them to `predictWithModel()` asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:
+Excellent. Now, the point of the held-back wines is that the model has never seen them. Giving them to `predictWithModel()` asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:
 
 
 ``` r
@@ -7785,7 +7781,7 @@ held_back_predictions %>%
 ## 6    24 no                0.0136  no
 ```
 
-How does a probability become a call? Through a **cut-off**. `predictWithModel()` calls a wine "yes" when its `probability_yes` is 0.5 or more, and "no" otherwise. We can count how many held-back wines fall on each side:
+Good! Next, how does a probability become a call? Through a **cut-off**. `predictWithModel()` calls a wine "yes" when its `probability_yes` is 0.5 or more, and "no" otherwise. We can count how many held-back wines fall on each side:
 
 
 ``` r
@@ -7812,7 +7808,7 @@ ggplot(held_back_predictions, aes(x = alcohol, y = probability_yes, color = exce
 <p class="caption">(\#fig:unnamed-chunk-626)Each held-back wine's predicted probability of being excellent, against the 0.5 cut-off. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that the wine is excellent, from a logistic regression model on five chemical predictors, on the vertical axis; color shows whether the tasters rated the wine excellent, and the dashed line marks the 0.5 cut-off above which the model calls a wine excellent. Each point is one held-back red wine. Data: wine_quality, red wines in the held-back set.</p>
 </div>
 
-Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. `predictWithModel()` has no argument for the cut-off. **Moving the cut-off is a `mutate()` on the probability column**, writing a new call from `probability_yes`:
+Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. `predictWithModel()` has no argument for the cut-off, but we can still move the cut-off using `mutate()` on the probability column, then writing a new call from `probability_yes`:
 
 
 ``` r
@@ -7827,7 +7823,7 @@ held_back_predictions %>%
 ## 2 yes              61
 ```
 
-A lower cut-off calls more wines yes, and a higher one calls fewer. The probabilities themselves do not change: only the line drawn across them moves.
+A lower cut-off calls more wines yes, and a higher one calls fewer wines yes. The probabilities themselves do not change: only the line drawn across them moves.
 
 #### concept check {-}
 
@@ -7856,7 +7852,7 @@ predictWithModel(data = held_back_wines, model = wine_model) %>%
 
 ## which predictors matter most {-}
 
-With several predictors in the model, a natural question is which of them drives the probability. The regression chapter met the same question and the same trap, and the fix carries over unchanged. Here are the coefficients of the five-predictor model, ranked by size:
+With several predictors in the model, a natural question is which of them drives the probability most strongly. In the regression chapter we met that same question (and the associated trap and its fix, which carries over to classification unchanged. Here are the coefficients of the five-predictor model, ranked by size:
 
 
 ``` r
@@ -7877,9 +7873,9 @@ wine_model$metrics %>%
 ## 5 6.076894e-04 1.823068e-03
 ```
 
-These raw coefficients mostly reflect units. Density barely changes from one wine to the next, so a change of one whole gram per milliliter is far larger than any difference between two wines in the table, and its coefficient is the largest of the five for that reason alone. Total sulfur dioxide is the opposite case: it is measured in milligrams per liter and spreads over a range of a hundred or more, so one unit of it is a tiny change and its coefficient is tiny. Ranking these numbers ranks the units, not the predictors.
+These raw coefficients mostly reflect units. Density barely changes from one wine to the next, so a change of one whole gram per milliliter is far larger than any difference between two wines in the table, and its coefficient is the largest of the five for that reason alone. Total sulfur dioxide is the opposite: it is measured in milligrams per liter and spreads over a range of a hundred or more, so one unit of it is a tiny change and its coefficient is tiny. Ranking these numbers ranks the units, not the predictors.
 
-The fix is the regression chapter's: scale each predictor to a mean of zero and a standard deviation of one before fitting (scaling is introduced in the distances and scaling chapter), with `scale_variance = TRUE`. Each coefficient then describes a one-standard-deviation change in its predictor, which is comparable across predictors:
+The fix is the same as in the regression chapter: scale each predictor to a mean of zero and a standard deviation of one before fitting (scaling is introduced in the distances and scaling chapter), with `scale_variance = TRUE`. Each coefficient then describes a one-standard-deviation change in its predictor, which is comparable across predictors:
 
 
 ``` r
@@ -7910,9 +7906,24 @@ scaled_wine_model$metrics %>%
 
 After scaling, the ranking no longer follows the units: each coefficient is the change in log-odds for a one-standard-deviation change in that predictor, so the predictor at the top of this list is the one that moves the probability most. Three further points:
 
-- The ranking uses the size of each coefficient, `abs(value)`, because the sign only gives the direction. A negative coefficient, such as the one on volatile acidity (the vinegary acids a fault in winemaking produces), means the probability of yes falls as that predictor rises, and it can matter just as much as a positive one.
+- The ranking uses the size of each coefficient, `abs(value)`, because the sign only gives the direction. A negative coefficient, such as the one on volatile acidity, means the probability of yes falls as that predictor rises, and it can matter just as much as a positive one.
 - As in linear regression, scaling changes the units of the coefficients, not the model. The scaled and unscaled models give every wine the same probability, and `predictWithModel()` scales a new table with the training wines' means and standard deviations, so the held-back wines go in as measured.
 - Scaling the predictor columns by hand with `mutate(across(c(...), scale))` before `buildModel()` gives the same coefficients, provided it is done on the training rows. It is a sound way to rank predictors, but a model built that way then needs every new table scaled with the training rows' means and standard deviations before it can predict, so `scale_variance = TRUE` is the safer route when the model will also be used for predictions.
+
+A bar chart shows the same ranking at a glance. Plot the size of each scaled coefficient, `abs(value)`, so that a strong negative predictor stands as long as an equally strong positive one:
+
+
+``` r
+scaled_wine_coefficients <-scaled_wine_model$metrics %>%
+  filter(type == "coefficient", variable != "(Intercept)")
+
+ggplot(scaled_wine_coefficients, aes(x = abs(value), y = reorder(variable, abs(value)))) + geom_col()
+```
+
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-630-1.png" alt="Scaled coefficients rank five chemical predictors by how strongly they move the probability that a red wine is excellent. Horizontal bar chart with the size of each scaled coefficient, in log-odds per one standard deviation of the predictor, on the horizontal axis and the predictor on the vertical axis; each bar is one of the five predictors in a logistic regression model of whether a red wine is excellent, and its length is the absolute value of that predictor's scaled coefficient, so a predictor that lowers the probability of excellent has a bar as long as one that raises it equally. Bars are ordered by length. Data: wine_quality, red wines in the training set." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-630)Scaled coefficients rank five chemical predictors by how strongly they move the probability that a red wine is excellent. Horizontal bar chart with the size of each scaled coefficient, in log-odds per one standard deviation of the predictor, on the horizontal axis and the predictor on the vertical axis; each bar is one of the five predictors in a logistic regression model of whether a red wine is excellent, and its length is the absolute value of that predictor's scaled coefficient, so a predictor that lowers the probability of excellent has a bar as long as one that raises it equally. Bars are ordered by length. Data: wine_quality, red wines in the training set.</p>
+</div>
 
 #### concept check {-}
 
@@ -7941,7 +7952,7 @@ scaled_wine_model$metrics %>%
 
 ## judging a classifier on held-back cases {-}
 
-A classification model is judged by its calls on the held-back wines: cases it never saw, whose true answers we know. The obvious first number is **accuracy**, the share of calls that are right:
+A classification model is judged by its calls on the held-back data (wines, in this case). The obvious first number is **accuracy**, the share of calls that are correct:
 
 
 ``` r
@@ -7955,7 +7966,7 @@ held_back_predictions %>%
 
 `predicted_class == excellent` is `TRUE` for every wine the model called correctly, and the mean of a column of `TRUE` and `FALSE` is the share that are `TRUE`.
 
-Accuracy alone can mislead, and this dataset shows how. Consider a "model" that ignores the chemistry and calls every wine "no":
+However, accuracy alone can mislead, and this dataset is an example of how that can happen. Consider a "model" that ignores the chemistry and calls every wine "no":
 
 
 ``` r
@@ -7971,9 +7982,9 @@ held_back_predictions %>%
 ## 1          0.897              0.885
 ```
 
-Only 46 of the 399 held-back wines are excellent, so calling every wine "no" is right for the other 353: an accuracy of about 88%, from a rule that has learned nothing. Whenever yes is rare, the always-"no" rule scores a high accuracy, and a real model's accuracy has to be read against it.
+Only 46 of the 399 held-back wines are excellent, so calling every wine "no" is right for the other 353: an accuracy of about 88%, from a rule that has no basis in anything to do with the wine. Whenever “yes" is rare, the always-"no" rule scores a high accuracy, and a real model's accuracy has to be read against it.
 
-What the always-"no" rule cannot do is find a single excellent wine. So the second question to ask of a classifier is about the yes cases themselves. Of the held-back wines that really are excellent, how many did the model **catch** (call yes), and how many did it **miss** (call no)?
+What the always-"no" rule cannot do is find excellent wine. So the second question to ask of a classifier is about the yes cases themselves. Of the held-back wines that really are excellent, how many did the model **catch** (call yes), and how many did it **miss** (call no)?
 
 
 ``` r
@@ -7990,9 +8001,54 @@ held_back_predictions %>%
 ## 1              46     17     29
 ```
 
-The always-"no" rule catches none of these 46 wines and misses all of them, however high its accuracy. Two classifiers with almost the same accuracy can differ completely here, and a model that catches some of the excellent wines is far more useful than one that catches none. The caught and missed counts are what show the difference. So report caught and missed beside accuracy, never accuracy alone.
+The always-"no" rule catches none of these 46 wines and misses all of them, however high its accuracy. Two classifiers with almost the same accuracy can differ completely here, and a model that catches some of the excellent wines is almost certainly far more useful than one that catches none. The caught and missed counts are what show the difference. So an analyst should report caught and missed beside accuracy, never just accuracy alone.
 
-The cut-off from earlier in the chapter matters here too. Lowering it catches more of the excellent wines, at the cost of more false calls (an ordinary wine called excellent):
+Caught and missed describe only the wines that really are excellent. The ordinary wines can be called correctly or incorrectly too, and putting all four types of counts together gives the standard summary of a classifier's performance: the **confusion matrix**. It is a two-by-two table that sorts every held-back case by reality (the rows) and what the model called (the columns):
+
+| | called no | called yes |
+|---|---|---|
+| **really no** | correctly called no (true negative) | false alarm (false positive) |
+| **really yes** | missed (false negative) | caught (true positive) |
+
+(The table is in the order R prints it below, "no" before "yes"; many other texts put yes first, so always check the labels rather than the position when working with confusion matrices.) The two cells on the diagonal are the right calls, and the other two are the two different kinds of mistake. A false alarm (false positive) is an ordinary wine called excellent; a miss is an excellent wine called ordinary (false negative). Counting the held-back wines by both columns at once, then spreading the calls across the columns, builds the confusion matrix:
+
+
+``` r
+held_back_predictions %>%
+  group_by(excellent, predicted_class) %>%
+  summarize(n = n(), .groups = "drop") %>%
+  pivot_wider(names_from = predicted_class, values_from = n, names_prefix = "called_")
+## # A tibble: 2 × 3
+##   excellent called_no called_yes
+##   <chr>         <int>      <int>
+## 1 no              341         12
+## 2 yes              29         17
+```
+
+Accuracy is the two diagonal cells divided by all four. Two other numbers come from the matrix, and each answers a sharper question than accuracy does:
+
+- **Recall** is caught ÷ (caught + missed): of the cases that really are yes, the share the model caught. A model with high recall rarely misses an excellent wine.
+- **Precision** is caught ÷ (caught + false alarms): of the cases the model called yes, the share that really are yes. A model with high precision is usually right when it says "excellent."
+
+
+``` r
+held_back_predictions %>%
+  summarize(
+    caught = sum(excellent == "yes" & predicted_class == "yes"),
+    missed = sum(excellent == "yes" & predicted_class == "no"),
+    false_alarms = sum(excellent == "no" & predicted_class == "yes"),
+    recall = caught / (caught + missed),
+    precision = caught / (caught + false_alarms)
+  )
+## # A tibble: 1 × 5
+##   caught missed false_alarms recall precision
+##    <int>  <int>        <int>  <dbl>     <dbl>
+## 1     17     29           12  0.370     0.586
+```
+
+The always-"no" rule has a recall of zero, since it catches nothing, and no precision at all: it never calls a wine excellent, so there are no yes calls to be right about (R reports this as `NaN`, "not a number").
+
+The cut-off from earlier in the chapter moves these numbers in opposite directions. Lowering it calls more wines excellent, which catches more of the excellent wines (recall rises) but also produces more false alarms (precision falls):
 
 
 ``` r
@@ -8008,7 +8064,7 @@ held_back_predictions %>%
 ## 1            17            26
 ```
 
-Where to put the cut-off depends on what a miss costs compared with a false call: a missed excellent wine is a lost sale, but a missed disease is a missed diagnosis.
+Raising the cut-off does the opposite: fewer, surer yes calls, with higher precision and lower recall. Where to put the cut-off depends on what a miss costs compared with a false alarm. A missed excellent wine is a lost sale, but a missed disease is a missed diagnosis, so a medical screen favors recall while a winery choosing which bottles to put its premium label on likely favors precision.
 
 #### concept check {-}
 
@@ -8036,6 +8092,13 @@ predictWithModel(data = held_back_wines, model = wine_model) %>%
 <label><input type="radio"> When yes is rare, accuracy can be high for a rule that catches no yes cases at all, so caught and missed must be reported too</label>
 </div>
 
+<div class="selfcheck" data-answer="1" data-explain="Recall is caught ÷ (caught + missed), the share of the really excellent wines that the model calls excellent. Precision is caught ÷ (caught + false alarms), the share of the yes calls that are right. Lowering the cut-off adds yes calls, which catches more excellent wines (recall up) but adds false alarms (precision down).">
+<p class="scq">Self-check: a winery wants to find as many of its excellent wines as possible, even if some ordinary wines get called excellent along the way. Which number should it watch, and which way should it move the cut-off?</p>
+<label><input type="radio"> Precision, and raise the cut-off</label>
+<label><input type="radio"> Recall, and lower the cut-off</label>
+<label><input type="radio"> Accuracy, and leave the cut-off at 0.5</label>
+</div>
+
 <hr>
 
 <script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
@@ -8046,7 +8109,7 @@ predictWithModel(data = held_back_wines, model = wine_model) %>%
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.summary-pdf target="_blank"}
 
-A yes/no response needs a classification model, not a straight line: a straight line's predictions run below 0 and above 1. **Set data aside first:** filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. **Read the output:** `probability_yes` is the model's probability of yes, and `predicted_class` is the call at a cut-off of 0.5. Move the cut-off with a `mutate()` on the probability, knowing that a lower cut-off catches more yes cases and makes more false calls. **Rank predictors only after scaling,** by the size of the coefficient, because raw coefficients mostly reflect units. **Judge on the held-back rows,** and never on accuracy alone: when yes is rare, calling everything "no" scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed.
+A yes/no response needs a classification model, not a straight line: a straight line's predictions run below 0 and above 1. **Set data aside first:** filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. **Read the output:** `probability_yes` is the model's probability of yes, and `predicted_class` is the call at a cut-off of 0.5. Move the cut-off with a `mutate()` on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. **Rank predictors only after scaling,** by the size of the coefficient, because raw coefficients mostly reflect units. **Judge on the held-back rows,** and never on accuracy alone: when yes is rare, calling everything "no" scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. **The confusion matrix** holds all four counts; a lower cut-off raises **recall** and lowers **precision**.
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
@@ -8057,6 +8120,7 @@ A yes/no response needs a classification model, not a straight line: a straight 
 | `buildModel(scale_variance = TRUE)` | comparing coefficients across predictors | `TRUE` to rank predictors; rank with `arrange(desc(abs(value)))` |
 | `summarize(mean(predicted_class == response))` | accuracy | compare against calling every row "no" |
 | `filter(response == "yes")` + `summarize(sum(...))` | the yes cases caught and missed | which call counts as caught (`"yes"`) or missed (`"no"`) |
+| `group_by(response, predicted_class)` + `summarize(n = n())` | the confusion matrix, then precision and recall | recall = caught ÷ (caught + missed); precision = caught ÷ (caught + false alarms) |
 
 <hr>
 
@@ -8074,9 +8138,9 @@ The practice world below runs both class days of this chapter and can be played 
 
 ## further reading {-}
 
-- [An Introduction to Statistical Learning](https://www.statlearning.com/). A free textbook whose classification chapter introduces logistic regression, the choice of a cut-off and the trade-off between catching yes cases and making false calls, with worked examples in R.
+- [An Introduction to Statistical Learning](https://www.statlearning.com/). A free textbook whose classification chapter introduces logistic regression, the choice of a cut-off and the trade-off between catching yes cases and making false alarms, with worked examples in R.
 
-- [Classification, Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/classification). A short interactive module on thresholds, accuracy and its limits with imbalanced classes, and the confusion matrix that the caught and missed counts in this chapter are part of.
+- [Classification, Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/classification). A short interactive module on thresholds, accuracy and its limits with imbalanced classes, and the confusion matrix, precision and recall.
 
 - [Wine Quality dataset, UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/186/wine+quality). The source of this chapter's red wines: physicochemical measurements and tasters' scores for Portuguese vinho verde wines, with the original study that modeled the scores.
 
@@ -8188,8 +8252,8 @@ random_forest_model$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-663-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-663)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-669-1.png" alt="Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-669)Prediction error of random forest models for valine across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean root mean squared error across cross-validation folds, with lighter tiles marking lower error. Each tile is one parameter combination. Data: metabolomics_data.</p>
 </div>
 
 We can use the model to make predictions with the `predictWithModel()` function:
@@ -8211,8 +8275,8 @@ ggplot(random_forest_predictions) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-664-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-664)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
+<img src="index_files/figure-html/unnamed-chunk-670-1.png" alt="Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-670)Valine abundance predicted by the best random forest model. Scatter plot of measured valine against iso-leucine abundance (gold points), with the mean valine abundance as a grey line and the random forest's predictions as a maroon line. Each point is one patient. Data: metabolomics_data.</p>
 </div>
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical response from a set of predictors. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the `model_type` to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
@@ -8266,8 +8330,8 @@ rfc$metrics %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-666-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-666)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
+<img src="index_files/figure-html/unnamed-chunk-672-1.png" alt="Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-672)Accuracy of random forest classifiers for patient status across the parameter grid. Tile plots, one panel per minimum leaf size; the horizontal axis is the number of variables tried at each split, the vertical axis is the number of trees, and tile color is the mean accuracy across cross-validation folds. Each tile is one parameter combination. Data: metabolomics_data, with six patients held out.</p>
 </div>
 
 We can also make predictions on data the model has not seen, here the six patients that were held out. For a classification model, `predictWithModel()` adds one `probability_` column per category and a `predicted_class` column holding the most probable one, so we can set the predictions beside the real status:
@@ -8468,7 +8532,7 @@ runMatrixAnalysis(
     scale_fill_manual(values = c("maroon", "gold", "steelblue", "darkgreen"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-683-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-689-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### transformer embeddings {-}
 
@@ -8518,7 +8582,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-685-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-691-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -8542,7 +8606,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-686-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-692-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -8582,7 +8646,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-687-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-693-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## generative models {-}
 
@@ -8615,15 +8679,15 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… Ginsenosi…
-##  2 β-Amyrin synthase from Conyza blinii expresse… Oxidosqua…
+##  2 β-Amyrin synthase from Conyza blinii expresse… Conyzasap…
 ##  3 [Cloning and bioinformatics analysis of β-amy… Dipsacus …
 ##  4 Friedelin in plants: metabolism, synthase eng… Friedelin…
 ##  5 Friedelin in Maytenus ilicifolia Is Produced … Triterpen…
-##  6 Genome Mining and Gene Expression Reveal Mayt… Maytansin…
-##  7 Current status and prospects of herbicide-res… herbicide…
+##  6 Genome Mining and Gene Expression Reveal Mayt… plant-end…
+##  7 Current status and prospects of herbicide-res… Herbicide…
 ##  8 Sorghum (Sorghum bicolor).                     Sorghum t…
-##  9 Morphogene-assisted transformation of Sorghum… sorghum t…
-## 10 Regulatory mechanisms underlying cuticular wa… plant cut…
+##  9 Morphogene-assisted transformation of Sorghum… Sorghum t…
+## 10 Regulatory mechanisms underlying cuticular wa… Plant cut…
 ## 11 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
 ## 12 Update on Cuticular Wax Biosynthesis and Its … plant cut…
 ```
@@ -8638,7 +8702,7 @@ select(search_results, title, generation)
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/13_language_models_flowchart.png" alt="Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-689)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
+<p class="caption">(\#fig:unnamed-chunk-695)Choosing a language model approach. This decision flowchart starts from what is wanted back from a column of text and ends at the function, and the argument that sets it up, used in this chapter. Yellow boxes are questions about the task and green boxes are the recommended function calls.</p>
 </div>
 
 Language models turn text into numbers. An embedding model converts each title, abstract or description into a vector (384 numbers for the course transformer model), and texts with similar meanings get similar vectors, so familiar tools such as PCA can show which ones group together. The two embedding methods differ in how they treat context: GloVe gives every word one fixed vector and averages the word vectors over a sentence, whereas a transformer adjusts each word's vector to fit the sentence around it. A generative model builds on the same machinery to write new text in response to a prompt and a system message, and it is much slower and more expensive than embedding because each row is a separate request to a large model. Keys and tokens live in `.Renviron` and are read with `Sys.getenv()`, never typed into code.
@@ -8796,7 +8860,7 @@ ggplot(all_sequences_embedded_pca) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-713-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-719-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -8984,7 +9048,7 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/16_homology_flowchart.png" alt="Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-728)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
+<p class="caption">(\#fig:unnamed-chunk-734)Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter's search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.</p>
 </div>
 
 A homology search starts with two choices. **BLAST or HMMER**: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. **Where to search**: `blastNCBI()` sends one sequence to NCBI's servers, and `polyBlast()` searches our own genomes or transcriptomes with many queries at once, with a `blast_mode` that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.
@@ -9115,7 +9179,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-744-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-750-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -9143,7 +9207,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-745-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-751-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behavior is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! That message is a sign that the scaffold may not be appropriate. When operating at the genus level, sequence data is probably the better basis for building the phylogeny anyway. So let's look at how to do that:
 
@@ -9188,7 +9252,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-747-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-753-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -9204,7 +9268,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-748-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-754-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so we recommend it:
 
@@ -9213,7 +9277,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-749-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-755-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Another convenient function is ggplot's `fortify`. This will convert a `phylo` object into a data frame:
 
@@ -9284,7 +9348,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-751-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-757-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -9304,7 +9368,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-752-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-758-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -9380,7 +9444,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-757-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-763-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -9415,7 +9479,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-758-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-764-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -9427,7 +9491,7 @@ plot_grid(
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/18_phylogenies_flowchart.png" alt="Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-759)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
+<p class="caption">(\#fig:unnamed-chunk-765)Choosing how to build a tree. This decision flowchart starts from what the tips of the tree will be and ends at a recommended scaffold_type for buildTree. Yellow boxes are questions about the tree and green boxes are recommended settings.</p>
 </div>
 
 Building a tree starts with one decision: **what the tree is built from.** A newick scaffold is quick for species when only the relationships above the family level matter, and `buildTree()` grafts a species missing from the scaffold onto a relative's tip, so its messages are worth reading. When genus-level topology matters, or when the tips are genes, the tree should come from a sequence alignment instead, by neighbor joining or by maximum likelihood. Once built, a tree is plotted with `ggtree()`, joined to data after `fortify()`, collapsed to a higher level with `collapseTree()`, and drawn beside its traits, where the trait axis must be reordered to match the tree and the tree tips and trait labels checked by eye to confirm they line up.
@@ -9667,7 +9731,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-783-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-789-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 <hr>
 
@@ -10353,7 +10417,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-810-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-816-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -10477,7 +10541,7 @@ p + geom_xsidedensity(aes(y=after_stat(density), xfill = Species), position = "s
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-829-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-835-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### 3D scatter plots {-}
 
@@ -10565,7 +10629,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-831-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-837-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### venn diagrams {-}
 
@@ -10588,7 +10652,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-832-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-838-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -10613,7 +10677,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-833-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-839-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 
@@ -10686,7 +10750,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-838-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-844-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -10698,7 +10762,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-839-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-845-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -10714,7 +10778,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-840-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-846-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -10729,7 +10793,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-841-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-847-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -10758,7 +10822,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-842-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-848-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
@@ -10783,7 +10847,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-843-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-849-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -10830,7 +10894,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-844-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-850-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -10851,7 +10915,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-845-1.png" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-851-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 
 <hr>
@@ -10875,6 +10939,12 @@ plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
+
+<!-- HELD BACK from the published book (Lucas, 2026-11-22): not ready to publish yet. To publish, restore the
+two-line child chunk for chapters/ai_and_climate.Rmd here (an r chunk with child= that file). The chunk is removed
+rather than commented, because knitr still runs chunks inside an HTML comment. Also move its explorer page back:
+notes/ai_climate_water/impact_explorer.html -> integrated_bioanalytics/impact_explorer.html (parked in the
+gitignored notes folder so deploy does not publish it). -->
 
 # datasets {-}
 

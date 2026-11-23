@@ -758,6 +758,12 @@ ________________________________________________________________________________
 ```{r child="chapters/z_specialized_plots.Rmd"}
 ```
 
+<!-- HELD BACK from the published book (Lucas, 2026-11-22): not ready to publish yet. To publish, restore the
+two-line child chunk for chapters/ai_and_climate.Rmd here (an r chunk with child= that file). The chunk is removed
+rather than commented, because knitr still runs chunks inside an HTML comment. Also move its explorer page back:
+notes/ai_climate_water/impact_explorer.html -> integrated_bioanalytics/impact_explorer.html (parked in the
+gitignored notes folder so deploy does not publish it). -->
+
 # datasets {-}
 
 ## alaska_lake_data {-}

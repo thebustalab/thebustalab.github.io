@@ -1,0 +1,15 @@
+{
+ "mode": "open",
+ "history": [
+  {
+   "to": "sensitive",
+   "at": "2026-11-23T02:36:07.764Z",
+   "via": "default"
+  },
+  {
+   "to": "open",
+   "at": "2026-11-23T02:36:10.567Z",
+   "via": "toggle"
+  }
+ ]
+}

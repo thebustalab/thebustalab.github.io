@@ -1,0 +1,144 @@
+# ai, climate and water {#ai-and-climate -}
+
+::: {.chapter-card}
+
+<div class="cc-title-slot"></div>
+
+**Is all the AI in this course bad for the climate, and for water?** It is a fair question. The escape rooms that serve as many of this course's exercises were built with heavy help from AI models that wrote code, drew scenes and animated them, and every step used electricity and water. This appendix explains where that cost comes from, puts it on the same scale as everyday and laboratory activities, adds up what the build cost, and sets it against the growing footprint of data centers. It closes with an argument, not a calculation, for why the rooms are worth it.
+
+:::
+
+<link rel="stylesheet" href="/integrated_bioanalytics/webr-cell.css?v=5">
+<script>
+window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ name: "impact_explorer", url: "/integrated_bioanalytics/data/impact_explorer.csv" }], setup: "suppressMessages({library(dplyr); library(ggplot2); library(readr)})" };
+</script>
+
+## where the cost comes from {-}
+
+A language model writes its reply one token (a word or piece of a word) at a time, and every token takes a full pass through the model on specialized chips in a data center. That takes electricity, whose emissions depend on how the local grid generates power. It also takes water in two places: data centers evaporate water to cool their chips, and power plants evaporate water to cool their steam. For US data centers the power plant is the larger of the two by about twelve times, according to a Lawrence Berkeley National Laboratory report.
+
+A coding agent is the same kind of model placed in a loop with tools: it runs code, reads the result, and decides what to do next. On every turn it re-reads everything done so far, so one task can process far more tokens than one chat reply. That is how the escape rooms were built, over hundreds of agent sessions.
+
+## the impact explorer {-}
+
+The explorer puts AI use on the same scale as everyday activities. The tabs switch between carbon dioxide equivalents (CO2e, in kilograms) and water (in liters), **Log scale** spaces the axis by powers of ten, and clicking a row lists its sources. Orange rows come from this course and purple rows are AI and data centers beyond it. Each bar spans a low and a high estimate and the tick marks a central value. A wide bar means the answer depends on details nobody has pinned down.
+
+<iframe src="/integrated_bioanalytics/impact_explorer.html" title="Impact Explorer" style="width:100%;height:1000px;border:0;" loading="lazy"></iframe>
+
+Three things stand out.
+
+- **One person's chat use is small.** A hundred chatbot prompts come to about 0.01 to 0.13 kg CO2e, less than a single clothes-dryer cycle (about 0.9 kg). A 1/3-lb hamburger is about 15 kg for beef from beef herds (about 5 kg from dairy herds), and a return flight from Duluth to Los Angeles roughly 460 kg of CO2 from the fuel alone.
+- **Agent work is heavier.** One average agent session from building the rooms is about 0.23 kg, as much as roughly 1,400 prompts, and months of sessions add up (below).
+- **The biggest rows run without anyone deciding to run them.** A laboratory fume hood pulls heated air out through the roof around the clock. In a Duluth winter one hood comes to about 19 metric tons of CO2e a year (9 to 25 tons depending on the hood), more than one American's yearly CO2. Hoods exist for an essential purpose, safety; the point is proportion. A pre-1950 house heated with gas through a Duluth winter is about 4.5 tons, and a -80 °C freezer 0.8 to 3 tons.
+
+#### concept check {-}
+
+The explorer's data are loaded here as `impact_explorer`. Fill in the blank with the ggplot2 scale function that spaces the x axis by powers of ten, then press Run.
+
+<div class="webr-cell"><textarea class="webr-code">impact_explorer %>%
+  filter(!is.na(co2_central)) %>%
+  ggplot(aes(x = co2_central, y = reorder(activity, co2_central), color = category)) +
+  geom_point(size = 3) +
+  ____() +
+  labs(x = "kg CO2e (central value)", y = NULL)</textarea></div>
+
+<div class="selfcheck" data-answer="1" data-explain="One fume hood comes to about 19,200 kg CO2e a year in the central case, or about 53 kg a day. Building all the escape rooms comes to about 320 kg in the central case, which is 320 / 53, or about six days of one hood.">
+<p class="scq">Self-check: using the central values, building all the escape rooms emits about as much CO2e as one fume hood running for how long?</p>
+<label><input type="radio"> About six hours</label>
+<label><input type="radio"> About six days</label>
+<label><input type="radio"> About six months</label>
+<label><input type="radio"> About six years</label>
+</div>
+
+<hr>
+
+## water: withdrawn or consumed {-}
+
+The water tab has two views, because water statistics use two measures. **Withdrawn** water is all the water taken from a river, lake or aquifer. **Consumed** water is the part that does not go back: evaporated, built into a product, or taken up by a crop. A single-pass condenser on tap water withdraws about 400 liters in an eight-hour day, but almost none of it is consumed, because it runs down the drain to a treatment plant and is returned. A cooling tower is the opposite: much of its water leaves as vapor. US power plants withdraw about 44 liters per kilowatt-hour but consume only about 3. Lab rows appear only in the withdrawn view, because no source gives a consumed figure for lab tap water. For food, the explorer counts only irrigation water (the "blue" water footprint), not the rain that falls on fields, which is how a single burger gets quoted at over 2,000 liters.
+
+Published figures for the water behind one chatbot reply disagree by about a hundredfold, because they count different things and assume different energy per reply:
+
+| source | water per reply | what it counts |
+|---|---|---|
+| Google, median Gemini prompt (2025) | 0.26 mL | data-center cooling only |
+| Li and colleagues, GPT-3 reply (2025 version) | about 17 mL | cooling plus power-plant water |
+| Mistral, 400-token reply (2025) | 45 mL | inference plus server manufacture |
+
+Google's and Mistral's figures are company disclosures and Li and colleagues' is a model; none has been independently audited. Adding power-plant water to Google's figure gives about 1 mL. Most of the remaining gap to 17 mL is energy per reply: Li and colleagues modeled about 4 watt-hours for a GPT-3 reply (2023), while Google reported about 0.24 watt-hours for a median Gemini prompt (2025).
+
+On the water tab the pattern from carbon repeats, and much of it is in chemistry buildings. A water aspirator withdraws about 7,300 liters in an eight-hour day, an older autoclave left tempering its condensate about 11,000 liters a day, and one condenser-day withdraws as much as roughly 36,000 Gemini prompts (power-plant water included, by our estimate). Much of that lab water returns to the river or lake, and the devices do real work. Still, in withdrawn terms the water attached to AI is often smaller than the water used without noticing, so the place to start saving water in a chemistry building is a recirculating chiller or a vacuum pump, not a chatbot.
+
+#### concept check {-}
+
+<div class="selfcheck" data-answer="1" data-explain="The condenser's tap water runs down the drain to a treatment plant and is returned, so it is withdrawn but very little of it is consumed. Because no source gives a consumed figure for lab tap water, the explorer shows the condenser only in the withdrawn view.">
+<p class="scq">Self-check: why does the single-pass condenser appear in the explorer's withdrawn view but not its consumed view?</p>
+<label><input type="radio"> Condenser water is too small to show on the chart</label>
+<label><input type="radio"> Its water is returned through the drain, so little is consumed, and no source gives a consumed figure</label>
+<label><input type="radio"> Lab water is not counted as freshwater</label>
+</div>
+
+<hr>
+
+## what it cost to build the escape rooms {-}
+
+We estimated the electricity used to build every escape room to date: image generation, video rendering on the lab's own computer, and the agent sessions that wrote and tested the code. Image and video counts were measured (the image count is a floor) and the lab computer's power partly measured; energy per image and per agent token were modeled, because no provider publishes them. Training the models and manufacturing chips and data centers are outside this boundary. Electricity was converted at the EPA's figure for the northern Minnesota grid (0.42 kg CO2e per kWh) and the US-average power-plant water consumption (about 3.1 liters per kWh), plus on-site cooling for the cloud work.
+
+| | low | central | high |
+|---|---|---|---|
+| CO2e (kg) | 69 | ~320 | ~2,400 |
+| water consumed (L) | ~550 | ~2,900 | ~24,000 |
+| water withdrawn (L) | ~7,200 | ~34,000 | ~260,000 |
+
+In the central case about 90% of the energy went to agent work, which is also the least certain term, so the high case is about 35 times the low. The columns are scenarios, not hard limits. The central estimate is less than one Duluth to Los Angeles return flight (the high case is about three to five), about six days of one fume hood, and about three and a half cotton T-shirts' worth of consumed water. The rooms are also a one-time build used many times: with 20 to 25 students a year spending 30 to 60 minutes in each of the 20 live scenarios for ten years (about 2,000 to 5,000 student-hours), the build adds about 0.09 kg CO2e and 0.8 liters of water consumed per student-hour in the central case.
+
+## offsets {-}
+
+I will offset the build, sized to the top of the full assumption grid, beyond the table's high column (about 6 metric tons of CO2e and 61,500 liters of water), rounded up.
+
+- **Carbon: about 6.4 metric tons CO2e**, through Terrapass, whose projects are registered with verified registries such as Verra, the American Carbon Registry and the Climate Action Reserve.
+- **Water: 17 Water Restoration Certificates** from the Bonneville Environmental Foundation, each of which pays to return 1,000 gallons to a freshwater source in need (about 64,000 liters in all).
+
+Offsets are a backstop, not a license, and their quality varies. West and colleagues found that only about 6% of the forest-protection credits they examined were linked to real, additional reductions in deforestation, and a water certificate restores flow in some stressed watershed, not where the electricity's water was used.
+
+## the bigger picture {-}
+
+None of this means the concern about AI is overblown. It is about scale. The International Energy Agency estimates that data centers used about 1.5% of the world's electricity in 2024 and projects more than a doubling by 2030, with AI growing fastest. US data centers used about 4.4% of the nation's electricity in 2023, and consumed about 66 billion liters of water on site and nearly 800 billion liters at power plants.
+
+Water adds a twist carbon does not have: location. A kilogram of CO2 warms the planet the same wherever it is emitted, but a liter drawn from Lake Superior (the Great Lakes hold about a fifth of the world's surface fresh water) is not a liter pumped from a falling aquifer in Arizona. Data centers are now being proposed near Duluth. In July 2026 Google told the Hermantown city council that its proposed site would not use evaporative cooling. Dry cooling generally trades water for electricity, and each extra kilowatt-hour consumes water at the power plant. A 2025 Minnesota law requires the Department of Natural Resources to ensure that water-saving measures are considered, and conflicts with other water users addressed, when a data center would consume, or be supplied, more than 100 million gallons a year.
+
+## why I think the escape rooms are worth it {-}
+
+This is a judgment, not a result. If the answer to the aggregate problem is clean energy and good policy, people have to carry it out: design the batteries, write and enforce the regulations, and check whether an emissions disclosure or an offset project's claims are true. That takes people comfortable measuring, modeling and reasoning with data. This course trains exactly that, and the escape rooms are the best way I have found to keep students practicing those skills for hours rather than minutes, shared by every cohort that plays them. I could have built simpler exercises with a smaller footprint. I believe the rooms buy more practice, for more students, over more years, and that the people this practice trains are part of how the larger problem gets solved. That belief has not been measured.
+
+<script type="module" src="/integrated_bioanalytics/webr-cell.js?v=5"></script>
+
+<hr>
+
+## sources {-}
+
+- International Energy Agency, [*Energy and AI*, executive summary](https://www.iea.org/reports/energy-and-ai/executive-summary) (2025) and [*Key Questions on Energy and AI*, executive summary](https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary) (2026).
+- US Department of Energy, [report on data-center electricity demand](https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers) (Lawrence Berkeley National Laboratory, 2024).
+- Shehabi and colleagues, [2024 United States Data Center Energy Usage Report](https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf) (Lawrence Berkeley National Laboratory, 2024; water figures on p. 55).
+- US EPA, [eGRID summary data](https://www.epa.gov/egrid/summary-data) (eGRID2023).
+- Google, [Measuring the environmental impact of AI inference](https://cloud.google.com/blog/products/infrastructure/measuring-the-environmental-impact-of-ai-inference) (2025).
+- Li, Yang, Islam and Ren, [Making AI less "thirsty"](https://arxiv.org/abs/2304.03271) (arXiv, version 5, 2025).
+- Luccioni, Jernite and Strubell, [Power hungry processing](https://arxiv.org/html/2311.16863v3) (FAccT 2024).
+- Bai and colleagues, [token use by coding agents](https://arxiv.org/abs/2604.22750) (arXiv preprint, 2026).
+- Engman, [The energy consumption of fume hoods at the University of Minnesota Duluth](https://conservancy.umn.edu/server/api/core/bitstreams/bbadc66b-f50f-4c35-abcc-d88bde024337/content) (UMD Sustainability, 2011), and Mills and Sartor, [Energy use and savings potential for laboratory fume hoods](https://ideas.repec.org/a/eee/energy/v30y2005i10p1859-1864.html) (*Energy*, 2005).
+- US Energy Information Administration, [space heating in older Midwest homes](https://www.eia.gov/todayinenergy/detail.php?id=57321) (2023), and US EPA, [Greenhouse Gas Equivalencies Calculator: calculations and references](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator-calculations-and-references) (natural gas, vehicles).
+- US Department of Energy, [energy-efficient laboratory refrigerators and freezers](https://www.energy.gov/node/4310028), and Our World in Data, [CO2 emissions of the United States](https://ourworldindata.org/co2/country/united-states).
+- Poore and Nemecek (2018) via Our World in Data: [greenhouse gas emissions per kilogram of food](https://ourworldindata.org/grapher/ghg-per-kg-poore) and [freshwater withdrawals per kilogram of food](https://ourworldindata.org/grapher/water-withdrawals-per-kg-poore).
+- West and colleagues, *Science* 381:873 (2023), [doi:10.1126/science.ade3535](https://doi.org/10.1126/science.ade3535), summarized by the [University of Cambridge](https://www.energy.cam.ac.uk/news/millions-carbon-credits-are-generated-overestimating-forest-preservation).
+- Terrapass, [carbon offsets for individuals and families](https://terrapass.com/product/productindividuals-families/).
+- Bonneville Environmental Foundation, [Water Restoration Certificate fact sheet](https://www.b-e-f.org/wrc-fact-sheet/).
+- Elsworth and colleagues (Google), [Measuring the environmental impact of delivering AI at Google scale](https://services.google.com/fh/files/misc/measuring_the_environmental_impact_of_delivering_ai_at_google_scale.pdf) (2025), and Google, [2025 Environmental Report](https://www.gstatic.com/gumdrop/sustainability/google-2025-environmental-report.pdf).
+- Altman, [The gentle singularity](https://blog.samaltman.com/the-gentle-singularity) (2025).
+- Mistral AI, [Our contribution to a global environmental standard for AI](https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai) (2025).
+- Mekonnen and Hoekstra, [The green, blue and grey water footprint of crops and derived crop products](https://hess.copernicus.org/articles/15/1577/2011/) (*Hydrology and Earth System Sciences*, 2011), [The green, blue and grey water footprint of farm animals and animal products](https://www.waterfootprint.org/resources/Report-48-WaterFootprint-AnimalProducts-Vol1.pdf) (UNESCO-IHE, 2010), and [National water footprint accounts](https://waterfootprint.org/media/downloads/Report50-NationalWaterFootprints-Vol1.pdf) (UNESCO-IHE, 2011).
+- Rushforth and Ruddell, [A spatially detailed blue water footprint of the United States economy](https://hess.copernicus.org/articles/22/3007/2018/hess-22-3007-2018.html) (*Hydrology and Earth System Sciences*, 2018).
+- US Geological Survey, [Estimated use of water in the United States in 2015](https://pubs.usgs.gov/fs/2018/3035/fs20183035.pdf) (fact sheet, 2018), and US EPA WaterSense, [Fix a Leak Week](https://www.epa.gov/watersense/fix-leak-week).
+- US EPA and International Institute for Sustainable Laboratories, [Laboratory water efficiency guide](https://www.epa.gov/system/files/documents/2022-06/ws-I2SL-Laboratory-Water-Efficiency-Guide.pdf); University of Alabama at Birmingham, [Green Labs: conserving thousands of gallons of water](https://www.uab.edu/sustainability/news/uab-green-labs-conserving-thousands-of-gallons-of-water); University of Iowa, [lab water conservation](https://sustainability.lab.uiowa.edu/initiatives/water-conservation).
+- Clark, Horner and Harto, [Life cycle water consumption for shale gas and conventional natural gas](https://www.osti.gov/biblio/1395029-life-cycle-water-consumption-shale-gas-conventional-natural-gas) (*Environmental Science and Technology*, 2013), and Water Calculator, [The water footprint of energy](https://watercalculator.org/footprint/the-water-footprint-of-energy/).
+- US EPA, [Great Lakes facts and figures](https://www.epa.gov/greatlakes/great-lakes-facts-and-figures).
+- KQDS Fox21, [Google presents AUAR draft and talks water usage to Hermantown City Council](https://www.fox21online.com/news/local/google-presents-auar-draft-and-talks-water-usage-to-hermantown-city-council/article_707e9165-fb74-4cfe-97e8-27f1095b02be.html) (July 2026).
+- Minnesota Statutes, [section 103G.271](https://www.revisor.mn.gov/statutes/cite/103G.271) (water-use permits; subdivision 5b covers data centers, added in 2025).

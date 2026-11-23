@@ -105,6 +105,7 @@ escape_rooms/
 # exactly like AGENTS.md does.
 integrated_bioanalytics/tests/
 integrated_bioanalytics/notes/
+phylochemistry/notes/
 # Agent reference docs split out of AGENTS.md 2026-09-13 (canon_slim). Same privacy as the AGENTS.md
 # they came from, and load-bearing: build_harness.md names on-box paths, the private dataset and the
 # API-key filenames. Caught by the canon_slim loss-critic, not by a human eye — the split created
