@@ -78,7 +78,7 @@ fig:unnamed-chunk-765
 fig:unnamed-chunk-32
 part-data-visualization
 part-exploratory-analysis
-part-statistical-analysis
+part-linear-models
 part-models
 matrix-analyses
 basic-template-a-wide-data-frame

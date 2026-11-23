@@ -75,12 +75,12 @@
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li class="book-part">STATISTICAL ANALYSIS</li>
+<li class="book-part">LINEAR MODELS</li>
 <li><a class="" href="comparing-means.html">comparing groups</a></li>
 <li><a class="" href="regression-models.html">regression models</a></li>
 <li><a class="" href="anova.html">analysis of variance</a></li>
-<li class="book-part">MODELS</li>
 <li><a class="active" href="classification-models.html">classification models</a></li>
+<li class="book-part">MODELS</li>
 <li><a class="" href="machine-learning.html">machine learning models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="protein-language-models.html">protein language models</a></li>
@@ -117,7 +117,7 @@
 <div class="cc-title-slot">
 
 </div>
-<p><strong>Does this unknown sample belong to group A or group B?</strong> Many laboratory questions have two possible answers rather than a number: does a blood sample point to the presence of a disease or not, will a batch pass inspection or not, is a wine one that tasters will rate as excellent or poor? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and the user defines a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples the model was never shown as it was built, shows how to determine which predictors matter most, and illustrates how to judge how well a set of calls hold up, including coverage of common pitfalls in model metrics.</p>
+<p><strong>Does this unknown sample belong to group A or group B?</strong> Many laboratory questions have two possible answers rather than a number: does a blood sample point to the presence of a disease or not, will a batch pass inspection or not, is a wine one that tasters will rate as excellent or poor? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and the user defines a cut-off that turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples the model was never shown as it was built, shows how to determine which predictors matter most, and illustrates how to judge how well a set of calls hold up, including coverage of common pitfalls in model metrics.</p>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf" class="cc-btn" target="_blank">One-page summary (PDF)</a> <a href="classification-models.html#classification-models-summary" class="cc-btn ghost">Jump to the chapter summary</a></p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-613"></span>
@@ -744,8 +744,9 @@ The practice world below runs both class days of this chapter and can be played 
 <li><p><a href="https://developers.google.com/machine-learning/crash-course/classification">Classification, Google Machine Learning Crash Course</a>. A short interactive module on thresholds, accuracy and its limits with imbalanced classes, and the confusion matrix, precision and recall.</p></li>
 <li><p><a href="https://archive.ics.uci.edu/dataset/186/wine+quality">Wine Quality dataset, UCI Machine Learning Repository</a>. The source of this chapter’s red wines: physicochemical measurements and tasters’ scores for Portuguese vinho verde wines, with the original study that modeled the scores.</p></li>
 </ul>
-<!-- end classification models --><!-- start machine learning --><!-- DRAFT (2026-10-20): split out of 12_numerical_models.Rmd. Holds the training/testing and random-forest
-material while the chapter is written; plan in notes/modeling_split_notes.md -> Chapter C. -->
+<!-- end classification models --><hr>
+<hr>
+<hr>
 </div>
 </div>
   <div class="chapter-nav">
@@ -780,7 +781,7 @@ material while the chapter is written; plan in notes/modeling_split_notes.md -> 
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

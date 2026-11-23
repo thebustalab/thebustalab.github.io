@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-22"
+date: "2026-11-23"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5252,7 +5252,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) STATISTICAL ANALYSIS
+# (PART) LINEAR MODELS
 
 
 # comparing groups {#comparing-means -}
@@ -7485,12 +7485,6 @@ An ANOVA splits the spread in a response (its sum of squares) into the part each
 
 - [Interaction analysis in emmeans](https://cran.r-project.org/web/packages/emmeans/vignettes/interactions.html). The vignette for the package the course uses to compare slopes between groups shows how to follow up an interaction: comparisons within each level of the other factor, interaction plots, and comparing slopes between groups.
 
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-# (PART) MODELS
-
 
 <!-- start classification models -->
 
@@ -7504,7 +7498,7 @@ ________________________________________________________________________________
 
 <div class="cc-title-slot"></div>
 
-**Does this unknown sample belong to group A or group B?** Many laboratory questions have two possible answers rather than a number: does a blood sample point to the presence of a disease or not, will a batch pass inspection or not, is a wine one that tasters will rate as excellent or poor? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and the user defines a cut-off turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples the model was never shown as it was built, shows how to determine which predictors matter most, and illustrates how to judge how well a set of calls hold up, including coverage of common pitfalls in model metrics.
+**Does this unknown sample belong to group A or group B?** Many laboratory questions have two possible answers rather than a number: does a blood sample point to the presence of a disease or not, will a batch pass inspection or not, is a wine one that tasters will rate as excellent or poor? Classification models answer questions of this kind. For each sample they estimate the probability that the answer is yes, and the user defines a cut-off that turns that probability into a call. This chapter builds a classification model from one predictor and then from several, uses it to make calls for samples the model was never shown as it was built, shows how to determine which predictors matter most, and illustrates how to judge how well a set of calls hold up, including coverage of common pitfalls in model metrics.
 
 [One-page summary (PDF)](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.cc-btn target="_blank"} [Jump to the chapter summary](#classification-models-summary){.cc-btn .ghost}
 
@@ -8145,6 +8139,12 @@ The practice world below runs both class days of this chapter and can be played 
 - [Wine Quality dataset, UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/186/wine+quality). The source of this chapter's red wines: physicochemical measurements and tasters' scores for Portuguese vinho verde wines, with the original study that modeled the scores.
 
 <!-- end classification models -->
+
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) MODELS
 
 
 <!-- start machine learning -->
