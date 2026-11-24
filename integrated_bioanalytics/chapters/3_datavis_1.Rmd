@@ -301,7 +301,7 @@ Some pointers:
 
 ### algae {-}
 
-1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `library(phylochemistry)`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 ```{r, include = FALSE}
 filter(algae_data, chemical_species == "FAs")
@@ -356,19 +356,9 @@ geom_point()
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
 ```{r, include = FALSE}
-## DO NOT put a bare source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") back here.
-## `include = FALSE` hides this chunk's output; it does NOT stop it evaluating. The whole book knits in
-## ONE session, and ch3 runs before ch7, so a bare re-source replaced the working-copy library that
-## _common.R had just loaded with the PREVIOUS RELEASE -- and ch7's runMatrixAnalysis(analysis = "dist",
-## output_format = "long") then returned a bare `dist` that ggplot() could not fortify. That broke the
-## 2026-09-22 deploy repeatedly, with an error ~12000 lines from its cause. _common.R already
-## bootstraps the library for every chapter, so this is a no-op; it only acts if something upstream
-## failed, and then it prefers the working copy.
-if (!exists("algae_data")) {
-  .pc3 <- file.path("..", "phylochemistry", "phylochemistry.R")
-  if (file.exists(.pc3)) source(.pc3) else
-    source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-}
+## Never load or source a library from a chapter chunk: `include = FALSE` hides output but still
+## evaluates, and the whole book knits in ONE session, so a reload here replaces what _common.R loaded
+## for every later chapter (that broke the 2026-09-22 deploy). _common.R loads the packages.
 ggplot(
   data = filter(
     algae_data, 

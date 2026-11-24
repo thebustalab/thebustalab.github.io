@@ -116,14 +116,11 @@
 <p>In the last chapter, we saw how language models convert text into numerical vectors so that statistical methods can be applied to language. The same idea applies to biological sequences. Protein language models are trained on vast databases of protein sequences and convert each amino acid sequence into an embedding that captures biologically meaningful patterns, including evolutionary relationships, structural features and functional properties. That makes it possible to ask of a set of proteins which ones resemble each other and whether they sort by function (for example, whether diterpene and monoterpene synthases separate from one another) without first building a multiple sequence alignment, and even for proteins with few known relatives. Questions of this kind come up in enzyme discovery and function annotation. In this chapter we retrieve sequences from NCBI, embed them with a pre-trained protein language model, and look at the embeddings with PCA. The chapters that follow (homology, alignments and phylogenies) compare proteins through their aligned sequences instead.</p>
 <p>Running the analyses in this chapter requires three things.</p>
 <ol style="list-style-type: decimal">
-<li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
+<li>Please ensure that your computer can load the tidyverse and phylochemistry (see “installation” in the appendix). Some functions in this chapter may prompt you to install additional R packages the first time you use them.</li>
 </ol>
 <div class="sourceCode" id="cb231"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R"</span><span class="op">)</span></span>
-<span><span class="co">## Loading language model module...</span></span>
-<span><span class="co">## Loading dgx module...</span></span>
-<span><span class="co">## Done with dgx loading!</span></span>
-<span><span class="co">## Done with language model loading!</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thebustalab/phylochemistry">phylochemistry</a></span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Please create an account at and obtain an API key from <a href="https://biolm.ai/" class="uri">https://biolm.ai/</a> (Login &gt; Account &gt; API Tokens)</li>
 <li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get an API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
@@ -145,31 +142,31 @@
 <p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Protein language models can also capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
 <p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play key roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
-<p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code works well here, though the <code>searchNCBI()</code> function can also retrieve a different set of sequences. For example:</p>
+<p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The <code>OSC_sequences</code> dataset (load it with <code>OSC_sequences &lt;- getDataset("OSC_sequences")</code>) works well here, though the <code><a href="https://rdrr.io/pkg/phylochemistry/man/searchNCBI.html">searchNCBI()</a></code> function can also retrieve a different set of sequences. For example:</p>
 <div class="sourceCode" id="cb232"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/searchNCBI.html">searchNCBI</a></span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" .*"</span>, <span class="st">""</span>, <span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span><span class="op">)</span>, <span class="st">"__diterpene_synthase"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"monoterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/searchNCBI.html">searchNCBI</a></span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"monoterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" .*"</span>, <span class="st">""</span>, <span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span><span class="op">)</span>, <span class="st">"__monoterpene_synthase"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
 <span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="va">all_sequences</span><span class="op">[</span><span class="va">all_sequences</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">width</span> <span class="op">&lt;</span> <span class="fl">1024</span><span class="op">]</span></span></code></pre></div>
-<p>Once some sequences are in hand, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA API key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.</p>
+<p>Once some sequences are in hand, we can embed them with the function <code><a href="https://rdrr.io/pkg/phylochemistry/man/embedAminoAcids.html">embedAminoAcids()</a></code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA API key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. On the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). bioLM offers a choice between a number of models.</p>
 <div class="sourceCode" id="cb233"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/embedAminoAcids.html">embedAminoAcids</a></span><span class="op">(</span></span>
 <span>  amino_acid_stringset <span class="op">=</span> <span class="va">all_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"path/to/biolm_api_key.txt"</span><span class="op">)</span>,</span>
 <span>  nvidia_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"path/to/nvidia_api_key.txt"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"nvidia"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="st">"data/protein_embeddings_example.rds"</span><span class="op">)</span></span>
 <span><span class="va">all_sequences_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></code></pre></div>
 <p>Nice! Once we’ve got the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
 <div class="sourceCode" id="cb234"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">all_sequences_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -207,7 +204,7 @@
 <tbody>
 <tr class="odd">
 <td>1</td>
-<td><code>searchNCBI()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/searchNCBI.html">searchNCBI()</a></code></td>
 <td>retrieve protein sequences from NCBI as an AAStringSet</td>
 <td>
 <code>search_term</code>, <code>retmax</code>
@@ -221,7 +218,7 @@
 </tr>
 <tr class="odd">
 <td>2</td>
-<td><code>embedAminoAcids()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/embedAminoAcids.html">embedAminoAcids()</a></code></td>
 <td>embed each sequence with a pre-trained protein language model</td>
 <td>
 <code>amino_acid_stringset</code>, <code>platform</code> (<code>"nvidia"</code> runs esm2-650m, bioLM offers several models), <code>nvidia_api_key</code> or <code>biolm_api_key</code>
@@ -229,7 +226,7 @@
 </tr>
 <tr class="even">
 <td>3</td>
-<td><code>runMatrixAnalysis()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code></td>
 <td>PCA on the embedding columns to see which proteins group together</td>
 <td>
 <code>analysis = "pca"</code>, <code>columns_w_values_for_single_analyte</code> (the embedding columns), <code>columns_w_sample_ID_info</code>
@@ -249,7 +246,7 @@
 </ul>
 <!-- ## exercises {-}
 
-3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
+3. Generate and visualize a set of protein embeddings. You can use the `OSC_sequences` dataset (`OSC_sequences <- getDataset("OSC_sequences")`), or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 
 --><hr>
@@ -288,7 +285,7 @@
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

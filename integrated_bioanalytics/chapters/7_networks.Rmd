@@ -212,6 +212,7 @@ passenger_flows
 Note that `passenger_flows` is already an edge list: two columns naming the nodes, and a third carrying the weight. That is all `buildNetwork()` needs. Because each row is a directed fact (passengers who flew *from* the origin *to* the destination), we pass `directed = TRUE`.
 
 ```{r fig.height = 6, fig.width = 8, fig.align = "center", fig.cap = "An interaction network of US passenger air travel. Each point is one of twenty-nine airports, labeled with its city and state and positioned by a force-directed layout. Each line is a route on which passengers were recorded flying, with line width and opacity both encoding the number of passengers. Node positions carry no geographic information; the only content of the figure is which airports are joined to which. Data are the simulated 'passenger_flows' and 'us_airports' datasets used in UMD CHEM5725."}
+library(ggrepel)
 air_net <- buildNetwork(
   edgelist = passenger_flows,
   node_attributes = us_airports,

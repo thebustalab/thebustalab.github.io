@@ -15,7 +15,8 @@ comparing-means chapter, and what remained is here.*
 
 ## specialized plots {-}
 
-```{r}
+```{r, message = FALSE}
+library(ggside)
 
 i2 <- iris %>%
   mutate(Species2 = rep(c("A","B"), 75))
@@ -90,6 +91,7 @@ ggplot() +
 ### venn diagrams {-}
 
 ```{r}
+library(ggforce)
 df <- data.frame(
   plant1 = sample(c(TRUE, FALSE), 24, replace = TRUE),
   plant2 = sample(c(TRUE, FALSE), 24, replace = TRUE),
@@ -230,6 +232,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
 Now we could add some data. The next few examples use a dataset of per- and polyfluoroalkyl substance (PFAS) measurements from sites around Lake Superior. **Note: these are unpublished data from ongoing lab research, included here purely to illustrate the plotting techniques. The file is not distributed with the course, so the code below is shown for reference and will not run on your machine — focus on the mapping and layering approach rather than reproducing the figure.** We could do something simple like plot total abundances as the size of a point:
 
 ```{r, fig.width = 8, fig.height = 4}
+library(cowplot)
 lake_superior_PFAS <- readMonolist(Sys.getenv("PFAS_DATA"))
 lake_superior_PFAS %>%
   group_by(site, lon, lat) %>%
@@ -253,6 +256,7 @@ Or we could do something more sophisticated like add pie charts at each point:
 
 
 ```{r, fig.width = 8, fig.height = 4}
+library(ggrepel)
 lake_superior_PFAS <- readMonolist(Sys.getenv("PFAS_DATA"))
 
 grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
@@ -293,9 +297,10 @@ ggplot() +
   theme_cowplot()
 ```
 
-You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
+You can also access a high resolution shoreline dataset for Lake Superior with `getDataset("lake_superior_shoreline")`:
 
 ```{r, fig.width = 8, fig.height = 4}
+lake_superior_shoreline <- getDataset("lake_superior_shoreline")
 shore <- lake_superior_shoreline
 
 wide_view <- ggplot(shore) +

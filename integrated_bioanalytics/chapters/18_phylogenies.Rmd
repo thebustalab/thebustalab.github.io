@@ -83,6 +83,7 @@ plot(test_tree_small)
 Though this can get messy when there are lots of tip labels:
 
 ```{r, message = FALSE}
+plant_species <- read_csv("https://thebustalab.github.io/data/plant_species.csv", show_col_types = FALSE)
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
@@ -96,6 +97,7 @@ plot(test_tree_big)
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so we recommend it:
 
 ```{r, message = FALSE}
+library(ggtree)
 ggtree(test_tree_big)
 ```
 
@@ -196,6 +198,7 @@ trait_plot <- ggplot(
 Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
 
 ```{r, fig.height = 14, fig.width = 7, message = FALSE}
+library(cowplot)
 plot_grid(
   tree_plot,
   trait_plot,

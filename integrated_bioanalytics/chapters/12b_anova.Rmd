@@ -180,6 +180,7 @@ Fill in the blank with the rank-based test of whether potassium differs among th
 An ANOVA makes the same assumptions as the linear models in the regression chapter, and they are all assumptions about the noise: each measurement's distance from its group mean (which `check_model()` calls a residual) should be roughly normal and have a similar spread in every group, and the measurements should be independent. The `check_model()` habit from the regression chapter applies here unchanged:
 
 ```{r, fig.width = 12, fig.height = 10, fig.cap = "Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset."}
+library(performance)
 check_model(K_model$model)
 ```
 

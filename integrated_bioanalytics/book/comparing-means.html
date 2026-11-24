@@ -152,9 +152,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <p>Importantly, there are many wells that draw on each aquifer, as shown in the graph below.</p>
 <div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">well_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n_wells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">well_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">aquifers_summarized</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">well_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n_wells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">well_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">aquifers_summarized</span></span>
 <span></span>
 <span><span class="va">aquifers_summarized</span></span>
 <span><span class="co">## # A tibble: 10 × 2</span></span>
@@ -181,7 +181,7 @@ Number of wells drawing on each Hawaiian aquifer. Horizontal bar chart of the nu
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(phylochemistry)
 library(rstatix)
 library(agricolae)
 library(multcompView)
@@ -215,7 +215,7 @@ Self-check: A test comparing potassium in two aquifers gives p = 0.04. Which sta
 <p>Before comparing two means, first look at the two distributions. This initial inspection is not a formality. Every statistical test in this chapter makes assumptions about the <em>shape</em> of the data (the parametric tests assume each group is roughly normally distributed, and the rank tests assume the groups have similar shapes), and a mean on its own reveals nothing about either. Two groups can have identical means and completely different distributions, and a bar chart of the means will hide that perfectly (#barbarcharts). So, it is worth knowing how to draw a distribution in full rather than relying solely on summary statistics.</p>
 <p>By using multiple geoms, a single plot can show the summary (mean, median, etc.), the density, and the raw observations at once. In the plot below, the half-eye gives the density, the boxplot the quartiles, and the dots every actual measurement, showing the shape, the spread and the sample size in one picture:</p>
 <div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mpg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">cyl</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">mpg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">cyl</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">hwy</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggdist</span><span class="fu">::</span><span class="fu"><a href="https://mjskay.github.io/ggdist/reference/stat_halfeye.html">stat_halfeye</a></span><span class="op">(</span></span>
 <span>    adjust <span class="op">=</span> <span class="fl">0.5</span>, justification <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, .width <span class="op">=</span> <span class="fl">0</span>, point_colour <span class="op">=</span> <span class="cn">NA</span></span>
@@ -258,7 +258,7 @@ Self-check: With the points drawn, which aquifer has the most potassium measurem
 <p>So, the first question we must answer is whether each group within our data can be sufficiently approximated using a normal distribution. We can check our data for normality using the Shapiro test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
 <div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
 <span>  <span class="va">K_data</span></span>
 <span><span class="co">## # A tibble: 106 × 6</span></span>
 <span><span class="co">##    aquifer_code well_name         longitude latitude analyte</span></span>
@@ -278,7 +278,7 @@ Self-check: With the points drawn, which aquifer has the most potassium measurem
 <p>To work with two means, let’s just look at aquifers 1 and 6:</p>
 <div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_6"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_6"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">K_data_1_6</span></span>
 <span><span class="co">## # A tibble: 24 × 6</span></span>
@@ -322,8 +322,8 @@ Distributions of potassium in aquifers 1 and 6. Histograms (gray bars, 30 bins) 
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shapiro test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/shapiroTest.html">shapiroTest</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 4</span></span>
 <span><span class="co">##   aquifer_code variable statistic     p</span></span>
 <span><span class="co">##   &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;</span></span>
@@ -359,7 +359,7 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <p>Now, since our data passed the Shapiro test, we can use a t-test. A t-test is a parametric test. This means that it relies on modeling the data using a normal distribution in order to make comparisons. When its assumptions hold, it is also the most powerful test available, meaning it is the most likely to detect a difference in means, assuming one is present. Like every test in this chapter, it takes a formula written with a tilde (<code>~</code>). The <strong>response</strong>, the measured value being compared, goes on the left of the tilde, and the <strong>predictor</strong>, here the column that sorts the measurements into groups, goes on the right. In <code>abundance ~ aquifer_code</code>, the response is <code>abundance</code> and the predictor is <code>aquifer_code</code>. The regression and ANOVA chapters use the same <code>response ~ predictor</code> form, where a predictor can also be a number. Let’s try it out:</p>
 <div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/tTest.html">tTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 8</span></span>
 <span><span class="co">##   .y.       group1 group2    n1    n2 statistic    df      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
@@ -367,7 +367,7 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <p>A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro test. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. Instead, it compares the groups using the ranks of the measurements rather than the measurements themselves, so its p-value does not depend on the shape of the distribution. For fun, let’s try that one out and compare the p-values from the two methods:</p>
 <div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">wilcoxTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/wilcoxTest.html">wilcoxTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 7</span></span>
 <span><span class="co">##   .y.       group1    group2       n1    n2 statistic      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;</span></span>
@@ -376,7 +376,7 @@ Self-check: Based on the Shapiro results, which test should compare potassium in
 <p>Strictly speaking, then, the Wilcox test compares neither means nor medians. When the two distributions share a shape and are simply shifted relative to one another, its question reduces to whether the medians differ, which is why the median is the usual summary to report alongside a Wilcox result. When the shapes clearly do not match, still report the medians as a description, but phrase the conclusion as “values in group A tend to be higher than values in group B.”</p>
 <p>Working on ranks also makes the test resistant to outliers. A reading ten times larger than the rest still counts only as the top rank, whereas the same reading can drag a mean a long way. Ranking also means the two tests can disagree, and occasionally point in opposite directions. Consider nitrate measured in 30 soil samples from each of two orchards. Every north sample sits between 13 and 17 mg/kg. Most south samples are lower, between 8 and 12, but eight of them come from beds near a manure store and read between 80 and 120:</p>
 <div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">orchards</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">orchards</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>  orchard <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"north"</span>, <span class="st">"south"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  nitrate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">13</span>, <span class="fl">17</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
 <span>              <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">12</span>, length.out <span class="op">=</span> <span class="fl">22</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">80</span>, <span class="fl">120</span>, length.out <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>
@@ -393,8 +393,8 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">orchards</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">orchard</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">nitrate</span><span class="op">)</span>, median <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">nitrate</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">orchard</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">nitrate</span><span class="op">)</span>, median <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">nitrate</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 3</span></span>
 <span><span class="co">##   orchard  mean median</span></span>
 <span><span class="co">##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
@@ -403,14 +403,14 @@ Nitrate in soil samples from two orchards. Strip plot of nitrate concentration (
 <p>The south orchard has the higher mean (34 vs 15) but the lower median (10.8 vs 15). Now both tests:</p>
 <div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">orchards</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tTest</span><span class="op">(</span><span class="va">nitrate</span> <span class="op">~</span> <span class="va">orchard</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/tTest.html">tTest</a></span><span class="op">(</span><span class="va">nitrate</span> <span class="op">~</span> <span class="va">orchard</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 8</span></span>
 <span><span class="co">##   .y.     group1 group2    n1    n2 statistic    df     p</span></span>
 <span><span class="co">## * &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 nitrate north  south     30    30     -2.53  29.1 0.017</span></span>
 <span></span>
 <span><span class="va">orchards</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">wilcoxTest</span><span class="op">(</span><span class="va">nitrate</span> <span class="op">~</span> <span class="va">orchard</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/wilcoxTest.html">wilcoxTest</a></span><span class="op">(</span><span class="va">nitrate</span> <span class="op">~</span> <span class="va">orchard</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 7</span></span>
 <span><span class="co">##   .y.     group1 group2    n1    n2 statistic       p</span></span>
 <span><span class="co">## * &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
@@ -441,7 +441,7 @@ Self-check: What does the result tell you about aquifers 1 and 9?
 <p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let’s consider our hawaii aquifer data again, though this time let’s use all the aquifers, not just two:</p>
 <div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">K_data</span></span>
 <span><span class="co">## # A tibble: 106 × 6</span></span>
@@ -472,7 +472,7 @@ Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis)
 <p>Let’s check visually to see if each group is normally distributed:</p>
 <div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
@@ -483,11 +483,11 @@ Potassium in all ten Hawaiian aquifers. Boxplots of potassium abundance (x axis)
 Distributions of potassium in each of the ten Hawaiian aquifers. Histograms (gray bars, 30 bins) of potassium abundance (x axis), one panel per aquifer, in which the height of each bar is the number of measurements in that bin. A density curve (blue line) is drawn over each histogram, multiplied by ten so that it shares the y axis with the bars, which is why that axis is labeled density * 10. Aquifers with only a few measurements give histograms too sparse to judge normality by eye. Data are from the ‘hawaii_aquifers’ dataset used in UMD CHEM5725.
 </p>
 </div>
-<p>Again, it is somewhat hard to tell visually if these data are normally distributed, so let’s check with the Shapiro test. Don’t forget: with the Shapiro test, we are looking within each group and so need to <code>group_by()</code>:</p>
+<p>Again, it is somewhat hard to tell visually if these data are normally distributed, so let’s check with the Shapiro test. Don’t forget: with the Shapiro test, we are looking within each group and so need to <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>:</p>
 <div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/shapiroTest.html">shapiroTest</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 10 × 4</span></span>
 <span><span class="co">##    aquifer_code variable statistic         p</span></span>
 <span><span class="co">##    &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;</span></span>
@@ -528,7 +528,7 @@ Self-check: Why compare the ten aquifers with a Games-Howell or Dunn test rather
 <p>Let’s assume for a second that every group passed the Shapiro test. This means that we could reasonably model our data with normal distributions and use a parametric test. For that we use the Games-Howell test (implemented using <code>gamesHowellTest</code>). This will essentially run a t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). Like Welch’s t-test, it compares each pair using those two groups’ own spreads, rather than one spread shared by all the groups, so it needs no check that the groups have similar variances. After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
 <div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/gamesHowellTest.html">gamesHowellTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 8</span></span>
 <span><span class="co">##    .y.       group1 group2 estimate conf.low conf.high p.adj</span></span>
 <span><span class="co">##  * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
@@ -547,8 +547,8 @@ Self-check: Why compare the ten aquifers with a Games-Howell or Dunn test rather
 <p>Using the output from our Games-Howell test, we can determine which means are similar. We can do this using the pGroups function:</p>
 <div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_games_howell</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/gamesHowellTest.html">gamesHowellTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">groups_based_on_games_howell</span></span>
 <span><span class="co">##             treatment  group spaced_group</span></span>
 <span><span class="co">## aquifer_1   aquifer_1  abcde       abcde </span></span>
@@ -600,7 +600,7 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 <p>The above Games-Howell example is great, but remember - aquifer 9 did not pass the Shapiro test, so the Games-Howell test’s p-values may not be accurate here, and a rank test is the more trustworthy choice. The rank-based counterpart of the Games-Howell test is the Dunn test. It pools every value from every group, ranks them all together, compares each pair’s average rank within that single ranking, and then corrects the p-values for the number of comparisons. Everything said above about what the Wilcox test compares applies here too. Because the ranking is shared, the Dunn test and a pairwise Wilcox test can give slightly different answers for the same pair: with the Dunn test, a pair’s ranks depend on which other groups are in the pool. (That shared ranking is the one the Kruskal test uses. The Kruskal test is the rank-based cousin of the ANOVA, and it appears in the ANOVA chapter.) Let’s try:</p>
 <div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/dunnTest.html">dunnTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 45 × 9</span></span>
 <span><span class="co">##    .y.     group1 group2    n1    n2 statistic       p p.adj</span></span>
 <span><span class="co">##  * &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
@@ -616,11 +616,11 @@ Self-check: How many of the 45 pairs of aquifers differ significantly in potassi
 <span><span class="co">## 10 abunda… aquif… aquif…     7     6     2.17  0.0296  0.830</span></span>
 <span><span class="co">## # ℹ 35 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
-<p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>pGroups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
+<p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups()</a></code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
 <div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">groups_based_on_dunn</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/dunnTest.html">dunnTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">groups_based_on_dunn</span></span>
 <span><span class="co">##             treatment group spaced_group</span></span>
 <span><span class="co">## aquifer_1   aquifer_1  abcd         abcd</span></span>
@@ -675,7 +675,7 @@ Self-check: Why is the Dunn result the one to trust for these potassium data?
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-485"></span>
@@ -686,9 +686,9 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <p>Fortunately, we can use an approach that is very similar to what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro test, as usual (note that we group using two variables so that each analyte within each aquifer is considered as an individual distribution):</p>
 <div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/shapiroTest.html">shapiroTest</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
 <span><span class="co">## Note: Found a group with exactly 3 data points where at least two were identical.</span></span>
 <span><span class="co">## A tiny bit of noise was added to these data points, because the Shapiro–Wilk test</span></span>
 <span><span class="co">## p-value can be artificially low in such edge cases due to test mechanics.</span></span>
@@ -699,7 +699,7 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <span><span class="co">##  1 Cl      aquifer_1    values       0.900 1.59e- 1</span></span>
 <span><span class="co">##  2 Cl      aquifer_10   values       0.486 1.09e- 5</span></span>
 <span><span class="co">##  3 Cl      aquifer_2    values       0.869 2.24e- 1</span></span>
-<span><span class="co">##  4 Cl      aquifer_3    values       0.750 1.63e- 6</span></span>
+<span><span class="co">##  4 Cl      aquifer_3    values       0.750 9.98e- 7</span></span>
 <span><span class="co">##  5 Cl      aquifer_4    values       0.903 7.49e- 2</span></span>
 <span><span class="co">##  6 Cl      aquifer_5    values       0.849 2.24e- 1</span></span>
 <span><span class="co">##  7 Cl      aquifer_6    values       0.741 2.15e- 3</span></span>
@@ -719,9 +719,9 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <p>Looks like some of those distributions are significantly different from normal! So we need to be using non-parametric testing. If this were a simple case of two means we would use <code>wilcoxTest</code>, but we have many pairs, so we will use <code>pairwiseWilcoxTest</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code><a href="https://rpkgs.datanovia.com/rstatix/reference/wilcox_test.html">?rstatix::pairwise_wilcox_test</a></code>):</p>
 <div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pairwiseWilcoxTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/pairwiseWilcoxTest.html">pairwiseWilcoxTest</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 10 × 10</span></span>
 <span><span class="co">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span></span>
 <span><span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span></span>
@@ -741,9 +741,9 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <p>What would we have done if every distribution had passed the Shapiro test? Well, a <code>pairwiseTTest</code> of course! Like <code>tTest</code>, it runs Welch’s t-test for each pair, so it needs no check that the two analytes have similar variances:</p>
 <div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pairwiseTTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/pairwiseTTest.html">pairwiseTTest</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span></span>
 <span>  <span class="va">test_output</span></span>
 <span><span class="co">## # A tibble: 10 × 11</span></span>
 <span><span class="co">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span></span>
@@ -780,12 +780,12 @@ Sodium and chloride in each of the ten Hawaiian aquifers. Violin plots of abunda
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"gold"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, fill <span class="op">=</span> <span class="st">"maroon"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geomSignif</span><span class="op">(</span>data <span class="op">=</span> <span class="va">anno</span>, orientation <span class="op">=</span> <span class="st">"horizontal"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/geomSignif.html">geomSignif</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">anno</span>, orientation <span class="op">=</span> <span class="st">"horizontal"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_x_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Analyte"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Abundance"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -841,7 +841,7 @@ Self-check: In aquifer 1, p is 0.054 but p.adj is 0.49. Why is p.adj so much lar
 <tr class="odd">
 <td><code>shapiroTest(abundance)</code></td>
 <td>is each group roughly normal? (p &gt; 0.05 means not significantly different from normal)</td>
-<td>after <code>group_by()</code> on the grouping column(s)</td>
+<td>after <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> on the grouping column(s)</td>
 </tr>
 <tr class="even">
 <td><code>tTest(abundance ~ aquifer_code)</code></td>
@@ -868,7 +868,7 @@ Self-check: In aquifer 1, p is 0.054 but p.adj is 0.49. Why is p.adj so much lar
 </td>
 </tr>
 <tr class="even">
-<td><code>pGroups()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups()</a></code></td>
 <td>letters for each group from Games-Howell or Dunn output (a shared letter means no significant difference)</td>
 <td>piped after <code>gamesHowellTest</code> or <code>dunnTest</code>, then drawn with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text()</a></code>
 </td>
@@ -881,7 +881,7 @@ Self-check: In aquifer 1, p is 0.054 but p.adj is 0.49. Why is p.adj so much lar
 <td>after <code>group_by(aquifer_code)</code>, with <code>p.adj</code> corrected across all the groups</td>
 </tr>
 <tr class="even">
-<td><code>geomSignif()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/geomSignif.html">geomSignif()</a></code></td>
 <td>draws brackets and stars from pairwise test output</td>
 <td>
 <code>data =</code> a table built from the test output</td>
@@ -982,7 +982,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -122,26 +122,26 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr","ggrepel","RCol
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>We’ve looked at how to filter data and map variables in our data to geometric shapes to make plots. Let’s have a look at a few more things. For these examples, we’re going to use the data set called <code>solvents</code>. These examples introduce two new geoms. The first, <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code>, is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_smooth</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## `geom_smooth()` using method = 'loess' and formula = 'y ~</span></span>
 <span><span class="co">## x'</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-150-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Also, please be aware of <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code>, which is nice for situations with two discrete variables and one continuous variable. <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> makes what are often referred to as heat maps. Note that <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> is somewhat similar to <code>geom_point(shape = 21)</code>, in that it has both <code>fill</code> and <code>color</code> aesthetics that control the fill color and the border color, respectively.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">harvesting_regime</span> <span class="op">==</span> <span class="st">"Heavy"</span><span class="op">)</span>,</span>
-<span>  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">chemical_species</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">harvesting_regime</span> <span class="op">==</span> <span class="st">"Heavy"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">chemical_species</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>These examples should illustrate that there is, to some degree, correspondence between the type of data being plotted (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.</p>
 <p>Two more geoms are worth knowing at this stage, because they place text directly onto the plot. The first, <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text()</a></code>, draws a piece of text at each data point. To use it, map a variable to the <code>label</code> aesthetic and ggplot prints it. This is enormously useful for knowing <em>which</em> point is which, rather than just where the points sit. Let’s go back to the <code>solvents</code> scatter plot from earlier and label each point with the name of the solvent:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">solvent</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">solvent</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>That works, but with this many points the labels overlap and can be a bit unreadable. The <code>ggrepel</code> package largely solves this with <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel()</a></code>, a near drop-in replacement that gently nudges the labels away from each other:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -232,7 +232,8 @@ Self-check: what does faceting do to your plot?
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>The color scales provided by RColorBrewer are a particularly useful type of scale:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">display.brewer.all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">display.brewer.all</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-159-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span> <span class="op">+</span></span>
@@ -351,32 +352,33 @@ Self-check: the <code><a href="https://ggplot2.tidyverse.org/reference/theme.htm
 <div id="subplots" class="section level2 unnumbered">
 <h2>subplots<a class="anchor" aria-label="anchor" href="#subplots"><i class="fas fa-link"></i></a>
 </h2>
-<p>We can make subplots using the <code>plot_grid()</code> function from the <code>cowplot</code> package, which comes with the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Let’s see:</p>
+<p>We can make subplots using the <code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid()</a></code> function from the <code>cowplot</code> package, which we load with <code><a href="https://wilkelab.org/cowplot/">library(cowplot)</a></code>. Let’s see:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plot1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"free"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="va">plot1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>            <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"free"</span><span class="op">)</span></span>
 <span>          <span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"A"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot2</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"bound"</span><span class="op">)</span></span>
+<span>            <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"bound"</span><span class="op">)</span></span>
 <span>          <span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"B"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot3</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element</span> <span class="op">==</span> <span class="st">"C"</span><span class="op">)</span></span>
+<span>            <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element</span> <span class="op">==</span> <span class="st">"C"</span><span class="op">)</span></span>
 <span>          <span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span>, <span class="va">plot3</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span>, <span class="va">plot3</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-167-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <div id="concept-check-8" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-8"><i class="fas fa-link"></i></a>
 </h4>
-<p><code>plot_grid()</code> from <code>cowplot</code> arranges finished plots into one figure. Fill in the two blanks with the plot objects <code>p1</code> and <code>p2</code> so they sit side by side, then press Run.</p>
+<p><code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid()</a></code> from <code>cowplot</code> arranges finished plots into one figure. Fill in the two blanks with the plot objects <code>p1</code> and <code>p2</code> so they sit side by side, then press Run.</p>
 <div class="webr-cell">
 <textarea class="webr-code">p1 &lt;- ggplot(solvents, aes(x = category, y = boiling_point)) +
   geom_boxplot() + theme_classic()
@@ -387,7 +389,7 @@ plot_grid(____, ____)</textarea>
 </div>
 <div class="selfcheck" data-answer="1" data-explain="plot_grid() takes already-built ggplot objects as its arguments and lays them out together; it does not take a dataset or an aes() mapping.">
 <p class="scq">
-Self-check: what do you pass to <code>plot_grid()</code>?
+Self-check: what do you pass to <code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid()</a></code>?
 </p>
 <p><label><input type="radio"> a dataset and an aes() mapping</label>
 <label><input type="radio"> two or more finished plot objects</label>
@@ -408,7 +410,7 @@ Self-check: what do you pass to <code>plot_grid()</code>?
 Choosing geoms and facets. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms and facet commands taught in this chapter and the last. Yellow boxes are questions about the data or the plot and green boxes are recommended commands.
 </p>
 </div>
-<p>The kind of data being plotted can help you choose which geom to use: <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> for two continuous variables, and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel()</a></code> labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a <code>scale_*</code> command adjusts, themes control the non-data ink, and <code>plot_grid()</code> combines finished plots into one figure.</p>
+<p>The kind of data being plotted can help you choose which geom to use: <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> for two continuous variables, and <code><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile()</a></code> (a heat map) for two discrete variables and one continuous variable. When labeling which point is which matters, <code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html">geom_text_repel()</a></code> labels them without overlap. Facets split a plot into small multiples, one panel per level of a categorical variable. Every aesthetic mapping creates a scale that a <code>scale_*</code> command adjusts, themes control the non-data ink, and <code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid()</a></code> combines finished plots into one figure.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -489,7 +491,7 @@ Choosing geoms and facets. This decision flowchart starts from the kind of varia
 </td>
 </tr>
 <tr class="odd">
-<td><code>plot_grid()</code></td>
+<td><code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid()</a></code></td>
 <td>arranges finished plot objects into one figure</td>
 <td>the plot objects, <code>ncol</code>
 </td>
@@ -606,7 +608,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

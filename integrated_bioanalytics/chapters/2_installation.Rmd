@@ -6,7 +6,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## R {-}
 
-R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
+R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to installing RStudio. If not, follow these steps to install R:
 
 1. Go to https://cran.r-project.org/
 
@@ -36,7 +36,7 @@ If you have trouble installing RStudio please google "Install RStudio Mac" or "I
 
 ## verification {-}
 
-Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
+Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png', dpi = NA)
@@ -102,20 +102,30 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 ## phylochemistry {-}
 
-In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
+In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. The datasets and custom functions come in the course's R package, phylochemistry, which also installs the other packages the chapters use. Install everything by running these two commands once in the R console:
 
-First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
-```{r, echo = FALSE, cache = FALSE}
-bustalab <- TRUE
+```{r, eval = FALSE}
+install.packages("BiocManager")
+install.packages(c("tidyverse", "phylochemistry"), repos = c("https://thebustalab.r-universe.dev", BiocManager::repositories()))
 ```
+
+The first command installs BiocManager, a small helper that points R at the version of Bioconductor that matches your version of R. Bioconductor hosts a few of the packages phylochemistry relies on, such as the tree-drawing package ggtree. The second command installs the tidyverse and phylochemistry along with everything they need. The installation can take several minutes. If R asks "Do you want to install from sources the packages which need compilation?", type `no` and press enter. You only need to do this once on each computer, and again after you upgrade R.
+
+Then, each time you open R or RStudio, load the tidyverse and phylochemistry:
 
 ```{r, message = FALSE, cache = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(tidyverse)
+library(phylochemistry)
 ```
 
+The datasets used in this book, such as `algae_data`, are available as soon as phylochemistry is loaded. A few large datasets are downloaded the first time you ask for them, for example `ny_trees <- getDataset("ny_trees")`. Some functions in the later chapters need extra packages, and the first time you use one of them it will tell you what to install.
 
+If you are in the Busta Lab, also install the lab package once, then load it in each session alongside phylochemistry:
 
-The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
+```r
+install.packages("bustalab", repos = c("https://thebustalab.r-universe.dev", BiocManager::repositories()))
+library(bustalab)
+```
 
 <!-- end -->
 
@@ -123,7 +133,7 @@ The first time you try this, it will very likely say: "You need to install the f
 
 Once R, RStudio, and phylochemistry are installed, the last piece is getting your own data into R. The sandboxes in this book load their datasets for you, but data sitting on your own hard drive has to be imported, and there are two ways to do it.
 
-The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
+The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with phylochemistry. You run `readCSV()` in your console, then navigate to the data on your hard drive.
 
 Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
 

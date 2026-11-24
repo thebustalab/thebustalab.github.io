@@ -134,11 +134,11 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 </h2>
 <p>The comparing groups chapter asked whether groups differ, and which pairs. ANOVA asks a broader question: of all the variation in a set of measurements, how much is explained by each factor in the experiment, and how do those factors combine?</p>
 <p>The central idea of ANOVA is that the spread in a set of measurements can be split into parts. Spread here means a <strong>sum of squares</strong>: each measurement’s distance from the grand mean (the average of every measurement), squared, and added up. Some of the spread lies between groups: the group averages sit away from the grand mean. The rest lies within groups: each measurement scatters around its own group’s average. That leftover spread is the <strong>noise</strong>, the variation the groups do not explain. If the groups truly do not differ, the between-group part should be about the size the noise alone would produce. Divided by its number of free values (explained below), each part becomes a variance: the <strong>variance between groups</strong> and the <strong>variance within groups</strong>. The F statistic is the first divided by the second, and a large F means the groups differ by more than noise would allow.</p>
-<p>The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones <code>anovaTest()</code> prints, and the next sections explain each of them. Every row of the table is built from distances like these, an idea the PERMANOVA section at the end of the chapter carries from one measurement to a whole profile.</p>
+<p>The instrument below builds that split one row at a time, on 30 plants of three species. Press the numbered buttons in order: each draws the distances its row adds up, then fills in the row of the table. The columns are the ones <code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code> prints, and the next sections explain each of them. Every row of the table is built from distances like these, an idea the PERMANOVA section at the end of the chapter carries from one measurement to a whole profile.</p>
 <div class="anova-instrument" data-config="/integrated_bioanalytics/data/anova_instrument_one_factor.json">
 
 </div>
-<p>This is the same machinery as the regression chapter, where the r-squared was the share of the total sum of squares a model explains. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a <strong>factor</strong>). The formula is written the same way: the response on the left of the <code>~</code>, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with <code>buildModel()</code> and a formula, as in the regression chapter’s section on comparing slopes between groups, then ask that one model questions with <code>anovaTest()</code> and, for a single factor, <code>gamesHowellTest()</code>.</p>
+<p>This is the same machinery as the regression chapter, where the r-squared was the share of the total sum of squares a model explains. An ANOVA is a linear model whose predictors are categories rather than numbers (a categorical predictor in an ANOVA is usually called a <strong>factor</strong>). The formula is written the same way: the response on the left of the <code>~</code>, the predictors on the right. That connection is what lets ANOVA grow beyond a single factor: anything a linear model can include (a second factor, an interaction, a numeric predictor) can appear in an ANOVA too. It also means the work can be organized the same way throughout this chapter: build the model once with <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> and a formula, as in the regression chapter’s section on comparing slopes between groups, then ask that one model questions with <code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code> and, for a single factor, <code><a href="https://rdrr.io/pkg/phylochemistry/man/gamesHowellTest.html">gamesHowellTest()</a></code>.</p>
 <div id="concept-check-58" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-58"><i class="fas fa-link"></i></a>
 </h4>
@@ -166,14 +166,14 @@ Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does tha
 </h3>
 <p>Using the potassium data from the comparing groups chapter, we build a model of abundance by aquifer, and a one-way ANOVA on it asks whether the aquifers differ at all:</p>
 <div class="sourceCode" id="cb181"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">K_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">K_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">K_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
 <span>  formula <span class="op">=</span> <span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">K_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##           term sum_of_squares free_values variance    F</span></span>
 <span><span class="co">## 1 aquifer_code          150.4           9   16.710 9.49</span></span>
 <span><span class="co">## 2        noise          169.2          96    1.762   NA</span></span>
@@ -186,8 +186,8 @@ Self-check: an ANOVA on potassium in ten aquifers gives a large F. What does tha
 <p>The ANOVA does not say which aquifers differ. That is the job of the Games-Howell test from the comparing groups chapter, which accepts the same model and returns the same letters as <code>gamesHowellTest(abundance ~ aquifer_code)</code> on the data:</p>
 <div class="sourceCode" id="cb182"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">gamesHowellTest</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/gamesHowellTest.html">gamesHowellTest</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##             treatment  group spaced_group estimate</span></span>
 <span><span class="co">## aquifer_1   aquifer_1  abcde       abcde  2.325000</span></span>
 <span><span class="co">## aquifer_10 aquifer_10 abcdef       abcdef 2.328571</span></span>
@@ -240,7 +240,7 @@ Self-check: the magnesium ANOVA gives the aquifer row a share of 0.53. What does
 <div id="reading-the-anova-table" class="section level3 unnumbered">
 <h3>reading the ANOVA table<a class="anchor" aria-label="anchor" href="#reading-the-anova-table"><i class="fas fa-link"></i></a>
 </h3>
-<p><code>anovaTest()</code> prints one row for each term in the model, then a row for the noise and a row for the total. Read the total row first: it holds all of the spread in the response, and every other row is a part of it. Reading across a row:</p>
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code> prints one row for each term in the model, then a row for the noise and a row for the total. Read the total row first: it holds all of the spread in the response, and every other row is a part of it. Reading across a row:</p>
 <ul>
 <li>
 <code>sum_of_squares</code> is the spread the row accounts for. The rows above the total add up to the total.</li>
@@ -317,7 +317,7 @@ Self-check: a trial compares four fertilizers with six plots each. How many free
 <p>The rank-based cousin of the ANOVA is the Kruskal test. It is the Wilcox test extended to more than two groups: it pools every value from every group, ranks them all together, and asks whether the groups’ average ranks differ by more than chance would allow. It behaves much like an ANOVA run on the ranks, which is why it does not need normally distributed data. It answers only the “any difference at all?” question for a single factor, and which groups differ is then a question for the Dunn test from the comparing groups chapter. Rank-based versions of the designs in the rest of this chapter do exist, but they are more specialized and are not covered here.</p>
 <div class="sourceCode" id="cb183"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">kruskalTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/kruskalTest.html">kruskalTest</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 6</span></span>
 <span><span class="co">##   .y.           n statistic    df             p method      </span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;       </span></span>
@@ -344,9 +344,10 @@ Self-check: when is the Kruskal test the right choice?
 <div id="checking-the-model" class="section level3 unnumbered">
 <h3>checking the model<a class="anchor" aria-label="anchor" href="#checking-the-model"><i class="fas fa-link"></i></a>
 </h3>
-<p>An ANOVA makes the same assumptions as the linear models in the regression chapter, and they are all assumptions about the noise: each measurement’s distance from its group mean (which <code>check_model()</code> calls a residual) should be roughly normal and have a similar spread in every group, and the measurements should be independent. The <code>check_model()</code> habit from the regression chapter applies here unchanged:</p>
+<p>An ANOVA makes the same assumptions as the linear models in the regression chapter, and they are all assumptions about the noise: each measurement’s distance from its group mean (which <code><a href="https://easystats.github.io/performance/reference/check_model.html">check_model()</a></code> calls a residual) should be roughly normal and have a similar spread in every group, and the measurements should be independent. The <code><a href="https://easystats.github.io/performance/reference/check_model.html">check_model()</a></code> habit from the regression chapter applies here unchanged:</p>
 <div class="sourceCode" id="cb184"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">check_model</span><span class="op">(</span><span class="va">K_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://easystats.github.io/performance/">performance</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_model.html">check_model</a></span><span class="op">(</span><span class="va">K_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-587"></span>
 <img src="index_files/figure-html/unnamed-chunk-587-1.png" alt="Diagnostic checks for the one-way ANOVA model of potassium by aquifer. Panels produced by check_model(): a posterior predictive check comparing the distribution of observed and model-predicted potassium; linearity and homogeneity of variance, each plotting residuals against fitted values (one vertical stripe per aquifer); influential observations, plotting standardized residuals against leverage; and normality of residuals as a quantile-quantile plot. Data are from the hawaii_aquifers dataset." width="100%"><p class="caption">
@@ -380,17 +381,17 @@ Self-check: in the residuals-against-fitted-values panel, some aquifers’ strip
 <p>As an example in real data, consider sodium and chloride in four of the aquifers:</p>
 <div class="sourceCode" id="cb185"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nacl</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span>,</span>
 <span>         <span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_2"</span>, <span class="st">"aquifer_3"</span>, <span class="st">"aquifer_4"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nacl_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span><span class="va">nacl_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">nacl</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
 <span>  formula <span class="op">=</span> <span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span> <span class="op">*</span> <span class="va">aquifer_code</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nacl_model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##                   term sum_of_squares free_values variance</span></span>
 <span><span class="co">## 1              analyte           7031           1   7031.0</span></span>
 <span><span class="co">## 2         aquifer_code          22050           3   7349.0</span></span>
@@ -406,8 +407,8 @@ Self-check: in the residuals-against-fitted-values panel, some aquifers’ strip
 <p>The <code>*</code> in the formula asks for both factors and their interaction. The table has one row for each, then the noise and the total, and the free values still follow the rules: the 76 measurements leave 75 once the grand mean is spoken for, analyte (two levels) takes 1, aquifer (four levels) takes 3, the interaction takes 1 × 3 = 3, and the noise keeps the remaining 68. Analyte explains about 11% of the variation (chloride is more abundant than sodium overall) and aquifer about 33%. The interaction row asks whether the gap between chloride and sodium is the same in every aquifer. It explains about 6% of the variation, and its p-value is 0.056, just above the usual threshold, so the evidence that the gap changes from aquifer to aquifer is suggestive but not conclusive. An interaction plot shows what the row is testing: one line per analyte across the aquifers. Parallel lines mean no interaction; lines that converge, diverge or cross mean the effect of one factor depends on the other.</p>
 <div class="sourceCode" id="cb186"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nacl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">analyte</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>mean_abundance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">analyte</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_abundance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">mean_abundance</span>, color <span class="op">=</span> <span class="va">analyte</span>, group <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -453,10 +454,10 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 
 </div>
 <p>The shuffling is the new idea. If species made no difference to the profile, the species labels would be arbitrary, and dealing them out to the plants at random would make the species row stand out from the noise about as much as the real labels do. Shuffling 999 times and counting how often a shuffle does at least as well gives the p-value: (that count + 1) ÷ (999 + 1). It needs no assumption about the shape of the data, and it has two consequences worth knowing: the p-value changes slightly from run to run, and it can never be smaller than 1 ÷ (number of shuffles + 1), so with 999 shuffles the smallest possible value is 0.001.</p>
-<p><code>permanovaTest()</code> runs the analysis and prints the same columns as <code>anovaTest()</code>. It takes the data and a formula directly, with no <code>buildModel()</code> step first: a PERMANOVA fits no model to a single response, it splits the distances between the samples’ profiles, so there is nothing to build beforehand, and the distance to use is one of its own arguments. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside <code><a href="https://rdrr.io/r/base/cbind.html">cbind()</a></code>:</p>
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest()</a></code> runs the analysis and prints the same columns as <code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code>. It takes the data and a formula directly, with no <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> step first: a PERMANOVA fits no model to a single response, it splits the distances between the samples’ profiles, so there is nothing to build beforehand, and the distance to use is one of its own arguments. For data with one row per sample and one column per compound, the compounds go on the left of the formula inside <code><a href="https://rdrr.io/r/base/cbind.html">cbind()</a></code>:</p>
 <div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fertilizer_trial</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">permanovaTest</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">limonene</span>, <span class="va">pinene</span><span class="op">)</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">limonene</span>, <span class="va">pinene</span><span class="op">)</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
 <span><span class="co">##                 term sum_of_squares free_values variance</span></span>
 <span><span class="co">## 1            species         2847.0           2  1424.00</span></span>
 <span><span class="co">## 2         fertilizer          337.8           1   337.80</span></span>
@@ -466,17 +467,17 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <span><span class="co">##       F     p share</span></span>
 <span><span class="co">## 1 72.15 0.001 0.747</span></span>
 <span><span class="co">## 2 17.12 0.001 0.089</span></span>
-<span><span class="co">## 3  3.85 0.019 0.040</span></span>
+<span><span class="co">## 3  3.85 0.021 0.040</span></span>
 <span><span class="co">## 4    NA    NA 0.124</span></span>
 <span><span class="co">## 5    NA    NA 1.000</span></span></code></pre></div>
 <p>Species explains about 75% of the variation in the leaf profile and fertilizer about 9%. The interaction explains about 4%, and its p-value (around 0.03, varying a little from run to run) suggests that fertilizer does not shift every species’ profile the same way: in the instrument, fertilizer raises limonene in species A and, even more, in species B, and leaves species C almost where it was. PERMANOVA is ANOVA carried out on distances, and with a single response the two agree exactly. The distance between two plants’ limonene values, squared, is just the squared difference between them, so splitting those distances gives the same sums of squares, free values, variances, F values and shares as the linear model. Only p differs, because one comes from shuffling and the other from the F distribution:</p>
 <div class="sourceCode" id="cb188"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">fertilizer_trial</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
 <span>  formula <span class="op">=</span> <span class="va">limonene</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">anovaTest</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##                 term sum_of_squares free_values variance</span></span>
 <span><span class="co">## 1            species         1749.0           2   874.60</span></span>
 <span><span class="co">## 2         fertilizer          320.1           1   320.10</span></span>
@@ -491,7 +492,7 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <span><span class="co">## 5    NA       NA 1.000</span></span>
 <span></span>
 <span><span class="va">fertilizer_trial</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">permanovaTest</span><span class="op">(</span><span class="va">limonene</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest</a></span><span class="op">(</span><span class="va">limonene</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">fertilizer</span><span class="op">)</span></span>
 <span><span class="co">##                 term sum_of_squares free_values variance</span></span>
 <span><span class="co">## 1            species         1749.0           2   874.60</span></span>
 <span><span class="co">## 2         fertilizer          320.1           1   320.10</span></span>
@@ -501,15 +502,15 @@ Self-check: in an interaction plot, the lines for the two analytes run parallel 
 <span><span class="co">##       F     p share</span></span>
 <span><span class="co">## 1 79.15 0.001 0.704</span></span>
 <span><span class="co">## 2 28.97 0.001 0.129</span></span>
-<span><span class="co">## 3  6.84 0.007 0.061</span></span>
+<span><span class="co">## 3  6.84 0.006 0.061</span></span>
 <span><span class="co">## 4    NA    NA 0.107</span></span>
 <span><span class="co">## 5    NA    NA 1.000</span></span></code></pre></div>
-<p>For a single response, <code>buildModel()</code> with <code>anovaTest()</code> remains the route to use: it gives an exact p, and the same model then answers the follow-up questions (which groups differ, and whether the noise looks the way the test assumes). PERMANOVA earns its place when the response is a whole profile.</p>
-<p>Most of the course’s data sets are long, with one row per measurement, like <code>hawaii_aquifers</code>, where each well’s water chemistry is spread over nine rows, one per analyte. <code>permanovaTest()</code> takes long data directly: the value column goes on the left of the formula, <code>profile =</code> names the column that says which compound (or analyte) each row holds, and <code>sample =</code> names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:</p>
+<p>For a single response, <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> with <code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code> remains the route to use: it gives an exact p, and the same model then answers the follow-up questions (which groups differ, and whether the noise looks the way the test assumes). PERMANOVA earns its place when the response is a whole profile.</p>
+<p>Most of the course’s data sets are long, with one row per measurement, like <code>hawaii_aquifers</code>, where each well’s water chemistry is spread over nine rows, one per analyte. <code><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest()</a></code> takes long data directly: the value column goes on the left of the formula, <code>profile =</code> names the column that says which compound (or analyte) each row holds, and <code>sample =</code> names the column or columns that identify a sample. Five well names in this data set are each used for two wells at different positions, so a well is identified here by its name and its position together. Dissolved solids is left out because it is a total that overlaps the other analytes, and bicarbonate because it was not measured in 64 of the wells, and every sample needs the full profile:</p>
 <div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dissolved_solids"</span>, <span class="st">"HCO3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">permanovaTest</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dissolved_solids"</span>, <span class="st">"HCO3"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest</a></span><span class="op">(</span></span>
 <span>    <span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span>,</span>
 <span>    profile <span class="op">=</span> <span class="st">"analyte"</span>,</span>
 <span>    sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"well_name"</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span><span class="op">)</span>,</span>
@@ -622,7 +623,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 </tr>
 <tr class="even">
 <td>
-<code>anovaTest()</code>, <code>permanovaTest()</code>
+<code><a href="https://rdrr.io/pkg/phylochemistry/man/anovaTest.html">anovaTest()</a></code>, <code><a href="https://rdrr.io/pkg/phylochemistry/man/permanovaTest.html">permanovaTest()</a></code>
 </td>
 <td>the ANOVA table: a row per term, then noise and total, with <code>sum_of_squares</code>, <code>free_values</code>, <code>variance</code>, <code>F</code>, <code>p</code> and <code>share</code>
 </td>
@@ -630,7 +631,7 @@ Harvest Home is the world we play together in class, and you can also play it on
 </tr>
 <tr class="odd">
 <td>
-<code>gamesHowellTest()</code>, <code>pGroups()</code>
+<code><a href="https://rdrr.io/pkg/phylochemistry/man/gamesHowellTest.html">gamesHowellTest()</a></code>, <code><a href="https://rdrr.io/pkg/phylochemistry/man/pGroups.html">pGroups()</a></code>
 </td>
 <td>which groups differ, as letters, using each group’s own spread</td>
 <td>piped after the same one-factor model</td>
@@ -638,11 +639,11 @@ Harvest Home is the world we play together in class, and you can also play it on
 <tr class="even">
 <td><code>kruskalTest(abundance ~ aquifer_code)</code></td>
 <td>rank-based test of any difference, one factor</td>
-<td>on the data, followed by <code>dunnTest()</code>
+<td>on the data, followed by <code><a href="https://rdrr.io/pkg/phylochemistry/man/dunnTest.html">dunnTest()</a></code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>check_model()</code></td>
+<td><code><a href="https://easystats.github.io/performance/reference/check_model.html">check_model()</a></code></td>
 <td>diagnostic panels for the noise (residuals)</td>
 <td>given <code>model$model</code>
 </td>
@@ -734,7 +735,7 @@ A storm has brought down the power line at Rothamsted, every electric clock on t
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

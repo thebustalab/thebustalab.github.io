@@ -201,6 +201,7 @@ Fill in the blank with the pipe, so the data flows from one line to the next. Pr
 So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics: things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly 400,000 trees in New York City (this is after considerable filtering and simplification):
 
 ```{r}
+ny_trees <- getDataset("ny_trees")
 head(ny_trees)
 ```
 
@@ -482,7 +483,7 @@ cat('
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the periodic table. After you run `library(phylochemistry)` you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
 Some pointers:
 

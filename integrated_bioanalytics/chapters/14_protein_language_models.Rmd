@@ -12,9 +12,10 @@ In the last chapter, we saw how language models convert text into numerical vect
 
 Running the analyses in this chapter requires three things.
 
-1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+1. Please ensure that your computer can load the tidyverse and phylochemistry (see "installation" in the appendix). Some functions in this chapter may prompt you to install additional R packages the first time you use them.
 ```{r}
-source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
+library(tidyverse)
+library(phylochemistry)
 ```
 2. Please create an account at and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
 3. Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from https://build.nvidia.com/. (To get an API key, go to: https://build.nvidia.com/meta/esm2-650m, switch "input" to python and click "Get API Key" > Generate Key)
@@ -37,7 +38,7 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
 
-In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` object provided by the `source()` code works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` dataset (load it with `OSC_sequences <- getDataset("OSC_sequences")`) works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
 
 ```{r, cache = TRUE}
 g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
@@ -146,7 +147,7 @@ A protein language model turns each amino acid sequence into an embedding, a row
 
 <!-- ## exercises {-}
 
-3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
+3. Generate and visualize a set of protein embeddings. You can use the `OSC_sequences` dataset (`OSC_sequences <- getDataset("OSC_sequences")`), or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 ```{r, echo = FALSE, eval = FALSE, cache = TRUE}
 library(rentrez)

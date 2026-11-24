@@ -154,7 +154,7 @@ Iron content and density of 37 meteorite fragments. A scatter plot with iron con
 </div>
 <p>Three groups stand out right away, plus a couple of fragments that do not sit comfortably in any of them. K-means does formally what the eye just did. Let’s try it using <code>runMatrixAnalysis</code>. We set <code>analysis = "kmeans"</code>, name the columns to cluster on, and give the number of clusters we want to the <code>parameters</code> argument as <code>n_clusters</code> (the same way we asked for a number of groups when cutting a tree in the hierarchical clustering chapter). Below we ask for three clusters, and the next section shows how to arrive at that number. (With <code>parameters</code> left out altogether, desktop R opens a small application for choosing the number of clusters with a slider. That application cannot run in a browser, so in a markdown document, in a WebR cell, or in an escape room, the number of clusters always has to be given explicitly.)</p>
 <div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">meteorite_clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>n_clusters <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
@@ -180,12 +180,13 @@ Iron content and density of 37 meteorite fragments. A scatter plot with iron con
 <span><span class="co">## # ℹ 1 more variable: density_g_per_cm3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output has one row per fragment: its ID columns, the <code>cluster</code> k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, <code>runMatrixAnalysis</code> scales each column before it clusters (<code>scale_variance = TRUE</code> is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using <code>geom_mark_ellipse</code>. Note that it is recommended to specify both <code>fill</code> and <code>label</code> for geom_mark_ellipse:</p>
 <div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggforce.data-imaginist.com">ggforce</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_clusters</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_mark_ellipse</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://ggforce.data-imaginist.com/reference/geom_mark_ellipse.html">geom_mark_ellipse</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_clusters</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -232,7 +233,7 @@ Self-check: runMatrixAnalysis scales each column before k-means runs. Why does t
 </h2>
 <p>Above we simply asserted that three clusters was the right number. How would we know? Fewer clusters are generally easier to interpret, but too few leave a lot of variance inside each cluster, so the goal is a balance between the two. The elbow method, illustrated in the image at the top of this chapter, is a way of finding that balance. In that image, the same points are clustered into one, two, three, and more clusters (panel <strong>A</strong>), the within-cluster variance is measured for each number of clusters (<strong>B</strong>), and those values are plotted against the number of clusters (<strong>C</strong>). The best balance sits at the “elbow”, the point where the line bends most sharply (the point with the smallest angle theta). The elbow point indicates the number of clusters we can use to get the smallest within-cluster variance before diminishing returns set in. We can ask <code>runMatrixAnalysis</code> for the numbers it needs by setting <code>parameters = "elbow"</code>:</p>
 <div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_elbow</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">meteorite_elbow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="st">"elbow"</span>,</span>
@@ -270,7 +271,7 @@ Elbow plot for the meteorite fragments. Within-cluster variance falls steeply fr
 <p>Reading left to right: going from one cluster to two, and from two to three, each buys a large reduction in within-cluster variance, and after that the returns collapse. The line has clearly flattened by three clusters, which is where the three we used above came from. Here the elbow is sharp, because the fragments really do come in three kinds. With real data it is often gentler, and then choosing k is a judgment call, not a calculation. It is an important skill to be able to recognize when the elbow is sharp (and so the number of groups is really a property of the data) and when it is gentle (and so the number of groups is largely a choice). Even a sharp elbow belongs to the columns that were clustered, not to the samples alone: the same samples clustered on a different set of measurements can bend just as sharply at a different number of groups, and both answers can be right.</p>
 <p>By default <code>runMatrixAnalysis</code> tries every number of clusters from one up to ten. To try a different range, pass the maximum as a second value:</p>
 <div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"elbow"</span>, <span class="fl">6</span><span class="op">)</span>,</span>
@@ -309,9 +310,9 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <div id="dbscan" class="section level2 unnumbered">
 <h2>dbscan<a class="anchor" aria-label="anchor" href="#dbscan"><i class="fas fa-link"></i></a>
 </h2>
-<p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters. dbscan grows a cluster outwards from points that have at least “k” neighbors within a “threshold” distance of them, and a point that is not close enough to any cluster is left unassigned. In interactive mode, <code>runMatrixAnalysis()</code> will again load an interactive means of selecting these two parameters. In the context of a markdown document, escape room, or sandbox, simply provide “k” and “threshold” to the <code>parameters</code> argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:</p>
+<p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusters. dbscan grows a cluster outwards from points that have at least “k” neighbors within a “threshold” distance of them, and a point that is not close enough to any cluster is left unassigned. In interactive mode, <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> will again load an interactive means of selecting these two parameters. In the context of a markdown document, escape room, or sandbox, simply provide “k” and “threshold” to the <code>parameters</code> argument. Note that the threshold is measured on the scaled columns, not in percent or g/cm³:</p>
 <div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">meteorite_fragments</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
@@ -325,8 +326,8 @@ Self-check: the within-cluster variance is lowest at k = 10. Why is 10 not the n
 <span>    data <span class="op">=</span> <span class="va">meteorite_dbscan</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_mark_ellipse</span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu">drop_na</span><span class="op">(</span><span class="va">meteorite_dbscan</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://ggforce.data-imaginist.com/reference/geom_mark_ellipse.html">geom_mark_ellipse</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="va">meteorite_dbscan</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -369,11 +370,11 @@ Self-check: k-means was run on the same two fragments earlier in the chapter. Wh
 <div id="summarize-by-cluster" class="section level2 unnumbered">
 <h2>summarize by cluster<a class="anchor" aria-label="anchor" href="#summarize-by-cluster"><i class="fas fa-link"></i></a>
 </h2>
-<p>One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the <code>cluster</code> column and use <code>n()</code>, which counts the rows in each group:</p>
+<p>One more important point: when using k-means or dbscan, we can use the clusters as groupings for summary statistics. The simplest summary is a count: how many fragments ended up in each cluster? Group by the <code>cluster</code> column and use <code><a href="https://dplyr.tidyverse.org/reference/context.html">n()</a></code>, which counts the rows in each group:</p>
 <div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 4 × 2</span></span>
 <span><span class="co">##   cluster       n</span></span>
 <span><span class="co">##   &lt;chr&gt;     &lt;int&gt;</span></span>
@@ -406,22 +407,22 @@ Self-check: what does the row with NA in the cluster column count?
 </h3>
 <p>We can also ask how the two measurements we did <em>not</em> cluster on, nickel and silica, differ among the clusters. The clustering output only carries the ID columns and the columns we clustered on, so nickel and silica have to be brought back from <code>meteorite_fragments</code>. Combining two tables like this is called a join. <code>left_join(x, y, by = ...)</code> keeps every row of <code>x</code>, finds the row of <code>y</code> with the same value in the <code>by</code> column(s), and adds that row’s other columns alongside. Each fragment has its own ID in the <code>fragment</code> column of both tables, so we match on that, and take only the two columns we need from <code>meteorite_fragments</code>:</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span></span>
 <span>  <span class="va">meteorite_dbscan</span>,</span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">meteorite_fragments</span>, <span class="va">fragment</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">meteorite_fragments</span>, <span class="va">fragment</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="st">"fragment"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Selecting first matters: any column that is in both tables but not in <code>by</code> comes back twice, renamed with <code>.x</code> and <code>.y</code> endings, and code that refers to it by its old name stops working. Naming <code>by</code> is worth it too: left out, <code>left_join</code> matches on every column the two tables share, which is not always what was intended. (The networks chapter used <code>full_join()</code>, which works the same way but also keeps rows of <code>y</code> that have no match in <code>x</code>.) With nickel and silica back in place, we can summarize them by cluster:</p>
+<p>Selecting first matters: any column that is in both tables but not in <code>by</code> comes back twice, renamed with <code>.x</code> and <code>.y</code> endings, and code that refers to it by its old name stops working. Naming <code>by</code> is worth it too: left out, <code>left_join</code> matches on every column the two tables share, which is not always what was intended. (The networks chapter used <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">full_join()</a></code>, which works the same way but also keeps rows of <code>y</code> that have no match in <code>x</code>.) With nickel and silica back in place, we can summarize them by cluster:</p>
 <div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meteorite_dbscan</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">cluster</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"measurement"</span>, values_to <span class="op">=</span> <span class="st">"percent"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">drop_na</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">cluster</span>, <span class="va">measurement</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">meteorite_dbscan_clean</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">nickel_percent</span>, <span class="va">silica_percent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"measurement"</span>, values_to <span class="op">=</span> <span class="st">"percent"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="va">measurement</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">meteorite_dbscan_clean</span></span>
 <span></span>
 <span><span class="va">plot_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>      <span class="va">meteorite_dbscan_clean</span>,</span>
 <span>      mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">percent</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">percent</span><span class="op">)</span></span>
 <span>    <span class="op">)</span>,</span>
@@ -429,7 +430,7 @@ Self-check: what does the row with NA in the cluster column count?
 <span>    color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_errorbar</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>      <span class="va">meteorite_dbscan_clean</span>,</span>
 <span>      mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">percent</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">percent</span><span class="op">)</span></span>
 <span>    <span class="op">)</span>,</span>
@@ -451,8 +452,8 @@ Self-check: what does the row with NA in the cluster column count?
 <span>    data <span class="op">=</span> <span class="va">meteorite_dbscan</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_mark_ellipse</span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu">drop_na</span><span class="op">(</span><span class="va">meteorite_dbscan</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://ggforce.data-imaginist.com/reference/geom_mark_ellipse.html">geom_mark_ellipse</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="va">meteorite_dbscan</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">iron_percent</span>, y <span class="op">=</span> <span class="va">density_g_per_cm3</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -552,12 +553,12 @@ Choosing a flat clustering method. This decision flowchart starts from a set of 
 <td><code>left_join(x, y, by = "fragment")</code></td>
 <td>brings back columns that were not clustered on</td>
 <td>
-<code>by</code>, and <code>select()</code> the needed columns of <code>y</code> first</td>
+<code>by</code>, and <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> the needed columns of <code>y</code> first</td>
 </tr>
 <tr class="even">
 <td><code>geom_mark_ellipse(aes(fill = cluster, label = cluster))</code></td>
 <td>draws an ellipse around each cluster</td>
-<td>use <code>drop_na()</code> on dbscan output to skip the <code>NA</code> samples</td>
+<td>use <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> on dbscan output to skip the <code>NA</code> samples</td>
 </tr>
 </tbody>
 </table></div>
@@ -606,7 +607,7 @@ Sixty robberies in three years, and nobody can say how many thieving crews are b
 </ul>
 <!-- ## exercises {-}
 
-For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run `library(phylochemistry)`. Do the following:
 
 1. Run a PCA analysis on the data set and plot the results. 
 
@@ -740,7 +741,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

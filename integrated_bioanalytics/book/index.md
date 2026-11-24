@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-23"
+date: "2026-11-24"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -56,12 +56,15 @@ To run the analyses described in this book, there are two ways:
 
 1. Use the live R sandboxes provided in this book. These run entirely in your browser and require no installation. The escape room exercises associated with the book will also work using this method. There are R sandboxes in each chapter, and a <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener"><b>general purpose sandbox here</b></a>.
 
-2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" in the appendix. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+2. Install R, RStudio and the course's R package, phylochemistry, on your own computer. The package brings the custom functions and datasets used throughout the book. If you don't have R, see "installation" in the appendix, which also explains the one-time install of phylochemistry. After that, start each R session (RStudio recommended) by loading the tidyverse and phylochemistry:
 
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(tidyverse)
+library(phylochemistry)
 ```
+
+If you are in the Busta Lab, also install and load the lab package, bustalab, as described in the appendix. If you have trouble installing or loading the packages, please reach out to Lucas Busta at: bust0037@d.umn.edu.
 
 Let's get started!
 
@@ -461,7 +464,7 @@ Some pointers:
 
 ### algae {-}
 
-1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `library(phylochemistry)`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 
 
@@ -774,6 +777,7 @@ The color scales provided by RColorBrewer are a particularly useful type of scal
 
 
 ``` r
+library(RColorBrewer)
 display.brewer.all()
 ```
 
@@ -915,10 +919,11 @@ Complete the plot with a built-in complete theme that strips away the gray backg
 
 ## subplots {-}
 
-We can make subplots using the `plot_grid()` function from the `cowplot` package, which comes with the `source()` command. Let's see:
+We can make subplots using the `plot_grid()` function from the `cowplot` package, which we load with `library(cowplot)`. Let's see:
 
 
 ``` r
+library(cowplot)
 plot1 <-  ggplot(
             filter(alaska_lake_data, element_type == "free")
           ) +
@@ -1378,6 +1383,7 @@ So far, we have been plotting raw data. This is well and good, but it is not alw
 
 
 ``` r
+ny_trees <- getDataset("ny_trees")
 head(ny_trees)
 ## # A tibble: 6 × 14
 ##   tree_height tree_diameter address        tree_loc pit_type
@@ -1817,7 +1823,7 @@ Wrangling comes down to deciding what the table should look like after each step
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the periodic table. After you run `library(phylochemistry)` you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
 Some pointers:
 
@@ -2150,6 +2156,7 @@ head(round(alaska_scaled, 2))
 
 
 ``` r
+library(cowplot)
 runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),
@@ -2732,12 +2739,12 @@ net <- buildNetwork(
 ## buildNetwork: every repeated node pair (A->B and B->A) had matching edge attributes, so the network is treated as undirected and 380 edges were collapsed to 190. Set directed = TRUE to keep both directions.
 head(net$nodes)
 ##                              x         y
-## Devil_Mountain_Lake 0.27680568 0.6307944
-## Imuruk_Lake         0.27948381 0.0000000
-## Kuzitrin_Lake       0.05977573 0.5360999
-## Lava_Lake           0.00000000 0.3553212
-## North_Killeak_Lake  1.00000000 0.4350483
-## White_Fish_Lake     0.47482513 1.0000000
+## Devil_Mountain_Lake 0.35003138 0.3376264
+## Imuruk_Lake         0.33204088 1.0000000
+## Kuzitrin_Lake       0.20513109 0.6316610
+## Lava_Lake           0.74078406 0.9314271
+## North_Killeak_Lake  0.40450851 0.0000000
+## White_Fish_Lake     0.01320601 0.2661430
 ##                               node_name park
 ## Devil_Mountain_Lake Devil_Mountain_Lake BELA
 ## Imuruk_Lake                 Imuruk_Lake BELA
@@ -2747,19 +2754,19 @@ head(net$nodes)
 ## White_Fish_Lake         White_Fish_Lake BELA
 head(net$edges)
 ##           x         y          start_node       xend
-## 1 0.2768057 0.6307944 Devil_Mountain_Lake 0.27948381
-## 2 0.2768057 0.6307944 Devil_Mountain_Lake 0.05977573
-## 3 0.2768057 0.6307944 Devil_Mountain_Lake 0.00000000
-## 4 0.2768057 0.6307944 Devil_Mountain_Lake 1.00000000
-## 5 0.2768057 0.6307944 Devil_Mountain_Lake 0.47482513
-## 6 0.2768057 0.6307944 Devil_Mountain_Lake 0.72222396
+## 1 0.3500314 0.3376264 Devil_Mountain_Lake 0.33204088
+## 2 0.3500314 0.3376264 Devil_Mountain_Lake 0.20513109
+## 3 0.3500314 0.3376264 Devil_Mountain_Lake 0.74078406
+## 4 0.3500314 0.3376264 Devil_Mountain_Lake 0.40450851
+## 5 0.3500314 0.3376264 Devil_Mountain_Lake 0.01320601
+## 6 0.3500314 0.3376264 Devil_Mountain_Lake 0.80138062
 ##        yend           end_node similarity
-## 1 0.0000000        Imuruk_Lake  21.403954
-## 2 0.5360999      Kuzitrin_Lake  37.549555
-## 3 0.3553212          Lava_Lake  22.717833
-## 4 0.4350483 North_Killeak_Lake   9.342952
-## 5 1.0000000    White_Fish_Lake  13.719374
-## 6 0.5350723       Iniakuk_Lake  19.539621
+## 1 1.0000000        Imuruk_Lake  21.403954
+## 2 0.6316610      Kuzitrin_Lake  37.549555
+## 3 0.9314271          Lava_Lake  22.717833
+## 4 0.0000000 North_Killeak_Lake   9.342952
+## 5 0.2661430    White_Fish_Lake  13.719374
+## 6 0.3801517       Iniakuk_Lake  19.539621
 ```
 
 These outputs are easy to plot with! `buildNetwork()` returns node and edge coordinates from a force-directed layout, ready for ggplot. Edges are drawn with `geom_segment()`, nodes with `geom_point()`. For `buildNetwork()`, the `edgelist` should have node names in columns 1 and 2 (`lake_sample_1`, `lake_sample_2` here). If a third column is present it is treated as the edge weight, and any additional columns are carried through as edge attributes. `node_attributes` is joined onto the nodes so they can be colored by something already known about the samples.
@@ -2967,6 +2974,7 @@ Note that `passenger_flows` is already an edge list: two columns naming the node
 
 
 ``` r
+library(ggrepel)
 air_net <- buildNetwork(
   edgelist = passenger_flows,
   node_attributes = us_airports,
@@ -3534,6 +3542,7 @@ Now let's plot the two trees side by side:
 
 
 ``` r
+library(cowplot)
 single_plot <- ggtree(solvents_single) +
     geom_tiplab(aes(label = solvent), offset = 0.05, size = 3) +
     geom_tippoint(shape = 21, aes(fill = category), size = 3) +
@@ -4054,7 +4063,7 @@ Hierarchical clustering merges the two closest groups, again and again, until ev
 <!-- ## exercises {-} -->
 
 
-<!-- For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+<!-- For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by phylochemistry. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
 
 <!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
 
@@ -4158,6 +4167,7 @@ The output has one row per fragment: its ID columns, the `cluster` k-means assig
 
 
 ``` r
+library(ggforce)
 ggplot() +
   geom_point(
     data = meteorite_clusters,
@@ -4557,7 +4567,7 @@ Flat clustering sorts samples straight into groups. **K-means** places every sam
 
 <!-- ## exercises {-}
 
-For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run `library(phylochemistry)`. Do the following:
 
 1. Run a PCA analysis on the data set and plot the results. 
 
@@ -4673,7 +4683,7 @@ Dimensional reduction uses the concept of a small number of new axes to represen
 
 <hr>
 
-In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
+In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that comes with the phylochemistry package.
 
 Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
@@ -4780,6 +4790,7 @@ Let's plot the 2D projection of the Alaska lakes data:
 
 
 ``` r
+library(ggrepel)
 ggplot(data = AK_lakes_pca, aes(x = Dim_1, y = Dim_2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
@@ -4847,6 +4858,7 @@ We can now visualize the ordination plot using our standard ggplot plotting tech
 
 
 ``` r
+library(ggforce)
 ggplot(AK_lakes_pca_ord) +
   geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte), size = 1) +
   geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
@@ -5038,7 +5050,7 @@ filter(AK_lakes_pca_dim, principal_component %in% c(1, 2))</textarea></div>
 
 ### pcaVisualizer {-}
 
-Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
+Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. The phylochemistry package provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
 
 <div class="figure" style="text-align: center">
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%" />
@@ -5090,6 +5102,7 @@ Before starting with non-linear techniques, it can be helpful to see how a linea
 
 
 ``` r
+library(viridis)
 wq <- runMatrixAnalysis(
   data = wine_quality,
   analysis = "pca",
@@ -5339,7 +5352,7 @@ ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(phylochemistry)
 library(rstatix)
 library(agricolae)
 library(multcompView)
@@ -5910,7 +5923,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 1.63e- 6
+##  4 Cl      aquifer_3    values       0.750 9.98e- 7
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -6388,6 +6401,7 @@ Now, let's put it all together and make it pretty:
 
 
 ``` r
+library(ggpp)
 top <- ggplot(predictions_from_basic_linear_model) +
     geom_line(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
     geom_point(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
@@ -6593,6 +6607,7 @@ The 30-predictor model explains far more of the variation in Valine than the iso
 
 
 ``` r
+library(cowplot)
 model_comparison_data <- metabolomics_data %>%
   mutate(
     single_predictor_predicted_Valine = predictWithModel(
@@ -6860,6 +6875,7 @@ multiple_regression_model <- buildModel(
   response = "Valine"
 )
 
+library(performance)
 check_model(multiple_regression_model$model)
 ```
 
@@ -7172,6 +7188,7 @@ An ANOVA makes the same assumptions as the linear models in the regression chapt
 
 
 ``` r
+library(performance)
 check_model(K_model$model)
 ```
 
@@ -7300,7 +7317,7 @@ fertilizer_trial %>%
 ##       F     p share
 ## 1 72.15 0.001 0.747
 ## 2 17.12 0.001 0.089
-## 3  3.85 0.019 0.040
+## 3  3.85 0.021 0.040
 ## 4    NA    NA 0.124
 ## 5    NA    NA 1.000
 ```
@@ -7339,7 +7356,7 @@ fertilizer_trial %>%
 ##       F     p share
 ## 1 79.15 0.001 0.704
 ## 2 28.97 0.001 0.129
-## 3  6.84 0.007 0.061
+## 3  6.84 0.006 0.061
 ## 4    NA    NA 0.107
 ## 5    NA    NA 1.000
 ```
@@ -8243,6 +8260,7 @@ We can thus inspect the performance of the model based on the specific parameter
 
 
 ``` r
+library(viridis)
 random_forest_model$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
     facet_grid(.~min_leaf_size) +
@@ -8410,14 +8428,11 @@ Much of the information in science is written rather than measured: paper titles
 
 To run the analyses in this chapter, you will need three things.
 
-1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+1. Please ensure that your computer can load the tidyverse and phylochemistry (see "installation" in the appendix). Some functions in this chapter may prompt you to install additional R packages the first time you use them.
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
-## Loading language model module...
-## Loading dgx module...
-## Done with dgx loading!
-## Done with language model loading!
+library(tidyverse)
+library(phylochemistry)
 ```
 2. Please create an account and obtain an API key at https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management), then store it as described just below.
 3. Please set up your class tokens for the course language model endpoints, following the *setting up your class tokens* section below.
@@ -8491,10 +8506,10 @@ select(search_results, term, title)
 ##  3 beta-amyrin synthase       [Cloning and bioinformatics a…
 ##  4 friedelin synthase         Friedelin in plants: metaboli…
 ##  5 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  6 friedelin synthase         Genome Mining and Gene Expres…
+##  6 friedelin synthase         Friedelin Synthase from Mayte…
 ##  7 sorghum bicolor            Current status and prospects …
 ##  8 sorghum bicolor            Sorghum (Sorghum bicolor).    
-##  9 sorghum bicolor            Morphogene-assisted transform…
+##  9 sorghum bicolor            Potential food applications o…
 ## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
 ## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
 ## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
@@ -8512,6 +8527,7 @@ Below, we generate sentence-level GloVe embeddings for the PubMed titles retriev
 
 
 ``` r
+library(ggforce)
 search_results_glove <- embedText(
   search_results,
   column_name = "title",
@@ -8588,6 +8604,7 @@ To examine the relationships between the publication titles, we perform PCA on t
 
 
 ``` r
+library(ggrepel)
 runMatrixAnalysis(
   data = search_results_embedded,
   analysis = "pca",
@@ -8650,7 +8667,7 @@ ggplot(pca_out) +
 
 ## generative models {-}
 
-Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. It takes a column with prompts (the `prompt_column`, which contains the text to be processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions the model should follow when processing the input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function from phylochemistry sends text to the course generation endpoint and returns a new column of model responses alongside the input data. It takes a column with prompts (the `prompt_column`, which contains the text to be processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions the model should follow when processing the input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
 
 In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. As with `embedText()`, there is no key in the code. The class token from the `.Renviron` file authenticates the request. Finally, we select the title and the generated tags to see the results.
 
@@ -8679,14 +8696,14 @@ select(search_results, title, generation)
 ##    title                                          generation
 ##    <chr>                                          <chr>     
 ##  1 Ginsenosides in Panax genus and their biosynt… Ginsenosi…
-##  2 β-Amyrin synthase from Conyza blinii expresse… Conyzasap…
+##  2 β-Amyrin synthase from Conyza blinii expresse… Conyza bl…
 ##  3 [Cloning and bioinformatics analysis of β-amy… Dipsacus …
 ##  4 Friedelin in plants: metabolism, synthase eng… Friedelin…
 ##  5 Friedelin in Maytenus ilicifolia Is Produced … Triterpen…
-##  6 Genome Mining and Gene Expression Reveal Mayt… plant-end…
+##  6 Friedelin Synthase from Maytenus ilicifolia: … Triterpen…
 ##  7 Current status and prospects of herbicide-res… Herbicide…
 ##  8 Sorghum (Sorghum bicolor).                     Sorghum t…
-##  9 Morphogene-assisted transformation of Sorghum… Sorghum t…
+##  9 Potential food applications of sorghum (Sorgh… Sorghum, …
 ## 10 Regulatory mechanisms underlying cuticular wa… Plant cut…
 ## 11 Cuticular wax in wheat: biosynthesis, genetic… Plant cut…
 ## 12 Update on Cuticular Wax Biosynthesis and Its … plant cut…
@@ -8778,14 +8795,11 @@ In the last chapter, we saw how language models convert text into numerical vect
 
 Running the analyses in this chapter requires three things.
 
-1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+1. Please ensure that your computer can load the tidyverse and phylochemistry (see "installation" in the appendix). Some functions in this chapter may prompt you to install additional R packages the first time you use them.
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
-## Loading language model module...
-## Loading dgx module...
-## Done with dgx loading!
-## Done with language model loading!
+library(tidyverse)
+library(phylochemistry)
 ```
 2. Please create an account at and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
 3. Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from https://build.nvidia.com/. (To get an API key, go to: https://build.nvidia.com/meta/esm2-650m, switch "input" to python and click "Get API Key" > Generate Key)
@@ -8808,7 +8822,7 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
 
-In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` object provided by the `source()` code works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. The `OSC_sequences` dataset (load it with `OSC_sequences <- getDataset("OSC_sequences")`) works well here, though the `searchNCBI()` function can also retrieve a different set of sequences. For example:
 
 
 ``` r
@@ -8889,7 +8903,7 @@ A protein language model turns each amino acid sequence into an embedding, a row
 
 <!-- ## exercises {-}
 
-3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
+3. Generate and visualize a set of protein embeddings. You can use the `OSC_sequences` dataset (`OSC_sequences <- getDataset("OSC_sequences")`), or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 
 -->
@@ -8915,7 +8929,7 @@ HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequ
 
 ## blastNCBI {-}
 
-The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like "core_nt" initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like "core_nt" initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. The second example builds the query with `DNAStringSet()` from Biostrings, a Bioconductor package that phylochemistry does not install. Biostrings can be added once with `BiocManager::install("Biostrings")`.
 
 
 ``` r
@@ -8925,7 +8939,7 @@ blastNCBI(
     database = "core_nt"
 )
 
-seqs <- DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
+seqs <- Biostrings::DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
 blastNCBI(
     query_sequence = as.character(seqs[1]),
     program = "blastn",
@@ -9258,6 +9272,7 @@ Though this can get messy when there are lots of tip labels:
 
 
 ``` r
+plant_species <- read_csv("https://thebustalab.github.io/data/plant_species.csv", show_col_types = FALSE)
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
@@ -9274,6 +9289,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 
 
 ``` r
+library(ggtree)
 ggtree(test_tree_big)
 ```
 
@@ -9437,6 +9453,7 @@ Finally, we can plot the two plots together using `plot_grid`. It is important t
 
 
 ``` r
+library(cowplot)
 plot_grid(
   tree_plot,
   trait_plot,
@@ -9719,6 +9736,7 @@ In addition to providing ancestral state estimations, there is also a function f
 
 
 ``` r
+library(ggtree)
 ggtree(
   distinct(anc_traits_tree, node, .keep_all = TRUE)
 ) +
@@ -9882,6 +9900,7 @@ Zoom in on certain plot regions
 
 
 ``` r
+library(ggpp)
 p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 
@@ -9999,6 +10018,7 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 
 
 ``` r
+library(cowplot)
 plot_grid(plot1, plot2)
 ```
 
@@ -10361,7 +10381,7 @@ ________________________________________________________________________________
 
 ## R {-}
 
-R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
+R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to installing RStudio. If not, follow these steps to install R:
 
 1. Go to https://cran.r-project.org/
 
@@ -10391,7 +10411,7 @@ If you have trouble installing RStudio please google "Install RStudio Mac" or "I
 
 ## verification {-}
 
-Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
+Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png" alt="" width="100%" style="display: block; margin: auto;" />
 
@@ -10471,19 +10491,32 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 ## phylochemistry {-}
 
-In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
-
-First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
-
+In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. The datasets and custom functions come in the course's R package, phylochemistry, which also installs the other packages the chapters use. Install everything by running these two commands once in the R console:
 
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+install.packages("BiocManager")
+install.packages(c("tidyverse", "phylochemistry"), repos = c("https://thebustalab.r-universe.dev", BiocManager::repositories()))
 ```
 
+The first command installs BiocManager, a small helper that points R at the version of Bioconductor that matches your version of R. Bioconductor hosts a few of the packages phylochemistry relies on, such as the tree-drawing package ggtree. The second command installs the tidyverse and phylochemistry along with everything they need. The installation can take several minutes. If R asks "Do you want to install from sources the packages which need compilation?", type `no` and press enter. You only need to do this once on each computer, and again after you upgrade R.
+
+Then, each time you open R or RStudio, load the tidyverse and phylochemistry:
 
 
-The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
+``` r
+library(tidyverse)
+library(phylochemistry)
+```
+
+The datasets used in this book, such as `algae_data`, are available as soon as phylochemistry is loaded. A few large datasets are downloaded the first time you ask for them, for example `ny_trees <- getDataset("ny_trees")`. Some functions in the later chapters need extra packages, and the first time you use one of them it will tell you what to install.
+
+If you are in the Busta Lab, also install the lab package once, then load it in each session alongside phylochemistry:
+
+```r
+install.packages("bustalab", repos = c("https://thebustalab.r-universe.dev", BiocManager::repositories()))
+library(bustalab)
+```
 
 <!-- end -->
 
@@ -10491,7 +10524,7 @@ The first time you try this, it will very likely say: "You need to install the f
 
 Once R, RStudio, and phylochemistry are installed, the last piece is getting your own data into R. The sandboxes in this book load their datasets for you, but data sitting on your own hard drive has to be imported, and there are two ways to do it.
 
-The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
+The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with phylochemistry. You run `readCSV()` in your console, then navigate to the data on your hard drive.
 
 Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
 
@@ -10525,6 +10558,7 @@ comparing-means chapter, and what remained is here.*
 
 
 ``` r
+library(ggside)
 
 i2 <- iris %>%
   mutate(Species2 = rep(c("A","B"), 75))
@@ -10635,6 +10669,7 @@ ggplot() +
 
 
 ``` r
+library(ggforce)
 df <- data.frame(
   plant1 = sample(c(TRUE, FALSE), 24, replace = TRUE),
   plant2 = sample(c(TRUE, FALSE), 24, replace = TRUE),
@@ -10828,6 +10863,7 @@ Now we could add some data. The next few examples use a dataset of per- and poly
 
 
 ``` r
+library(cowplot)
 lake_superior_PFAS <- readMonolist(Sys.getenv("PFAS_DATA"))
 lake_superior_PFAS %>%
   group_by(site, lon, lat) %>%
@@ -10854,6 +10890,7 @@ Or we could do something more sophisticated like add pie charts at each point:
 
 
 ``` r
+library(ggrepel)
 lake_superior_PFAS <- readMonolist(Sys.getenv("PFAS_DATA"))
 
 grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
@@ -10896,10 +10933,11 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-850-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
-You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
+You can also access a high resolution shoreline dataset for Lake Superior with `getDataset("lake_superior_shoreline")`:
 
 
 ``` r
+lake_superior_shoreline <- getDataset("lake_superior_shoreline")
 shore <- lake_superior_shoreline
 
 wide_view <- ggplot(shore) +

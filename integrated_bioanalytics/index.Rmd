@@ -72,11 +72,14 @@ To run the analyses described in this book, there are two ways:
 
 1. Use the live R sandboxes provided in this book. These run entirely in your browser and require no installation. The escape room exercises associated with the book will also work using this method. There are R sandboxes in each chapter, and a <a href="/integrated_bioanalytics/sandbox.html" target="_blank" rel="noopener"><b>general purpose sandbox here</b></a>.
 
-2. Run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. For this second method, you need R and RStudio. If you don't have R, see "installation" in the appendix. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+2. Install R, RStudio and the course's R package, phylochemistry, on your own computer. The package brings the custom functions and datasets used throughout the book. If you don't have R, see "installation" in the appendix, which also explains the one-time install of phylochemistry. After that, start each R session (RStudio recommended) by loading the tidyverse and phylochemistry:
 
 ```{r, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(tidyverse)
+library(phylochemistry)
 ```
+
+If you are in the Busta Lab, also install and load the lab package, bustalab, as described in the appendix. If you have trouble installing or loading the packages, please reach out to Lucas Busta at: bust0037@d.umn.edu.
 
 Let's get started!
 
@@ -299,6 +302,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 Zoom in on certain plot regions
 
 ```{r}
+library(ggpp)
 p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 
@@ -406,6 +410,7 @@ plot2 <- ggplot(
 Now, add them together to lay them out. Let's look at various ways to lay this out:
 
 ```{r, fig.height = 5, fig.width = 10}
+library(cowplot)
 plot_grid(plot1, plot2)
 ```
 

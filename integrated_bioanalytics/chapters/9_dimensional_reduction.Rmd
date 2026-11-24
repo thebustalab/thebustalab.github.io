@@ -8,7 +8,7 @@ Dimensional reduction uses the concept of a small number of new axes to represen
 
 <hr>
 
-In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that is loaded into the R Session by the source() command.
+In the previous chapters, we explored data sets by plotting a few variables at a time and looking for trends by eye. That stops working once a data set has more variables than can sensibly be plotted: thirteen chemical measurements on every Alaskan lake, eleven on every bottle of wine, or the long list of numbers a language model uses to describe a single piece of text. Dimensionality reduction condenses those many variables into a few new axes, and plotting the first two places samples with similar profiles near each other. It answers questions such as "which samples resemble each other across all of the variables at once?" and, with principal components analysis (PCA), "which variables are driving the differences among the samples, and which are correlated?" PCA plots of this kind are a standard first look at any data set with many measurements per sample, and later in the book they return in the language model chapters, where PCA turns text and protein embeddings into a map. In this course, we will conduct dimensionality reduction using `runMatrixAnalysis()`, a function that comes with the phylochemistry package.
 
 Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
@@ -59,6 +59,7 @@ Note that `runMatrixAnalysis()` scales every analyte before running the PCA (the
 Let's plot the 2D projection of the Alaska lakes data:
 
 ```{r, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5, fig.cap='Alaskan lakes separated by their water chemistry. A scatter plot of principal component analysis (PCA) scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one lake, fill color shows the national park the lake is in, and labels give the lake names. Lakes that sit close together have similar chemistry across all thirteen measured variables. Data are from the alaska_lake_data dataset used in UMD CHEM5725.'}
+library(ggrepel)
 ggplot(data = AK_lakes_pca, aes(x = Dim_1, y = Dim_2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
@@ -110,6 +111,7 @@ head(AK_lakes_pca_ord)
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. Using `geom_label_repel()` is not required; the built-in `geom_label()` works too, but `geom_label_repel()` can make labeling the segments easier.
 
 ```{r, fig.align = "center", fig.height = 5, fig.width = 6, message = FALSE, fig.cap='Which analytes drive each principal component of the Alaskan lake chemistry. An ordination (loadings) plot, with each analyte drawn as a segment from the origin to its loading on the first principal component (Dim_1, x-axis) and the second (Dim_2, y-axis). Segment color identifies the analyte, the black circle has a radius of one, and labels mark the analytes that load most strongly on each component. Data are from the alaska_lake_data dataset used in UMD CHEM5725.'}
+library(ggforce)
 ggplot(AK_lakes_pca_ord) +
   geom_segment(aes(x = 0, y = 0, xend = Dim_1, yend = Dim_2, color = analyte), size = 1) +
   geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
@@ -247,7 +249,7 @@ filter(AK_lakes_pca_dim, principal_component %in% c(1, 2))</textarea></div>
 
 ### pcaVisualizer {-}
 
-Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
+Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between samples and analytes. The phylochemistry package provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalysis()` and assembles a dashboard with coordinated plots.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png', dpi = NA)
@@ -294,7 +296,8 @@ In this command, the dollar sign ($) is used to access (or create) the ID column
 
 Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing our sample identifier along with additional information such as wine type, quality_score, and quality_category.
 
-```{r, fig.height = 7, fig.width = 7, fig.cap='Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.'}
+```{r, fig.height = 7, fig.width = 7, fig.cap='Red and white wines separated by their chemistry, using a linear method. A scatter plot of PCA scores, with the first principal component (Dim_1) on the x-axis and the second (Dim_2) on the y-axis. Each point is one wine, point shape shows whether it is red or white, and fill color shows its sensory quality score. Data are from the wine_quality dataset used in UMD CHEM5725.', message = FALSE}
+library(viridis)
 wq <- runMatrixAnalysis(
   data = wine_quality,
   analysis = "pca",

@@ -15,8 +15,8 @@
 # Output: book_test/check.html plus a figure table on stdout. book_test/ is gitignored and separate
 # from the published book/, so this can never overwrite a real render.
 #
-# It picks up _local_harness.R through _common.R, so it tests the LOCAL phylochemistry.R. That is the
-# whole point: without the harness a local render silently tests the published library instead.
+# It goes through _common.R, so it tests the phylochemistry package SOURCE in this tree (pkgload),
+# not the installed release. That is the whole point: a green result must say something about your edit.
 
 args <- commandArgs(trailingOnly = TRUE)
 figs_only <- "--figs-only" %in% args

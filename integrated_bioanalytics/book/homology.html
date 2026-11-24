@@ -118,16 +118,16 @@
 <div id="blastncbi" class="section level2 unnumbered">
 <h2>blastNCBI<a class="anchor" aria-label="anchor" href="#blastncbi"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <code>blastNCBI()</code> function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like “core_nt” initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the <code>Biostrings</code> package is available because it supplies <code>DNAStringSet</code>.</p>
+<p>The <code><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI()</a></code> function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like “core_nt” initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. The second example builds the query with <code>DNAStringSet()</code> from Biostrings, a Bioconductor package that phylochemistry does not install. Biostrings can be added once with <code>BiocManager::install("Biostrings")</code>.</p>
 <div class="sourceCode" id="cb235"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">blastNCBI</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI</a></span><span class="op">(</span></span>
 <span>    query_sequence <span class="op">=</span> <span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span>,</span>
 <span>    program <span class="op">=</span> <span class="st">"blastn"</span>,</span>
 <span>    database <span class="op">=</span> <span class="st">"core_nt"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">DNAStringSet</span><span class="op">(</span><span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span><span class="op">)</span></span>
-<span><span class="fu">blastNCBI</span><span class="op">(</span></span>
+<span><span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html">DNAStringSet</a></span><span class="op">(</span><span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI</a></span><span class="op">(</span></span>
 <span>    query_sequence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">seqs</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>    program <span class="op">=</span> <span class="st">"blastn"</span>,</span>
 <span>    database <span class="op">=</span> <span class="st">"core_nt"</span></span>
@@ -137,7 +137,7 @@
 <h2>local blast<a class="anchor" aria-label="anchor" href="#local-blast"><i class="fas fa-link"></i></a>
 </h2>
 <p>On NCBI, various sequence collections can be searched with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>. Download the program and then point this function to the executable via the <code>blast_module_directory_path</code> argument. The function can search multiple sequence libraries at once using multiple queries, and three blast configurations are available (the equivalents of blastn, tblastn and blastp, chosen with <code>blast_mode</code> below). Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.</p>
-<p>Let’s check out <code>polyBlast()</code> by looking at an example. For this example, we need to set up a few things:</p>
+<p>Let’s check out <code><a href="https://rdrr.io/pkg/phylochemistry/man/polyBlast.html">polyBlast()</a></code> by looking at an example. For this example, we need to set up a few things:</p>
 <ul>
 <li>“named_subjects_list”: A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).</li>
 <li>“query_in_path”: One or more queries, all listed in a single fasta file.</li>
@@ -148,7 +148,7 @@
 <li>“queries_in_output”: TRUE/FALSE, should the queries be included in the output? Set to TRUE when the query sequences are needed for downstream analyses like tree building.</li>
 <li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
 </ul>
-<p>Different BLAST modes tailor the search to the molecule types being compared. In the XYblastZ naming scheme, <code>nnblastn</code> reproduces the classic nucleotide-vs-nucleotide search (<code>blastn</code>), <code>ntblastp</code> lines up with <code>tblastn</code>, and <code>pnblastp</code> matches <code>blastp</code>. <code>polyBlast()</code> accepts only these three modes. NCBI’s other programs, such as <code>blastx</code>, <code>megablast</code>, <code>dc-megablast</code> and <code>tblastx</code>, are not available through it (<code>megablast</code> can be requested from <code>blastNCBI()</code> instead). Pick the mode that matches the biology of the query and target sequences so the scoring and heuristics work in the analyst’s favor.</p>
+<p>Different BLAST modes tailor the search to the molecule types being compared. In the XYblastZ naming scheme, <code>nnblastn</code> reproduces the classic nucleotide-vs-nucleotide search (<code>blastn</code>), <code>ntblastp</code> lines up with <code>tblastn</code>, and <code>pnblastp</code> matches <code>blastp</code>. <code><a href="https://rdrr.io/pkg/phylochemistry/man/polyBlast.html">polyBlast()</a></code> accepts only these three modes. NCBI’s other programs, such as <code>blastx</code>, <code>megablast</code>, <code>dc-megablast</code> and <code>tblastx</code>, are not available through it (<code>megablast</code> can be requested from <code><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI()</a></code> instead). Pick the mode that matches the biology of the query and target sequences so the scoring and heuristics work in the analyst’s favor.</p>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
 <div class="sourceCode" id="cb236"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -163,7 +163,7 @@
 <span>  <span class="st">"Nicotiana_benthamiana"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">polyBlast</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/polyBlast.html">polyBlast</a></span><span class="op">(</span></span>
 <span>  named_subjects_list <span class="op">=</span> <span class="va">the_transcriptomes</span>,</span>
 <span>  query_in_path <span class="op">=</span> <span class="st">"/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa"</span>,</span>
 <span>  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_hit_sequences/"</span>,</span>
@@ -183,9 +183,9 @@
 <li><p>Build a library of HMM domains: In bioinformatics, a typical application is the construction of a library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once an alignment is in hand, the HMM can be ‘trained’ on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.</p></li>
 <li><p>Predict domains in unknown sequences: After training, the HMMs can then score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. The HMM can search databases of uncharacterized sequences. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.</p></li>
 </ol>
-<p>We can implement these two steps using the <code>buildDomainLibrary()</code> function and the <code>predictDomains()</code> function. See below:</p>
+<p>We can implement these two steps using the <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildDomainLibrary.html">buildDomainLibrary()</a></code> function and the <code><a href="https://rdrr.io/pkg/phylochemistry/man/predictDomains.html">predictDomains()</a></code> function. See below:</p>
 <div class="sourceCode" id="cb237"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">buildDomainLibrary</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildDomainLibrary.html">buildDomainLibrary</a></span><span class="op">(</span></span>
 <span>    alignment_in_paths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa"</span>,</span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_2_amin_seqs_aligned.fa"</span></span>
@@ -193,7 +193,7 @@
 <span>    domain_library_out_path <span class="op">=</span> <span class="st">"/project_data/shared/kalanchoe_transporters/test.hmm"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">predictDomains</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictDomains.html">predictDomains</a></span><span class="op">(</span></span>
 <span>    fasta_in_path <span class="op">=</span> <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa"</span>,</span>
 <span>    domain_library_in_path <span class="op">=</span> <span class="st">"/project_data/shared/kalanchoe_transporters/test.hmm"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -237,7 +237,7 @@
 Choosing a homology search. This decision flowchart starts from what a search should find and ends at one of the chapter’s search functions, followed by how to judge the resulting hits. Yellow boxes are questions about the search and green boxes are recommended functions or practices.
 </p>
 </div>
-<p>A homology search starts with two choices. <strong>BLAST or HMMER</strong>: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. <strong>Where to search</strong>: <code>blastNCBI()</code> sends one sequence to NCBI’s servers, and <code>polyBlast()</code> searches our own genomes or transcriptomes with many queries at once, with a <code>blast_mode</code> that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.</p>
+<p>A homology search starts with two choices. <strong>BLAST or HMMER</strong>: BLAST is the fast first pass for close homologs and rapid annotation, while HMMER profiles built from alignments are more sensitive for distant homologs and shared domains. <strong>Where to search</strong>: <code><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI()</a></code> sends one sequence to NCBI’s servers, and <code><a href="https://rdrr.io/pkg/phylochemistry/man/polyBlast.html">polyBlast()</a></code> searches our own genomes or transcriptomes with many queries at once, with a <code>blast_mode</code> that matches the molecule types. Hits are then judged by E-value and bit score rather than percent identity, and ranked by bit score once E-values become so small that R prints them as zero.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -252,27 +252,27 @@ Choosing a homology search. This decision flowchart starts from what a search sh
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>blastNCBI()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/blastNCBI.html">blastNCBI()</a></code></td>
 <td>remote BLAST of one sequence on NCBI’s servers, returning a tibble of hits</td>
 <td>
 <code>query_sequence</code>, <code>program</code> (<code>"blastn"</code>, <code>"megablast"</code>), <code>database</code> (<code>"core_nt"</code>)</td>
 </tr>
 <tr class="even">
-<td><code>polyBlast()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/polyBlast.html">polyBlast()</a></code></td>
 <td>local BLAST+ search of one or more queries against several sequence collections, writing a hit list and one file per hit (returns nothing)</td>
 <td>
 <code>named_subjects_list</code>, <code>query_in_path</code>, <code>blast_mode</code>, <code>e_value_cutoff</code> (default 1), <code>queries_in_output</code>, plus the paths <code>sequences_of_interest_directory_path</code>, <code>monolist_out_path</code>, <code>blast_module_directory_path</code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>buildDomainLibrary()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/buildDomainLibrary.html">buildDomainLibrary()</a></code></td>
 <td>trains profile HMMs from multiple sequence alignments into a domain library</td>
 <td>
 <code>alignment_in_paths</code>, <code>domain_library_out_path</code>
 </td>
 </tr>
 <tr class="even">
-<td><code>predictDomains()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/predictDomains.html">predictDomains()</a></code></td>
 <td>scores sequences against a domain library to find likely family members</td>
 <td>
 <code>fasta_in_path</code>, <code>domain_library_in_path</code>
@@ -338,7 +338,7 @@ Choosing a homology search. This decision flowchart starts from what a search sh
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

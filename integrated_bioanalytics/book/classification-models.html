@@ -136,15 +136,15 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <p>This chapter works with the red wines in the <code>wine_quality</code> dataset. Each wine has a set of chemical measurements (its alcohol content, its acidity, its sulfur dioxide, its density, and so on) and a <code>quality_score</code> given by a panel of tasters. We will call a wine excellent if it scored 7 or more, and store that as a column of yes and no. We also give each wine a number, so that any one of them can be found again later:</p>
 <div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">red_wines</span> <span class="op">&lt;-</span> <span class="va">wine_quality</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"red"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span></span>
-<span>    wine <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"red"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    wine <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html">row_number</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    excellent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">quality_score</span> <span class="op">&gt;=</span> <span class="fl">7</span>, <span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">excellent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">excellent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 2</span></span>
 <span><span class="co">##   excellent     n</span></span>
 <span><span class="co">##   &lt;chr&gt;     &lt;int&gt;</span></span>
@@ -154,9 +154,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <p>At this point one may ask: why not simply use the regression chapter’s tools? A linear model needs a number for its response, so we could code each excellent wine as 1 and every other wine as 0, then fit a straight line of that number against alcohol content:</p>
 <div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">red_wines_as_numbers</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>excellent_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>excellent_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">straight_line_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span><span class="va">straight_line_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">red_wines_as_numbers</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="st">"alcohol"</span>,</span>
@@ -166,13 +166,13 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 <div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alcohol_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>alcohol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">22</span>, by <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">straight_line_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span><span class="va">straight_line_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">alcohol_range</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">straight_line_model</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">straight_line_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    lowest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">predicted_excellent_number</span><span class="op">)</span>,</span>
 <span>    highest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">predicted_excellent_number</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -192,7 +192,7 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","ggplot2","readr"], datasets: [{ 
 A straight line fitted to a yes/no response runs outside the range a probability can take. Scatter plot with alcohol content (percent by volume) on the horizontal axis and whether a red wine is excellent, coded 1 for yes and 0 for no, on the vertical axis; each point is one wine, drawn faintly so that overlapping wines show as darker marks. The red line is a linear model of the 0/1 code on alcohol, carried out from 4 to 22 percent alcohol, and the dashed lines mark 0 and 1. Data: wine_quality, red wines only.
 </p>
 </div>
-<p>The line above has to pass through a cloud of 0s and 1s, and what it predicts is a number, not a category. In the middle, a reading such as 0.4 is unclear: does it mean the wine is probably not excellent, or that it has a 40% chance of being excellent? It’s hard to say. Worse, a straight line has no floor and no ceiling: extrapolated out from 4 to 22 percent alcohol, it falls below 0 at the weak end and goes past 1 at the strong end (no wine in the table is that strong, but a model should ideally still give a sensible answer), and neither of those values can be interpreted at all. The fix is a model built to give a probability and operate appropriately at extreme values: its predictions need to bend into an S-shape, close to 0 at one end, close to 1 at the other, and never beyond either, so a prediction of 0.4 means a 40% chance that the wine is excellent. That model is <strong>logistic regression</strong>, and it takes the yes/no column itself as its response, with no recoding to numbers. A logistic regression model predicts the probability of one of the two values. For a column of “yes” and “no”, <code>buildModel()</code> always models “yes”; for a column of <code>TRUE</code> and <code>FALSE</code> it models <code>TRUE</code>; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.</p>
+<p>The line above has to pass through a cloud of 0s and 1s, and what it predicts is a number, not a category. In the middle, a reading such as 0.4 is unclear: does it mean the wine is probably not excellent, or that it has a 40% chance of being excellent? It’s hard to say. Worse, a straight line has no floor and no ceiling: extrapolated out from 4 to 22 percent alcohol, it falls below 0 at the weak end and goes past 1 at the strong end (no wine in the table is that strong, but a model should ideally still give a sensible answer), and neither of those values can be interpreted at all. The fix is a model built to give a probability and operate appropriately at extreme values: its predictions need to bend into an S-shape, close to 0 at one end, close to 1 at the other, and never beyond either, so a prediction of 0.4 means a 40% chance that the wine is excellent. That model is <strong>logistic regression</strong>, and it takes the yes/no column itself as its response, with no recoding to numbers. A logistic regression model predicts the probability of one of the two values. For a column of “yes” and “no”, <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> always models “yes”; for a column of <code>TRUE</code> and <code>FALSE</code> it models <code>TRUE</code>; for any other pair of words it models whichever comes second in alphabetical order. That is why the response columns in this chapter are written as yes and no.</p>
 <div id="concept-check-66" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-66"><i class="fas fa-link"></i></a>
 </h4>
@@ -223,17 +223,17 @@ Self-check: why is a straight line a poor model for a yes/no response coded as 1
 <p>Whenever we want to use a model to make predictions, we need to remember, at the outset, the way in which we estimate the accuracy of our predictions: (i) hold back some of the data and exclude it from training, then (ii) use that held back set to test how well the model does on data (wines, in the case of our example here) it was never shown. So, our data table needs a column saying which wines are used for building (the <strong>training</strong> wines) and which are <strong>held back</strong> for the test. Here, every fourth wine is held back:</p>
 <div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">red_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>record <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu">row_number</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">4</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"held back"</span>, <span class="st">"training"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>record <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html">row_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">4</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"held back"</span>, <span class="st">"training"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">training_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"training"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"training"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">held_back_wines</span> <span class="op">&lt;-</span> <span class="va">red_wines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"held back"</span><span class="op">)</span></span></code></pre></div>
-<p>Marking the split with a column, rather than drawing rows at random each time, means everyone who runs this code holds back exactly the same wines and gets exactly the same answers. In many datasets (including the ones in this chapter’s exercises) the column comes with the data, and the only step is the <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The held-back wines are the <strong>test set</strong>, and from here on every model is built on <code>training_wines</code> alone.</p>
-<p>A logistic regression model is built with <code>buildModel()</code>, the same function as in the regression chapter, with <code>model_type = "logistic_regression"</code>. The predictors and the response are named exactly as before, and the response is the yes/no column:</p>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">record</span> <span class="op">==</span> <span class="st">"held back"</span><span class="op">)</span></span></code></pre></div>
+<p>Marking the split with a column, rather than drawing rows at random each time, means everyone who runs this code holds back exactly the same wines and gets exactly the same answers. In many datasets (including the ones in this chapter’s exercises) the column comes with the data, and the only step is the <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>. The held-back wines are the <strong>test set</strong>, and from here on every model is built on <code>training_wines</code> alone.</p>
+<p>A logistic regression model is built with <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code>, the same function as in the regression chapter, with <code>model_type = "logistic_regression"</code>. The predictors and the response are named exactly as before, and the response is the yes/no column:</p>
 <div class="sourceCode" id="cb195"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alcohol_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alcohol_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="st">"alcohol"</span>,</span>
@@ -241,24 +241,24 @@ Self-check: why is a straight line a poor model for a yes/no response coded as 1
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">alcohol_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span><span class="op">)</span></span>
 <span><span class="co">##      variable      value    std_err        type</span></span>
 <span><span class="co">## 1 (Intercept) -13.471603 0.96287892 coefficient</span></span>
 <span><span class="co">## 2     alcohol   1.077528 0.08584569 coefficient</span></span>
 <span><span class="co">##        p_value  p_value_adj</span></span>
 <span><span class="co">## 1 1.770001e-44 3.540002e-44</span></span>
 <span><span class="co">## 2 3.879808e-36 3.879808e-36</span></span></code></pre></div>
-<p>How does <code>buildModel()</code> choose the curve? For each training wine, a candidate curve gives a probability to what actually happened: its probability of yes for an excellent wine, and one minus that for any other wine. Multiplying these probabilities across all the training wines gives the curve’s <strong>likelihood</strong>, and <code>buildModel()</code> keeps the curve with the highest likelihood (the maximum-likelihood fit). It plays the part that least squares played for a straight line in the regression chapter: the best curve is the one under which the data we actually saw are most probable.</p>
+<p>How does <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> choose the curve? For each training wine, a candidate curve gives a probability to what actually happened: its probability of yes for an excellent wine, and one minus that for any other wine. Multiplying these probabilities across all the training wines gives the curve’s <strong>likelihood</strong>, and <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> keeps the curve with the highest likelihood (the maximum-likelihood fit). It plays the part that least squares played for a straight line in the regression chapter: the best curve is the one under which the data we actually saw are most probable.</p>
 <p>The alcohol coefficient is positive, so the model’s probability that a wine is excellent rises with its alcohol content. (Logistic regression coefficients are measured on a scale called the log-odds, not in probability units, so we read their sign and, after scaling, their size, rather than translating them into a change in probability.)</p>
-<p><code>predictWithModel()</code> works just as it did for regression, and adds two columns to whatever table it is given. <strong><code>probability_yes</code></strong> is the model’s probability that the response is “yes”, and <strong><code>predicted_class</code></strong> is the call the model makes from it, yes or no:</p>
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> works just as it did for regression, and adds two columns to whatever table it is given. <strong><code>probability_yes</code></strong> is the model’s probability that the response is “yes”, and <strong><code>predicted_class</code></strong> is the call the model makes from it, yes or no:</p>
 <div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alcohol_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alcohol_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">alcohol_model</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">alcohol_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 5</span></span>
 <span><span class="co">##    wine alcohol excellent probability_yes predicted_class</span></span>
@@ -272,15 +272,15 @@ Self-check: why is a straight line a poor model for a yes/no response coded as 1
 <p>To read the probability for one wine, filter for it:</p>
 <div class="sourceCode" id="cb197"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alcohol_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wine</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">probability_yes</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">wine</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">wine</span>, <span class="va">alcohol</span>, <span class="va">probability_yes</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 3</span></span>
 <span><span class="co">##    wine alcohol probability_yes</span></span>
 <span><span class="co">##   &lt;int&gt;   &lt;dbl&gt;           &lt;dbl&gt;</span></span>
 <span><span class="co">## 1    10    10.5           0.104</span></span></code></pre></div>
 <p>Predicting across a range of alcohol contents shows the S-shape that the straight line could not give:</p>
 <div class="sourceCode" id="cb198"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alcohol_curve</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alcohol_curve</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>alcohol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">15</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">alcohol_model</span></span>
 <span><span class="op">)</span></span>
@@ -327,21 +327,21 @@ Self-check: a wine has a probability_yes of 0.3. What does that mean?
 </h2>
 <p>Alcohol is one of many measurements in the table. As with multiple regression, a classification model can use several predictors at once, we just name them all at build time:</p>
 <div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wine_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">wine_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alcohol"</span>, <span class="st">"volatile_acidity"</span>, <span class="st">"sulphates"</span>, <span class="st">"total_sulfur_dioxide"</span>, <span class="st">"density"</span><span class="op">)</span>,</span>
 <span>  response <span class="op">=</span> <span class="st">"excellent"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Excellent. Now, the point of the held-back wines is that the model has never seen them. Giving them to <code>predictWithModel()</code> asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:</p>
+<p>Excellent. Now, the point of the held-back wines is that the model has never seen them. Giving them to <code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> asks the model for a probability and a call for each one, exactly as it would for wines that have not yet been tasted:</p>
 <div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">held_back_wines</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">wine_model</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wine</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">wine</span>, <span class="va">excellent</span>, <span class="va">probability_yes</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 4</span></span>
 <span><span class="co">##    wine excellent probability_yes predicted_class</span></span>
@@ -352,11 +352,11 @@ Self-check: a wine has a probability_yes of 0.3. What does that mean?
 <span><span class="co">## 4    16 no                0.00913 no             </span></span>
 <span><span class="co">## 5    20 no                0.128   no             </span></span>
 <span><span class="co">## 6    24 no                0.0136  no</span></span></code></pre></div>
-<p>Good! Next, how does a probability become a call? Through a <strong>cut-off</strong>. <code>predictWithModel()</code> calls a wine “yes” when its <code>probability_yes</code> is 0.5 or more, and “no” otherwise. We can count how many held-back wines fall on each side:</p>
+<p>Good! Next, how does a probability become a call? Through a <strong>cut-off</strong>. <code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> calls a wine “yes” when its <code>probability_yes</code> is 0.5 or more, and “no” otherwise. We can count how many held-back wines fall on each side:</p>
 <div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 2</span></span>
 <span><span class="co">##   predicted_class     n</span></span>
 <span><span class="co">##   &lt;chr&gt;           &lt;int&gt;</span></span>
@@ -373,12 +373,12 @@ Self-check: a wine has a probability_yes of 0.3. What does that mean?
 Each held-back wine’s predicted probability of being excellent, against the 0.5 cut-off. Scatter plot with alcohol content (percent by volume) on the horizontal axis and the probability that the wine is excellent, from a logistic regression model on five chemical predictors, on the vertical axis; color shows whether the tasters rated the wine excellent, and the dashed line marks the 0.5 cut-off above which the model calls a wine excellent. Each point is one held-back red wine. Data: wine_quality, red wines in the held-back set.
 </p>
 </div>
-<p>Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. <code>predictWithModel()</code> has no argument for the cut-off, but we can still move the cut-off using <code>mutate()</code> on the probability column, then writing a new call from <code>probability_yes</code>:</p>
+<p>Nothing about 0.5 is fixed. It is a natural default (call yes when yes is more likely than not), but a winery hunting for every excellent wine might rather call yes at a lower probability, and accept that some of those calls will be wrong. <code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> has no argument for the cut-off, but we can still move the cut-off using <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> on the probability column, then writing a new call from <code>probability_yes</code>:</p>
 <div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>called_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span>, <span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">called_at_0.3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>called_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span>, <span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">called_at_0.3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 2</span></span>
 <span><span class="co">##   called_at_0.3     n</span></span>
 <span><span class="co">##   &lt;chr&gt;         &lt;int&gt;</span></span>
@@ -419,8 +419,8 @@ Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2
 <p>With several predictors in the model, a natural question is which of them drives the probability most strongly. In the regression chapter we met that same question (and the associated trap and its fix, which carries over to classification unchanged. Here are the coefficients of the five-predictor model, ranked by size:</p>
 <div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wine_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##               variable       value      std_err        type</span></span>
 <span><span class="co">## 1              density 14.92792540 55.707270516 coefficient</span></span>
 <span><span class="co">## 2            sulphates  3.35812659  0.576221181 coefficient</span></span>
@@ -436,7 +436,7 @@ Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2
 <p>These raw coefficients mostly reflect units. Density barely changes from one wine to the next, so a change of one whole gram per milliliter is far larger than any difference between two wines in the table, and its coefficient is the largest of the five for that reason alone. Total sulfur dioxide is the opposite: it is measured in milligrams per liter and spreads over a range of a hundred or more, so one unit of it is a tiny change and its coefficient is tiny. Ranking these numbers ranks the units, not the predictors.</p>
 <p>The fix is the same as in the regression chapter: scale each predictor to a mean of zero and a standard deviation of one before fitting (scaling is introduced in the distances and scaling chapter), with <code>scale_variance = TRUE</code>. Each coefficient then describes a one-standard-deviation change in its predictor, which is comparable across predictors:</p>
 <div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scaled_wine_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">scaled_wine_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">training_wines</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"logistic_regression"</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alcohol"</span>, <span class="st">"volatile_acidity"</span>, <span class="st">"sulphates"</span>, <span class="st">"total_sulfur_dioxide"</span>, <span class="st">"density"</span><span class="op">)</span>,</span>
@@ -445,8 +445,8 @@ Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">scaled_wine_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##               variable       value    std_err        type</span></span>
 <span><span class="co">## 1              alcohol  1.09173405 0.11840555 coefficient</span></span>
 <span><span class="co">## 2     volatile_acidity -0.59369471 0.11850732 coefficient</span></span>
@@ -462,13 +462,13 @@ Self-check: compared with the default cut-off of 0.5, what does a cut-off of 0.2
 <p>After scaling, the ranking no longer follows the units: each coefficient is the change in log-odds for a one-standard-deviation change in that predictor, so the predictor at the top of this list is the one that moves the probability most. Three further points:</p>
 <ul>
 <li>The ranking uses the size of each coefficient, <code>abs(value)</code>, because the sign only gives the direction. A negative coefficient, such as the one on volatile acidity, means the probability of yes falls as that predictor rises, and it can matter just as much as a positive one.</li>
-<li>As in linear regression, scaling changes the units of the coefficients, not the model. The scaled and unscaled models give every wine the same probability, and <code>predictWithModel()</code> scales a new table with the training wines’ means and standard deviations, so the held-back wines go in as measured.</li>
-<li>Scaling the predictor columns by hand with <code>mutate(across(c(...), scale))</code> before <code>buildModel()</code> gives the same coefficients, provided it is done on the training rows. It is a sound way to rank predictors, but a model built that way then needs every new table scaled with the training rows’ means and standard deviations before it can predict, so <code>scale_variance = TRUE</code> is the safer route when the model will also be used for predictions.</li>
+<li>As in linear regression, scaling changes the units of the coefficients, not the model. The scaled and unscaled models give every wine the same probability, and <code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> scales a new table with the training wines’ means and standard deviations, so the held-back wines go in as measured.</li>
+<li>Scaling the predictor columns by hand with <code>mutate(across(c(...), scale))</code> before <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> gives the same coefficients, provided it is done on the training rows. It is a sound way to rank predictors, but a model built that way then needs every new table scaled with the training rows’ means and standard deviations before it can predict, so <code>scale_variance = TRUE</code> is the safer route when the model will also be used for predictions.</li>
 </ul>
 <p>A bar chart shows the same ranking at a glance. Plot the size of each scaled coefficient, <code>abs(value)</code>, so that a strong negative predictor stands as long as an equally strong positive one:</p>
 <div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scaled_wine_coefficients</span> <span class="op">&lt;-</span><span class="va">scaled_wine_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"coefficient"</span>, <span class="va">variable</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">scaled_wine_coefficients</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span><span class="op">(</span><span class="va">variable</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -480,7 +480,7 @@ Scaled coefficients rank five chemical predictors by how strongly they move the 
 <div id="concept-check-69" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-69"><i class="fas fa-link"></i></a>
 </h4>
-<p>Fill in the blank with the value that makes <code>buildModel()</code> scale the predictors, then press Run to rank them.</p>
+<p>Fill in the blank with the value that makes <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> scale the predictors, then press Run to rank them.</p>
 <div class="webr-cell">
 <textarea class="webr-code">scaled_wine_model &lt;- buildModel(
   data = training_wines,
@@ -511,7 +511,7 @@ Self-check: why does density have such a large coefficient in the model built on
 <p>A classification model is judged by its calls on the held-back data (wines, in this case). The obvious first number is <strong>accuracy</strong>, the share of calls that are correct:</p>
 <div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 1</span></span>
 <span><span class="co">##   accuracy</span></span>
 <span><span class="co">##      &lt;dbl&gt;</span></span>
@@ -520,8 +520,8 @@ Self-check: why does density have such a large coefficient in the model built on
 <p>However, accuracy alone can mislead, and this dataset is an example of how that can happen. Consider a “model” that ignores the chemistry and calls every wine “no”:</p>
 <div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>always_no <span class="op">=</span> <span class="st">"no"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>always_no <span class="op">=</span> <span class="st">"no"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    model_accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span>,</span>
 <span>    always_no_accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">always_no</span> <span class="op">==</span> <span class="va">excellent</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -533,9 +533,9 @@ Self-check: why does density have such a large coefficient in the model built on
 <p>What the always-“no” rule cannot do is find excellent wine. So the second question to ask of a classifier is about the yes cases themselves. Of the held-back wines that really are excellent, how many did the model <strong>catch</strong> (call yes), and how many did it <strong>miss</strong> (call no)?</p>
 <div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
-<span>    excellent_wines <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    excellent_wines <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    caught <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
 <span>    missed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -572,9 +572,9 @@ Self-check: why does density have such a large coefficient in the model built on
 <p>(The table is in the order R prints it below, “no” before “yes”; many other texts put yes first, so always check the labels rather than the position when working with confusion matrices.) The two cells on the diagonal are the right calls, and the other two are the two different kinds of mistake. A false alarm (false positive) is an ordinary wine called excellent; a miss is an excellent wine called ordinary (false negative). Counting the held-back wines by both columns at once, then spreading the calls across the columns, builds the confusion matrix:</p>
 <div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">excellent</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">predicted_class</span>, values_from <span class="op">=</span> <span class="va">n</span>, names_prefix <span class="op">=</span> <span class="st">"called_"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">excellent</span>, <span class="va">predicted_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">predicted_class</span>, values_from <span class="op">=</span> <span class="va">n</span>, names_prefix <span class="op">=</span> <span class="st">"called_"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 3</span></span>
 <span><span class="co">##   excellent called_no called_yes</span></span>
 <span><span class="co">##   &lt;chr&gt;         &lt;int&gt;      &lt;int&gt;</span></span>
@@ -589,7 +589,7 @@ Self-check: why does density have such a large coefficient in the model built on
 </ul>
 <div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    caught <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
 <span>    missed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span>,</span>
 <span>    false_alarms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"no"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
@@ -604,8 +604,8 @@ Self-check: why does density have such a large coefficient in the model built on
 <p>The cut-off from earlier in the chapter moves these numbers in opposite directions. Lowering it calls more wines excellent, which catches more of the excellent wines (recall rises) but also produces more false alarms (precision falls):</p>
 <div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    caught_at_0.5 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>    caught_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -658,7 +658,7 @@ Self-check: a winery wants to find as many of its excellent wines as possible, e
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-11"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>A yes/no response needs a classification model, not a straight line: a straight line’s predictions run below 0 and above 1. <strong>Set data aside first:</strong> filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. <strong>Read the output:</strong> <code>probability_yes</code> is the model’s probability of yes, and <code>predicted_class</code> is the call at a cut-off of 0.5. Move the cut-off with a <code>mutate()</code> on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. <strong>Rank predictors only after scaling,</strong> by the size of the coefficient, because raw coefficients mostly reflect units. <strong>Judge on the held-back rows,</strong> and never on accuracy alone: when yes is rare, calling everything “no” scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. <strong>The confusion matrix</strong> holds all four counts; a lower cut-off raises <strong>recall</strong> and lowers <strong>precision</strong>.</p>
+<p>A yes/no response needs a classification model, not a straight line: a straight line’s predictions run below 0 and above 1. <strong>Set data aside first:</strong> filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. <strong>Read the output:</strong> <code>probability_yes</code> is the model’s probability of yes, and <code>predicted_class</code> is the call at a cut-off of 0.5. Move the cut-off with a <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. <strong>Rank predictors only after scaling,</strong> by the size of the coefficient, because raw coefficients mostly reflect units. <strong>Judge on the held-back rows,</strong> and never on accuracy alone: when yes is rare, calling everything “no” scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. <strong>The confusion matrix</strong> holds all four counts; a lower cut-off raises <strong>recall</strong> and lowers <strong>precision</strong>.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -677,14 +677,14 @@ Self-check: a winery wants to find as many of its excellent wines as possible, e
 <td>the column and its two values</td>
 </tr>
 <tr class="even">
-<td><code>buildModel()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code></td>
 <td>fitting a logistic regression model to a yes/no response</td>
 <td>
 <code>data</code> (training rows), <code>model_type = "logistic_regression"</code>, <code>predictors</code> (one or more), <code>response</code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>predictWithModel()</code></td>
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code></td>
 <td>a probability and a call for every row of any table with the same predictor columns</td>
 <td>
 <code>data</code> (e.g. the held-back rows), <code>model</code>; adds <code>probability_yes</code> and <code>predicted_class</code>
@@ -781,7 +781,7 @@ The practice world below runs both class days of this chapter and can be played 
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

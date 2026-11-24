@@ -177,7 +177,7 @@ Self-check: which operator stores a value inside an object in R?
 </ul>
 <p>Let’s illustrate this with an example. <code>algae_data</code> is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let’s use another <code>tidyverse</code> command called <code>filter</code> to filter the <code>algae_data</code> object. We will need to tell the filter command what to filter out using “logical predicates” (things like equal to: <code>==</code>, less than: <code>&lt;</code>, greater than: <code>&gt;</code>, greater-than-or-equal-to: <code>&gt;=</code>, etc.). Let’s filter <code>algae_data</code> so that only rows where the <code>chemical_species</code> is equal to <code>FAs</code> (fatty acids) are preserved. This will look like <code>chemical_species == "FAs"</code>. Here we go:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 18 × 5</span></span>
 <span><span class="co">##    replicate algae_strain harvesting_regime chemical_species</span></span>
 <span><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;           </span></span>
@@ -202,7 +202,7 @@ Self-check: which operator stores a value inside an object in R?
 <span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
 <p>Cool! Now it’s just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let’s write this new, smaller dataset into a new object. For that we use <code>&lt;-</code>, remember?</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">algae_data_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">algae_data_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
 <span><span class="va">algae_data_small</span></span>
 <span><span class="co">## # A tibble: 18 × 5</span></span>
 <span><span class="co">##    replicate algae_strain harvesting_regime chemical_species</span></span>
@@ -244,7 +244,7 @@ Self-check: which operator stores a value inside an object in R?
 </div>
 <div class="selfcheck" data-answer="1" data-explain="Inside filter(), == tests for equality. A single = would try to assign, and &lt;- is the assignment arrow.">
 <p class="scq">
-Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, which operator tests whether two values are equal?
+Self-check: inside <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, which operator tests whether two values are equal?
 </p>
 <p><label><input type="radio"> a single equals, =</label>
 <label><input type="radio"> a double equals, ==</label>
@@ -263,27 +263,27 @@ Self-check: inside <code><a href="https://rdrr.io/r/stats/filter.html">filter()<
 </ol>
 <p>We do this using the ggplot function’s data argument. When we run that line, it just shows a gray plot space. Why is this? It’s because all we’ve done is tell ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Define how the variables map onto the axes.</strong></li>
 </ol>
-<p>This is called aesthetic mapping and is done with the <code>aes()</code> function. <code>aes()</code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
+<p>This is called aesthetic mapping and is done with the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function. <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-70-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Use geometric shapes to represent other variables in the data.</strong></li>
 </ol>
-<p>Map the variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to the plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end of the top line. Let’s try it:</p>
+<p>Map the variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot()</a></code>, and <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>. These functions should be added to the plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end of the top line. Let’s try it:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-71-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
-<p>In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use <code>aes()</code> to map the variables onto the geometric features of the shapes:</p>
+<p>In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> to map the variables onto the geometric features of the shapes:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-72-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <div id="concept-check-2" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-2"><i class="fas fa-link"></i></a>
@@ -306,32 +306,32 @@ Self-check: in the plot above, what does the point <b>color</b> represent?
 <label><input type="radio"> the harvesting regime</label>
 <label><input type="radio"> the abundance</label></p>
 </div>
-<p>In the plot above, the points are a bit small. How could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data (as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
+<p>In the plot above, the points are a bit small. How could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> function, we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data (as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-73-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-74-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
-<p><strong>Important note:</strong> Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. This shows up in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
+<p><strong>Important note:</strong> Inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics to <em>constants</em>. This shows up in the above two plots - in the first one, color is inside <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> and mapped to the variable called harvesting_regime, while size is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function and mapped to the variable harvesting_regime, while color is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is mapped to the constant “black”.</p>
 <p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-75-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <p>As is probably clear by now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">algae_strain</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span>, size <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">algae_strain</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span>, size <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-76-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-77-1.png" alt="" width="50%" style="display: block; margin: auto;"></div>
 </div>
 <div id="concept-check-3" class="section level4 unnumbered">
@@ -375,7 +375,7 @@ You can compile this document into a pdf. We can also run R chunks right inside 
 Choosing a geom and where a feature goes. This decision flowchart starts from the kind of variables on the x and y axes and ends at the geoms taught in this chapter and at whether a feature goes inside or outside aes(). Yellow boxes are questions about the data or the plot and green boxes are recommended commands.
 </p>
 </div>
-<p>Objects store data (like: <code>my_object &lt;- 7</code>), and functions act on it: <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> keeps only the rows that meet a logical condition, such as <code>filter(my_data, chemical_species == "FAs")</code>. A ggplot is then built in three steps: name the data with <code>ggplot(data = ...)</code>, map variables onto the axes with <code>aes()</code>, and add one or more geoms with <code>+</code>. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a <strong>variable</strong> in the data goes <strong>inside</strong> <code>aes()</code> (<code>geom_point(aes(color = harvesting_regime))</code>), and a feature set to a <strong>constant</strong> goes <strong>outside</strong> <code>aes()</code> (<code>geom_point(size = 5)</code>). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.</p>
+<p>Objects store data (like: <code>my_object &lt;- 7</code>), and functions act on it: <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> keeps only the rows that meet a logical condition, such as <code>filter(my_data, chemical_species == "FAs")</code>. A ggplot is then built in three steps: name the data with <code>ggplot(data = ...)</code>, map variables onto the axes with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>, and add one or more geoms with <code>+</code>. Geoms are geometric objects with features (size, color, shape, etc.). A feature mapped to a <strong>variable</strong> in the data goes <strong>inside</strong> <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> (<code>geom_point(aes(color = harvesting_regime))</code>), and a feature set to a <strong>constant</strong> goes <strong>outside</strong> <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> (<code>geom_point(size = 5)</code>). Swapping mappings around is cheap, so it is worth trying a few to see which plot best communicates the aspect of your data that you are interested in.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -395,18 +395,18 @@ Choosing a geom and where a feature goes. This decision flowchart starts from th
 <td>the object name on the left</td>
 </tr>
 <tr class="even">
-<td><code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code></td>
+<td><code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code></td>
 <td>keeps only the rows that meet a condition</td>
 <td>the condition: <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>%in% c(...)</code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>ggplot()</code></td>
+<td><code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code></td>
 <td>starts a plot and names the data</td>
 <td><code>data =</code></td>
 </tr>
 <tr class="even">
-<td><code>aes()</code></td>
+<td><code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code></td>
 <td>maps variables onto the axes and onto features of the shapes</td>
 <td>
 <code>x</code>, <code>y</code>, <code>color</code>, <code>size</code>, <code>fill</code>
@@ -418,19 +418,19 @@ Choosing a geom and where a feature goes. This decision flowchart starts from th
 <td>end the line with <code>+</code> to continue on the next</td>
 </tr>
 <tr class="even">
-<td><code>geom_point()</code></td>
+<td><code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code></td>
 <td>draws one point per observation</td>
 <td>
 <code>aes(color = ...)</code>, <code>aes(size = ...)</code>, or constants such as <code>size = 5</code>, <code>color = "black"</code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>geom_violin()</code></td>
+<td><code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code></td>
 <td>draws the spread of values in each group</td>
 <td><code>aes(fill = ...)</code></td>
 </tr>
 <tr class="even">
-<td><code>geom_boxplot()</code></td>
+<td><code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot()</a></code></td>
 <td>draws a box plot for each group</td>
 <td>nothing extra in this chapter</td>
 </tr>
@@ -480,7 +480,7 @@ Some pointers:
 
 ### algae {-}
 
-1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `library(phylochemistry)`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 
 
@@ -648,7 +648,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

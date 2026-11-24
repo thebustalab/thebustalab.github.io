@@ -14,14 +14,14 @@
     })();
   </script><title>installation | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
+<meta name="description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to...">
 <meta name="generator" content="bookdown 0.46 with bs4_book()">
 <meta property="og:title" content="installation | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
+<meta property="og:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="installation | Integrated Bioanalytics">
-<meta name="twitter:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
+<meta name="twitter:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -114,7 +114,7 @@
 <div id="r" class="section level2 unnumbered">
 <h2>R<a class="anchor" aria-label="anchor" href="#r"><i class="fas fa-link"></i></a>
 </h2>
-<p>R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:</p>
+<p>R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.5), you can go straight to installing RStudio. If not, follow these steps to install R:</p>
 <ol style="list-style-type: decimal">
 <li><p>Go to <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a></p></li>
 <li><p>Click on “Download R for &lt;your operating system&gt;” (see footnote), depending on your operating system you will select “Download R for Linux”, “Download R for (Mac) OS X”, or “Download R for Windows”.</p></li>
@@ -141,7 +141,7 @@
 <div id="verification" class="section level2 unnumbered">
 <h2>verification<a class="anchor" aria-label="anchor" href="#verification"><i class="fas fa-link"></i></a>
 </h2>
-<p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
+<p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.</p>
 <div class="sourceCode" id="cb272"><pre class="downlit sourceCode r">
@@ -196,18 +196,27 @@ If the library load correctly - then you are set to go! If not, try updating you
 <div id="phylochemistry" class="section level2 unnumbered">
 <h2>phylochemistry<a class="anchor" aria-label="anchor" href="#phylochemistry"><i class="fas fa-link"></i></a>
 </h2>
-<p>In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
-<p>First, attempt to load phylochemistry, if you are on Windows, be sure you’ve opened RStudio as an administrator (right click, “run as administrator”):</p>
+<p>In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. The datasets and custom functions come in the course’s R package, phylochemistry, which also installs the other packages the chapters use. Install everything by running these two commands once in the R console:</p>
 <div class="sourceCode" id="cb278"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></span></code></pre></div>
-<p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?” You should say “yes”.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"phylochemistry"</span><span class="op">)</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"https://thebustalab.r-universe.dev"</span>, <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/repositories.html">repositories</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The first command installs BiocManager, a small helper that points R at the version of Bioconductor that matches your version of R. Bioconductor hosts a few of the packages phylochemistry relies on, such as the tree-drawing package ggtree. The second command installs the tidyverse and phylochemistry along with everything they need. The installation can take several minutes. If R asks “Do you want to install from sources the packages which need compilation?”, type <code>no</code> and press enter. You only need to do this once on each computer, and again after you upgrade R.</p>
+<p>Then, each time you open R or RStudio, load the tidyverse and phylochemistry:</p>
+<div class="sourceCode" id="cb279"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thebustalab/phylochemistry">phylochemistry</a></span><span class="op">)</span></span></code></pre></div>
+<p>The datasets used in this book, such as <code>algae_data</code>, are available as soon as phylochemistry is loaded. A few large datasets are downloaded the first time you ask for them, for example <code>ny_trees &lt;- getDataset("ny_trees")</code>. Some functions in the later chapters need extra packages, and the first time you use one of them it will tell you what to install.</p>
+<p>If you are in the Busta Lab, also install the lab package once, then load it in each session alongside phylochemistry:</p>
+<div class="sourceCode" id="cb280"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"bustalab"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"https://thebustalab.r-universe.dev"</span>, <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/repositories.html">repositories</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">bustalab</span><span class="op">)</span></span></code></pre></div>
 <!-- end -->
 </div>
 <div id="data-import" class="section level2 unnumbered">
 <h2>data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
 </h2>
 <p>Once R, RStudio, and phylochemistry are installed, the last piece is getting your own data into R. The sandboxes in this book load their datasets for you, but data sitting on your own hard drive has to be imported, and there are two ways to do it.</p>
-<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
+<p>The easiest way to do this is to use the interactive command <code><a href="https://rdrr.io/pkg/phylochemistry/man/readCSV.html">readCSV()</a></code>, a function that comes with phylochemistry. You run <code><a href="https://rdrr.io/pkg/phylochemistry/man/readCSV.html">readCSV()</a></code> in your console, then navigate to the data on your hard drive.</p>
 <p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
 <ul>
 <li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
@@ -252,7 +261,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

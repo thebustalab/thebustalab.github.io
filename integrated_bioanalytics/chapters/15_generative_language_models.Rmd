@@ -38,7 +38,7 @@
 
 <!-- ```{r, eval = FALSE} -->
 <!-- bustalab = TRUE -->
-<!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
+<!-- library(phylochemistry) -->
 
 <!-- newsletter <- createNewsletter( -->
 <!--     search_terms = c( -->

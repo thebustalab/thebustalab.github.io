@@ -88,6 +88,7 @@ head(anc_traits_tree)
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by `ancestralTraits`. Note that an object passed to ggtree() with duplicate node names requires the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
 
 ```{r, fig.height = 10}
+library(ggtree)
 ggtree(
   distinct(anc_traits_tree, node, .keep_all = TRUE)
 ) +

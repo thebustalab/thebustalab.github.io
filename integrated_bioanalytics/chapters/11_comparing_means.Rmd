@@ -45,7 +45,7 @@ ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(phylochemistry)
 library(rstatix)
 library(agricolae)
 library(multcompView)

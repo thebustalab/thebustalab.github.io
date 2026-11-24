@@ -1060,5 +1060,77 @@
     },
     "source_topic": "pks",
     "discovered": "2026-11-17"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_aeb7de433879",
+    "title": "MuMYB116 confers salt tolerance in mulberry through a hormone-Ca2+ regulatory network",
+    "authors": "Chaorui Liu; Teng Zhao; Ming Sun; Gefan Wang; Shuo Lu; Leran Yv; Zhaoyang Liu; 盖英萍; 冀宪领",
+    "journal": "Forestry Research",
+    "year": 2026,
+    "doi": "10.48130/forres-0026-0035",
+    "link": "https://doi.org/10.48130/forres-0026-0035",
+    "abstract": "signal transduction, and physiological and metabolic responses. This work provides a useful molecular resource for developing salt-tolerant mulberry cultivars and a theoretical basis for the ecological restoration of saline soils.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.48130/forres-0026-0035"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-24"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_e49c82a64a12",
+    "title": "Early Response of Five Wine Grape Cultivars to Agrobacterium vitis Infection Suggests a Role of STS in Plant Defense",
+    "authors": "Lin Miao; Shuya Chen; Jiahui Zhu; Chuwei Yu; Yulin Fang; Xu Liu; Qing Ge",
+    "journal": "Phytopathology",
+    "year": 2026,
+    "doi": "10.1094/phyto-02-26-0059-r",
+    "link": "https://doi.org/10.1094/phyto-02-26-0059-r",
+    "abstract": "Crown gall disease, caused by Agrobacterium vitis , is a global threat to viticulture that severely compromises vine vigor and berry quality. To elucidate the molecular mechanisms underlying grapevine resistance, five cultivars were inoculated with A. vitis strain A10 under controlled greenhouse conditions. Pathological assessments revealed divergent disease progression patterns among cultivars in which Yan73 (Y73) and Muscat Blanc (MB) exhibited higher resistance, whereas Y73 displayed mild disease development. Conversely, Merlot (ML), Cabernet Sauvignon, and Chardonnay showed rapid symptom development, and ML was identified as the most susceptible, characterized by the highest incidence and severity. Given that bacterial pathogens such as A. vitis are notoriously difficult to eradicate after infection, characterizing the early infection phase is critical for effective management. Comparative transcriptional analysis (RNA-seq) was conducted to capture the early molecular responses across these cultivars. Differentially expressed genes shared among cultivars were significantly enriched in pathways related to plant–pathogen interaction, stilbene biosynthesis, and responses to oxygen levels. Notably, ethylene signaling and response pathways were predominantly enriched in the relatively resistant cultivars Y73 and MB, suggesting their pivotal role in early defense. Further investigation into the stilbene synthase (STS) pathway revealed that its primary catalytic product, resveratrol (Res), serves as a key defensive metabolite. In vivo assays demonstrated that exogenous Res treatments significantly attenuated disease incidence and severity in a dose-dependent manner. Overall, this study outlines the early immune response of grapevine to A. vitis infection and highlights the importance of STS and ethylene pathways in resistance, providing potential targets for breeding crown gall–resistant grape cultivars.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "resveratrol",
+      "doi": "doi:10.1094/phyto-02-26-0059-r"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-24"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_ed3747291f89",
+    "title": "MnWRKY22 mediates tissue-specific resveratrol biosynthesis through coordinated regulation of the stilbene synthase gene cluster in mulberry",
+    "authors": "Xiaoyu Xia; Zhen Yang; Zhonghao Wang; Maolin Yuan; Yaomin Xie; Shuo Zhao; Yan Li; Yiwei Luo; Jianglian Yuan; Ningjia He",
+    "journal": "PLANT PHYSIOLOGY",
+    "year": 2026,
+    "doi": "10.1093/plphys/kiag778",
+    "link": "https://doi.org/10.1093/plphys/kiag778",
+    "abstract": "Resveratrol, a pharmaceutically significant stilbenoid accumulates in mulberry roots. To elucidate the molecular mechanism underlying this tissue-specific biosynthesis, we systematically analyzed the stilbene synthase (STS) gene family in mulberry. Our investigation revealed that 9 out of 10 MnSTS genes form tandem repeats in a single genomic cluster. Co-expression clustering and phylogenetic analysis implied that these genes undergo purifying selection, resulting in highly consistent co-expression patterns across tissues, with particularly specific high expression in roots and calli. Subsequent weighted gene co-expression network analysis identified the transcription factor MnWRKY22 as a key regulatory candidate. Functional validation confirmed that MnWRKY22 is specifically expressed in roots and calli and directly binds to W-box elements in all MnSTS promoters, thereby activating their transcription. Suppression of MnWRKY22 expression significantly reduced both MnSTS transcript levels and resveratrol accumulation, while its overexpression enhanced MnSTS expression and resveratrol production. Notably, overexpression of MnWRKY22 in leaves ectopically activated otherwise silent MnSTSs, enabling de novo resveratrol synthesis. This study reveals the coordinated evolutionary characteristics of the MnSTS gene family and establishes MnWRKY22 as a unified regulator of tissue-specific resveratrol accumulation in mulberry. These findings provide a foundation for enhancing resveratrol production through metabolic engineering approaches.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "resveratrol",
+      "doi": "doi:10.1093/plphys/kiag778"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-24"
+  },
+  {
+    "task_type": "enzyme",
+    "id": "enz_1569d55e2ee8",
+    "title": "Whole-Genome Sequencing Identifies a New Aspergillus tubingensis Strain from Eremostachys isochila with Intraspecific Variation in Pharmaceutically Relevant Biosynthetic Gene Clusters",
+    "authors": "Farkhod Eshboev; Mavjuda Kholikova; Asifullah Khan; Meixia Yang; Xiong Gao; Kamila Mardieva; Akhror Abdurashidov; Saida Turaeva; Vera A. Alferova; Elvira Yusupova; Zilola Kabirova; Shokhista Tashmukhamedova; Tina T. X. Dong; Bakhodir Sagdullaev; Shaknoz Azimova; Karl Wah Keung Tsim",
+    "journal": "Molecules",
+    "year": 2026,
+    "doi": "10.3390/molecules31213939",
+    "link": "https://doi.org/10.3390/molecules31213939",
+    "abstract": "Fungal endophytes are promising sources of pharmaceutically relevant secondary metabolites, yet the genomic basis of their biosynthetic potential remains poorly characterized. We sequenced the genome of endophyte S23, isolated from healthy Eremostachys isochila, and compared it with 13 reference genomes. ITS, multilocus, and genome-scale phylogenies identified S23 as Aspergillus tubingensis. CAZyme, secretome, effector, and virulence-factor analyses showed limited plant-pathogenic potential, with secreted LysM-domain proteins, chitinases, and β-1,3-glucanases as candidate determinants of endophytic adaptation. Biosynthetic gene cluster (BGC) mining identified 95 clusters, mostly conserved across A. tubingensis, including one S23-specific type I polyketide synthase cluster. S23 was identified as the only A. tubingensis genome carrying the complete ten-gene yanuthone D cluster, while the other five strains retained only three cluster genes and lacked the core polyketide synthase gene. This locus conflicts with the species phylogeny, arguing against simple vertical inheritance. The burnettiene A cluster showed a patchy intraspecific distribution, being complete in S23 but absent from three A. tubingensis strains. Nidulanin A and TAN-1612 BGCs were conserved, and the core kojic acid gene, kojA, was absent from all A. tubingensis genomes, including S23. These findings highlight distinctive biosynthetic features of S23 and provide targets for experimental validation of its metabolite production.",
+    "prefill": {
+      "enzyme_name": "",
+      "product": "",
+      "doi": "doi:10.3390/molecules31213939"
+    },
+    "source_topic": "pks",
+    "discovered": "2026-11-24"
   }
 ]

@@ -114,8 +114,8 @@
 <h2>
 <span class="header-section-number">4.1</span> matrix analyses<a class="anchor" aria-label="anchor" href="#matrix-analyses"><i class="fas fa-link"></i></a>
 </h2>
-<p>There is <strong>one</strong> matrix-analysis function in this course: <code>runMatrixAnalysis()</code>. If you meet older
-material calling <code>runMatrixAnalyses()</code>, with an “es” on the end, that was a wide-data-only version and
+<p>There is <strong>one</strong> matrix-analysis function in this course: <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code>. If you meet older
+material calling <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalyses.html">runMatrixAnalyses()</a></code>, with an “es” on the end, that was a wide-data-only version and
 it was retired in September 2026 — calling it now returns a message telling you what to use instead.</p>
 <div id="basic-template-a-wide-data-frame" class="section level3" number="4.1.1">
 <h3>
@@ -123,9 +123,9 @@ it was retired in September 2026 — calling it now returns a message telling yo
 </h3>
 <p>A <strong>wide</strong> data frame has one row per sample and one column per analyte. <code>chemical_blooms</code> is exactly
 that shape: a <code>label</code> column naming each plant, and then one column for each compound class.</p>
-<div class="sourceCode" id="cb307"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb309"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -156,9 +156,9 @@ stays the same.</p>
 <h3>
 <span class="header-section-number">4.1.2</span> full template<a class="anchor" aria-label="anchor" href="#full-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb308"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb310"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># data to use for analysis</span></span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>      <span class="st">"pca"</span>, <span class="st">"pca_ord"</span>, <span class="st">"pca_dim"</span>, <span class="co"># PCA</span></span>
@@ -209,27 +209,27 @@ stays the same.</p>
 <h2>
 <span class="header-section-number">4.2</span> models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
 </h2>
-<p>Models in this course use two functions: <code>buildModel()</code> builds a model from a table, and
-<code>predictWithModel()</code> uses that model to make predictions for a table. (If you meet older material
-calling <code>buildModel2()</code>, it is the same function under its old name.)</p>
+<p>Models in this course use two functions: <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> builds a model from a table, and
+<code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> uses that model to make predictions for a table. (If you meet older material
+calling <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel2.html">buildModel2()</a></code>, it is the same function under its old name.)</p>
 <div id="basic-template-one-predictor-one-response" class="section level3" number="4.2.1">
 <h3>
 <span class="header-section-number">4.2.1</span> basic template: one predictor, one response<a class="anchor" aria-label="anchor" href="#basic-template-one-predictor-one-response"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb309"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb311"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
+<span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="st">"iso-Leucine"</span>,</span>
 <span>  response <span class="op">=</span> <span class="st">"Valine"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">my_predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span><span class="va">my_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_unknown</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">my_model</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>That is the whole basic workflow, and <code>buildModel()</code> is only four questions:</p>
+<p>That is the whole basic workflow, and <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code> is only four questions:</p>
 <ul>
 <li>
 <code>data</code>: which table to build the model from. It must have no missing values in the columns the
@@ -242,8 +242,8 @@ model uses (fill them in with <code>impute()</code> or remove those rows first).
 <li>
 <code>response</code>: which <strong>one</strong> column the model predicts.</li>
 </ul>
-<p><code>predictWithModel()</code> is only two questions: which table to predict for (<code>data</code>), and which model to
-use (<code>model</code>, the whole output of <code>buildModel()</code>). The new table needs every predictor column, but it
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> is only two questions: which table to predict for (<code>data</code>), and which model to
+use (<code>model</code>, the whole output of <code><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel()</a></code>). The new table needs every predictor column, but it
 does not need the response. What comes back is that same table with new columns added:</p>
 <ul>
 <li>regression models add <code>predicted_&lt;response&gt;</code>, for example <code>predicted_Valine</code>.</li>
@@ -254,9 +254,9 @@ does not need the response. What comes back is that same table with new columns 
 <h3>
 <span class="header-section-number">4.2.2</span> full template: buildModel()<a class="anchor" aria-label="anchor" href="#full-template-buildmodel"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb310"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb312"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">buildModel</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/buildModel.html">buildModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, <span class="co"># the table to build the model from; no missing values in the columns the model uses</span></span>
 <span>  model_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"linear_regression"</span>,            <span class="co"># predicts a number with a straight-line relationship</span></span>
@@ -299,13 +299,13 @@ does not need the response. What comes back is that same table with new columns 
 <h3>
 <span class="header-section-number">4.2.3</span> full template: predictWithModel()<a class="anchor" aria-label="anchor" href="#full-template-predictwithmodel"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb311"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb313"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,  <span class="co"># the table to predict for; it needs every predictor column the model was built on</span></span>
 <span>  <span class="va">model</span>  <span class="co"># the output of buildModel() (the whole list, or just its $model)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><code>predictWithModel()</code> works out the model type from the model itself, so you never need to tell it.
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/predictWithModel.html">predictWithModel()</a></code> works out the model type from the model itself, so you never need to tell it.
 It can only predict for groups the model has seen: if the new table contains a category that was not
 in the table used to build the model, it stops and says so.</p>
 </div>
@@ -348,7 +348,7 @@ in the table used to build the model, it stops and says so.</p>
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

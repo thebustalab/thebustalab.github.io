@@ -53,7 +53,8 @@ local({
 # So: if the library is newer than the newest cache entry, stop and say so. One line to clear, and the
 # message names it. Override with BOOK_ALLOW_STALE_CACHE=1 when you know the cache predates a
 # library change that cannot affect it.
-# Both `phylochemistry.R` AND `_common.R` count as inputs: the 2026-09-22 cache was poisoned not by
+# Both the phylochemistry package source (its R/ and data/ files; it was the single phylochemistry.R
+# until the package switch) AND `_common.R` count as inputs: the 2026-09-22 cache was poisoned not by
 # a library edit but by a render in which ch3 re-sourced the PUBLISHED library over the local one, so
 # the cache entry was NEWER than the library and a library-only mtime check would have waved it
 # through. `_common.R` is where the loading logic lives, so touching it invalidates the cache too.
@@ -72,7 +73,9 @@ local({
   }
   message("[build] WARNING: per-chunk library fingerprints NOT active — falling back to the ",
           "mtime guard. Check _common.R.")
-  lib <- c(file.path("..", "phylochemistry", "phylochemistry.R"), "_common.R")
+  pkg <- get0(".pc_pkg_dir", envir = globalenv(),
+              ifnotfound = file.path("..", "..", "..", "public_tools", "phylochemistry", "phylochemistry"))
+  lib <- c(list.files(file.path(pkg, c("R", "data")), full.names = TRUE), "_common.R")
   lib <- lib[file.exists(lib)]
   cache_files <- list.files("_bookdown_files", recursive = TRUE, full.names = TRUE,
                             pattern = "\\.(rdb|rdx|RData)$")

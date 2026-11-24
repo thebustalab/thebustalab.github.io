@@ -12,9 +12,10 @@ Much of the information in science is written rather than measured: paper titles
 
 To run the analyses in this chapter, you will need three things.
 
-1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+1. Please ensure that your computer can load the tidyverse and phylochemistry (see "installation" in the appendix). Some functions in this chapter may prompt you to install additional R packages the first time you use them.
 ```{r}
-source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
+library(tidyverse)
+library(phylochemistry)
 ```
 2. Please create an account and obtain an API key at https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management), then store it as described just below.
 3. Please set up your class tokens for the course language model endpoints, following the *setting up your class tokens* section below.
@@ -87,6 +88,7 @@ At the word level, each token is replaced by its corresponding vector from the G
 Below, we generate sentence-level GloVe embeddings for the PubMed titles retrieved in this chapter. This uses the same PubMed results as the analysis below, but switches the embedding method to GloVe by providing a local GloVe file path. Download a GloVe file from https://nlp.stanford.edu/projects/glove/, then record where you put it in your `.Renviron` file as `GLOVE_FILE`, alongside the tokens you stored at the start of this chapter. The code below reads that setting with `Sys.getenv()`, so the file itself can live anywhere on your machine.
 
 ```{r}
+library(ggforce)
 search_results_glove <- embedText(
   search_results,
   column_name = "title",
@@ -147,6 +149,7 @@ search_results_embedded %>%
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
 ```{r, fig.width = 8, fig.height = 6}
+library(ggrepel)
 runMatrixAnalysis(
   data = search_results_embedded,
   analysis = "pca",
@@ -204,7 +207,7 @@ ggplot(pca_out) +
 
 ## generative models {-}
 
-Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function provided by the `source()` command sends text to the course generation endpoint and returns a new column of model responses alongside the input data. It takes a column with prompts (the `prompt_column`, which contains the text to be processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions the model should follow when processing the input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
+Embedding models convert language into numbers so that we can measure similarity. An extension of that same process can be used to create a generative language model, which uses embedding under the hood to generate new text when given instructions. The `generateText()` function from phylochemistry sends text to the course generation endpoint and returns a new column of model responses alongside the input data. It takes a column with prompts (the `prompt_column`, which contains the text to be processed) and, optionally, a column with system messages that steer the model's behavior (`system_column`, the instructions the model should follow when processing the input text). Each row is sent as a chat conversation: the system message sets the role, the prompt becomes the user message, and the model returns a reply.
 
 In the example below, we ask the model to summarize each abstract with three comma-separated tags. We first add a system message to each row that defines the model's role. We then call `generateText()`, passing the abstract column as the prompt. As with `embedText()`, there is no key in the code. The class token from the `.Renviron` file authenticates the request. Finally, we select the title and the generated tags to see the results.
 

@@ -1,60 +1,73 @@
 # example R options set globally
 options(width = 60)
 
-# Ensure a CRAN mirror is always set. Each chapter renders in its own
-# non-interactive session (new_session: true), where repos defaults to
-# "@CRAN@". phylochemistry.R calls install.packages() for any missing
-# package, which errors ("trying to use CRAN without setting a mirror")
-# unless a real mirror is set here first.
+# Ensure a CRAN mirror is always set. The book renders in a non-interactive session
+# (new_session: true), where repos defaults to "@CRAN@", and anything that installs or checks a
+# package then errors ("trying to use CRAN without setting a mirror") unless a real mirror is set.
 if (is.null(getOption("repos")) || any(getOption("repos") == "@CRAN@")) {
   options(repos = c(CRAN = "https://cloud.r-project.org"))
 }
 
-# Bootstrap phylochemistry (packages, custom functions, datasets) at the start of
-# every chapter session. This used to happen as a side effect of reading order:
-# the installation chapter's live source() chunk sat in "GETTING STARTED", ahead
-# of every data chapter. That chapter moved to the appendix (2026-08-27), so the
-# bootstrap is explicit here instead of implicit in chapter position. The guard
-# keeps it a no-op when the library is already attached.
-# LOCAL BUILD HARNESS (optional, gitignored, absent on the Mac). When present it sources the LOCAL
-# phylochemistry instead of the published URL and translates the chapters' hardcoded Mac paths onto
-# this machine, so a local render actually tests the working copy. It bootstraps the library itself,
-# hence the exists() guard below still short-circuits afterwards. No-op if the file is not there.
+# ---------------------------------------------------------------------------------------------
+# LOAD THE PACKAGES: library(tidyverse), then phylochemistry -- the same two lines the book teaches.
+#
+# WHICH phylochemistry? The package SOURCE in this same synced tree whenever it is there, loaded
+# with pkgload::load_all(); the INSTALLED package (r-universe) only as a fallback. The chapters and
+# the package are edited together and deploy.sh compiles the book BEFORE anything is published, so
+# compiling against the installed release would test the PREVIOUS version and a chapter written
+# against a same-commit package change could not compile. (Same rule, same reason, as when this file
+# sourced ../phylochemistry/phylochemistry.R: that is how ch7 broke on 2026-09-22.)
+#
+# The source lives at Tools/public_tools/phylochemistry/phylochemistry, i.e. three levels up from
+# this folder on both the Mac and host2. Overrides, for a test or an unusual checkout:
+#   PHYLOCHEMISTRY_PKG_DIR=<path to the package source>
+#   PHYLOCHEMISTRY_BOOK_LOAD=installed   (use library(phylochemistry) even when the source is there)
+#
+# There is no bustalab <- TRUE any more: no chapter needs the lab package, and the book must render
+# with exactly what a student installs.
+.pc_pkg_dir <- Sys.getenv("PHYLOCHEMISTRY_PKG_DIR",
+                          file.path("..", "..", "..", "public_tools", "phylochemistry", "phylochemistry"))
+.pc_use_source <- !identical(Sys.getenv("PHYLOCHEMISTRY_BOOK_LOAD"), "installed") &&
+  file.exists(file.path(.pc_pkg_dir, "DESCRIPTION"))
+
+if (!"package:tidyverse" %in% search()) suppressPackageStartupMessages(library(tidyverse))
+
+# A HALF-LOADED LIBRARY MUST NOT PASS SILENTLY (2026-09-22): stop with the real load error here,
+# rather than letting it surface in a chapter chunk with an error that says nothing about the library.
+if (!"package:phylochemistry" %in% search()) {
+  .pc_err <- tryCatch({
+    if (.pc_use_source) {
+      if (!requireNamespace("pkgload", quietly = TRUE)) {
+        stop("the book loads phylochemistry from its source folder and needs pkgload: ",
+             "install.packages(\"pkgload\")")
+      }
+      suppressMessages(pkgload::load_all(.pc_pkg_dir, export_all = FALSE, helpers = FALSE,
+                                         attach_testthat = FALSE, quiet = TRUE))
+    } else {
+      suppressPackageStartupMessages(library(phylochemistry))
+    }
+    NULL
+  }, error = function(e) conditionMessage(e))
+  if (!is.null(.pc_err)) {
+    stop(
+      "phylochemistry failed to load from ",
+      if (.pc_use_source) normalizePath(.pc_pkg_dir, mustWork = FALSE) else "the installed library",
+      "\n  ", .pc_err,
+      "\nThe book compiles against the package SOURCE on purpose (see AGENTS.md). Fix the package;",
+      " do NOT fall back to the published release, which is a different version."
+    )
+  }
+}
+
+# LOCAL BUILD HARNESS (optional, gitignored, absent on the Mac). Translates the Mac paths and env vars
+# the chapters expect onto this machine. Sourced AFTER the packages load, because it wraps package
+# functions. No-op if the file is not there.
 if (file.exists("_local_harness.R")) try(source("_local_harness.R"), silent = TRUE)
 
-# WHICH phylochemistry.R? The LOCAL one in this same working tree, whenever it is there; the
-# published URL only as a fallback. This matters because the library and the chapters are edited
-# together and deploy.sh compiles the book BEFORE it pushes the site: sourcing the URL means a
-# compile always tests the LIVE (i.e. previous) library, so any chapter written against a
-# same-commit library change cannot compile. That is exactly how ch7 broke on 2026-09-22 —
-# `runMatrixAnalysis(analysis = "dist", output_format = "long")` returned a bare `dist` from the
-# published library and ggplot() could not fortify it. Sourcing the tree removes the whole class.
-.pc_local <- file.path("..", "phylochemistry", "phylochemistry.R")
-
-# SUPERSEDED 2026-09-23 — the old note here said the cache was deliberately NOT keyed on this file,
-# because a whole-file checksum makes every library edit a COLD rebuild (re-running the live ch13/ch14
-# API chunks, which can fail a deploy on a spent class budget). That trade-off no longer has to be
-# made: see "PER-CHUNK CACHE KEYING" further down, which keys each chunk on the fingerprints of just
-# the library functions THAT chunk calls. A library edit now invalidates the affected chunks and
-# leaves the rest cached. `rm -rf _bookdown_files` (or `../deploy.sh --cold-book`) remains the
-# belt-and-braces option; it is no longer the routine one.
-
-# ANY source() OF A phylochemistry URL IS REDIRECTED TO THE LOCAL WORKING COPY (2026-09-22).
-#
-# WHY. _common.R loading the local library is not enough, because CHAPTERS re-source the published
-# one mid-render and the whole book knits in ONE session (index.Rmd + children). ch3 line ~327 is an
-# `include = FALSE` chunk -- hidden output, but it still EVALUATES -- holding a bare
-# source("https://thebustalab.github.io/phylochemistry/phylochemistry.R"). ch3 runs before ch7, so it
-# quietly replaced the freshly-loaded working copy with the PREVIOUS RELEASE, and ch7 then called a
-# runMatrixAnalysis() with no long-format `dist` branch and died inside ggplot(), ~12000 lines from
-# the cause. ch2 (appendix) and ch13/ch14 (the module) do the same thing later in the book.
-# This cost the 2026-09-22 deploy several hours. The Linux canary harness had solved it with exactly
-# this override -- but _local_harness.R is gitignored and Mac-absent, so the Mac deploy, the one that
-# actually publishes, was the only machine without the fix. Hence it lives HERE now.
-#
-# Applies to modules/ and bustalabfunctions/ too, so a local library can no longer be half-shadowed
-# by published modules. No-op wherever the local file is absent. Render-only: _common.R is the book's
-# before_chapter_script and is not part of what students source.
+# ANY source() OF A thebustalab.github.io/phylochemistry/... URL IS REDIRECTED TO THE LOCAL WORKING
+# COPY when one exists (2026-09-22). No chapter sources the toolkit any more, but the appendix still
+# shows `source(".../modules/gcms.R")` (the standalone GC-MS app), and a render must never pull a
+# published file over the local tree. No-op wherever the local file is absent. Render-only.
 .pc_root <- file.path("..", "phylochemistry")
 if (dir.exists(.pc_root) && !isTRUE(attr(get0("source", envir = globalenv()), "pc_redirect"))) {
   .pc_url <- "^https://thebustalab\\.github\\.io/phylochemistry/"
@@ -62,19 +75,6 @@ if (dir.exists(.pc_root) && !isTRUE(attr(get0("source", envir = globalenv()), "p
     if (is.character(file) && length(file) == 1L && grepl(.pc_url, file)) {
       .local <- file.path(.pc_root, sub(.pc_url, "", file))
       if (file.exists(.local)) file <- .local
-      # modules/datasets.R downloads every sample dataset from its LIVE url with readr::read_csv, and
-      # one 404 aborts the whole library load. deploy.sh compiles the book BEFORE it pushes the site,
-      # so a dataset added in the same change is not live yet and the compile would die
-      # ("phylochemistry.R failed to load"). Read sample_data/ from the working copy instead.
-      # Found adding meteorite_fragments for ch.10, 2026-10-06.
-      if (identical(sub(.pc_url, "", file), "modules/datasets.R") || grepl("modules/datasets\\.R$", file)) {
-        .sd <- normalizePath(file.path(.pc_root, "sample_data"), mustWork = FALSE)
-        if (dir.exists(.sd) && file.exists(file)) {
-          .txt <- gsub("https://thebustalab.github.io/phylochemistry/sample_data/", paste0(.sd, "/"),
-                       readLines(file, warn = FALSE), fixed = TRUE)
-          file <- tempfile(fileext = ".R"); writeLines(.txt, file)
-        }
-      }
     }
     base::source(file, ...)
   }
@@ -82,54 +82,33 @@ if (dir.exists(.pc_root) && !isTRUE(attr(get0("source", envir = globalenv()), "p
   assign("source", .pc_redirect, envir = globalenv())
 }
 
-# A HALF-LOADED LIBRARY MUST NOT PASS SILENTLY (2026-09-22).
-# The local source() used to be try(..., silent = TRUE) with `exists("algae_data")` as the
-# did-it-work test. Both are wrong together: phylochemistry.R defines algae_data at ~line 311 (the
-# datasets module) but runMatrixAnalysis at ~line 14104, so ANY error in between leaves algae_data
-# present, the fallback skipped, and the library half-loaded -- with the modules/ sourced near the
-# top still in scope. The render then dies thousands of lines from the cause, in a chapter chunk,
-# with an error that says nothing about the library. Fail loudly at the point of failure instead.
-if (!exists("algae_data")) {
-  bustalab <- TRUE
-  if (file.exists(.pc_local)) {
-    .pc_err <- tryCatch({ suppressMessages(source(.pc_local)); NULL },
-                        error = function(e) conditionMessage(e))
-    if (!is.null(.pc_err)) {
-      stop(
-        "phylochemistry.R failed to load from ", normalizePath(.pc_local, mustWork = FALSE),
-        "\n  ", .pc_err,
-        "\nThe book compiles against the LOCAL library on purpose (see AGENTS.md). Fix the library;",
-        " do NOT fall back to the published one, which is a different version."
-      )
-    }
-  } else {
-    # No local working copy (a machine that only has the book). Published library, as before.
-    try(
-      suppressMessages(
-        source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-      ),
-      silent = TRUE
-    )
+# The two large datasets the book reads with getDataset() are downloaded on first use, and that first
+# use prints a message naming the local cache folder -- which would land in the rendered HTML (a
+# private path; the pre-push scan blocks it). Fetch them quietly here so the chapter chunks always
+# hit the cache.
+try(local({
+  cat_ <- phylochemistry::getDataset()
+  for (nm in intersect(c("ny_trees", "lake_superior_shoreline"), cat_$name[!cat_$cached])) {
+    suppressMessages(phylochemistry::getDataset(nm))
   }
-}
+}), silent = TRUE)
 
-# Post-load assertion. Cheap, and it names the real problem in one line rather than letting a stale
-# or partial library surface as a ggplot()/fortify() error twelve thousand lines away.
-if (!exists("runMatrixAnalysis") || !is.function(runMatrixAnalysis)) {
-  stop("phylochemistry loaded but runMatrixAnalysis() is missing -- the library did not finish loading.")
+# Post-load assertion, on BEHAVIOUR (2026-09-22): the runMatrixAnalysis() in scope must be the
+# package's, and must have the long-format `dist` branch chapter 7 depends on. A formals-only check
+# is useless (every stale fork still HAS an output_format argument), and a stray copy in the global
+# environment (someone sourcing the old phylochemistry.R) would silently shadow the package.
+.pc_rma <- get0("runMatrixAnalysis", mode = "function")
+if (is.null(.pc_rma)) {
+  stop("phylochemistry loaded but runMatrixAnalysis() is missing -- the package did not finish loading.")
 }
-# Assert on BEHAVIOUR, not on the formals. Every stale fork of runMatrixAnalysis() still HAS an
-# `output_format` argument -- it just ignores it for analysis = "dist" and hands back a bare `dist`
-# object, which is precisely the ch7 failure. So look for the branch that actually builds the long
-# pair table (2026-09-22: a formals-only check passed happily while the wrong function was loaded).
-if (!any(grepl('"sample_1", "sample_2", "distance"',
-               deparse(body(runMatrixAnalysis)), fixed = TRUE))) {
+if (!identical(environmentName(environment(.pc_rma)), "phylochemistry")) {
+  stop("The runMatrixAnalysis() in scope does not come from the phylochemistry package (found in ",
+       environmentName(environment(.pc_rma)), "). Something sourced an old copy over it.")
+}
+if (!any(grepl('"sample_1", "sample_2", "distance"', deparse(body(.pc_rma)), fixed = TRUE))) {
   stop(
-    "The runMatrixAnalysis() in scope is a STALE copy: it has no long-format branch for\n",
-    "  analysis = \"dist\", so it returns a bare `dist` object and chapter 7 cannot plot it.\n",
-    "The working copy at ", normalizePath(.pc_local, mustWork = FALSE), " does have that branch,\n",
-    "so what loaded is either the PUBLISHED library or a fork left inside modules/ by a\n",
-    "phylochemistry.R load that failed part-way through."
+    "The runMatrixAnalysis() in scope has no long-format branch for analysis = \"dist\", so it\n",
+    "  returns a bare `dist` object and chapter 7 cannot plot it. Check which phylochemistry loaded."
   )
 }
 
@@ -166,50 +145,54 @@ try({
 }, silent = TRUE)
 
 # ---------------------------------------------------------------------------------------------
-# PER-CHUNK CACHE KEYING ON THE LIBRARY FUNCTIONS A CHUNK ACTUALLY CALLS (2026-09-23)
+# PER-CHUNK CACHE KEYING ON THE PACKAGE FUNCTIONS AND DATASETS A CHUNK ACTUALLY USES (2026-09-23;
+# moved from the sourced script to the package namespace with the package switch)
 #
 # THE PROBLEM. `cache = TRUE` is global (index.Rmd setup). knitr keys a chunk on its own CODE only,
-# so a library change that alters what a function RETURNS leaves every chunk a cache hit and the new
-# behaviour never runs. The blunt fix -- key every chunk on the library's checksum -- makes any
-# library edit a COLD rebuild of the whole book, which re-runs the deliberately-live ch13/ch14 API
-# chunks. Most of the compile time is in chunks that never touch the library, so that is a bad trade.
+# so a package change that alters what a function RETURNS leaves every chunk a cache hit and the new
+# behaviour never runs. The blunt fix -- key every chunk on a checksum of the whole package -- makes
+# any package edit a COLD rebuild of the whole book, which re-runs the deliberately-live ch13/ch14
+# API chunks. Most of the compile time is in chunks that never touch the package.
 #
-# WHAT THIS DOES. Fingerprint every function the library defines, then give each chunk a
-# `cache.extra` built from just the fingerprints of the functions THAT chunk calls. Change
-# `runMatrixAnalysis()` and only the chunks calling it re-run; everything else stays cached.
+# WHAT THIS DOES. Fingerprint every function in the phylochemistry NAMESPACE (exported and internal),
+# then give each chunk a `cache.extra` built from just the fingerprints of the exported functions and
+# lazy datasets THAT chunk names. Change `runMatrixAnalysis()` and only the chunks calling it re-run.
 #
-# INDIRECT CALLS ARE COVERED. A fingerprint is the transitive closure: f's own body plus the bodies
-# of every library function f calls, and everything they call. So a chunk calling `buildNetwork()`
-# re-runs when a helper three levels down changes, which a naive body-hash would miss and which
-# would have been a silent-wrong-results bug rather than a loud one.
+# INDIRECT CALLS ARE COVERED. A function's fingerprint is the transitive closure: its own body plus the
+# bodies of every package function it calls (internal helpers included), and everything they call.
 #
-# Function names are taken from the chunk's PARSED code (`all.names`), not a regex, so a mention in
-# a string or a comment does not count and a call does.
+# DATASETS ARE COVERED TOO (new with the package): each lazy dataset (`algae_data`, ...) is hashed,
+# so a chunk naming one re-runs when its data/ file changes. getDataset() downloads are NOT covered.
 #
-# LIMITS, stated plainly: a change to a DATASET, or to library code that runs at load time rather
-# than inside a function, is invisible to this. `../deploy.sh --cold-book` remains the belt-and-
-# braces answer and should still be run before a semester starts.
+# Names are taken from the chunk's PARSED code (`all.names`), not a regex, so a mention in a string
+# or a comment does not count and a call does. Source references are stripped before hashing, so the
+# key does not depend on file paths or on load_all() versus library().
+#
+# LIMITS: package code that runs at LOAD time (.onLoad), and getDataset() downloads, are invisible to
+# this. `../deploy.sh --cold-book` remains the belt-and-braces answer before a semester starts.
 local({
+  ns <- tryCatch(asNamespace("phylochemistry"), error = function(e) NULL)
+  if (is.null(ns)) return(invisible(NULL))
   fn_names <- Filter(function(n) {
-    obj <- get0(n, envir = globalenv(), inherits = FALSE)
+    obj <- get0(n, envir = ns, inherits = FALSE)
     is.function(obj) && !is.primitive(obj)
-  }, ls(globalenv(), all.names = FALSE))
+  }, ls(ns, all.names = TRUE))
   if (length(fn_names) == 0) return(invisible(NULL))
 
   hash_of <- if (requireNamespace("digest", quietly = TRUE)) {
     function(x) digest::digest(x)
   } else {
-    function(x) x   # knitr digests cache.extra itself; raw text is correct, just bulkier
+    function(x) if (is.character(x)) paste(x, collapse = "\n") else NA_character_
   }
 
   own <- vapply(fn_names, function(n) {
-    f <- get(n, envir = globalenv())
+    f <- utils::removeSource(get(n, envir = ns))
     hash_of(paste(c(deparse(formals(f)), deparse(body(f))), collapse = "\n"))
   }, character(1))
 
-  ## direct library-callees of each function, from the language object (no re-parsing)
+  ## direct package-callees of each function, from the language object (no re-parsing)
   deps <- lapply(fn_names, function(n) {
-    b <- body(get(n, envir = globalenv()))
+    b <- body(get(n, envir = ns))
     if (is.null(b)) character(0) else intersect(all.names(b), fn_names)
   })
   names(deps) <- fn_names
@@ -224,6 +207,17 @@ local({
   fingerprint <- vapply(fn_names, function(n) {
     hash_of(paste(own[sort(unique(c(n, deps[[n]])))], collapse = "|"))
   }, character(1))
+  fingerprint <- fingerprint[names(fingerprint) %in% getNamespaceExports(ns)]
+
+  ## lazy datasets: hash each object (only when digest is available; raw text would be huge)
+  lazy <- tryCatch(getNamespaceInfo(ns, "lazydata"), error = function(e) NULL)
+  if (is.environment(lazy) && requireNamespace("digest", quietly = TRUE)) {
+    ds <- ls(lazy, all.names = TRUE)
+    if (length(ds)) {
+      fingerprint <- c(fingerprint, vapply(ds, function(d) digest::digest(get(d, envir = lazy)),
+                                           character(1)))
+    }
+  }
 
   assign(".pc_fingerprint", fingerprint, envir = globalenv())
 
@@ -241,16 +235,15 @@ local({
   })
 })
 
-# BUILD STAMP — one line, kept deliberately (2026-09-22). Written to stderr so it lands in the deploy
-# log. On 2026-09-22 several fixes were made to files whose presence in the render was never verified,
-# and the render gave no way to tell. One line at the top of every compile removes that whole class of
-# wasted round trip: which library loaded, whether the URL redirect is armed, and whether the function
-# ch7 depends on is the current one. If it ever reads redirect=FALSE or long_dist=FALSE, stop and fix
-# that before touching a chapter.
+# BUILD STAMP -- one line, kept deliberately (2026-09-22). Written to stderr so it lands in the deploy
+# log: which phylochemistry loaded (source folder or installed, and its version), whether the URL
+# redirect is armed, and whether the function ch7 depends on is the current one. If it ever reads
+# long_dist=FALSE, stop and fix that before touching a chapter.
 cat(sprintf(
-  "[_common.R] library=%s | redirect=%s | long_dist=%s\n",
-  normalizePath(.pc_local, mustWork = FALSE),
+  "[_common.R] phylochemistry=%s %s | redirect=%s | long_dist=%s | fingerprints=%d\n",
+  if (.pc_use_source) paste0("source:", normalizePath(.pc_pkg_dir, mustWork = FALSE)) else "installed",
+  as.character(utils::packageVersion("phylochemistry")),
   isTRUE(attr(get0("source", envir = globalenv()), "pc_redirect")),
-  any(grepl('"sample_1", "sample_2", "distance"',
-            deparse(body(runMatrixAnalysis)), fixed = TRUE))
+  any(grepl('"sample_1", "sample_2", "distance"', deparse(body(.pc_rma)), fixed = TRUE)),
+  length(get0(".pc_fingerprint", envir = globalenv(), ifnotfound = character(0)))
 ), file = stderr())

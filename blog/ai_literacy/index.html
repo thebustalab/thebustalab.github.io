@@ -217,25 +217,28 @@
     </section>
   </div>
 
-  <script id="emissionData" type="text/plain">
-activity,co2_value,co2_unit,water_value,water_unit,source
-A 5-minute hot shower,0.575,kg CO2,40,L,https://www.epa.gov/watersense/showerheads
-Driving a car 1 mile,0.4,kg CO2,,,https://www.epa.gov/greenvehicles/greenhouse-gas-emissions-typical-passenger-vehicle
-100 AI queries (longer prompts),0.03,kg CO2,3.8,L,https://arxiv.org/abs/2304.03271
-Two minutes microwave use,0.008,kg CO2,,,https://www.carbonfootprint.com/energyconsumption.html
-Streaming Netflix for 1 hour,0.036,kg CO2,,,https://www.iea.org/commentaries/the-carbon-footprint-of-streaming-video-fact-checking-the-headlines
-Using a space heater for 1 hour,0.36,kg CO2,,,https://www.energy.gov/energysaver/small-space-heaters
-Fly from Chicago to Minneapolis,74,kg CO2,,,https://co2.myclimate.org/en/flight_calculators/new
-Eating a hamburger (1/3 lb),9,kg CO2,2250,L,https://ourworldindata.org/environmental-impact-food
-Clothes dryer cycle,1.8,kg CO2,,,https://www.energystar.gov/sites/default/files/asset/document/ENERGY_STAR_Scoping_Report_Residential_Clothes_Dryers.pdf
-Latte (with dairy milk),0.34,kg CO2,,,https://www.ucl.ac.uk/news/2021/jan/analysis-heres-carbon-cost-your-daily-coffee-and-how-make-it-climate-friendly
-1 hour laptop use,0.04,kg CO2,,,https://www.energuide.be/en/questions-answers/how-much-power-does-a-computer-use-and-how-much-co2-does-that-represent/54/
-Toilet flush,,,6,L,https://appliance-standards.org/product/toilets
-Load of laundry,,,76,L,https://www.energystar.gov/products/appliances/clothes_washers
-Apple,,,70,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
-Glass of milk (250 mL),,,250,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
-Cup of coffee (black),,,140,L,https://www.waterfootprint.org/resources/interactive-tools/product-gallery/
-Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-science-school/science/water-qa-how-much-water-do-i-use-home-each-day
+  <!-- The figures come from the course dataset (DATA_URL below), the single source of truth shared with
+       the course's Impact Explorer. This list only picks rows from it by "activity" and gives each a
+       label for this page. CO2 = co2_central (kg CO2e); water = withdrawn_central (L). -->
+  <script id="blogRows" type="application/json">
+[
+  {"label": "A 5-minute hot shower", "activity": "A 5-minute hot shower"},
+  {"label": "Driving a car 1 mile", "activity": "Driving a car 1 mile"},
+  {"label": "100 AI queries", "activity": "100 chatbot prompts"},
+  {"label": "Two minutes microwave use", "activity": "Two minutes of microwave use"},
+  {"label": "Streaming Netflix for 1 hour", "activity": "Streaming video for 1 hour"},
+  {"label": "Using a space heater for 1 hour", "activity": "Running a space heater for 1 hour"},
+  {"label": "Round-trip flight, Duluth to Los Angeles", "activity": "Round-trip flight, Duluth to Los Angeles"},
+  {"label": "Eating a hamburger (1/3 lb)", "activity": "Eating a 1/3-lb hamburger"},
+  {"label": "Clothes dryer cycle", "activity": "One clothes-dryer cycle"},
+  {"label": "Latte (with dairy milk)", "activity": "A latte with dairy milk"},
+  {"label": "1 hour laptop use", "activity": "1 hour in a browser escape room (laptop)"},
+  {"label": "Toilet flush", "activity": "Flushing a toilet"},
+  {"label": "Load of laundry", "activity": "A load of laundry (washer)"},
+  {"label": "Apple", "activity": "A small apple (100 g)"},
+  {"label": "Glass of milk (250 mL)", "activity": "A glass of milk (250 mL)"},
+  {"label": "Cup of tap water (240 mL)", "activity": "A cup of tap water"}
+]
 </script>
 
   <script>
@@ -310,7 +313,7 @@ Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-sci
           low: 0,
           high: r[valueKey],
           unit: metric === 'co2' ? r.co2Unit : r.waterUnit,
-          source: r.source,
+          sources: r.sources,
         }))
         .sort((a, b) => a.high - b.high);
     }
@@ -334,7 +337,7 @@ Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-sci
       statusEl.textContent = `Showing ${shown} of ${total} ${metric === 'co2' ? 'CO2' : 'water'} activities.`;
       footEl.textContent = metric === 'co2'
         ? 'CO2 tab: starts with the lowest emitter and adds larger emitters each step.'
-        : 'Water tab: starts with the lowest water-use item and adds larger items each step.';
+        : 'Water tab (water withdrawn, including water later returned to its source): starts with the lowest water-use item and adds larger items each step.';
     }
 
     function render() {
@@ -390,8 +393,9 @@ Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-sci
         row.appendChild(vals);
 
         const showSource = () => {
-          if (d.source) {
-            sourcesEl.innerHTML = `<strong>${escapeHtml(d.activity)}</strong><br>Source: <a href="${escapeAttr(d.source)}" target="_blank" rel="noopener noreferrer">${escapeHtml(d.source)}</a>`;
+          if (d.sources.length) {
+            const links = d.sources.map(s => `<a href="${escapeAttr(s)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s)}</a>`).join('<br>');
+            sourcesEl.innerHTML = `<strong>${escapeHtml(d.activity)}</strong><br>${d.sources.length > 1 ? 'Sources' : 'Source'}:<br>${links}`;
           } else {
             sourcesEl.innerHTML = `<strong>${escapeHtml(d.activity)}</strong><br>Source not provided.`;
           }
@@ -436,18 +440,33 @@ Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-sci
       render();
     }
 
-    function init() {
-      const text = document.getElementById('emissionData').textContent;
-      const raw = parseCSV(text);
+    const DATA_URL = '/integrated_bioanalytics/data/impact_explorer.csv';
 
-      state.allRows = raw.map(r => ({
-        activity: r.activity,
-        co2Value: num(r.co2_value),
-        co2Unit: (r.co2_unit || '').trim() || 'kg CO2',
-        waterValue: num(r.water_value),
-        waterUnit: (r.water_unit || '').trim() || 'L',
-        source: (r.source || '').trim(),
-      })).filter(r => r.activity);
+    // Central value; falls back to the midpoint of low/high, as the course explorer does.
+    function central(r, kind) {
+      const c = r[`${kind}_central`], lo = r[`${kind}_low`], hi = r[`${kind}_high`];
+      if (c) return num(c);
+      if (lo && hi) return (num(lo) + num(hi)) / 2;
+      return 0;
+    }
+
+    function init(text) {
+      const byActivity = new Map(parseCSV(text).map(r => [r.activity, r]));
+      const picks = JSON.parse(document.getElementById('blogRows').textContent);
+      const missing = picks.filter(p => !byActivity.has(p.activity)).map(p => p.activity);
+      if (missing.length) console.warn('Impact Explorer: not in the data file:', missing);
+
+      state.allRows = picks.filter(p => byActivity.has(p.activity)).map(p => {
+        const r = byActivity.get(p.activity);
+        return {
+          activity: p.label,
+          co2Value: central(r, 'co2'),
+          co2Unit: 'kg CO2',
+          waterValue: central(r, 'withdrawn'),
+          waterUnit: 'L',
+          sources: (r.source || '').split(';').map(s => s.trim()).filter(Boolean),
+        };
+      });
 
       const co2Total = metricRows('co2').length;
       const waterTotal = metricRows('water').length;
@@ -471,7 +490,13 @@ Cup of tap water (240 mL),,,0.24,L,https://www.usgs.gov/special-topics/water-sci
       switchMetric('co2');
     }
 
-    init();
+    fetch(DATA_URL, { cache: 'no-cache' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(init)
+      .catch(err => {
+        statusEl.textContent = 'Could not load the data file. Please reload the page.';
+        console.warn('Impact Explorer data load failed:', err);
+      });
   </script>
 </body>
 </html>

@@ -123,9 +123,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <p>A distance matrix compares every sample with every other sample across all of the measured variables at once, and boils each comparison down to a single number, as in the illustration at the top of this chapter. Small numbers mean similar samples.</p>
 <p>First, we need our data set in wide format, with one row per sample and one column per variable:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 15</span></span>
 <span><span class="co">##   lake       park  water_temp    pH     C     N     P     Cl</span></span>
@@ -221,9 +221,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span><span class="co">## 18   7.313364   9.643066                      </span></span>
 <span><span class="co">## 19  16.910716  16.591947  14.272415           </span></span>
 <span><span class="co">## 20   7.593005   9.322022   2.664249  12.413960</span></span></code></pre></div>
-<p>We can also get distances directly from <code>runMatrixAnalysis()</code>, this course’s matrix-analysis function, by specifying <code>analysis = "dist"</code>. The argument <code>output_format = "long"</code> asks for the distances as a <strong>long table</strong>, one row per pair of lakes, rather than as the compact triangle <code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> printed above. The long shape is the one we usually want, because it can be filtered, sorted and plotted like any other tidy table, and because it is exactly the shape a network’s edge list needs.</p>
+<p>We can also get distances directly from <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code>, this course’s matrix-analysis function, by specifying <code>analysis = "dist"</code>. The argument <code>output_format = "long"</code> asks for the distances as a <strong>long table</strong>, one row per pair of lakes, rather than as the compact triangle <code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> printed above. The long shape is the one we usually want, because it can be filtered, sorted and plotted like any other tidy table, and because it is exactly the shape a network’s edge list needs.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
@@ -249,9 +249,9 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 <span><span class="co">## #   park_sample_2 &lt;chr&gt;</span></span></code></pre></div>
 <p>Because the long table is tidy, finding the samples most like a given sample is just a filter and a sort. These are the lakes closest to Lake Narvakrak:</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Lake_Narvakrak_NOAT"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_dist_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Lake_Narvakrak_NOAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 3 × 7</span></span>
 <span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
@@ -308,9 +308,9 @@ Self-check: in the long format, what does one row represent?
 </h2>
 <p>Back to North Killeak Lake. Let’s look at the averages and spreads of each analyte, and then at chloride specifically:</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">element</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    mean_mg_per_L <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>,</span>
 <span>    sd_mg_per_L <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -329,7 +329,7 @@ Self-check: in the long format, what does one row represent?
 <span><span class="co">## 10 P              0.0006     0.00135</span></span>
 <span><span class="co">## 11 S              5.21       7.03</span></span></code></pre></div>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"Cl"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"Cl"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mg_per_L</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-259"></span>
@@ -355,23 +355,24 @@ Chloride abundance across Alaskan lakes. A bar chart showing the concentration o
 <span><span class="co">## [4,] -0.26 -0.26 -0.24 -0.39 -0.50</span></span>
 <span><span class="co">## [5,]  3.94  4.03  3.90  0.71  3.55</span></span>
 <span><span class="co">## [6,]  1.00  1.12  1.32  0.03  1.05</span></span></code></pre></div>
-<p><code>runMatrixAnalysis()</code> scales for us with <code>scale_variance = TRUE</code>, which is its default. Importantly, scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. Some distance metrics, which we will meet below, also need the raw values and must not be scaled at all. But whenever the columns are measurements in different units, scale first.</p>
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> scales for us with <code>scale_variance = TRUE</code>, which is its default. Importantly, scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. Some distance metrics, which we will meet below, also need the raw values and must not be scaled at all. But whenever the columns are measurements in different units, scale first.</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,</span>
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    scale_variance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_unique_ID_sample_1</span>, y <span class="op">=</span> <span class="va">sample_unique_ID_sample_2</span>, fill <span class="op">=</span> <span class="va">distance</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">plot2</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span>
 <span></span>
-<span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-261"></span>
 <img src="index_files/figure-html/unnamed-chunk-261-1.png" alt="The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725." width="100%"><p class="caption">
@@ -399,7 +400,7 @@ Self-check: why does scaling change which lakes come out looking similar?
 <div id="distance-metrics" class="section level2 unnumbered">
 <h2>distance metrics<a class="anchor" aria-label="anchor" href="#distance-metrics"><i class="fas fa-link"></i></a>
 </h2>
-<p>Everything so far has used <strong>euclidean distance</strong>, the straight-line distance between two points, extended to as many dimensions as there are variables. It is the default nearly everywhere, and for measurements in different units, once they are scaled, it is usually a sensible choice. But it carries assumptions: that every variable is a continuous number, that an absolute difference means the same thing anywhere on the scale, and that a value of zero is nothing special. When the data break those assumptions, euclidean distance can give a confident and wrong answer about which samples are alike. <code>runMatrixAnalysis()</code> offers several other metrics through its <code>distance_method</code> argument. Each one is a different definition of “similar”, and the sections below pair each with the kind of data it suits.</p>
+<p>Everything so far has used <strong>euclidean distance</strong>, the straight-line distance between two points, extended to as many dimensions as there are variables. It is the default nearly everywhere, and for measurements in different units, once they are scaled, it is usually a sensible choice. But it carries assumptions: that every variable is a continuous number, that an absolute difference means the same thing anywhere on the scale, and that a value of zero is nothing special. When the data break those assumptions, euclidean distance can give a confident and wrong answer about which samples are alike. <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> offers several other metrics through its <code>distance_method</code> argument. Each one is a different definition of “similar”, and the sections below pair each with the kind of data it suits.</p>
 <div id="euclidean-and-manhattan" class="section level3 unnumbered">
 <h3>euclidean and manhattan<a class="anchor" aria-label="anchor" href="#euclidean-and-manhattan"><i class="fas fa-link"></i></a>
 </h3>
@@ -409,7 +410,7 @@ Self-check: why does scaling change which lakes come out looking similar?
 <code class="sourceCode R"><span><span class="va">small_spread</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">one_big</span>      <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>  pair      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"small_spread"</span>, <span class="st">"one_big"</span><span class="op">)</span>,</span>
 <span>  euclidean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">small_spread</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">one_big</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  manhattan <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">small_spread</span><span class="op">)</span><span class="op">)</span>,     <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">one_big</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -449,10 +450,10 @@ Self-check: which metric is pulled harder by a single very large difference in o
 <p><strong>Correlation distance</strong> is 1 minus the Pearson correlation between two samples across all the variables (<code>distance_method = "correlation"</code>). Two samples whose values rise and fall together have a correlation near 1 and so a distance near 0, however different their totals are. <strong>Cosine distance</strong> (<code>distance_method = "cosine"</code>) treats each sample as an arrow pointing out from the origin and measures the angle between two arrows: arrows pointing the same way are at distance 0 no matter how long they are. The two are close cousins. The difference is that correlation first subtracts each sample’s own mean, while cosine does not. Cosine is the standard choice for comparing the embeddings we will meet in the language model chapters, where each sample is described by hundreds of numbers and the direction of the arrow carries the meaning.</p>
 <p>The <code>wood_smoke</code> data set holds the abundances of 254 compounds in smoke from six tree species, three hardwoods and three softwoods. The species produce different total amounts of smoke compounds:</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>total_mg_g <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">abundance_mg_g</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">total_mg_g</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>total_mg_g <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">abundance_mg_g</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">total_mg_g</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 3</span></span>
 <span><span class="co">##   wood_type species            total_mg_g</span></span>
 <span><span class="co">##   &lt;chr&gt;     &lt;chr&gt;                   &lt;dbl&gt;</span></span>
@@ -464,12 +465,12 @@ Self-check: which metric is pulled harder by a single very large difference in o
 <span><span class="co">## 6 hardwood  northern_red_oak         424.</span></span></code></pre></div>
 <p>Let’s ask which species is most like red maple, first by euclidean distance and then by correlation distance:</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span>, <span class="va">compound</span>, <span class="va">abundance_mg_g</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"compound"</span>, values_from <span class="op">=</span> <span class="st">"abundance_mg_g"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">wood_smoke_wide</span></span>
+<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">wood_type</span>, <span class="va">species</span>, <span class="va">compound</span>, <span class="va">abundance_mg_g</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"compound"</span>, values_from <span class="op">=</span> <span class="st">"abundance_mg_g"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">wood_smoke_wide</span></span>
 <span></span>
 <span><span class="va">closest_to_red_maple</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">method</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">wood_smoke_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="va">method</span>,</span>
@@ -477,9 +478,9 @@ Self-check: which metric is pulled harder by a single very large difference in o
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wood_smoke_wide</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"wood_type"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"red_maple_hardwood"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"red_maple_hardwood"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -538,7 +539,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <p>A great deal of chemical and biological data records <strong>how much of each component</strong> a sample contains: compound abundances from GC-MS, percentages of each compound class in a wax, counts of each species in a sample. Two things make this kind of data awkward for euclidean distance.</p>
 <p>The first is zeros. In abundance data, a zero usually means “not present”, and many samples share many zeros. Euclidean distance can produce a strange result here, sometimes called the abundance paradox. Consider three sites and three species:</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">paradox</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">paradox</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>  site      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"site_1"</span>, <span class="st">"site_2"</span>, <span class="st">"site_3"</span><span class="op">)</span>,</span>
 <span>  species_A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  species_B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span>,</span>
@@ -553,7 +554,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span><span class="co">## 3 site_3         0         4         4</span></span></code></pre></div>
 <p>Sites 1 and 3 contain exactly the same species. Site 3 just has more of each. Site 2 shares no species at all with site 1. Yet euclidean distance says site 1 is closer to site 2:</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">paradox</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
@@ -561,7 +562,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species_A"</span>, <span class="st">"species_B"</span>, <span class="st">"species_C"</span><span class="op">)</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"site"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 3</span></span>
 <span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
 <span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
@@ -570,7 +571,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
 <p><strong>Bray-Curtis dissimilarity</strong> (<code>distance_method = "bray_curtis"</code>) was built for this kind of data. It adds up the absolute differences between two samples and divides by the total amount in both, so it runs from 0 (identical) to 1 (nothing in common). A component absent from both samples adds nothing to either part of that fraction, so shared absences never make two samples look alike. On the same three sites, it puts site 1 with site 3, where it belongs:</p>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">paradox</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="st">"bray_curtis"</span>,</span>
@@ -578,7 +579,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species_A"</span>, <span class="st">"species_B"</span>, <span class="st">"species_C"</span><span class="op">)</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"site"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"site_1"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 2 × 3</span></span>
 <span><span class="co">##   sample_unique_ID_sample_1 sample_unique_ID_samp…¹ distance</span></span>
 <span><span class="co">##   &lt;chr&gt;                     &lt;chr&gt;                      &lt;dbl&gt;</span></span>
@@ -587,8 +588,8 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
 <p>When each sample’s values are percentages that add up to 100, Bray-Curtis has a particularly plain reading: it is the fraction of the composition that the two samples do <strong>not</strong> have in common. The <code>chemical_blooms</code> data set records the percentage of each compound class in the leaf waxes of 78 plant species, and nearly three quarters of its entries are zero. Let’s compare two members of the mint family, <em>Monarda fistulosa</em> and <em>Salvia apiana</em>, with a stonecrop, <em>Crassula perfoliata</em>:</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mint_comparison</span> <span class="op">&lt;-</span> <span class="va">chemical_blooms</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">label</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Monarda_fistulosa"</span>, <span class="st">"Salvia_apiana"</span>, <span class="st">"Crassula_perfoliata"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">mint_comparison</span> <span class="op">&lt;-</span> <span class="va">chemical_blooms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">label</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Monarda_fistulosa"</span>, <span class="st">"Salvia_apiana"</span>, <span class="st">"Crassula_perfoliata"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">mint_comparison</span></span>
 <span><span class="co">## # A tibble: 3 × 10</span></span>
 <span><span class="co">##   label     Alkanes Sec_Alcohols Others Fatty_acids Alcohols</span></span>
@@ -600,7 +601,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span><span class="co">## #   Other_compounds &lt;dbl&gt;, Aldehydes &lt;dbl&gt;</span></span>
 <span></span>
 <span><span class="va">compare_waxes</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">method</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">mint_comparison</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="va">method</span>,</span>
@@ -608,7 +609,7 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"label"</span></span>
-<span>  <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Monarda_fistulosa"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Monarda_fistulosa"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">compare_waxes</span><span class="op">(</span><span class="st">"euclidean"</span><span class="op">)</span></span>
@@ -626,8 +627,8 @@ Self-check: sample B is exactly sample A with every value doubled. What is the c
 <span><span class="co">## 2 Monarda_fistulosa         Crassula_perfoliata        0.404</span></span>
 <span><span class="co">## # ℹ abbreviated name: ¹​sample_unique_ID_sample_2</span></span></code></pre></div>
 <p>Euclidean distance calls <em>Monarda</em> very slightly closer to the stonecrop than to the other mint, largely because the two mints differ by about 30 percentage points in triterpenoids, and squaring makes that one large difference count heavily. Bray-Curtis puts the two mints together: they share about two thirds of their wax composition, whereas <em>Monarda</em> and the stonecrop share about 60%.</p>
-<p>The second awkward feature is that percentages are not independent. If one component goes up, the others must go down, because the total is fixed at 100. Data with this property are called <strong>compositional</strong>, and the principled way to compare them is the <strong>Aitchison distance</strong> (<code>distance_method = "aitchison"</code>). It replaces each value with the logarithm of its ratio to the sample’s geometric mean, then takes the euclidean distance between the results. Working with ratios means a component going from 1% to 2% counts as much as one going from 20% to 40%: both doubled. And it means two samples in the same proportions are identical, whatever their totals. The catch is that the logarithm of zero is undefined. <code>runMatrixAnalysis()</code> replaces zeros with half the smallest positive value and says so, but in data as zero-heavy as <code>chemical_blooms</code> those stand-in values end up driving the result. Aitchison distance is the right tool for compositions in which most components are present in most samples (the major fatty acids of a set of seed oils, for example). For zero-heavy composition data, Bray-Curtis is the safer choice.</p>
-<p><strong>None of these three metrics can be used on scaled data.</strong> Bray-Curtis, Aitchison and the Jaccard distance below all need the raw, non-negative values, and scaling centers every column on zero, which produces negative numbers. <code>runMatrixAnalysis()</code> stops with a message if they are combined with scaling, so each of them needs <code>scale_variance = FALSE</code>.</p>
+<p>The second awkward feature is that percentages are not independent. If one component goes up, the others must go down, because the total is fixed at 100. Data with this property are called <strong>compositional</strong>, and the principled way to compare them is the <strong>Aitchison distance</strong> (<code>distance_method = "aitchison"</code>). It replaces each value with the logarithm of its ratio to the sample’s geometric mean, then takes the euclidean distance between the results. Working with ratios means a component going from 1% to 2% counts as much as one going from 20% to 40%: both doubled. And it means two samples in the same proportions are identical, whatever their totals. The catch is that the logarithm of zero is undefined. <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> replaces zeros with half the smallest positive value and says so, but in data as zero-heavy as <code>chemical_blooms</code> those stand-in values end up driving the result. Aitchison distance is the right tool for compositions in which most components are present in most samples (the major fatty acids of a set of seed oils, for example). For zero-heavy composition data, Bray-Curtis is the safer choice.</p>
+<p><strong>None of these three metrics can be used on scaled data.</strong> Bray-Curtis, Aitchison and the Jaccard distance below all need the raw, non-negative values, and scaling centers every column on zero, which produces negative numbers. <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> stops with a message if they are combined with scaling, so each of them needs <code>scale_variance = FALSE</code>.</p>
 <div id="concept-check-20" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-20"><i class="fas fa-link"></i></a>
 </h4>
@@ -666,7 +667,7 @@ Self-check: why must scaling be turned off for Bray-Curtis?
 </h3>
 <p>Sometimes the amounts are not trustworthy or not interesting, and the only question is whether each thing is there: which compounds were detected, which genes are present in a genome, which species were seen at a site. For this, the <strong>Jaccard distance</strong> (<code>distance_method = "jaccard"</code>) treats every value above zero as “present”, then compares the two sets: it is the number of things present in only one of the two samples, divided by the number present in either. Things absent from both are ignored, just as in Bray-Curtis. Here is the Jaccard distance between every pair of wood smoke samples:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">wood_smoke_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="st">"jaccard"</span>,</span>
@@ -715,7 +716,7 @@ Self-check: two smoke samples contain exactly the same compounds, but every comp
 <div id="mixed-data-types" class="section level3 unnumbered">
 <h3>mixed data types<a class="anchor" aria-label="anchor" href="#mixed-data-types"><i class="fas fa-link"></i></a>
 </h3>
-<p>Every metric so far needs numbers. Real data sets often mix numbers with categories: a habitat, a country of origin, a growth form, a yes or no. <strong>Gower distance</strong> (<code>distance_method = "gower"</code>) handles the mixture. For each variable it computes a difference between 0 and 1: for a number, the absolute difference divided by that variable’s range, and for a category, 0 if the two samples match and 1 if they do not. The Gower distance is the average of those differences. Because each numeric variable is divided by its own range, Gower distance does its own scaling, so <code>runMatrixAnalysis()</code> leaves <code>scale_variance</code> out of it.</p>
+<p>Every metric so far needs numbers. Real data sets often mix numbers with categories: a habitat, a country of origin, a growth form, a yes or no. <strong>Gower distance</strong> (<code>distance_method = "gower"</code>) handles the mixture. For each variable it computes a difference between 0 and 1: for a number, the absolute difference divided by that variable’s range, and for a category, 0 if the two samples match and 1 if they do not. The Gower distance is the average of those differences. Because each numeric variable is divided by its own range, Gower distance does its own scaling, so <code><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis()</a></code> leaves <code>scale_variance</code> out of it.</p>
 <p>The <code>hops_components</code> data set describes 38 hop varieties by their oil and acid chemistry and by two categories: country of origin and brewing use (aroma, bittering or dry hopping). Let’s find the varieties closest to Chinook, first on chemistry alone and then on chemistry plus the two categories:</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hop_chemistry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -724,16 +725,16 @@ Self-check: two smoke samples contain exactly the same compounds, but every comp
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">closest_to_chinook</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">columns</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/runMatrixAnalysis.html">runMatrixAnalysis</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">hops_components</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="st">"dist"</span>,</span>
 <span>    distance_method <span class="op">=</span> <span class="st">"gower"</span>,</span>
 <span>    output_format <span class="op">=</span> <span class="st">"long"</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="va">columns</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"hop_variety"</span></span>
-<span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Chinook"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">arrange</span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sample_unique_ID_sample_1</span> <span class="op">==</span> <span class="st">"Chinook"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">distance</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -916,7 +917,7 @@ Escape-room cards go here once this chapter has rooms.
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

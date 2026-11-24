@@ -138,6 +138,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 The color scales provided by RColorBrewer are a particularly useful type of scale:
 
 ```{r, fig.height = 8}
+library(RColorBrewer)
 display.brewer.all()
 ```
 ```{r}
@@ -248,9 +249,10 @@ Complete the plot with a built-in complete theme that strips away the gray backg
 
 ## subplots {-}
 
-We can make subplots using the `plot_grid()` function from the `cowplot` package, which comes with the `source()` command. Let's see:
+We can make subplots using the `plot_grid()` function from the `cowplot` package, which we load with `library(cowplot)`. Let's see:
 
-```{r}
+```{r, message = FALSE}
+library(cowplot)
 plot1 <-  ggplot(
             filter(alaska_lake_data, element_type == "free")
           ) +

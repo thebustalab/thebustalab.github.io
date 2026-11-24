@@ -51,6 +51,7 @@ meteorite_clusters
 The output has one row per fragment: its ID columns, the `cluster` k-means assigned it to, and the two measurements it was clustered on. As in the previous chapters, `runMatrixAnalysis` scales each column before it clusters (`scale_variance = TRUE` is the default). That matters here: iron runs from about 20 to over 90 percent while density spans only about 3 to 8 g/cm³, so without scaling, the iron percentages would drive the clusters almost on their own. We can plot the results and color them according to the group that k-means suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
 ```{r, fig.width = 6, fig.height = 5, fig.cap = "The meteorite fragments colored by k-means cluster, with an ellipse drawn around each cluster. The three clumps from the previous plot are each one cluster; the two in-between fragments have each been placed in a neighboring cluster."}
+library(ggforce)
 ggplot() +
   geom_point(
     data = meteorite_clusters,
@@ -404,7 +405,7 @@ cat('
 
 <!-- ## exercises {-}
 
-For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run `library(phylochemistry)`. Do the following:
 
 1. Run a PCA analysis on the data set and plot the results. 
 

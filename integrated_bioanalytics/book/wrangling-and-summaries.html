@@ -120,16 +120,16 @@ window.WEBR_CELL_CONFIG = { packages: ["dplyr","tidyr","ggplot2","readr"], datas
 </script><div id="viewing-data" class="section level2 unnumbered">
 <h2>viewing data<a class="anchor" aria-label="anchor" href="#viewing-data"><i class="fas fa-link"></i></a>
 </h2>
-<p>Before a data set can be wrangled, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, there is <code>view()</code>:</p>
+<p>Before a data set can be wrangled, it helps to be able to <em>see</em> it. <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> shows the first six rows, which is enough to recall what the columns are called, but not enough to get a feel for what is actually in the table. For that, there is <code><a href="https://tibble.tidyverse.org/reference/view.html">view()</a></code>:</p>
 <div class="webr-cell">
 <textarea class="webr-code">view(alaska_lake_data)</textarea>
 </div>
 <p>That opens the whole table as a scrollable grid. Each column shows its name with its <strong>type</strong> underneath (<code>chr</code> for text, <code>dbl</code> for numbers with decimals, <code>int</code> for whole numbers, <code>lgl</code> for TRUE/FALSE, <code>fct</code> for a factor). Knowing a column’s type matters more than it might seem because it decides which operations will work on it, and a number that gets imported as <code>chr</code> is one of the most common reasons a calculation can fail.</p>
-<p>In this book’s webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with <code>view(alaska_lake_data, n = 5000)</code>. In addition, <code>view()</code> is not limited to data sets that were loaded in advance. It will show anything, including a table just built:</p>
+<p>In this book’s webR sandbox, very large tables are capped at the first 1000 rows so the browser stays responsive. When that happens the caption says so, and more can be requested with <code>view(alaska_lake_data, n = 5000)</code>. In addition, <code><a href="https://tibble.tidyverse.org/reference/view.html">view()</a></code> is not limited to data sets that were loaded in advance. It will show anything, including a table just built:</p>
 <div class="webr-cell">
 <textarea class="webr-code">view(select(alaska_lake_data, lake, pH))</textarea>
 </div>
-<p>That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what was intended is to look at the result rather than guess at it. Finally, please note that <code>view()</code> is provided by the sandboxes in this book (and by the escape rooms). In R and RStudio on a local machine, the equivalent is <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code>, with a capital V.</p>
+<p>That second use is the one to get into the habit of. Every wrangling step in this chapter produces a new table, and the quickest way to check that a step did what was intended is to look at the result rather than guess at it. Finally, please note that <code><a href="https://tibble.tidyverse.org/reference/view.html">view()</a></code> is provided by the sandboxes in this book (and by the escape rooms). In R and RStudio on a local machine, the equivalent is <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code>, with a capital V.</p>
 <div id="concept-check-9" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-9"><i class="fas fa-link"></i></a>
 </h4>
@@ -199,7 +199,7 @@ Self-check: you have run <code>head(alaska_lake_data)</code> and want to see the
 <span><span class="co">## [1] 7.69 7.69 7.69 7.69 7.69 7.69</span></span>
 <span></span>
 <span><span class="co"># To look at select columns by name</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 2</span></span>
 <span><span class="co">##   park  water_temp</span></span>
 <span><span class="co">##   &lt;chr&gt;      &lt;dbl&gt;</span></span>
@@ -247,9 +247,9 @@ Self-check: which verb chooses <em>columns</em>?
 <span><span class="co">## #   Ximenia_americana &lt;dbl&gt;, Ongokea_gore &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
-<p>While this format is very nice for filling in by hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. This function can be thought of as transforming both the data’s column names (or some of the column names) and the data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
+<p>While this format is very nice for filling in by hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code>. This function can be thought of as transforming both the data’s column names (or some of the column names) and the data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pivot_longer</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">fadb_sample</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  names_to <span class="op">=</span> <span class="st">"plant_species"</span>,</span>
@@ -272,22 +272,22 @@ Self-check: which verb chooses <em>columns</em>?
 <p>Brilliant! Now we have a long-style table that can be used with ggplot.</p>
 <p>Occasionally we need to go the other way. Some functions (particularly the clustering and
 dimensional-reduction ones we meet later in the book) want a <strong>numeric matrix</strong>: one row per sample,
-one column per measured variable. That is a wide table again, and <code>pivot_wider()</code> is how we get back
-to one. It is the exact inverse of <code>pivot_longer()</code>, and it takes the mirror-image arguments: instead
+one column per measured variable. That is a wide table again, and <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> is how we get back
+to one. It is the exact inverse of <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code>, and it takes the mirror-image arguments: instead
 of saying which columns to gather up and what to <em>name</em> the two new variables, we say which existing
 variable holds the names that should become column headers (<code>names_from</code>) and which one holds the
 values that should fill the matrix (<code>values_from</code>).</p>
 <p>Let’s take the long table we just made and fold it back up. We’ll save the long version first so we
-have something to hand to <code>pivot_wider()</code>:</p>
+have something to hand to <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code>:</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fadb_long</span> <span class="op">&lt;-</span> <span class="fu">pivot_longer</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">fadb_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">fadb_sample</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>,</span>
 <span>  names_to <span class="op">=</span> <span class="st">"plant_species"</span>,</span>
 <span>  values_to <span class="op">=</span> <span class="st">"relative_abundance"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">pivot_wider</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">fadb_long</span>,</span>
 <span>  names_from <span class="op">=</span> <span class="st">"plant_species"</span>,</span>
 <span>  values_from <span class="op">=</span> <span class="st">"relative_abundance"</span></span>
@@ -338,12 +338,12 @@ Self-check: when you pivot a table longer, what happens to the old column names?
 </h2>
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-197-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-198-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Neat! Another way to think about the pipe:</p>
@@ -374,7 +374,8 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 </h2>
 <p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics: things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly 400,000 trees in New York City (this is after considerable filtering and simplification):</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ny_trees</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/getDataset.html">getDataset</a></span><span class="op">(</span><span class="st">"ny_trees"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ny_trees</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 14</span></span>
 <span><span class="co">##   tree_height tree_diameter address        tree_loc pit_type</span></span>
 <span><span class="co">##         &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt;   </span></span>
@@ -388,27 +389,27 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## #   spc_latin &lt;chr&gt;, spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;,</span></span>
 <span><span class="co">## #   zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
-<p>Nearly 400,000 observations of 14 variables! That’s more than 5M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? It is hard to know how one would even begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
-<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in the first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
+<p>Nearly 400,000 observations of 14 variables! That’s more than 5M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? It is hard to know how one would even begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>. Let’s get to it.</p>
+<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in the first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 1</span></span>
 <span><span class="co">##   mean_height</span></span>
 <span><span class="co">##         &lt;dbl&gt;</span></span>
 <span><span class="co">## 1        72.6</span></span>
 <span></span>
-<span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 1</span></span>
 <span><span class="co">##   stdev_height</span></span>
 <span><span class="co">##          &lt;dbl&gt;</span></span>
 <span><span class="co">## 1         28.7</span></span></code></pre></div>
-<p>Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics.</p>
+<p>Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> to compute statistics.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 12 × 2</span></span>
 <span><span class="co">##    spc_latin              mean_height</span></span>
 <span><span class="co">##    &lt;chr&gt;                        &lt;dbl&gt;</span></span>
@@ -424,11 +425,11 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## 10 QUERCUS RUBRA                111. </span></span>
 <span><span class="co">## 11 TILIA CORDATA                 98.8</span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA              101.</span></span></code></pre></div>
-<p>Bam. Mean height of each tree species. We can also count the number of observations using <code>n()</code>:</p>
+<p>Bam. Mean height of each tree species. We can also count the number of observations using <code><a href="https://dplyr.tidyverse.org/reference/context.html">n()</a></code>:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span>number_of_individuals <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>number_of_individuals <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 12 × 2</span></span>
 <span><span class="co">##    spc_latin              number_of_individuals</span></span>
 <span><span class="co">##    &lt;chr&gt;                                  &lt;int&gt;</span></span>
@@ -444,11 +445,11 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## 10 QUERCUS RUBRA                          10020</span></span>
 <span><span class="co">## 11 TILIA CORDATA                          25970</span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA                        13221</span></span></code></pre></div>
-<p>Cool! <code>summarize()</code> is more powerful, though. We can do many summary statistics at once:</p>
+<p>Cool! <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> is more powerful, though. We can do many summary statistics at once:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span>,</span>
 <span>    stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">ny_trees_by_spc_summ</span></span>
@@ -470,7 +471,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## 12 ZELKOVA SERRATA              101.         10.7</span></span></code></pre></div>
 <p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> for variation along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectively. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_summ</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
@@ -481,11 +482,11 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
-<p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
+<p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span>, <span class="va">boroname</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span>, <span class="va">boroname</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
 <span>    mean_diam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_diameter</span><span class="op">)</span>,</span>
 <span>    stdev_diam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_diameter</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">ny_trees_by_spc_boro_summ</span></span>
@@ -507,7 +508,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <span><span class="co">## # ℹ 38 more rows</span></span></code></pre></div>
 <p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to the y axis and facet over tree species, which used to be on the y axis. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
@@ -524,7 +525,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-207-1.png" alt="" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
+<code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
@@ -567,7 +568,7 @@ Self-check: what does <code>x %&gt;% f()</code> do?
 </div>
 <div class="selfcheck" data-answer="0" data-explain="group_by() splits the data into piles; summarize() then collapses each pile down to a single row. Without the group_by(), summarize() sees one big pile and returns one row for the whole data set.">
 <p class="scq">
-Self-check: what does <code>summarize()</code> do to the number of rows?
+Self-check: what does <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> do to the number of rows?
 </p>
 <p><label><input type="radio"> returns one row per group</label>
 <label><input type="radio"> leaves the number of rows unchanged</label>
@@ -579,9 +580,9 @@ Self-check: what does <code>summarize()</code> do to the number of rows?
 <div id="ordering" class="section level2 unnumbered">
 <h2>ordering<a class="anchor" aria-label="anchor" href="#ordering"><i class="fas fa-link"></i></a>
 </h2>
-<p>We can also sort or order a data frame based on a specific column with the command <code>arrange()</code>. Let’s have a quick look. Suppose we wanted to know which lake was the coldest:</p>
+<p>We can also sort or order a data frame based on a specific column with the command <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>. Let’s have a quick look. Suppose we wanted to know which lake was the coldest:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">arrange</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">water_temp</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">water_temp</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 7</span></span>
 <span><span class="co">##    lake             park  water_temp    pH element mg_per_L</span></span>
 <span><span class="co">##    &lt;chr&gt;            &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
@@ -599,7 +600,7 @@ Self-check: what does <code>summarize()</code> do to the number of rows?
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p>Or suppose we wanted to know which was the warmest?</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">arrange</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 7</span></span>
 <span><span class="co">##    lake      park  water_temp    pH element mg_per_L</span></span>
 <span><span class="co">##    &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
@@ -615,12 +616,12 @@ Self-check: what does <code>summarize()</code> do to the number of rows?
 <span><span class="co">## 10 Lava_Lake BELA        20.2  7.42 Ca        11.8  </span></span>
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
-<p><code>arrange()</code> will work on grouped data, which is particularly useful in combination with <code>slice()</code>, which can show us the first n elements in each group:</p>
+<p><code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code> will work on grouped data, which is particularly useful in combination with <code><a href="https://dplyr.tidyverse.org/reference/slice.html">slice()</a></code>, which can show us the first n elements in each group:</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">slice</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 3 × 7</span></span>
 <span><span class="co">## # Groups:   park [3]</span></span>
 <span><span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span></span>
@@ -638,7 +639,7 @@ Self-check: what does <code>summarize()</code> do to the number of rows?
 </div>
 <div class="selfcheck" data-answer="1" data-explain="arrange() sorts ascending by default, so the smallest value lands on top. Wrapping the column in desc() flips it, which is how you ask for the largest instead.">
 <p class="scq">
-Self-check: on its own, <code>arrange()</code> sorts in which order?
+Self-check: on its own, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code> sorts in which order?
 </p>
 <p><label><input type="radio"> descending</label>
 <label><input type="radio"> ascending</label>
@@ -650,13 +651,13 @@ Self-check: on its own, <code>arrange()</code> sorts in which order?
 <div id="mutate" class="section level2 unnumbered">
 <h2>mutate<a class="anchor" aria-label="anchor" href="#mutate"><i class="fas fa-link"></i></a>
 </h2>
-<p>One last thing before our exercises… there is another command called <code>mutate()</code>. It is like summarize in that it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller. In fact, it makes it bigger, by creating a new column for each new variable defined inside <code>mutate()</code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
+<p>One last thing before our exercises… there is another command called <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code>. It is like summarize in that it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller. In fact, it makes it bigger, by creating a new column for each new variable defined inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">lake</span>, <span class="va">park</span>, <span class="va">element</span>, <span class="va">mg_per_L</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>percent_S <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">lake</span>, <span class="va">park</span>, <span class="va">element</span>, <span class="va">mg_per_L</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>percent_S <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 20 × 5</span></span>
 <span><span class="co">## # Groups:   park [3]</span></span>
 <span><span class="co">##    lake                park  element mg_per_L percent_S</span></span>
@@ -695,7 +696,7 @@ Self-check: on its own, <code>arrange()</code> sorts in which order?
 </div>
 <div class="selfcheck" data-answer="0" data-explain="Both verbs can do the same arithmetic on grouped data; the difference is what comes back. summarize() collapses each group to one row, while mutate() keeps every observation and glues the answer on as a new column — which is what you want for a within-group percentage.">
 <p class="scq">
-Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
+Self-check: how does <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> differ from <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>?
 </p>
 <p><label><input type="radio"> mutate() keeps one row per observation; summarize() returns one row per group</label>
 <label><input type="radio"> mutate() returns one row per group; summarize() keeps every row</label>
@@ -715,7 +716,7 @@ Self-check: how does <code>mutate()</code> differ from <code>summarize()</code>?
 Choosing a wrangling verb. This decision flowchart starts from what a table should look like after a wrangling step and ends at the verb that produces it. Yellow boxes are questions about the desired result and green boxes are the verbs from this chapter that enact that action.
 </p>
 </div>
-<p>Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. <code>group_by()</code> with <code>summarize()</code> collapses each group to a single row, while <code>mutate()</code> keeps every row and adds a column. The pipe (<code>%&gt;%</code>) chains these steps together, and <code>view()</code> on the result is the quickest way to check that each step did what was intended.</p>
+<p>Wrangling comes down to deciding what the table should look like after each step. Pivoting changes the shape without changing the data: long tables suit ggplot, and wide tables with one row per sample suit the matrix analyses later in the book. <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> with <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> collapses each group to a single row, while <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> keeps every row and adds a column. The pipe (<code>%&gt;%</code>) chains these steps together, and <code><a href="https://tibble.tidyverse.org/reference/view.html">view()</a></code> on the result is the quickest way to check that each step did what was intended.</p>
 </div>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -730,31 +731,31 @@ Choosing a wrangling verb. This decision flowchart starts from what a table shou
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>view()</code></td>
+<td><code><a href="https://tibble.tidyverse.org/reference/view.html">view()</a></code></td>
 <td>opens a whole table as a scrollable grid, with each column’s type</td>
 <td>the table, plus <code>n = 5000</code> to see past the first 1000 rows (<code><a href="https://rdrr.io/r/utils/View.html">View()</a></code> in RStudio)</td>
 </tr>
 <tr class="even">
-<td><code>select()</code></td>
+<td><code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code></td>
 <td>keeps only the named columns</td>
 <td>the column names</td>
 </tr>
 <tr class="odd">
-<td><code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code></td>
+<td><code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code></td>
 <td>keeps only the rows that meet a condition</td>
 <td>the condition, such as <code>park == "BELA"</code>
 </td>
 </tr>
 <tr class="even">
-<td><code>pivot_longer()</code></td>
+<td><code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code></td>
 <td>wide to long: column names and values each become a new column</td>
 <td>
 <code>cols</code>, <code>names_to</code>, <code>values_to</code>
 </td>
 </tr>
 <tr class="odd">
-<td><code>pivot_wider()</code></td>
-<td>long to wide, the exact inverse of <code>pivot_longer()</code>
+<td><code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code></td>
+<td>long to wide, the exact inverse of <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code>
 </td>
 <td>
 <code>names_from</code>, <code>values_from</code>
@@ -767,26 +768,26 @@ Choosing a wrangling verb. This decision flowchart starts from what a table shou
 </tr>
 <tr class="odd">
 <td>
-<code>group_by()</code> + <code>summarize()</code>
+<code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> + <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>
 </td>
 <td>one row per group, holding the statistics asked for</td>
-<td>the grouping columns, with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>, <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>, <code>n()</code> inside <code>summarize()</code>
+<td>the grouping columns, with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>, <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/context.html">n()</a></code> inside <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>
 </td>
 </tr>
 <tr class="even">
-<td><code>arrange()</code></td>
+<td><code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code></td>
 <td>sorts rows, smallest first</td>
-<td>the column, wrapped in <code>desc()</code> for largest first</td>
+<td>the column, wrapped in <code><a href="https://dplyr.tidyverse.org/reference/desc.html">desc()</a></code> for largest first</td>
 </tr>
 <tr class="odd">
-<td><code>slice()</code></td>
-<td>keeps the first n rows (of each group, after <code>group_by()</code>)</td>
+<td><code><a href="https://dplyr.tidyverse.org/reference/slice.html">slice()</a></code></td>
+<td>keeps the first n rows (of each group, after <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>)</td>
 <td>n, as in <code>slice(1)</code>
 </td>
 </tr>
 <tr class="even">
-<td><code>mutate()</code></td>
-<td>adds a new column and keeps every row, and works within groups after <code>group_by()</code>
+<td><code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code></td>
+<td>adds a new column and keeps every row, and works within groups after <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>
 </td>
 <td>the new column, as in <code>percent_S = mg_per_L/sum(mg_per_L)*100</code>
 </td>
@@ -835,7 +836,7 @@ You come into Alexandria on a wine ship, and the harbor will not release it unti
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the periodic table. After you run `library(phylochemistry)` you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
 Some pointers:
 
@@ -875,7 +876,7 @@ Some pointers:
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-2"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
-<li><p><a href="https://tidydatatutor.com/vis.html">Tidy Data Tutor</a>. This interactive site animates what happens to a data frame as verbs like <code>select()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, or <code>pivot_longer()</code> are applied, making it easier to see how each operation reshapes the tables.</p></li>
+<li><p><a href="https://tidydatatutor.com/vis.html">Tidy Data Tutor</a>. This interactive site animates what happens to a data frame as verbs like <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, or <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> are applied, making it easier to see how each operation reshapes the tables.</p></li>
 <li><p><a href="https://posit.co/resources/cheatsheets/#r-programming">tidyverse cheat sheet</a>. Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for looking up a forgotten argument name or exploring related functions.</p></li>
 <li><p><a href="https://tidyr.tidyverse.org/articles/tidy-data.html">tidyr and dplyr vignettes</a>. The official package articles dig into the philosophy behind tidy data, the rationale for pivoting functions, and worked examples that go deeper than our walkthrough.</p></li>
 <li><p><a href="https://r4ds.hadley.nz/transform">R for Data Science, Chapter 5–10</a>. Hadley Wickham and Mine Çetinkaya-Rundel’s open textbook expands on wrangling, reshaping, and summarizing with narratives, exercises, and datasets that reinforce the patterns we practiced.</p></li>
@@ -917,7 +918,7 @@ Some pointers:
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

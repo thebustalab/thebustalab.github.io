@@ -120,6 +120,7 @@ head(round(alaska_scaled, 2))
 `runMatrixAnalysis()` scales for us with `scale_variance = TRUE`, which is its default. Importantly, scaling is a choice, not a requirement. If every column is in the same units and the large values genuinely matter more, then leaving the data unscaled is a defensible choice. Some distance metrics, which we will meet below, also need the raw values and must not be scaled at all. But whenever the columns are measurements in different units, scale first.
 
 ```{r fig.height = 10, fig.width = 6.5, fig.align = "center", fig.cap = "The effect of scaling on a distance matrix. Two heat maps of the same twenty Alaskan lakes, with lake names on both axes and fill color showing the distance between each pair. A) Distances computed on the raw measurements, which are controlled almost entirely by chloride because chloride is reported in far larger numbers than the other analytes. B) Distances computed after every variable was centered and scaled to unit variance, so that a one-standard-deviation difference counts the same in every analyte. Data are from the 'alaska_lake_data' dataset used in UMD CHEM5725."}
+library(cowplot)
 runMatrixAnalysis(
     data = alaska_lake_data_wide,
     analysis = c("dist"),

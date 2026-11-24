@@ -14,7 +14,7 @@ HMMER, in contrast, uses profile Hidden Markov Models trained from multiple sequ
 
 ## blastNCBI {-}
 
-The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like "core_nt" initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. Inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and a database like "core_nt" initiates a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, presenting identity percentages, gaps, and scores for matches in an accessible format ready for analysis. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. The second example builds the query with `DNAStringSet()` from Biostrings, a Bioconductor package that phylochemistry does not install. Biostrings can be added once with `BiocManager::install("Biostrings")`.
 
 ```{r, eval = FALSE}
 blastNCBI(
@@ -23,7 +23,7 @@ blastNCBI(
     database = "core_nt"
 )
 
-seqs <- DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
+seqs <- Biostrings::DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
 blastNCBI(
     query_sequence = as.character(seqs[1]),
     program = "blastn",

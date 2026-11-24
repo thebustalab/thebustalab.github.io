@@ -183,7 +183,8 @@ That is our R squared value. It is equal to 1 minus the ratio of the "residual s
 
 Now, let's put it all together and make it pretty:
 
-```{r, fig.width = 10, fig.height = 7, fig.cap = "A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data."}
+```{r, fig.width = 10, fig.height = 7, fig.cap = "A linear model of valine abundance on iso-leucine abundance. (A) Scatter plot of measured valine (blue points) and model predictions (red line and points) against iso-leucine abundance, with the model's metrics in an inset table. (B) Bar plot of the residual (measured minus predicted valine) for each patient against iso-leucine abundance. Each point or bar is one patient. Data: metabolomics_data.", message = FALSE}
+library(ggpp)
 top <- ggplot(predictions_from_basic_linear_model) +
     geom_line(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
     geom_point(aes(x = `iso-Leucine`, y = predicted_Valine), color = "red") +
@@ -312,6 +313,7 @@ multiple_predictor_regression_model$metrics %>% filter(type == "statistic")
 The 30-predictor model explains far more of the variation in Valine than the iso-Leucine model does (an r-squared of 0.89 against 0.40). Comparing each model's predictions with the measured values shows the same thing:
 
 ```{r, fig.width = 10, fig.height = 5, fig.cap = "Predicted against measured valine abundance for two linear models. (A) Predictions of the single-predictor model (iso-leucine only). (B) Predictions of the 30-predictor model. In each scatter plot measured valine abundance is on the horizontal axis and predicted valine abundance on the vertical axis; points on a diagonal line would be perfect predictions. Each point is one patient. Data: metabolomics_data."}
+library(cowplot)
 model_comparison_data <- metabolomics_data %>%
   mutate(
     single_predictor_predicted_Valine = predictWithModel(
@@ -528,6 +530,7 @@ multiple_regression_model <- buildModel(
   response = "Valine"
 )
 
+library(performance)
 check_model(multiple_regression_model$model)
 ```
 
