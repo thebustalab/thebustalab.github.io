@@ -22,23 +22,11 @@ source("_common.R")
 # — before any chapter runs. So one `library(ggtern)` in an appendix chapter contaminates the WHOLE
 # book on every later build, and keeps doing so after that line is removed, because the list is only
 # ever added to. ggtern replaces ggplot2::ggplot(), which is how chapter 7 came to fail inside
-# `ggtern:::ggplot.default` on 2026-09-22. Drop the known maskers, and drop anything not installed
-# on this machine (a stale entry from another box otherwise halts the render outright). Packages
-# genuinely attached during the render get recorded again.
-local({
-  maskers <- c("ggtern", "plyr")
-  files <- list.files("_bookdown_files", pattern = "^__packages$",
-                      recursive = TRUE, full.names = TRUE)
-  for (f in files) {
-    pkgs <- readLines(f, warn = FALSE)
-    keep <- setdiff(pkgs, maskers)
-    keep <- keep[nzchar(keep) & nzchar(vapply(keep, function(p) system.file(package = p), character(1)))]
-    if (!identical(keep, pkgs)) {
-      writeLines(keep, f)
-      message("[build] pruned from ", f, ": ", paste(setdiff(pkgs, keep), collapse = ", "))
-    }
-  }
-})
+# `ggtern:::ggplot.default` on 2026-09-22. So keep only packages the book's own sources attach,
+# drop the known maskers, and drop anything not installed on this machine (a stale entry from another
+# box otherwise halts the render outright). Logic and the Hmisc case: _cache_prune.R.
+source("_cache_prune.R")
+prune_cache_dir(".")
 
 # STALE-CACHE GUARD (2026-09-22). The chunk cache is ON (`cache = TRUE` in index.Rmd's setup chunk)
 # and is deliberately NOT keyed on the library's checksum — see AGENTS.md for why (a cold rebuild
