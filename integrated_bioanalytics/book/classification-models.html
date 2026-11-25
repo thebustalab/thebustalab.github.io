@@ -587,32 +587,26 @@ Self-check: why does density have such a large coefficient in the model built on
 <li>
 <strong>Precision</strong> is caught ÷ (caught + false alarms): of the cases the model called yes, the share that really are yes. A model with high precision is usually right when it says “excellent.”</li>
 </ul>
+<p>The <code><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel()</a></code> function does this counting in one step. Give it the predictions and the name of the response column, and it returns the four cells of the confusion matrix (<code>caught</code>, <code>missed</code>, <code>false_alarms</code> and <code>correct_no</code>, the cases correctly called no) along with accuracy, precision and recall:</p>
 <div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
-<span>    caught <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
-<span>    missed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span>,</span>
-<span>    false_alarms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"no"</span> <span class="op">&amp;</span> <span class="va">predicted_class</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span>,</span>
-<span>    recall <span class="op">=</span> <span class="va">caught</span> <span class="op">/</span> <span class="op">(</span><span class="va">caught</span> <span class="op">+</span> <span class="va">missed</span><span class="op">)</span>,</span>
-<span>    precision <span class="op">=</span> <span class="va">caught</span> <span class="op">/</span> <span class="op">(</span><span class="va">caught</span> <span class="op">+</span> <span class="va">false_alarms</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">## # A tibble: 1 × 5</span></span>
-<span><span class="co">##   caught missed false_alarms recall precision</span></span>
-<span><span class="co">##    &lt;int&gt;  &lt;int&gt;        &lt;int&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">## 1     17     29           12  0.370     0.586</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel</a></span><span class="op">(</span><span class="va">held_back_predictions</span>, response <span class="op">=</span> <span class="st">"excellent"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 8</span></span>
+<span><span class="co">##   cutoff caught missed false_alarms correct_no accuracy</span></span>
+<span><span class="co">##    &lt;dbl&gt;  &lt;int&gt;  &lt;int&gt;        &lt;int&gt;      &lt;int&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">## 1    0.5     17     29           12        341    0.897</span></span>
+<span><span class="co">## # ℹ 2 more variables: precision &lt;dbl&gt;, recall &lt;dbl&gt;</span></span></code></pre></div>
 <p>The always-“no” rule has a recall of zero, since it catches nothing, and no precision at all: it never calls a wine excellent, so there are no yes calls to be right about (R reports this as <code>NaN</code>, “not a number”).</p>
 <p>The cut-off from earlier in the chapter moves these numbers in opposite directions. Lowering it calls more wines excellent, which catches more of the excellent wines (recall rises) but also produces more false alarms (precision falls):</p>
+<p><code><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel()</a></code> calls each case from its probability, so it can score several cut-offs at once, one row per cut-off:</p>
 <div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">held_back_predictions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">excellent</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
-<span>    caught_at_0.5 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
-<span>    caught_at_0.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">probability_yes</span> <span class="op">&gt;=</span> <span class="fl">0.3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">## # A tibble: 1 × 2</span></span>
-<span><span class="co">##   caught_at_0.5 caught_at_0.3</span></span>
-<span><span class="co">##           &lt;int&gt;         &lt;int&gt;</span></span>
-<span><span class="co">## 1            17            26</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel</a></span><span class="op">(</span><span class="va">held_back_predictions</span>, response <span class="op">=</span> <span class="st">"excellent"</span>, cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 3 × 8</span></span>
+<span><span class="co">##   cutoff caught missed false_alarms correct_no accuracy</span></span>
+<span><span class="co">##    &lt;dbl&gt;  &lt;int&gt;  &lt;int&gt;        &lt;int&gt;      &lt;int&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">## 1    0.3     26     20           35        318    0.862</span></span>
+<span><span class="co">## 2    0.5     17     29           12        341    0.897</span></span>
+<span><span class="co">## 3    0.7      3     43            1        352    0.890</span></span>
+<span><span class="co">## # ℹ 2 more variables: precision &lt;dbl&gt;, recall &lt;dbl&gt;</span></span></code></pre></div>
 <p>Raising the cut-off does the opposite: fewer, surer yes calls, with higher precision and lower recall. Where to put the cut-off depends on what a miss costs compared with a false alarm. A missed excellent wine is a lost sale, but a missed disease is a missed diagnosis, so a medical screen favors recall while a winery choosing which bottles to put its premium label on likely favors precision.</p>
 <div id="concept-check-70" class="section level4 unnumbered">
 <h4>concept check<a class="anchor" aria-label="anchor" href="#concept-check-70"><i class="fas fa-link"></i></a>
@@ -658,7 +652,7 @@ Self-check: a winery wants to find as many of its excellent wines as possible, e
 <h2>chapter summary<a class="anchor" aria-label="anchor" href="#chapter-summary-11"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf" class="summary-pdf" target="_blank">Download this summary as a one-page PDF</a></p>
-<p>A yes/no response needs a classification model, not a straight line: a straight line’s predictions run below 0 and above 1. <strong>Set data aside first:</strong> filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. <strong>Read the output:</strong> <code>probability_yes</code> is the model’s probability of yes, and <code>predicted_class</code> is the call at a cut-off of 0.5. Move the cut-off with a <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. <strong>Rank predictors only after scaling,</strong> by the size of the coefficient, because raw coefficients mostly reflect units. <strong>Judge on the held-back rows,</strong> and never on accuracy alone: when yes is rare, calling everything “no” scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. <strong>The confusion matrix</strong> holds all four counts; a lower cut-off raises <strong>recall</strong> and lowers <strong>precision</strong>.</p>
+<p>A yes/no response needs a classification model, not a straight line: a straight line’s predictions run below 0 and above 1. <strong>Set data aside first:</strong> filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. <strong>Read the output:</strong> <code>probability_yes</code> is the model’s probability of yes, and <code>predicted_class</code> is the call at a cut-off of 0.5. Move the cut-off with a <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. <strong>Rank predictors only after scaling,</strong> by the size of the coefficient, because raw coefficients mostly reflect units. <strong>Judge on the held-back rows,</strong> and never on accuracy alone: when yes is rare, calling everything “no” scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. <code><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel()</a></code> gives the <strong>confusion matrix</strong> counts, <strong>precision</strong> and <strong>recall</strong>; a lower cut-off raises recall and lowers precision.</p>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
 <col width="33%">
@@ -708,18 +702,10 @@ Self-check: a winery wants to find as many of its excellent wines as possible, e
 <td>compare against calling every row “no”</td>
 </tr>
 <tr class="odd">
+<td><code><a href="https://rdrr.io/pkg/phylochemistry/man/scoreModel.html">scoreModel()</a></code></td>
+<td>the confusion matrix counts, accuracy, precision and recall</td>
 <td>
-<code>filter(response == "yes")</code> + <code>summarize(sum(...))</code>
-</td>
-<td>the yes cases caught and missed</td>
-<td>which call counts as caught (<code>"yes"</code>) or missed (<code>"no"</code>)</td>
-</tr>
-<tr class="even">
-<td>
-<code>group_by(response, predicted_class)</code> + <code>summarize(n = n())</code>
-</td>
-<td>the confusion matrix, then precision and recall</td>
-<td>recall = caught ÷ (caught + missed); precision = caught ÷ (caught + false alarms)</td>
+<code>data</code> (the predictions), <code>response</code>, <code>cutoff</code> (0.5 by default)</td>
 </tr>
 </tbody>
 </table></div>
@@ -781,7 +767,7 @@ The practice world below runs both class days of this chapter and can be played 
 <footer class="text-light mt-5" style="background-color:#004529;"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2026-11-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

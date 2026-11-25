@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2026-11-24"
+date: "2026-11-25"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -8041,38 +8041,34 @@ Accuracy is the two diagonal cells divided by all four. Two other numbers come f
 - **Recall** is caught ÷ (caught + missed): of the cases that really are yes, the share the model caught. A model with high recall rarely misses an excellent wine.
 - **Precision** is caught ÷ (caught + false alarms): of the cases the model called yes, the share that really are yes. A model with high precision is usually right when it says "excellent."
 
+The `scoreModel()` function does this counting in one step. Give it the predictions and the name of the response column, and it returns the four cells of the confusion matrix (`caught`, `missed`, `false_alarms` and `correct_no`, the cases correctly called no) along with accuracy, precision and recall:
+
 
 ``` r
-held_back_predictions %>%
-  summarize(
-    caught = sum(excellent == "yes" & predicted_class == "yes"),
-    missed = sum(excellent == "yes" & predicted_class == "no"),
-    false_alarms = sum(excellent == "no" & predicted_class == "yes"),
-    recall = caught / (caught + missed),
-    precision = caught / (caught + false_alarms)
-  )
-## # A tibble: 1 × 5
-##   caught missed false_alarms recall precision
-##    <int>  <int>        <int>  <dbl>     <dbl>
-## 1     17     29           12  0.370     0.586
+scoreModel(held_back_predictions, response = "excellent")
+## # A tibble: 1 × 8
+##   cutoff caught missed false_alarms correct_no accuracy
+##    <dbl>  <int>  <int>        <int>      <int>    <dbl>
+## 1    0.5     17     29           12        341    0.897
+## # ℹ 2 more variables: precision <dbl>, recall <dbl>
 ```
 
 The always-"no" rule has a recall of zero, since it catches nothing, and no precision at all: it never calls a wine excellent, so there are no yes calls to be right about (R reports this as `NaN`, "not a number").
 
 The cut-off from earlier in the chapter moves these numbers in opposite directions. Lowering it calls more wines excellent, which catches more of the excellent wines (recall rises) but also produces more false alarms (precision falls):
 
+`scoreModel()` calls each case from its probability, so it can score several cut-offs at once, one row per cut-off:
+
 
 ``` r
-held_back_predictions %>%
-  filter(excellent == "yes") %>%
-  summarize(
-    caught_at_0.5 = sum(probability_yes >= 0.5),
-    caught_at_0.3 = sum(probability_yes >= 0.3)
-  )
-## # A tibble: 1 × 2
-##   caught_at_0.5 caught_at_0.3
-##           <int>         <int>
-## 1            17            26
+scoreModel(held_back_predictions, response = "excellent", cutoff = c(0.3, 0.5, 0.7))
+## # A tibble: 3 × 8
+##   cutoff caught missed false_alarms correct_no accuracy
+##    <dbl>  <int>  <int>        <int>      <int>    <dbl>
+## 1    0.3     26     20           35        318    0.862
+## 2    0.5     17     29           12        341    0.897
+## 3    0.7      3     43            1        352    0.890
+## # ℹ 2 more variables: precision <dbl>, recall <dbl>
 ```
 
 Raising the cut-off does the opposite: fewer, surer yes calls, with higher precision and lower recall. Where to put the cut-off depends on what a miss costs compared with a false alarm. A missed excellent wine is a lost sale, but a missed disease is a missed diagnosis, so a medical screen favors recall while a winery choosing which bottles to put its premium label on likely favors precision.
@@ -8120,7 +8116,7 @@ predictWithModel(data = held_back_wines, model = wine_model) %>%
 
 [Download this summary as a one-page PDF](https://thebustalab.github.io/integrated_bioanalytics/summary_sheets/12d_classification.pdf){.summary-pdf target="_blank"}
 
-A yes/no response needs a classification model, not a straight line: a straight line's predictions run below 0 and above 1. **Set data aside first:** filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. **Read the output:** `probability_yes` is the model's probability of yes, and `predicted_class` is the call at a cut-off of 0.5. Move the cut-off with a `mutate()` on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. **Rank predictors only after scaling,** by the size of the coefficient, because raw coefficients mostly reflect units. **Judge on the held-back rows,** and never on accuracy alone: when yes is rare, calling everything "no" scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. **The confusion matrix** holds all four counts; a lower cut-off raises **recall** and lowers **precision**.
+A yes/no response needs a classification model, not a straight line: a straight line's predictions run below 0 and above 1. **Set data aside first:** filter on the column that marks training and held-back rows, build every model on the training rows only, and keep the held-back rows (the test set) for judging. **Read the output:** `probability_yes` is the model's probability of yes, and `predicted_class` is the call at a cut-off of 0.5. Move the cut-off with a `mutate()` on the probability, knowing that a lower cut-off catches more yes cases and makes more false alarms. **Rank predictors only after scaling,** by the size of the coefficient, because raw coefficients mostly reflect units. **Judge on the held-back rows,** and never on accuracy alone: when yes is rare, calling everything "no" scores a high accuracy and catches nothing, so report how many yes cases were caught and how many were missed. `scoreModel()` gives the **confusion matrix** counts, **precision** and **recall**; a lower cut-off raises recall and lowers precision.
 
 | Function or step | What it is for | What we set or vary |
 |---|---|---|
@@ -8130,8 +8126,7 @@ A yes/no response needs a classification model, not a straight line: a straight 
 | `mutate(ifelse(probability_yes >= ...))` | moving the cut-off | the cut-off value |
 | `buildModel(scale_variance = TRUE)` | comparing coefficients across predictors | `TRUE` to rank predictors; rank with `arrange(desc(abs(value)))` |
 | `summarize(mean(predicted_class == response))` | accuracy | compare against calling every row "no" |
-| `filter(response == "yes")` + `summarize(sum(...))` | the yes cases caught and missed | which call counts as caught (`"yes"`) or missed (`"no"`) |
-| `group_by(response, predicted_class)` + `summarize(n = n())` | the confusion matrix, then precision and recall | recall = caught ÷ (caught + missed); precision = caught ÷ (caught + false alarms) |
+| `scoreModel()` | the confusion matrix counts, accuracy, precision and recall | `data` (the predictions), `response`, `cutoff` (0.5 by default) |
 
 <hr>
 
